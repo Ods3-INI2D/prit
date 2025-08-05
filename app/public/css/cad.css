@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+header{
+  align-content: center;
+  background-color: rgb(92, 123, 225);
+  position: relative;
+  top: 0;
+  left: 0;
+  height:32vh;
+  width: 100vw;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+body{
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(31, 31, 31);
+  color: white;
+}
+main{
+  margin: 0;
+  align-items: center;
+  height: 59vh;
+}
+button{
+  background-color: rgb(26, 0, 255);
+  color: white;
+  width: 50vw;
+  height: 4vh;
+  border-radius: 10px;
+  border: 0;
+  border-style: none;
+  font-size: 4.8vw;
+  margin-left: 25vw;
+  font-family: 'Belanosima';
+}
+h1{
+  font-size: 30px;
+  font-family: 'Belanosima';
+}
+footer{
+  width: 100vw;
+  height: 9vh;
+  background-color: rgb(92, 123, 225);
+  border-top-left-radius: 200px;
+  border-top-right-radius: 200px;
+}
+h2{
+  font-family: 'Inter';
+}
+#caixa{
+  width: 77vw;
+  height: 3vh;
+  border-radius: 7px;
+  border: 0;
+  font-size: 20;
+}
+img.icon{
+  width: 73vw;
+  height: 15vh;
+  margin-left: 12vw;
+}
+.txt{
+  margin-left: 12vw;
+  font-family: 'Belanosima';
+  font-size: 4.8vw;
+}
+.tit{
+  font-size: 10.4vw;
+}
+.link{
+  font-size: 4vw;
+  margin-left: 32vw;
+  font-family: 'Inter';
+}
+.link2{
+  font-size: 4vw;
+  margin-left: 35vw;
+  font-family: 'Inter';
+}
+.ou{
+  margin-left: 49vw;
+  margin-top: 2vh;
+}
+#google{
+  background-color: white;
+  width: 76.5vw;
+  color: black;
+  margin-top: 2vh;
+  font-family: 'Belanosima';
+  margin-left: 11.75vw;
+  font-size: 4.8vw;
+  text-align: center;
+}
+.google{
+  width: 6.2vw;
+  margin-left: -18vw;
+}
