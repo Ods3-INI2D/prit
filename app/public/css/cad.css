@@ -13,6 +13,10 @@ header{
 }
 body{
   width: 100vw;
+<<<<<<< HEAD
+=======
+  height: 100vh;
+>>>>>>> d7d26b30f29f12e78884a74ca7fbfc29f3570efa
   background-color: rgb(31, 31, 31);
   color: white;
 }
@@ -21,7 +25,11 @@ main{
   align-items: center;
   height: 59vh;
 }
+<<<<<<< HEAD
 #btn{
+=======
+button{
+>>>>>>> d7d26b30f29f12e78884a74ca7fbfc29f3570efa
   background-color: rgb(26, 0, 255);
   color: white;
   width: 50vw;
@@ -30,7 +38,11 @@ main{
   border: 0;
   border-style: none;
   font-size: 4.8vw;
+<<<<<<< HEAD
   margin-left: 13vw;
+=======
+  margin-left: 25vw;
+>>>>>>> d7d26b30f29f12e78884a74ca7fbfc29f3570efa
   font-family: 'Belanosima';
 }
 h1{
@@ -38,7 +50,10 @@ h1{
   font-family: 'Belanosima';
 }
 footer{
+<<<<<<< HEAD
   margin-top: 20vh;
+=======
+>>>>>>> d7d26b30f29f12e78884a74ca7fbfc29f3570efa
   width: 100vw;
   height: 9vh;
   background-color: rgb(92, 123, 225);
@@ -48,13 +63,18 @@ footer{
 h2{
   font-family: 'Inter';
 }
+<<<<<<< HEAD
 #nome{
+=======
+#caixa{
+>>>>>>> d7d26b30f29f12e78884a74ca7fbfc29f3570efa
   width: 77vw;
   height: 3vh;
   border-radius: 7px;
   border: 0;
   font-size: 20;
 }
+<<<<<<< HEAD
 #nasc{
   width: 77vw;
   height: 3vh;
@@ -102,6 +122,8 @@ h2{
   font-size: 20;
   font-family: 'Inter';
 }
+=======
+>>>>>>> d7d26b30f29f12e78884a74ca7fbfc29f3570efa
 img.icon{
   width: 73vw;
   height: 15vh;
@@ -117,12 +139,20 @@ img.icon{
 }
 .link{
   font-size: 4vw;
+<<<<<<< HEAD
   margin-left: 20vw;
+=======
+  margin-left: 32vw;
+>>>>>>> d7d26b30f29f12e78884a74ca7fbfc29f3570efa
   font-family: 'Inter';
 }
 .link2{
   font-size: 4vw;
+<<<<<<< HEAD
   margin-left: 28vw;
+=======
+  margin-left: 35vw;
+>>>>>>> d7d26b30f29f12e78884a74ca7fbfc29f3570efa
   font-family: 'Inter';
 }
 .ou{

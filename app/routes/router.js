@@ -1,4 +1,5 @@
 var express=require('express');
+<<<<<<< HEAD
 const {body, validationResult } = require('express-validator');
 var router=express.Router();
 var { valCPF, valTel, valSenha, valCsenha } = require('../helpers/validacoes')
@@ -7,12 +8,20 @@ router.get('/', function(req, res) {
     res.render('pages/cadastro', {"erros": null, "valores": {"nome": "", "nasc": "", "cpf": "", "tel": "",  "email" : "", "senhan": "", "csenha": ""}});
 });
 
+=======
+var router=express.Router();
+
+router.get('/', function(req, res) {
+    res.render('pages/cadastro');
+});
+>>>>>>> d7d26b30f29f12e78884a74ca7fbfc29f3570efa
 router.get('/login', function(req, res) {
     res.render('pages/login');
 });
 router.get('/home', function(req, res) {
     res.render('pages/home');
 });
+<<<<<<< HEAD
 router.get('/usuario', function(req, res) {
     res.render('pages/usuario');
 });
@@ -81,4 +90,6 @@ function rerros (req, res) {
     return res.render("pages/cadastro", { resultado: req.body, "erros": errors, "valores": req.body });
   };
 
+=======
+>>>>>>> d7d26b30f29f12e78884a74ca7fbfc29f3570efa
 module.exports = router;
