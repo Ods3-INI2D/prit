@@ -13,7 +13,6 @@ header{
 }
 body{
   width: 100vw;
-  height: 100vh;
   background-color: rgb(31, 31, 31);
   color: white;
 }
@@ -22,7 +21,7 @@ main{
   align-items: center;
   height: 59vh;
 }
-button{
+#btn{
   background-color: rgb(26, 0, 255);
   color: white;
   width: 50vw;
@@ -31,7 +30,7 @@ button{
   border: 0;
   border-style: none;
   font-size: 4.8vw;
-  margin-left: 25vw;
+  margin-left: 13vw;
   font-family: 'Belanosima';
 }
 h1{
@@ -39,6 +38,7 @@ h1{
   font-family: 'Belanosima';
 }
 footer{
+  margin-top: 20vh;
   width: 100vw;
   height: 9vh;
   background-color: rgb(92, 123, 225);
@@ -48,12 +48,59 @@ footer{
 h2{
   font-family: 'Inter';
 }
-#caixa{
+#nome{
   width: 77vw;
   height: 3vh;
   border-radius: 7px;
   border: 0;
   font-size: 20;
+}
+#nasc{
+  width: 77vw;
+  height: 3vh;
+  border-radius: 7px;
+  border: 0;
+  font-size: 20;
+}
+#cpf{
+  width: 77vw;
+  height: 3vh;
+  border-radius: 7px;
+  border: 0;
+  font-size: 20;
+}
+#tel{
+  width: 77vw;
+  height: 3vh;
+  border-radius: 7px;
+  border: 0;
+  font-size: 20;
+}
+#email{
+  width: 77vw;
+  height: 3vh;
+  border-radius: 7px;
+  border: 0;
+  font-size: 20;
+}
+#senhan{
+  width: 77vw;
+  height: 3vh;
+  border-radius: 7px;
+  border: 0;
+  font-size: 20;
+}
+#senha{
+  width: 77vw;
+  height: 3vh;
+  border-radius: 7px;
+  border: 0;
+  font-size: 20;
+}
+.erro{
+  color: red;
+  font-size: 20;
+  font-family: 'Inter';
 }
 img.icon{
   width: 73vw;
@@ -70,12 +117,12 @@ img.icon{
 }
 .link{
   font-size: 4vw;
-  margin-left: 32vw;
+  margin-left: 20vw;
   font-family: 'Inter';
 }
 .link2{
   font-size: 4vw;
-  margin-left: 35vw;
+  margin-left: 28vw;
   font-family: 'Inter';
 }
 .ou{
