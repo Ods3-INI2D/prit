@@ -1,3 +1,9 @@
 .body{
   background-color:rgb(31, 31, 31);
 }
+/*Tamanho Desktop*/
+ @media(min-width:1200px) and (max-width:1024px){
+     h1{ color:red;
+      width: 100px;
+     }
+   }
