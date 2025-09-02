@@ -1,9 +1,27 @@
 .body{
   background-color:rgb(31, 31, 31);
 }
-/*Tamanho Desktop*/
- @media(min-width:1200px) and (max-width:1024px){
-     h1{ color:red;
-      width: 100px;
-     }
-   }
+/* Tablets (≥ 768px) */
+@media (min-width: 768px) {
+  .container {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  @media (min-width: 768px )and (max-width:1024px) {
+    h1 {
+      background-color: red;
+    }
+  }
+  
+
+  .card {
+    flex: 1 1 45%;
+  }
+}
+
+/* Desktops (≥ 1024px) */
+@media (min-width: 1024px) {
+  .card {
+    flex: 1 1 30%;
+  }
+}
