@@ -1,27 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-header{
+@import url("https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+header {
   align-content: center;
   background-color: rgb(92, 123, 225);
   position: relative;
   top: 0;
   left: 0;
-  height:32vh;
+  height: 32vh;
   width: 100vw;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
 }
-body{
+body {
   width: 100vw;
-  background-color: rgb(31, 31, 31);
+  background-color: rgb(92, 123, 225);
   color: white;
 }
-main{
+main {
+  background-color: rgb(31, 31, 31);
   margin: 0;
   align-items: center;
   height: 59vh;
 }
-#btn{
+#btn {
   background-color: rgb(26, 0, 255);
   color: white;
   width: 50vw;
@@ -31,13 +32,13 @@ main{
   border-style: none;
   font-size: 4.8vw;
   margin-left: 13vw;
-  font-family: 'Belanosima';
+  font-family: "Belanosima";
 }
-h1{
+h1 {
   font-size: 30px;
-  font-family: 'Belanosima';
+  font-family: "Belanosima";
 }
-footer{
+footer {
   margin-top: 20vh;
   width: 100vw;
   height: 9vh;
@@ -45,101 +46,101 @@ footer{
   border-top-left-radius: 200px;
   border-top-right-radius: 200px;
 }
-h2{
-  font-family: 'Inter';
+h2 {
+  font-family: "Inter";
 }
-#nome{
+#nome {
   width: 77vw;
   height: 3vh;
   border-radius: 7px;
   border: 0;
   font-size: 20;
 }
-#nasc{
+#nasc {
   width: 77vw;
   height: 3vh;
   border-radius: 7px;
   border: 0;
   font-size: 20;
 }
-#cpf{
+#cpf {
   width: 77vw;
   height: 3vh;
   border-radius: 7px;
   border: 0;
   font-size: 20;
 }
-#tel{
+#tel {
   width: 77vw;
   height: 3vh;
   border-radius: 7px;
   border: 0;
   font-size: 20;
 }
-#email{
+#email {
   width: 77vw;
   height: 3vh;
   border-radius: 7px;
   border: 0;
   font-size: 20;
 }
-#senhan{
+#senhan {
   width: 77vw;
   height: 3vh;
   border-radius: 7px;
   border: 0;
   font-size: 20;
 }
-#senha{
+#senha {
   width: 77vw;
   height: 3vh;
   border-radius: 7px;
   border: 0;
   font-size: 20;
 }
-.erro{
+.erro {
   color: red;
   font-size: 20;
-  font-family: 'Inter';
+  font-family: "Inter";
 }
-img.icon{
+img.icon {
   width: 73vw;
   height: 15vh;
   margin-left: 12vw;
 }
-.txt{
+.txt {
   margin-left: 12vw;
-  font-family: 'Belanosima';
+  font-family: "Belanosima";
   font-size: 4.8vw;
 }
-.tit{
+.tit {
   font-size: 10.4vw;
 }
-.link{
+.link {
   font-size: 4vw;
   margin-left: 20vw;
-  font-family: 'Inter';
+  font-family: "Inter";
 }
-.link2{
+.link2 {
   font-size: 4vw;
   margin-left: 28vw;
-  font-family: 'Inter';
+  font-family: "Inter";
 }
-.ou{
+.ou {
   margin-left: 49vw;
   margin-top: 2vh;
 }
-#google{
+#google {
   background-color: white;
   width: 76.5vw;
   color: black;
   margin-top: 2vh;
-  font-family: 'Belanosima';
+  font-family: "Belanosima";
   margin-left: 11.75vw;
   font-size: 4.8vw;
   text-align: center;
 }
-.google{
+.google {
   width: 6.2vw;
   margin-left: -18vw;
 }
