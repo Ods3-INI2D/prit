@@ -1,152 +1,140 @@
-@import url("https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 header {
-  align-content: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: rgb(92, 123, 225);
-  position: relative;
-  top: 0;
-  left: 0;
   height: 32vh;
-  width: 100vw;
+  width: 100%;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
 }
-body {
-  width: 100vw;
-  background-color: rgb(92, 123, 225);
-  color: white;
+
+img.icon {
+  width: 70%;
+  max-width: 280px;
+  height: auto;
 }
+
 main {
-  background-color: rgb(31, 31, 31);
-  margin: 0;
-  align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 2rem;
+}
+
+section.txt {
+  width: 85%;
+  max-width: 500px;
+  font-family: 'Belanosima', sans-serif;
+}
+
+h1.tit {
+  font-size: 2rem;
+  text-align: center;
+}
+
+h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  margin-bottom: 0.3rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="password"] {
+  width: 100%;
+  height: 2.5rem;
+  border-radius: 7px;
+  border: 0;
+  padding: 0.5rem;
+  font-size: 1rem;
+  margin-bottom: 1rem;
 }
 #btn {
   background-color: rgb(26, 0, 255);
   color: white;
-  width: 50vw;
-  height: 4vh;
+  width: 100%;
+  max-width: 300px;
+  height: 2.8rem;
   border-radius: 10px;
-  border: 0;
-  border-style: none;
-  font-size: 4.8vw;
-  margin-left: 13vw;
-  font-family: "Belanosima";
+  border: none;
+  font-size: 1.1rem;
+  font-family: 'Belanosima', sans-serif;
+  display: block;
+  margin: 1rem auto;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
-@media (min-width: 768px) and (max-width: 1024px) {
-  h1{
-   font-size: 30px;
-   background-color: blue;
- }
+#btn:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
 }
-h1 {
-  font-size: 30px;
-  font-family: "Belanosima";
-  
+.erro {
+  color: red;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
 }
+
+.link {
+  display: block;
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  font-family: 'Inter', sans-serif;
+  color: white;
+  text-decoration: none;
+}
+
+.link2 {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
 footer {
-  margin-top: 20vh;
-  width: 100vw;
+  margin-top: 4rem;
+  width: 100%;
   height: 9vh;
   background-color: rgb(92, 123, 225);
   border-top-left-radius: 200px;
   border-top-right-radius: 200px;
 }
-h2 {
-  font-family: "Inter";
-}
-#nome {
-  width: 77vw;
-  height: 3vh;
-  border-radius: 7px;
-  border: 0;
-  font-size: 20;
-}
-#nasc {
-  width: 77vw;
-  height: 3vh;
-  border-radius: 7px;
-  border: 0;
-  font-size: 20;
-}
-#cpf {
-  width: 77vw;
-  height: 3vh;
-  border-radius: 7px;
-  border: 0;
-  font-size: 20;
-}
-#tel {
-  width: 77vw;
-  height: 3vh;
-  border-radius: 7px;
-  border: 0;
-  font-size: 20;
-}
-#email {
-  width: 77vw;
-  height: 3vh;
-  border-radius: 7px;
-  border: 0;
-  font-size: 20;
-}
-#senhan {
-  width: 77vw;
-  height: 3vh;
-  border-radius: 7px;
-  border: 0;
-  font-size: 20;
-}
-#senha {
-  width: 77vw;
-  height: 3vh;
-  border-radius: 7px;
-  border: 0;
-  font-size: 20;
-}
-.erro {
-  color: red;
-  font-size: 20;
-  font-family: "Inter";
-}
-img.icon {
-  width: 73vw;
-  height: 15vh;
-  margin-left: 12vw;
-}
-.txt {
-  margin-left: 12vw;
-  font-family: "Belanosima";
-  font-size: 4.8vw;
-}
-.tit {
-  font-size: 10.4vw;
-}
-.link {
-  font-size: 4vw;
-  margin-left: 20vw;
-  font-family: "Inter";
-}
-.link2 {
-  font-size: 4vw;
-  margin-left: 28vw;
-  font-family: "Inter";
-}
-.ou {
-  margin-left: 49vw;
-  margin-top: 2vh;
-}
-#google {
-  background-color: white;
-  width: 76.5vw;
-  color: black;
-  margin-top: 2vh;
-  font-family: "Belanosima";
-  margin-left: 11.75vw;
-  font-size: 4.8vw;
-  text-align: center;
-}
-.google {
-  width: 6.2vw;
-  margin-left: -18vw;
+/* Responsividade para desktops */
+@media (min-width: 1024px) {
+  header {
+    height: 25vh;
+  }
+
+  img.icon {
+    max-width: 300px;
+  }
+
+  section.txt {
+    max-width: 600px;
+    font-size: 1rem;
+  }
+
+  h1.tit {
+    font-size: 2.5rem;
+  }
+
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="password"] {
+    font-size: 1rem;
+    height: 2.8rem;
+  }
+
+  #btn {
+    font-size: 1.2rem;
+    height: 3rem;
+  }
+
+  .link {
+    font-size: 1rem;
+  }
 }

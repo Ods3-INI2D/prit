@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+/* ===== Reset básico ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #5c7be1;
+  height: 25vh;
+  width: 100%;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+header img.icon {
+  width: 60%;
+  max-width: 200px;
+  height: auto;
+}
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+section.txt {
+  width: 100%;
+  max-width: 400px;
+  text-align: left;
+}
+h1.tit {
+  font-family: 'Belanosima', sans-serif;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: white;
+}
+h2 {
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+  color: white;
+}
+#caixa {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  background-color: #fff;
+  color: #333;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+#caixa:focus {
+  border-color: #4da6ff;
+  outline: none;
+  box-shadow: 0 0 6px rgba(77, 166, 255, 0.4);
+}
+/* ===== Botões ===== */
+#btn {
+  background-color: rgb(26, 0, 255);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-family: 'Belanosima', sans-serif;
+  width: 100%;
+  max-width: 400px;
+  margin: 1rem 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+#btn:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+.ou {
+  text-align: center;
+  margin: 1rem 0;
+  color: #555;
+}
+/* Botão Google */
+#google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: #fff;
+  border: 2px solid #ddd;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Belanosima', sans-serif;
+  width: 100%;
+  max-width: 400px;
+  cursor: pointer;
+  transition: border-color 0.3s ease, transform 0.2s ease;
+}
+#google:hover {
+  border-color: #4da6ff;
+  transform: translateY(-2px);
+}
+.google {
+  width: 20px;
+  height: 20px;
+}
+.link {
+  display: block;
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 1.5rem;
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.link:hover {
+  color: #0056b3;
+}
+.link2 {
+  font-size: 1rem;
+  font-weight: bold;
+}
+footer {
+  margin-top: auto;
+  background-color: #5c7be1;
+  height: 10vh;
+  border-top-left-radius: 200px;
+  border-top-right-radius: 200px;
+}

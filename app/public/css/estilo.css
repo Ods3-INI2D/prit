@@ -1,3 +1,73 @@
-.body {
+body {
+  width: 100%;
+  margin: 0;
   background-color: rgb(31, 31, 31);
+  color: white;
+  font-family: 'Inter', sans-serif;
+}
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  background-color: #fff;
+  color: #333;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="password"]:focus {
+  border-color: #4da6ff; 
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 6px rgba(77, 166, 255, 0.4);
+}
+.erro {
+  font-size: 0.9rem;
+  color: #d93025;
+  margin-top: -0.5rem;
+  margin-bottom: 0.8rem;
+  display: block;
+}
+label h2 {
+  font-size: 1rem;
+  margin-bottom: 0.3rem;
+  color: #444;
+  font-weight: 500;
+}
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.link {
+  display: block;
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  font-family: 'Inter', sans-serif;
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: #0056b3;
+}
+
+.link2 {
+  font-size: 1rem;
+  font-weight: bold;
 }
