@@ -1,26 +1,3 @@
 .body {
   background-color: rgb(31, 31, 31);
 }
-/* Tablets (≥ 768px) */
-@media (min-width: 768px) {
-  .container {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  @media (min-width: 768px) and (max-width: 1024px) {
-    h1 {
-      background-color: red;
-      font-size: 100%;
-    }
-  }
-
-  /* Desktops (≥ 1024px) */
-  @media (min-width: 1024px) {
-    h1 {
-      background-color: blue;
-    }
-    .card {
-      flex: 1 1 30%;
-    }
-  }
-}

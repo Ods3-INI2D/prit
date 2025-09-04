@@ -33,9 +33,16 @@ main {
   margin-left: 13vw;
   font-family: "Belanosima";
 }
+@media (min-width: 768px) and (max-width: 1024px) {
+  h1{
+   font-size: 30px;
+   background-color: blue;
+ }
+}
 h1 {
   font-size: 30px;
   font-family: "Belanosima";
+  
 }
 footer {
   margin-top: 20vh;
