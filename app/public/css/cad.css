@@ -28,12 +28,12 @@ main {
 section.txt {
   width: 85%;
   max-width: 500px;
-  font-family: 'Belanosima', sans-serif;
 }
 
 h1.tit {
   font-size: 2rem;
   text-align: center;
+  font-family: 'Belanosima', sans-serif;
 }
 
 h2 {
@@ -76,10 +76,12 @@ input[type="password"] {
   transform: translateY(-2px);
 }
 
-.erro {
+.erro{
   color: red;
   font-size: 0.9rem;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', bold;
+  font-size: 3vh;
+  font-weight: 600;
 }
 
 .link {
@@ -174,7 +176,7 @@ footer {
     height: 2rem;
     font-size: 0.85rem;
     padding: 0 8px;
-
+  }
   #btn {
     font-size: 0.9rem;
     height: 2.3rem;
@@ -189,5 +191,4 @@ footer {
     border-top-left-radius: 80px;
     border-top-right-radius: 80px;
   }
-}
 }
