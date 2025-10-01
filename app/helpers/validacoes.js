@@ -1,9 +1,9 @@
 function valCPF(cpf) {
     if(cpf == '') return false;
-     
+    
     if (cpf.length != 11)
         return false;
- 
+
     if (cpf == "00000000000" || 
         cpf == "11111111111" || 
         cpf == "22222222222" || 
@@ -15,6 +15,8 @@ function valCPF(cpf) {
         cpf == "88888888888" || 
         cpf == "99999999999")
         return false;
+
+    return true;
 }
 function valTel(tel) {
     if(tel == '') return false;
@@ -33,23 +35,23 @@ function valTel(tel) {
         tel == "888888888" || 
         tel == "999999999")
         return false;
+        
+    return true;
 }
 function valSenha(senhan) {
     if(senhan == '') return false;
 
     body('senha')
-    .isLength({ min: 6, max: 20 }).withMessage('A senha deve conter de 6 a 20 caracteres')
+    .isLength({ min: 6, max: 20 }).withMessage('A senha deve conter de 6 a 20 caracteres!')
     .custom((value, { req }) => {
-      // Expressão regular para a validação
-      const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,20}$/;
+      const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).$/;
       if (!regex.test(value)) {
-        throw new Error('A senha deve conter pelo menos um número, uma letra maiúscula e um caractere especial');
+        throw new Error('A senha deve conter pelo menos um número, uma letra maiúscula e um caractere especial!');
       }
       return true;
     })
 }
 function valCsenha(csenha) {
-    if(csenha == '') return false;
-
     if(csenha !== senhan) return false;
 }
+module.exports = { valCPF, valTel, valSenha, valCsenha};

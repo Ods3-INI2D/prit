@@ -9,100 +9,86 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/estilo.css">
     <link rel="stylesheet" href="css/cad.css">
-    <script src="js/script.js"></script>
-</head>
+    </head>
 
 <body>
-        <%
-        var cssErro = {"nome": "", "nasc": "", "cpf": "", "tel": "",  "email" : "", "senhan": "", "csenha": ""}  
-        var msgErro = {"nome": "", "nasc": "", "cpf": "", "tel": "",  "email" : "", "senhan": "", "csenha": ""}
+    <%
+    var cssErro = {"nome": "", "nasc": "", "cpf": "", "tel": "", "email": "", "senhan": "", "csenha": ""} 
+    var msgErro = {"nome": "", "nasc": "", "cpf": "", "tel": "", "email": "", "senhan": "", "csenha": ""}
     if(erros) { 
-         
         listaErros.errors.forEach(function(itemErro){
-             if (itemErro.path  == "nome"){ 
+            if (itemErro.path == "nome"){ 
                 cssErro.nome = "erro";
                 msgErro.nome = itemErro.msg;
-            }  
-             if (itemErro.path  == "nasc"){ 
+            } 
+            if (itemErro.path == "nasc"){ 
                 cssErro.nasc = "erro";
-                msgErro.nasc = itemErro.msg;            
-             }  
-             if (itemErro.path  == "cpf"){
+                msgErro.nasc = itemErro.msg;         
+            } 
+            if (itemErro.path == "cpf"){
                 cssErro.cpf = "erro";
-                msgErro.cpf = itemErro.msg;                
-             }
-             if (itemErro.path  == "tel"){
+                msgErro.cpf = itemErro.msg;         
+            }
+            if (itemErro.path == "tel"){
                 cssErro.tel = "erro";
-                msgErro.tel = itemErro.msg;                
-             }
-             if (itemErro.path  == "email"){ 
+                msgErro.tel = itemErro.msg;         
+            }
+            if (itemErro.path == "email"){ 
                 cssErro.email = "erro";
                 msgErro.email = itemErro.msg;
-             }
-             if (itemErro.path  == "senhan"){
+            }
+            if (itemErro.path == "senhan"){
                 cssErro.senhan = "erro";
-                msgErro.senhan = itemErro.msg;                
-             }
-             if (itemErro.path  == "csenha"){
+                msgErro.senhan = itemErro.msg;         
+            }
+            if (itemErro.path == "csenha"){
                 cssErro.csenha = "erro";
-                msgErro.csenha = itemErro.msg;                
-             }
-         }); 
-     }; %>
-     
+                msgErro.csenha = itemErro.msg;         
+            }
+        }); 
+    }; %>
+    
     <header>
         <img class="icon" src="imagens/logo-login.svg">
     </header>
     <main>
         <section class="txt">
-       <br><h1 class="tit">Cadastro</h1><br>
+        <br><h1 class="tit">Cadastro</h1><br>
 
-                <form class="caixa" method="post" action="/usuario">
-        <p><label for="nome"><h2>Nome</h2></label></p>
-                <input type="text" name="nome" id="nome" value="<%= valores.nome %>" class="<%= cssErro.nome %>">
-                <span><%= msgErro.nome %></span><br><br>
+        <form class="formulario" method="post" action="/cadastro">
+            <p><label for="nome"><h2>Nome</h2></label></p>
+            <input type="text" name="nome" id="nome" value="<%= valores.nome %>" class="<%= cssErro.nome %>">
+            <span class="erro"><%= msgErro.nome %></span><br><br>
 
-                <form class="caixa" method="post" action="/usuario">
-        <p><label for="nasc"><h2>Data de Nascimento</h2></label></p>
-                <input type="date" name="nasc" id="nasc" value="<%= valores.nasc %>" class="<%= cssErro.nasc %>">
-                <span><%= msgErro.nasc %></span><br><br>
+            <p><label for="nasc"><h2>Data de Nascimento</h2></label></p>
+            <input type="date" name="nasc" id="nasc" value="<%= valores.nasc %>" class="<%= cssErro.nasc %>">
+            <span class="erro"><%= msgErro.nasc %></span><br><br>
 
-                <form class="caixa" method="post" action="/usuario">
-        <p><label for="cpf"><h2>CPF</h2></label></p>
-                <input type="number" name="cpf" id="cpf" value="<%= valores.cpf %>" class="<%= cssErro.cpf %>">
-                <span><%= msgErro.cpf %></span><br><br>
+            <p><label for="cpf"><h2>CPF</h2></label></p>
+            <input type="number" name="cpf" id="cpf" value="<%= valores.cpf %>" class="<%= cssErro.cpf %>">
+            <span class="erro"><%= msgErro.cpf %></span><br><br>
 
-                <form class="caixa" method="post" action="/usuario">
-        <p><label for="tel"><h2>Telefone</h2></label></p>
-                <input type="number" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>">
-                <span><%= msgErro.tel %></span><br><br>
+            <p><label for="tel"><h2>Telefone</h2></label></p>
+            <input type="number" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>">
+            <span class="erro"><%= msgErro.tel %></span><br><br>
 
-                <form class="caixa" method="post" action="/usuario">
-        <p><label for="email"><h2>E-mail</h2></label></p>
-                <input type="text" name="email" id="email" value="<%= valores.email %>" class="<%= cssErro.email %>">
-                <span><%= msgErro.email %></span><br><br>
+            <p><label for="email"><h2>E-mail</h2></label></p>
+            <input type="text" name="email" id="email" value="<%= valores.email %>" class="<%= cssErro.email %>">
+            <span class="erro"><%= msgErro.email %></span><br><br>
 
-                <form class="caixa" method="post" action="/usuario">
-        <p><label for="senhan"><h2>Senha</h2></label></p>
-                <input type="password" name="senhan" id="senhan" value="<%= valores.senhan %>" class="<%= cssErro.senhan %>">
-                <span><%= msgErro.senhan %></span><br><br>
+            <p><label for="senhan"><h2>Senha</h2></label></p>
+            <input type="password" name="senhan" id="senhan" value="<%= valores.senhan %>" class="<%= cssErro.senhan %>">
+            <span class="erro"><%= msgErro.senhan %></span><br><br>
 
-                <form class="caixa" method="post" action="/usuario">
-        <p><label for="senha"><h2>Confirmar Senha</h2></label></p>
-                <input type="password" name="senha" id="senha" value="<%= valores.csenha %>" class="<%= cssErro.csenha %>">
-                <span><%= msgErro.csenha %></span><br><br>
-                
-                <input id="btn" type="submit" value="Cadastro">
-                
+            <p><label for="senha"><h2>Confirmar Senha</h2></label></p>
+            <input type="password" name="senha" id="senha" value="<%= valores.csenha %>" class="<%= cssErro.csenha %>">
+            <span class="erro"><%= msgErro.csenha %></span><br><br>
+            
+            <input id="btn" type="submit" value="Cadastro">
 
-                <br><a href="/login" class="link">Já tem uma conta?
-                    <br><h1 class="link2">Entre aqui</h1></a>
-       </form></section><br>
-
-       
-
-       
-
+            <br><a href="/login" class="link">Já tem uma conta?
+                <br><h1 class="link2">Entre aqui</h1></a>
+        </form></section><br>
     </main>
 
     <footer>
