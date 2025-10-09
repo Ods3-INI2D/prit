@@ -10,12 +10,14 @@ header {
   width: 100%;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Adicionando sombra ao header */
 }
 
 form {
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Adicionando sombra ao formulário */
 }
 img.icon {
   width: 70%;
@@ -53,12 +55,12 @@ input[type="date"],
 input[type="password"] {
   width: 100%;
   padding: 12px 16px;
-  margin: 10px 0;
+  margin: 12px 0;
   border: 2px solid #ccc;
   border-radius: 12px;
   background-color: #f5f5f5;
   font-size: 16px;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 #btn {
