@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+body{
+    background-color: rgb(91, 91, 91);
+    font-family: 'Inter';
+    color: white;
+    border: 10px;
+    
+}
+.produto{
+    width: 100px;
+    height: 120px;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-left: 18px;
+    position: absolute;
+}
+.nome{
+    font-size: 10px;
+    margin-top: 135.5px;
+    margin-left: 18px;
+    position: absolute;
+}
+.preco{
+    font-size: 8px;
+    margin-top: 147.5px;
+    margin-left: 18px;
+    position: absolute;
+}
+.categoria{
+    font-size: 8px;
+    margin-top: 164px;
+    margin-left: 18px;
+    position: absolute;
+}
+.estrela{
+    width: 8px;
+    height: 8px;
+    margin-top: 164px;
+    margin-left: 73px;
+    margin-right: 9px;
+    position: absolute;
+}
+.li{
+    color: white;
+}
+.espaco{
+    margin-left: 9px;
+}
+.espaco1{
+    margin-left: 18px;
+}
+.espaco2{
+    margin-left: 27px;
+}
+.espaco3{
+    margin-left: 36px;
+}
