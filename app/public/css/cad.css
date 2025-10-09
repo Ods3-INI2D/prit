@@ -1,28 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 header {
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: rgb(92, 123, 225);
-  height: 20vh; /* Ajustado para um tamanho mais equilibrado */
+  height: 18vh;
   width: 100%;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Sombras mais intensas */
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
 form {
-  max-width: 450px;
+  max-width: 100%;
   margin: 20px auto;
-  padding: 30px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Sombra mais forte no formulário */
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
 }
+
 img.icon {
-  width: 60%;
-  max-width: 280px;
+  width: 40%;
+  max-width: 120px;
   height: auto;
 }
 
@@ -30,23 +35,23 @@ main {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  margin-top: 3rem;
+  margin-top: 2rem;
 }
 
 section.txt {
   width: 90%;
-  max-width: 550px;
+  font-size: 0.85rem;
 }
 
 h1.tit {
-  font-size: 2.4rem;
+  font-size: 1.3rem;
   text-align: center;
   font-family: 'Belanosima', sans-serif;
 }
 
 h2 {
   font-family: 'Inter', sans-serif;
-  font-size: 1rem;
+  font-size: 0.8rem;
   margin-bottom: 0.5rem;
 }
 
@@ -55,14 +60,16 @@ input[type="number"],
 input[type="date"],
 input[type="password"] {
   width: 100%;
-  padding: 14px 18px;
-  margin: 14px 0;
+  padding: 0 8px;
+  margin: 12px 0;
   border: 2px solid #ccc;
   border-radius: 12px;
   background-color: #f5f5f5;
-  font-size: 16px;
+  font-size: 0.85rem;
+  height: 2rem;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
+
 input[type="text"]:focus,
 input[type="number"]:focus,
 input[type="date"]:focus,
@@ -76,10 +83,10 @@ input[type="password"]:focus {
   color: white;
   width: 100%;
   max-width: 320px;
-  height: 3.2rem;
+  height: 2.3rem;
   border-radius: 12px;
   border: none;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-family: 'Belanosima', sans-serif;
   display: block;
   margin: 1.5rem auto;
@@ -92,17 +99,17 @@ input[type="password"]:focus {
   transform: translateY(-3px);
 }
 
-.erro{
-    color: red;
-    font-size: 14px;
-    margin-top: -8px;
-    margin-bottom: 10px;
+.erro {
+  color: red;
+  font-size: 14px;
+  margin-top: -8px;
+  margin-bottom: 10px;
 }
 
 .link {
   display: block;
   text-align: center;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   margin-top: 1.5rem;
   font-family: 'Inter', sans-serif;
   color: white;
@@ -115,28 +122,63 @@ input[type="password"]:focus {
 }
 
 footer {
-  margin-top: 4rem;
+  margin-top: 3rem;
   width: 100%;
-  height: 10vh;
+  height: 6vh;
   background-color: rgb(92, 123, 225);
-  border-top-left-radius: 200px;
-  border-top-right-radius: 200px;
+  border-top-left-radius: 80px;
+  border-top-right-radius: 80px;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white
+  color: white;
 }
+
 footer p {
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
-/* Responsividade para desktops */
+
+/* ===== DESKTOP (ajustes progressivos) ===== */
+@media (min-width: 768px) {
+  h1.tit {
+    font-size: 1.8rem;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="password"] {
+    font-size: 1rem;
+    height: 2.5rem;
+  }
+
+  #btn {
+    font-size: 1rem;
+    height: 2.6rem;
+  }
+
+  .link {
+    font-size: 0.9rem;
+  }
+
+  footer {
+    height: 8vh;
+    border-top-left-radius: 120px;
+    border-top-right-radius: 120px;
+  }
+}
+
+/* Responsividade para DESKTOP */
 @media (min-width: 1024px) {
   header {
     height: 20vh;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
   }
 
   img.icon {
-    max-width: 300px;
+    width: 60%;
+    max-width: 280px;
   }
 
   section.txt {
@@ -145,14 +187,17 @@ footer p {
   }
 
   h1.tit {
-    font-size: 2.5rem;
+    font-size: 2.4rem;
+  }
+
+  h2 {
+    font-size: 1rem;
   }
 
   input[type="text"],
   input[type="number"],
   input[type="date"],
   input[type="password"] {
-    font-size: 1rem;
     height: 2.8rem;
   }
 
@@ -164,53 +209,10 @@ footer p {
   .link {
     font-size: 1rem;
   }
-}
-/* Responsividade para celulares */
-@media (max-width: 600px) {
-  header {
-    height: 18vh;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-  }
-
-  img.icon {
-    width: 40%;
-    max-width: 120px;
-  }
-
-  section.txt {
-    width: 90%;
-    font-size: 0.85rem;
-  }
-
-  h1.tit {
-    font-size: 1.3rem;
-  }
-
-  h2 {
-    font-size: 0.8rem;
-  }
-
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  input[type="password"] {
-    height: 2rem;
-    font-size: 0.85rem;
-    padding: 0 8px;
-  }
-  #btn {
-    font-size: 0.9rem;
-    height: 2.3rem;
-  }
-
-  .link {
-    font-size: 0.75rem;
-  }
 
   footer {
-    height: 6vh;
-    border-top-left-radius: 80px;
-    border-top-right-radius: 80px;
+    height: 10vh;
+    border-top-left-radius: 200px;
+    border-top-right-radius: 200px;
   }
 }
