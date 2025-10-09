@@ -1,0 +1,45 @@
+.menu{
+    width: 24px;
+    height: 33px;
+    margin-left: 17px;
+    margin-top: 33px;
+    position: absolute;
+}
+.x{
+    width: 24px;
+    height: 33px;
+    margin-left: 17px;
+    margin-top: 33px;
+    position: absolute;
+}
+.logo{
+    width: 95px;
+    height: 36px;
+    margin-left: 150px;
+    margin-top: 22px;
+    position: absolute;
+}
+.cart{
+    width: 24px;
+    height: 24px;
+    margin-left: 381px;
+    margin-top: 33px;
+    position: absolute;
+}
+.user{
+    width: 24px;
+    height: 24px;
+    margin-left: 17px;
+    margin-top: 90px;
+    position: absolute;
+}
+.lupa{
+    width: 24px;
+    height: 24px;
+    margin-left: 381px;
+    margin-top: 90px;
+    position: absolute;
+}
+section.azul{
+    background: rgb(92, 123, 225);
+}
