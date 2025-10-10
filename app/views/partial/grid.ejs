@@ -12,51 +12,16 @@
 </head>
 
 <body>
-    <a class="hamburger" onclick=amenu() href="#"><img src="imagens/borg.svg" alt="menu" class="menu"></a>
-            <section class="menu">
-                <nav>
-                    <a onclick=smenu() href="#"><img src="imagens/x.svg" alt="fechar" class="x"></a>
-                    <br><h1>Categorias</h1>
-                    <ul>
-                        <li><a href=""></a>Higiene Pessoal</li>
-                        <li><a href=""></a>Vitaminas e Suplementos</li>
-                        <li><a href=""></a>Cosméticos</li>
-                        <li><a href=""></a>Maternidade</li>
-                        <li><a href=""></a>Primeiros Socorros</li>
-                        <li><a href=""></a>Dispositivos</li>
+  <header>
+    <a href="/home"><img src="imagens/logo.svg" alt="logo" class="logo"></a>
 
-                    </ul>
-                </nav>
-            </section>
+    <a href="/carrinho"><img src="imagens/cart.svg" alt="carrinho" class="cart"></a>
+  </header>
+  <main>
+    <a href="/usuario"><img src="imagens/user.svg" alt="user" class="user"></a>
 
-            <script>
-                function amenu(){
-                    const Menu = document.querySelector('.menu')
-                    Menu.style.display = 'flex'
-                    const Op = document.querySelector('.op')
-                    Op.style.display = 'none'
-                }
-                function smenu(){
-                    const Menu = document.querySelector('.menu')
-                    Menu.style.display = 'none'
-                    const Op = document.querySelector('.op')
-                    Op.style.display = 'flex'
-                }
-            </script>
-            
-
-
-            <a href="/home"><img src="imagens/logo.svg" alt="logo" class="logo"></a>
-
-            <a href="/carrinho"><img src="imagens/cart.svg" alt="carrinho" class="cart"></a>
-
-            <section class="azul">
-
-            <a href="/usuario"><img src="imagens/user.svg" alt="user" class="user"></a>
-
-            <img src="imagens/lupa.svg" alt="lupa" class="lupa">
-
-            </section>
+    <img src="imagens/lupa.svg" alt="lupa" class="lupa">
+  </main>
 </body>
 
 </html>

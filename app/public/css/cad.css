@@ -14,7 +14,6 @@ header {
   width: 100%;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
 form {
