@@ -26,7 +26,7 @@ form {
 }
 
 img.icon {
-  width: 70%;
+  width: 100%;
   max-width: 300px;
   height: auto;
 }
@@ -172,7 +172,7 @@ footer p {
 /* Responsividade para DESKTOP */
 @media (min-width: 1024px) {
   header {
-    height: 2vh;
+    height: 25vh;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
   }
