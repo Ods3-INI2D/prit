@@ -92,6 +92,12 @@ router.get('/bloco', function(req, res) {
 router.get('/grid', function(req, res) {
     res.render('partial/grid');
 });
+router.get('/produto', function(req, res) {
+    res.render('pages/produto');
+});
+router.get('/footer', function(req, res) {
+    res.render('partial/footer');
+});
 
 
 module.exports = router;
