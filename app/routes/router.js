@@ -92,9 +92,12 @@ router.get('/bloco', function(req, res) {
 router.get('/grid', function(req, res) {
     res.render('partial/grid');
 });
+<<<<<<< HEAD
 router.get('/menu', function(req, res) {
     res.render('partial/menu');
 });
+=======
+>>>>>>> 836e68ce711cd0daf1e7660657391b7f8eb7c697
 router.get('/produto', function(req, res) {
     res.render('pages/produto');
 });

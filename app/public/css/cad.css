@@ -18,8 +18,13 @@ form {
   padding: 20px;
 }
 img.icon {
+<<<<<<< HEAD
   width: 70%;
   max-width: 280px;
+=======
+  width: 100%;
+  max-width: 300px;
+>>>>>>> 836e68ce711cd0daf1e7660657391b7f8eb7c697
   height: auto;
 }
 
@@ -116,6 +121,11 @@ footer {
 @media (min-width: 1024px) {
   header {
     height: 25vh;
+<<<<<<< HEAD
+=======
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+>>>>>>> 836e68ce711cd0daf1e7660657391b7f8eb7c697
   }
 
   img.icon {
