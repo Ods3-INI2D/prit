@@ -14,6 +14,14 @@
 <body>
   <header>
     <nav class="opcoes" id="menuhamburger">
+        <img src="imagens/plogo.png" class="logo">
+
+    <img src="imagens/userb.png" class="user">
+
+    <h1 class="nome">Olá, Usuário!</h1>
+
+    <a href="usuario.ejs" class="conta">Gerenciar sua Conta</a>
+
       <h1 class="tit">Categorias</h1>
         <ul role="menu">
             <li class="hp" role="none">
@@ -73,7 +81,7 @@
             navMenu.classList.toggle('is-open');
 
             
-            const newLabel = isExpanded ? 'abrir menu hamburger' : 'Fechar menu principal';
+            const newLabel = isExpanded ? 'abrir menu hamburger' : 'fechar menu hamburger';
             menuToggle.setAttribute('aria-label', newLabel);
         });
 

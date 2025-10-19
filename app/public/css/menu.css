@@ -1,4 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+body{
+    width: 100vw;
+    height: 100vh;
+}
 .opcoes {
     display: none;
     position: absolute; 
@@ -11,10 +15,10 @@
 }
 .hamburger {
     position: absolute;
-    margin-left: 4.33vw;
+    margin-left: 17px;
     margin-top: 33px;
-    width: 6.11vw;
-    height: 2.82vh;
+    width: 18px;
+    height: 12px;
     background: none;
     border: none;
     cursor: pointer;
