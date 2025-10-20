@@ -10,15 +10,16 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #5c7be1;
-  height: 25vh;
+  background-color: rgb(92, 123, 225);
+  height: 18vh;
   width: 100%;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
 header img.icon {
-  width: 60%;
+  width: 40%;
   max-width: 200px;
   height: auto;
 }
@@ -42,10 +43,41 @@ h1.tit {
   color: white;
 }
 h2 {
+  font-family: 'Inter', sans-serif;
   font-size: 1rem;
   margin-bottom: 0.4rem;
   font-weight: 500;
   color: white;
+}
+form {
+  max-width: 100%;
+  margin: 20px auto;
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  background-color: #fff;
+  color: #333;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="password"]:focus {
+  border-color: #4da6ff;
+  outline: none;
+  box-shadow: 0 0 6px rgba(77, 166, 255, 0.4);
 }
 #caixa {
   width: 100%;
@@ -77,9 +109,16 @@ h2 {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
 #btn:hover {
   background-color: #218838;
   transform: translateY(-2px);
+}
+.erro {
+  color: red;
+  font-size: 14px;
+  margin-top: -5px;
+  margin-bottom: 10px;
 }
 .ou {
   text-align: center;
@@ -119,8 +158,10 @@ h2 {
   text-decoration: none;
   transition: color 0.3s ease;
 }
+
 .link:hover {
   color: #0056b3;
+
 }
 .link2 {
   font-size: 1rem;
@@ -132,4 +173,28 @@ footer {
   height: 10vh;
   border-top-left-radius: 200px;
   border-top-right-radius: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+footer p {
+  font-size: 1rem;
+}
+/* Responsividade para desktops */
+@media (min-width: 1024px) {
+  h1.tit {
+    font-size: 2.2rem;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="password"] {
+    font-size: 1rem;
+  }
+
+  #btn {
+    font-size: 1.2rem;
+  }
 }

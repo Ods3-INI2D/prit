@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>grid</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/menu.css">
+</head>
+
+<body>
+  <header>
+    <nav class="opcoes" id="menuhamburger">
+        <img src="imagens/plogo.png" class="logo">
+
+    <img src="imagens/userb.png" class="user">
+
+    <h1 class="nome">Olá, Usuário!</h1>
+
+    <a href="usuario.ejs" class="conta">Gerenciar sua Conta</a>
+
+      <h1 class="tit">Categorias</h1>
+        <ul role="menu">
+            <li class="hp" role="none">
+                <a 
+                    href="#" 
+                    role="button"
+                    class="linkhp"
+                    aria-controls="submenuhp"
+                    aria-expanded="false"
+                >
+                    Higiene Pessoal
+                </a>
+                
+                <ul class="submenu" id="submenuhp" role="menu">
+                    <li role="none"><a role="menuitem" href="/">Geral</a></li>
+                    <li role="none"><a role="menuitem" href="/">Cuidados com a Pele</a></li>
+                    <li role="none"><a role="menuitem" href="/">Higiene Bucal</a></li>
+                    <li role="none"><a role="menuitem" href="/">Cabelo</a></li>
+                </ul>
+            </li>
+
+            <li role="none"><a role="menuitem" href="/">Vitaminas e Suplementos</a></li>
+            <li role="none"><a role="menuitem" href="/">Bebê</a></li>
+            <li role="none"><a role="menuitem" href="/">Terceira Idade</a></li>
+            <li role="none"><a role="menuitem" href="/">Descontos</a></li>
+            <li role="none"><a role="menuitem" href="/">Mais Buscados</a></li>
+            <li role="none"><a role="menuitem" href="/">Todas as Categorias</a></li>
+        </ul>
+
+        <ul class="outro" role="menu">
+            <li role="none"><a role="menuitem" href="/">Parceiros</a></li>
+            <li role="none"><a role="menuitem" href="/">Central de Atendimento</a></li>
+        </ul>
+    </nav>
+
+    <button
+        class="hamburger"
+        aria-controls="menuhamburger"
+        aria-expanded="false" 
+        aria-label="abrir menu hamburger"
+    >
+        <span class="linha1"></span>
+        <span class="linha2"></span>
+        <span class="linha3"></span>
+    </button>
+  </header>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const menuToggle = document.querySelector('.hamburger');
+        const navMenu = document.getElementById('menuhamburger');
+
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+            menuToggle.setAttribute('aria-expanded', !isExpanded);
+            navMenu.classList.toggle('is-open');
+
+            
+            const newLabel = isExpanded ? 'abrir menu hamburger' : 'fechar menu hamburger';
+            menuToggle.setAttribute('aria-label', newLabel);
+        });
+
+        
+        const submenuToggleLink = document.querySelector('.linkhp');
+        const submenu = document.getElementById('submenuhp');
+
+        if (submenuToggleLink && submenu) {
+            submenuToggleLink.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                e.stopPropagation(); 
+                
+                const isExpanded = submenuToggleLink.getAttribute('aria-expanded') === 'true';
+                
+                
+                submenuToggleLink.setAttribute('aria-expanded', !isExpanded);
+
+                
+                submenu.classList.toggle('is-visible');
+            });
+        }
+    });
+</script>
+</body>
+
+</html>

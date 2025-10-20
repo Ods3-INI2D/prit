@@ -1,3 +1,9 @@
+header{
+    background-color: rgb(31, 31, 31);
+}
+main{
+    background-color: rgb(92, 123, 225);
+}
 .menu{
     width: 24px;
     height: 33px;
@@ -39,7 +45,4 @@
     margin-left: 381px;
     margin-top: 90px;
     position: absolute;
-}
-section.azul{
-    background: rgb(92, 123, 225);
 }
