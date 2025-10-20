@@ -7,7 +7,6 @@ body{
     display: none;
     position: absolute; 
     z-index: 1000;
-    background-color: rgb(91, 123, 225);
     font-family: 'Inter', sans-serif;
 }
 .opcoes.is-open {
@@ -59,4 +58,11 @@ body{
 }
 a{
     color: white;
+}
+img{
+    position:absolute;
+    width:35px;
+    height:35px;
+    margin-left:340px;
+    margin-top:21px;
 }
