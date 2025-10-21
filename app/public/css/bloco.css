@@ -29,6 +29,44 @@ body{
     margin-left: 4.58vw;
     position: absolute;
 }
+.linha {
+    border-top:0px;
+    border-bottom:1 px solid white;
+    width: 9vw;
+    margin-top: 17.8vh;
+    margin-left: 4.3vw;
+    position: absolute;
+
+}
+.precof{
+    font-size: 2.04vw;
+    margin-top: 17.31vh;
+    margin-left: 14vw;
+    position: absolute;
+}
+.branco{
+    width: 6.361vw;
+    height: 1.174vh;
+    margin-top: 17.28vh;
+    margin-left: 24vw;
+    position: absolute;
+
+}
+.porcentagem{
+    color: black;
+    font-size: 1.7vw;
+    margin-top: 17.4vh;
+    margin-left: 24.2vw;
+    position: absolute;
+}
+.seta{
+    width: 1.272vw;
+    margin-top: 17.5vh;
+    margin-left: 28.9vw;
+    position: absolute;
+    
+
+}
 .categoria{
     font-size: 2.04vw;
     margin-top: 19.19vh;
@@ -38,7 +76,7 @@ body{
 .estrela{
     width: 2.04vw;
     margin-top: 19.19vh;
-    margin-left: 22.9vw;
+    margin-left: 19vw;
     position: absolute;
 }
 .li{
