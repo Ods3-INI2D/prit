@@ -89,6 +89,9 @@ router.get('/usuario', function(req, res) {
 router.get('/bloco', function(req, res) {
     res.render('partial/bloco');
 });
+router.get('/blocod', function(req, res) {
+    res.render('partial/blocod');
+});
 router.get('/grid', function(req, res) {
     res.render('partial/grid');
 });
