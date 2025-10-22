@@ -57,7 +57,7 @@
 
         <form class="formulario" method="post" action="/cadastro">
             <p><label for="nome"><h2>Nome</h2></label></p>
-            <input type="text" name="nome" id="nome" value="<%= valores.nome %>" class="<%= cssErro.nome %>">
+            <input type="text" placeholder="Seu nome" name="nome" id="nome" value="<%= valores.nome %>" class="<%= cssErro.nome %>">
             <span class="erro"><%= msgErro.nome %></span><br><br>
 
             <p><label for="nasc"><h2>Data de Nascimento</h2></label></p>
@@ -65,23 +65,23 @@
             <span class="erro"><%= msgErro.nasc %></span><br><br>
 
             <p><label for="cpf"><h2>CPF</h2></label></p>
-            <input type="number" name="cpf" id="cpf" value="<%= valores.cpf %>" class="<%= cssErro.cpf %>">
+            <input type="number" placeholder="Seu CPF" name="cpf" id="cpf" value="<%= valores.cpf %>" class="<%= cssErro.cpf %>">
             <span class="erro"><%= msgErro.cpf %></span><br><br>
 
             <p><label for="tel"><h2>Telefone</h2></label></p>
-            <input type="number" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>">
+            <input type="number" placeholder="Seu Telefone" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>">
             <span class="erro"><%= msgErro.tel %></span><br><br>
 
             <p><label for="email"><h2>E-mail</h2></label></p>
-            <input type="text" name="email" id="email" value="<%= valores.email %>" class="<%= cssErro.email %>">
+            <input type="text" placeholder="Seu E-mail" name="email" id="email" value="<%= valores.email %>" class="<%= cssErro.email %>">
             <span class="erro"><%= msgErro.email %></span><br><br>
 
             <p><label for="senhan"><h2>Senha</h2></label></p>
-            <input type="password" name="senhan" id="senhan" value="<%= valores.senhan %>" class="<%= cssErro.senhan %>">
+            <input type="password" placeholder="Sua Senha" name="senhan" id="senhan" value="<%= valores.senhan %>" class="<%= cssErro.senhan %>">
             <span class="erro"><%= msgErro.senhan %></span><br><br>
 
             <p><label for="senha"><h2>Confirmar Senha</h2></label></p>
-            <input type="password" name="senha" id="senha" value="<%= valores.csenha %>" class="<%= cssErro.csenha %>">
+            <input type="password" placeholder="Confirme sua Senha" name="senha" id="senha" value="<%= valores.csenha %>" class="<%= cssErro.csenha %>">
             <span class="erro"><%= msgErro.csenha %></span><br><br>
 
             <input id="btn" type="submit" onclick="location.href='/home'" value="Cadastro">
