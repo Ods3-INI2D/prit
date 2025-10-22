@@ -32,8 +32,8 @@ header {
 }
 
 img.icon {
-    width: 150px; 
-    max-width: 50%;
+    width: 40%; 
+    max-width: 200px;
     height: auto;
 }
 
@@ -45,7 +45,15 @@ main {
     align-items: center;
     padding: 2rem 1rem;
 }
-
+section.txt {
+    width: 100%;
+    max-width: 400px; /* Limite de largura para o módulo de login em qualquer tela */
+    text-align: left;
+    background-color: transparent; /* GARANTE QUE NÃO HÁ FUNDO AZUL AQUI */
+    padding: 0; /* REMOVE O PADDING DA SEÇÃO PARA NÃO CRIAR ESPAÇAMENTO INVISÍVEL */
+    box-shadow: none; /* REMOVE QUALQUER SOMBRA INDESEJADA AQUI */
+    border-radius: 0; /* REMOVE QUALQUER ARREDONDAMENTO INDESEJADO AQUI */
+}
 /* * ALTERAÇÃO AQUI:*/
 section.login-module {
     width: 100%;
