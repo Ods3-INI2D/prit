@@ -1,54 +1,45 @@
+/* --- Estilos Gerais de Estrutura e Cores --- */
+
+
 body {
   width: 100%;
   margin: 0;
+  /* Mantém o fundo escuro e cor de texto claro, se este for o estilo desejado
+     para o corpo da página, complementando o outro CSS */
   background-color: rgb(31, 31, 31);
   color: white;
   font-family: 'Inter', sans-serif;
 }
+<<<<<<< HEAD
+=======
+
+/* --- Estilos de Interação (Foco) --- */
+
+/* As regras básicas para input[type="..."] foram removidas porque já
+   estão no outro CSS. Mantenho apenas os estilos de :focus que dão
+   um feedback visual ao usuário, caso não estejam no outro arquivo. */
+>>>>>>> bd43c7223e2b339963b2ffd0b0832fab47495560
 input[type="text"]:focus,
 input[type="number"]:focus,
 input[type="date"]:focus,
 input[type="password"]:focus {
-  border-color: #4da6ff; 
+  border-color: #4da6ff; /* Cor da borda ao focar */
   background-color: #fff;
   outline: none;
-  box-shadow: 0 0 6px rgba(77, 166, 255, 0.4);
+  box-shadow: 0 0 6px rgba(77, 166, 255, 0.4); /* Sombra suave de destaque */
 }
+
+/* --- Estilos de Mensagens Específicas --- */
+
 .erro {
   font-size: 0.9rem;
-  color: #d93025;
+  color: #d93025; /* Cor vermelha para erros */
   margin-top: -0.5rem;
   margin-bottom: 0.8rem;
   display: block;
 }
-label h2 {
-  font-size: 1rem;
-  margin-bottom: 0.3rem;
-  color: #444;
-  font-weight: 500;
-}
-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem 0;
-}
-.link {
-  display: block;
-  text-align: center;
-  font-size: 0.95rem;
-  margin-top: 1rem;
-  font-family: 'Inter', sans-serif;
-  color: #007bff;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
 
-.link:hover {
-  color: #0056b3;
-}
-
-.link2 {
-  font-size: 1rem;
-  font-weight: bold;
-}
+/* * NOTA: As regras para input[type="text"] (etc.), .link, .link2, label h2 e header 
+ * foram removidas pois os estilos essenciais já estão presentes ou conflitariam 
+ * com o outro arquivo CSS fornecido.
+ */

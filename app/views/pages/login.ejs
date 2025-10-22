@@ -2,49 +2,92 @@
 <html lang="pt-br">
 
 <head>
+    <!-- Metadados e links... -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/estilo.css">
-    <link rel="stylesheet" href="css/cad.css">
-    <link rel="stylesheet" href="css/login.css">
+    <title>Login</title>
 
+    <!-- Linkando o arquivo CSS externo -->
+    <link rel="stylesheet" href="/css/login.css">
+        <!-- Linkando o arquivo JavaScript externo -->
+    <script src="/js/validacoes.js"></script>
 </head>
 
 <body>
     <header>
-        <img class="icon" src="imagens/logo.png">
+        <!-- Placeholder para a imagem -->
+        <img class="icon" src="/imagens/logo.png" alt="Logo da Aplicação">
     </header>
+
     <main>
-        <section class="txt">
-       <br><h1 class="tit">Login</h1><br>
-       <form>
-        <p><label><h2>E-mail ou nome de usuário</h2></label></p>
-                <input type="text" placeholder=""id="caixa"><br><br>
-        
-        <p><label><h2>Senha</h2></label></p>
-                <input type="text" placeholder=""id="caixa"><br><br>     
-       </form></section>
+        <!-- Container principal do módulo de login -->
+        <section class="login-module">
+            
+            <header class="title-group">
+                <!-- Título principal -->
+                <h1 class="tit">Login</h1>
+            </header>
 
-       <button href="/home" id="btn">Login</button>
+            <form id="loginForm" method="POST" action="/login">
+                <!-- O título 'Login' que você viu na imagem não estava dentro do <form>, 
+                mas sim no <header class="title-group">. Como a cor dele já é branca no seu CSS, ele não ficará azul. -->
 
-       <h2 class="ou">Ou</h2>
-       
-       <button href="/home" id="google">
-        <img class="google" src="imagens/google.png">
-        Entrar com o Google</button><br>
+                <!-- Campo E-mail -->
+                <p>
+                    <label for="email">
+                        <h2>E-mail ou nome de usuário</h2>
+                    </label>
+                </p>
+                <input type="text" placeholder="exemplo@dominio.com" id="email" name="email" required>
+                <small id="email-erro-msg" class="erro"></small>
 
+                <!-- Campo Senha -->
+                <p>
+                    <label for="senha">
+                        <h2>Senha</h2>
+                    </label>
+                </p>
+                <input 
+                    type="text" 
+                    placeholder="Sua senha" 
+                    id="senha" 
+                    name="senha" 
+                    required
+                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                    title="A senha deve conter pelo menos 8 caracteres, incluindo pelo menos um número, uma letra minúscula e uma letra maiúscula."
+                >
+                <small id="senha-erro-msg" class="erro"></small>
 
-       <br><a href="/" class="link">Não tem uma conta?
-        <br><h1 class="link2">Cadastre-se aqui</h1></a>
+                <!-- Botão de submissão do formulário (azul) -->
+                <button type="submit" id="btn-login">Login</button>
+            </form>
+        </section>
+
+        <!-- Separador "Ou" -->
+        <p class="ou">Ou</p>
+
+        <!-- Botão de Login Social -->
+        <button id="google" type="button">
+            <img class="google" src="/imagens/google.png" alt="Ícone do Google">
+            <!-- CORREÇÃO 1: Envolver o texto em <strong> para negrito -->
+            <strong>Entrar com o Google</strong>
+        </button>
+
+        <!-- Padrão semântico para o prompt de cadastro -->
+        <p class="signup-prompt">
+            <a href="/" class="link">
+                Não tem uma conta?
+                <strong class="link2">Cadastre-se aqui</strong>
+            </a>
+        </p>
 
     </main>
 
     <footer>
-        
+        <!-- Rodapé da aplicação -->
     </footer>
-</body>
 
+
+</body>
 </html>
