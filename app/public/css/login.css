@@ -1,200 +1,273 @@
-@import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+/* --- Imports de Fontes (TODAS AS FONTES UTILIZADAS INCLUÍDAS) --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500;700&family=Belanosima&family=Inter:wght@400;500;700&display=swap');
 
+/* --- Estilos Globais e Reset (Mobile First - Padrão para Telas Pequenas) --- */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
+
+body {
+    background-color: #1f1f1f; 
+    color: white;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+}
+
+/* --- HEADER (Padrão Mobile) --- */
 header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgb(92, 123, 225);
-  height: 18vh;
-  width: 100%;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    background-color: rgb(92, 123, 225); 
+    height: 18vh; 
+    width: 100%; 
+    border-bottom-left-radius: 8px; 
+    border-bottom-right-radius: 8px; 
 }
 
-header img.icon {
-  width: 40%;
-  max-width: 200px;
-  height: auto;
+img.icon {
+    width: 40%; 
+    max-width: 200px;
+    height: auto;
 }
+
+
+/* --- MAIN CONTENT & LAYOUT (Padrão Mobile) --- */
 main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
 }
+
+/* * ALTERAÇÃO AQUI:
+ * A caixa azul do título "Login" provavelmente vinha do `section.login-module`
+ * ou diretamente do `.title-group`. Vamos garantir que não tenha background.
+ */
 section.txt {
-  width: 100%;
-  max-width: 400px;
-  text-align: left;
+    width: 100%;
+    max-width: 400px; /* Limite de largura para o módulo de login em qualquer tela */
+    text-align: left;
+    background-color: transparent; /* GARANTE QUE NÃO HÁ FUNDO AZUL AQUI */
+    padding: 0; /* REMOVE O PADDING DA SEÇÃO PARA NÃO CRIAR ESPAÇAMENTO INVISÍVEL */
+    box-shadow: none; /* REMOVE QUALQUER SOMBRA INDESEJADA AQUI */
+    border-radius: 0; /* REMOVE QUALQUER ARREDONDAMENTO INDESEJADO AQUI */
 }
+
 h1.tit {
-  font-family: 'Belanosima', sans-serif;
-  font-size: 2rem;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  color: white;
+    font-family: 'Belanosima', sans-serif;
+    font-size: 2rem;
+    color: white; 
+    text-align: center;
 }
+
 h2 {
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  margin-bottom: 0.4rem;
-  font-weight: 500;
-  color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+    color: white;
 }
+
 form {
-  max-width: 100%;
-  margin: 20px auto;
-  padding: 25px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+    max-width: 100%;
+    margin: 20px auto;
+    padding: 25px;
+    background-color: #2a2a2a; 
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 10px rgba(77, 166, 255, 0.2);
 }
-input[type="text"],
-input[type="number"],
-input[type="date"],
+
+/* --- INPUT FIELDS --- */
+input[type="email"],
 input[type="password"] {
-  width: 100%;
-  padding: 12px 15px;
-  border-radius: 8px;
-  border: 2px solid #ddd;
-  background-color: #fff;
-  color: #333;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  transition: border 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    padding: 12px 15px; 
+    border-radius: 8px;
+    border: 2px solid #555;
+    background-color: #383838;
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="date"]:focus,
+input[type="email"]:focus,
 input[type="password"]:focus {
-  border-color: #4da6ff;
-  outline: none;
-  box-shadow: 0 0 6px rgba(77, 166, 255, 0.4);
-}
-#caixa {
-  width: 100%;
-  padding: 12px 15px;
-  border-radius: 8px;
-  border: 2px solid #ddd;
-  background-color: #fff;
-  color: #333;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  transition: border 0.3s ease, box-shadow 0.3s ease;
-}
-#caixa:focus {
-  border-color: #4da6ff;
-  outline: none;
-  box-shadow: 0 0 6px rgba(77, 166, 255, 0.4);
-}
-#btn {
-  background-color: rgb(26, 0, 255);
-  color: #fff;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-family: 'Belanosima', sans-serif;
-  width: 100%;
-  max-width: 400px;
-  margin: 1rem 0;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+    border-color: #4da6ff;
+    outline: none;
+    box-shadow: 0 0 6px rgba(77, 166, 255, 0.8);
 }
 
-#btn:hover {
-  background-color: #218838;
-  transform: translateY(-2px);
+/* --- BUTTONS --- */
+#btn-login {
+    background-color: #007bff; 
+    color: #fff;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-family: 'Belanosima', sans-serif;
+    width: 100%;
+    margin: 1rem auto;
+    display: block;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
-.erro {
-  color: red;
-  font-size: 14px;
-  margin-top: -5px;
-  margin-bottom: 10px;
+
+#btn-login:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
 }
-.ou {
-  text-align: center;
-  margin: 1rem 0;
-  color: #555;
-}
+
 #google {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background-color: #fff;
-  border: 2px solid #ddd;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: 'Belanosima', sans-serif;
-  width: 100%;
-  max-width: 400px;
-  cursor: pointer;
-  transition: border-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Belanosima', sans-serif;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    cursor: pointer;
+    transition: border-color 0.3s ease, transform 0.2s ease;
+    color: #333;
 }
+
 #google:hover {
-  border-color: #4da6ff;
-  transform: translateY(-2px);
+    border-color: #4da6ff;
+    transform: translateY(-2px);
 }
-.google {
-  width: 20px;
-  height: 20px;
+
+#google img.google {
+    width: 20px;
+    height: 20px;
 }
+
+/* --- UTILS --- */
+small.erro {
+    color: #ff5555;
+    font-size: 0.9rem;
+    margin-top: -8px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+main>p.ou {
+    text-align: center;
+    margin: 1rem 0;
+    color: #aaa;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* --- LINKS --- */
+.signup-prompt {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    margin-top: 3.5rem; 
+}
+
 .link {
-  display: block;
-  text-align: center;
-  font-size: 0.95rem;
-  margin-top: 1.5rem;
-  color: #007bff;
-  text-decoration: none;
-  transition: color 0.3s ease;
+    color: #4da6ff; 
+    text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 .link:hover {
-  color: #0056b3;
-
+    color: #8ac0ff;
+    text-decoration: underline;
 }
 .link2 {
-  font-size: 1rem;
-  font-weight: bold;
-}
-footer {
-  margin-top: auto;
-  background-color: #5c7be1;
-  height: 10vh;
-  border-top-left-radius: 200px;
-  border-top-right-radius: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-}
-footer p {
-  font-size: 1rem;
-}
-/* Responsividade para desktops */
-@media (min-width: 1024px) {
-  h1.tit {
-    font-size: 2.2rem;
-  }
-
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  input[type="password"] {
     font-size: 1rem;
+    font-weight: bold;
+    display: block;
+}
+
+/* --- FOOTER (Padrão Mobile) --- */
+footer {
+    margin-top: auto;
+    width: 100%;
+    background-color: #1f1f1f; 
+    height: 6vh; 
+}
+
+
+/* =================================================== */
+/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 601px) --- */
+/* =================================================== */
+@media (min-width: 601px) {
+    
+    /* --- HEADER (Ajuste para Desktop) --- */
+    header {
+        height: 18vh; 
+        border-bottom-left-radius: 10px; 
+        border-bottom-right-radius: 10px; 
+    }
+
+  img.icon {
+    width: 70%; /* Largura para desktop */
+    max-width: 300px; /* Largura máxima para desktop */
   }
 
-  #btn {
-    font-size: 1.2rem;
-  }
+    /* ALTERAÇÃO AQUI:*/
+    section.login-module {
+        background-color: transparent; 
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+    }
+    .title-group {
+        background-color: transparent; 
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    /* --- FONTES & TAMANHOS DE COMPONENTES (Aumento para Desktop) --- */
+    h1.tit {
+        font-size: 2.5rem; 
+    }
+
+    h2 {
+        font-size: 1.1rem; 
+    }
+
+    input[type="email"],
+    input[type="password"] {
+        padding: 14px 18px; 
+        font-size: 1.05rem;
+    }
+
+    #btn-login {
+        padding: 14px;
+        font-size: 1.2rem;
+    }
+
+    #google {
+        padding: 14px;
+        font-size: 1.05rem;
+    }
+
+    .link2 {
+        font-size: 1.1rem; 
+    }
+
+    /* --- FOOTER (Ajuste para Desktop) --- */
+    footer {
+        height: 5vh; 
+    }
 }
