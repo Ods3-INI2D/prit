@@ -13,7 +13,7 @@
 
 <body>
   <header>
-    <%- include('../partial/menu.ejs') %>
+    <%- include ('../partial/menu.ejs') %>
 
     <a href="/home"><img src="imagens/logo.png" alt="logo" class="logo"></a>
 
@@ -21,6 +21,12 @@
   </header>
   <main>
     <a href="/usuario"><img src="imagens/user.png" alt="user" class="user"></a>
+
+    <form>
+      <label for="busca">
+        <input type="text" placeholder="Buscar..." name="barra">
+      </label>
+    </form>
 
     <img src="imagens/lupa.png" alt="lupa" class="lupa">
   </main>

@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 :root {
+    position: absolute;
     --menu-width: 430px;
     --menu-height: 932px;
     max-height:100vh;
@@ -8,8 +9,7 @@
 }
 
 body {
-    margin: 0;
-    padding: 0;
+
     width: 100vw;
     height: 100vh;
     background-color: #2D2D2D;
@@ -18,7 +18,7 @@ body {
 
 .opcoes {
     display: none;
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: var(--menu-width);
@@ -37,10 +37,7 @@ body {
 }
 .hamburger {
     position: absolute;
-    left: 20px;
-    top: 24px;
-    width: 24px;
-    height: 24px;
+    width: 6.11vw;
     background: none;
     border: none;
     cursor: pointer;
@@ -48,8 +45,9 @@ body {
     z-index: 1001;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     gap: 6px;
+    margin-top: 8vh;
+    margin-left: -85vw;
 }
 
 .hamburger hr {
@@ -80,6 +78,7 @@ body {
     width: 7.44vw;
     height: 3.22vh;
     margin-left: 81vw;
+    margin-top: 1.5vh;
 }
 
 .user {
@@ -229,5 +228,6 @@ body {
 footer {
     margin: 0 -4.58vw;
     background-color: #1B1B1B;
-    width: calc(100% + 9.16vw);
+    width: 85vw;
+    height:max-content;
 }
