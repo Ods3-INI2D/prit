@@ -57,7 +57,7 @@
 
         <form class="formulario" method="post" action="/cadastro">
             <p><label for="nome"><h2>Nome</h2></label></p>
-            <input type="text" name="nome" id="nome" value="<%= valores.nome %>" class="<%= cssErro.nome %>">
+            <input type="text" placeholder="Seu nome" name="nome" id="nome" value="<%= valores.nome %>" class="<%= cssErro.nome %>">
             <span class="erro"><%= msgErro.nome %></span><br><br>
 
             <p><label for="nasc"><h2>Data de Nascimento</h2></label></p>
@@ -65,11 +65,11 @@
             <span class="erro"><%= msgErro.nasc %></span><br><br>
 
             <p><label for="cpf"><h2>CPF</h2></label></p>
-            <input type="number" name="cpf" id="cpf" value="<%= valores.cpf %>" class="<%= cssErro.cpf %>">
+            <input type="number" placeholder="Seu CPF" name="cpf" id="cpf" value="<%= valores.cpf %>" class="<%= cssErro.cpf %>">
             <span class="erro"><%= msgErro.cpf %></span><br><br>
 
             <p><label for="tel"><h2>Telefone</h2></label></p>
-            <input type="number" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>">
+            <input type="number" placeholder="Seu Telefone" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>">
             <span class="erro"><%= msgErro.tel %></span><br><br>
 
             <p><label for="email"><h2>E-mail</h2></label></p>

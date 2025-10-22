@@ -1,48 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+body{
+    font-family: 'Inter';
+    width: 100vw;
+    max-height: 124px;
+}
 header{
-    background-color: rgb(31, 31, 31);
+    position: absolute;
+    min-height: 76px;
+    width: 100vw;
+
 }
 main{
-    background-color: rgb(92, 123, 225);
-}
-.menu{
-    width: 24px;
-    height: 33px;
-    margin-left: 17px;
-    margin-top: 33px;
     position: absolute;
+    background-color: #163069;
+    fill: #163069;
 }
-.x{
-    width: 24px;
-    height: 33px;
-    margin-left: 17px;
-    margin-top: 33px;
+.ham{
     position: absolute;
 }
 .logo{
-    width: 95px;
-    height: 36px;
-    margin-left: 150px;
-    margin-top: 22px;
     position: absolute;
+    margin-top: 2.46vh;
+    
+    width: 24.173vw;
+    height: 4.23vh;
 }
 .cart{
-    width: 24px;
-    height: 24px;
-    margin-left: 381px;
-    margin-top: 33px;
     position: absolute;
+    margin-top: 3.17vh;
+    margin-left: 91.09vw;
+    width: 6.11vw;
 }
 .user{
-    width: 24px;
-    height: 24px;
-    margin-left: 17px;
-    margin-top: 90px;
     position: absolute;
+    margin-top: 10.56vh;
+    margin-left: 4.33vw;
+    width: 6.11vw;
+}
+input[type="text"]{
+    position: absolute;
+    margin-top: 10.56vh;
+    margin-left: 23.16vw;
+    width: 71.76vw;
+    height: 2.23vh;
+    border-radius: 10px;
+}
+::placeholder{
+    font-family: 'Inter';
+    margin-left: 50px;
 }
 .lupa{
-    width: 24px;
-    height: 24px;
-    margin-left: 381px;
-    margin-top: 90px;
     position: absolute;
+    margin-top: 10.56vh;
+    margin-left: 15.27vw;
+    width: 6.11vw;
 }

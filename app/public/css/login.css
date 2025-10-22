@@ -1,5 +1,5 @@
-/* --- Imports de Fontes (TODAS AS FONTES UTILIZADAS INCLUÍDAS) --- */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500;700&family=Belanosima&family=Inter:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 /* --- Estilos Globais e Reset (Mobile First - Padrão para Telas Pequenas) --- */
 * {
@@ -37,7 +37,6 @@ img.icon {
     height: auto;
 }
 
-
 /* --- MAIN CONTENT & LAYOUT (Padrão Mobile) --- */
 main {
     flex: 1;
@@ -46,11 +45,6 @@ main {
     align-items: center;
     padding: 2rem 1rem;
 }
-
-/* * ALTERAÇÃO AQUI:
- * A caixa azul do título "Login" provavelmente vinha do `section.login-module`
- * ou diretamente do `.title-group`. Vamos garantir que não tenha background.
- */
 section.txt {
     width: 100%;
     max-width: 400px; /* Limite de largura para o módulo de login em qualquer tela */
@@ -60,16 +54,33 @@ section.txt {
     box-shadow: none; /* REMOVE QUALQUER SOMBRA INDESEJADA AQUI */
     border-radius: 0; /* REMOVE QUALQUER ARREDONDAMENTO INDESEJADO AQUI */
 }
+/* * ALTERAÇÃO AQUI:*/
+section.login-module {
+    width: 100%;
+    max-width: 400px; /* Limite de largura para o módulo de login em qualquer tela */
+    text-align: left;
+    background-color: transparent; /* GARANTE QUE NÃO HÁ FUNDO AZUL AQUI */
+    padding: 0; /* REMOVE O PADDING DA SEÇÃO PARA NÃO CRIAR ESPAÇAMENTO INVISÍVEL */
+    box-shadow: none; /* REMOVE QUALQUER SOMBRA INDESEJADA AQUI */
+    border-radius: 0; /* REMOVE QUALQUER ARREDONDAMENTO INDESEJADO AQUI */
+}
+
+.title-group {
+    text-align: center;
+    margin-bottom: 1.5rem; /* Mantém o espaçamento abaixo do título */
+    /* Se a caixa azul for persistir, você pode adicionar: */
+    background-color: transparent; 
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
 
 h1.tit {
-    font-family: 'Belanosima', sans-serif;
     font-size: 2rem;
     color: white; 
-    text-align: center;
 }
 
 h2 {
-    font-family: 'Inter', sans-serif;
     font-size: 1rem;
     margin-bottom: 0.4rem;
     font-weight: 500;
@@ -86,8 +97,8 @@ form {
 }
 
 /* --- INPUT FIELDS --- */
-input[type="email"],
-input[type="password"] {
+input[type="text"]
+ {
     width: 100%;
     padding: 12px 15px; 
     border-radius: 8px;
@@ -99,8 +110,7 @@ input[type="password"] {
     transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
-input[type="email"]:focus,
-input[type="password"]:focus {
+input[type="text"]:focus {
     border-color: #4da6ff;
     outline: none;
     box-shadow: 0 0 6px rgba(77, 166, 255, 0.8);
@@ -189,8 +199,8 @@ main>p.ou {
 
 .link:hover {
     color: #8ac0ff;
-    text-decoration: underline;
 }
+
 .link2 {
     font-size: 1rem;
     font-weight: bold;
