@@ -5,69 +5,71 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>grid</title>
+    <title>Menu</title>
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/estilo.css">
     <link rel="stylesheet" href="css/menu.css">
 </head>
 
 <body>
-  <header>
-    <nav class="opcoes" id="menuhamburger">
-        <img src="imagens/plogo.png" class="logo">
+    <header>
+        <button class="hamburger"
+                aria-controls="menuhamburger"
+                aria-expanded="false" 
+                aria-label="abrir menu hamburger">
+            <hr class="linha1">
+            <hr class="linha2">
+            <hr class="linha3">
+        </button>
 
-    <img src="imagens/userb.png" class="user">
+        <nav class="opcoes" id="menuhamburger">
+            <img src="imagens/plogo.png" class="plogo" alt="Logo da Farmácia">
+            <img src="imagens/userb.png" class="user" alt="Ícone do usuário">
 
-    <h1 class="nome">Olá, Usuário!</h1>
+            <section class="menu-content">
+                <section class="perfil">
+                    <h1 class="nome">Olá, Usuário!</h1>
+                    <a href="usuario.ejs" class="conta">Gerenciar sua Conta</a>
+                </section>
 
-    <a href="usuario.ejs" class="conta">Gerenciar sua Conta</a>
+                <section class="categorias">
+                    <h2 class="tit">Categorias</h2>
+                    <ul class="menu-principal" role="menu">
+                        <li class="menu-item hp">
+                            <a href="#" 
+                               class="linkhp"
+                               aria-controls="submenuhp"
+                               aria-expanded="false">
+                                Higiene Pessoal
+                                <i class="seta">›</i>
+                            </a>
+                            <ul class="submenu" id="submenuhp" role="menu">
+                                <li><a href="/">Geral</a></li>
+                                <li><a href="/">Cuidados com a Pele</a></li>
+                                <li><a href="/">Higiene Bucal</a></li>
+                                <li><a href="/">Cabelo</a></li>
+                            </ul>
+                        </li>
+                        <li class="menu-item"><a href="/">Vitaminas e Suplementos</a></li>
+                        <li class="menu-item"><a href="/">Bebê</a></li>
+                        <li class="menu-item"><a href="/">Terceira Idade</a></li>
+                        <li class="menu-item"><a href="/">Descontos</a></li>
+                        <li class="menu-item"><a href="/">Mais Buscados</a></li>
+                        <li class="menu-item"><a href="/">Todas as Categorias</a></li>
+                    </ul>
+                </section>
 
-      <h1 class="tit">Categorias</h1>
-        <ul role="menu">
-            <li class="hp" role="none">
-                <a 
-                    href="#" 
-                    role="button"
-                    class="linkhp"
-                    aria-controls="submenuhp"
-                    aria-expanded="false"
-                >
-                    Higiene Pessoal
-                </a>
-                
-                <ul class="submenu" id="submenuhp" role="menu">
-                    <li role="none"><a role="menuitem" href="/">Geral</a></li>
-                    <li role="none"><a role="menuitem" href="/">Cuidados com a Pele</a></li>
-                    <li role="none"><a role="menuitem" href="/">Higiene Bucal</a></li>
-                    <li role="none"><a role="menuitem" href="/">Cabelo</a></li>
-                </ul>
-            </li>
-
-            <li role="none"><a role="menuitem" href="/">Vitaminas e Suplementos</a></li>
-            <li role="none"><a role="menuitem" href="/">Bebê</a></li>
-            <li role="none"><a role="menuitem" href="/">Terceira Idade</a></li>
-            <li role="none"><a role="menuitem" href="/">Descontos</a></li>
-            <li role="none"><a role="menuitem" href="/">Mais Buscados</a></li>
-            <li role="none"><a role="menuitem" href="/">Todas as Categorias</a></li>
-        </ul>
-
-        <ul class="outro" role="menu">
-            <li role="none"><a role="menuitem" href="/">Parceiros</a></li>
-            <li role="none"><a role="menuitem" href="/">Central de Atendimento</a></li>
-        </ul>
-    </nav>
-
-    <button
-        class="hamburger"
-        aria-controls="menuhamburger"
-        aria-expanded="false" 
-        aria-label="abrir menu hamburger"
-    >
-        <span class="linha1"></span>
-        <span class="linha2"></span>
-        <span class="linha3"></span>
-    </button>
-  </header>
+                <footer>
+                    <nav>
+                        <ul class="outro" role="menu">
+                            <li class="menu-item"><a href="/">Parceiros</a></li>
+                            <li class="menu-item"><a href="/">Central de Atendimento</a></li>
+                        </ul>
+                    </nav>
+                </footer>
+            </section>
+        </nav>
+    </header>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
         
