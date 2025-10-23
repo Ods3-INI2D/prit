@@ -39,7 +39,8 @@
     max-width: 30px;
     height: auto;
     display: block;
-    margin: 0 auto 80vw;
+    margin-top; 0;
+    margin-left: 80vw;
 }
 
 .opcoes .user {
