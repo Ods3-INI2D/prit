@@ -13,6 +13,15 @@ router.use(session({
     cookie: { secure: false }
 }));
 
+// Middleware para disponibilizar o usuário em todas as views
+router.use(function(req, res, next) {
+    res.locals.usuario = null;
+    if (req.session.usuarioEmail) {
+        res.locals.usuario = db.findUsuario(req.session.usuarioEmail);
+    }
+    next();
+});
+
 router.get('/', function(req, res) {
     res.render('pages/cadastro', { 
         erros: null, 
@@ -199,26 +208,6 @@ router.get('/categoria/:nome', function(req, res) {
 router.get('/logout', function(req, res) {
     req.session.destroy();
     res.redirect('/login');
-});
-
-router.get('/bloco', function(req, res) {
-    res.render('partial/bloco');
-});
-
-router.get('/blocod', function(req, res) {
-    res.render('partial/blocod');
-});
-
-router.get('/grid', function(req, res) {
-    res.render('partial/grid');
-});
-
-router.get('/menu', function(req, res) {
-    res.render('partial/menu');
-});
-
-router.get('/footer', function(req, res) {
-    res.render('partial/footer');
 });
 
 module.exports = router;
