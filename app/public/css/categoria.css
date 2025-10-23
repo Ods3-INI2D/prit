@@ -1,71 +1,87 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
+/* --- Reset e Configuração Base (Mobile First) --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    font-size: 16px; 
+}
+
 body {
     background-color: #1f1f1f;
     font-family: 'Inter', sans-serif;
     color: white;
-    width: 100vw;
+    width: 100%; 
     min-height: 100vh;
     margin: 0;
 }
 
 main {
     min-height: 60vh;
-    padding: 2.34vh 0;
+    padding: 1.5rem 0; 
 }
 
+/* --- Navegação/Voltar (Mobile First) --- */
 .navegacao {
-    width: 90.84vw;
-    margin: 0 auto 2.34vh;
+    width: 90%; 
+    max-width: 1200px;
+    margin: 0 auto 1.5rem; 
 }
 
 .voltar {
     display: inline-flex;
     align-items: center;
-    gap: 2.54vw;
+    gap: 0.5rem; 
     color: white;
     text-decoration: none;
-    font-size: 4.07vw;
+    font-size: 1rem; 
     font-weight: 500;
 }
 
 .seta-voltar {
-    width: 5.09vw;
+    width: 1.25rem; 
     height: auto;
 }
 
+/* --- Título da Categoria (Mobile First) --- */
 .categoria-container {
-    width: 90.84vw;
+    width: 90%; 
+    max-width: 1200px;
     margin: 0 auto;
 }
 
 .titulo-categoria {
-    font-size: 6.62vw;
+    font-size: 2rem; 
     font-weight: 700;
-    margin-bottom: 2.34vh;
+    margin-bottom: 1.5rem; 
     color: white;
     text-align: center;
 }
 
+/* --- Mensagem de Vazio (Mobile First) --- */
 .categoria-vazia {
     text-align: center;
-    padding: 5.87vh 0;
+    padding: 3.75rem 0; 
 }
 
 .mensagem-vazio {
-    font-size: 4.58vw;
+    font-size: 1.125rem; 
     color: #888;
-    margin-bottom: 2.34vh;
+    margin-bottom: 1.5rem; 
 }
 
 .btn-voltar-home {
     display: inline-block;
-    padding: 1.76vh 7.63vw;
+    padding: 0.9375rem 2rem; 
     background-color: #163069;
     color: white;
     text-decoration: none;
-    border-radius: 2.54vw;
-    font-size: 4.58vw;
+    border-radius: 0.75rem; 
+    font-size: 1.125rem;
     font-weight: 600;
     transition: background-color 0.3s ease;
 }
@@ -74,23 +90,24 @@ main {
     background-color: #0d1f42;
 }
 
+/* --- Grid de Produtos (Mobile First) --- */
 .produtos-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2.54vw;
-    margin-bottom: 3.52vh;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 0.75rem; 
+    margin-bottom: 2.25rem; 
 }
 
 .produto-card {
     background-color: #2a2a2a;
-    border-radius: 2.54vw;
+    border-radius: 0.75rem; 
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .produto-card:hover {
-    transform: translateY(-0.59vh);
-    box-shadow: 0 0.94vh 1.88vh rgba(77, 166, 255, 0.2);
+    transform: translateY(-0.3125rem); 
+    box-shadow: 0 0.5rem 1rem rgba(77, 166, 255, 0.2); 
 }
 
 .link-produto {
@@ -101,70 +118,65 @@ main {
 
 .imagem-produto {
     width: 100%;
-    height: 20.09vh;
+    height: 10rem; 
     object-fit: cover;
 }
 
 .nome-produto {
-    font-size: 4.07vw;
+    font-size: 1rem; 
     font-weight: 600;
-    padding: 1.17vh 2.54vw 0.59vh;
+    padding: 0.75rem 0.5rem 0.3125rem; 
     color: white;
     line-height: 1.3;
-    min-height: 5.87vh;
+    min-height: 3.75rem; 
 }
 
 .preco-container {
-    padding: 0 2.54vw;
+    padding: 0 0.5rem; 
     display: flex;
     align-items: center;
-    gap: 1.27vw;
-    margin-bottom: 0.59vh;
+    gap: 0.5rem; 
+    margin-bottom: 0.3125rem; 
 }
 
 .preco-original {
-    font-size: 3.56vw;
+    font-size: 0.875rem; 
     color: #888;
     text-decoration: line-through;
 }
 
 .preco-desconto {
-    font-size: 4.58vw;
+    font-size: 1rem; 
     font-weight: 700;
     color: #4da6ff;
 }
 
-.preco-normal {
-    font-size: 4.58vw;
-    font-weight: 700;
-    color: #4da6ff;
-    padding: 0 2.54vw 0.59vh;
-}
+/* =================================================== */
+/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
+/* =================================================== */
+@media (min-width: 768px) {
+    
+    .titulo-categoria {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+    }
 
-.percentual {
-    background-color: #4da6ff;
-    color: #1f1f1f;
-    font-size: 3.05vw;
-    font-weight: 700;
-    padding: 0.29vh 1.27vw;
-    border-radius: 0.76vw;
-    display: inline-block;
-    margin: 0 2.54vw 0.59vh;
-}
+    .produtos-grid {
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 1.5rem;
+    }
 
-.categoria-label {
-    font-size: 3.56vw;
-    color: #888;
-    padding: 0 2.54vw 0.59vh;
-}
+    .imagem-produto {
+        height: 12rem; 
+    }
 
-.estrelas-container {
-    display: flex;
-    gap: 0.51vw;
-    padding: 0.59vh 2.54vw 1.17vh;
-}
+    .nome-produto {
+        font-size: 1.1rem;
+        min-height: 4.5rem; 
+    }
 
-.estrela {
-    width: 4.07vw;
-    height: auto;
+    .preco-original,
+    .preco-desconto {
+        font-size: 1rem;
+    }
 }

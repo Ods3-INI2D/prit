@@ -12,24 +12,29 @@
 </head>
 
 <body>
-  <header>
-    <%- include ('../partial/menu.ejs') %>
+    <header>
+        <%- include ('../partial/menu.ejs') %>
 
-    <a href="/home"><img src="imagens/logo.png" alt="logo" class="logo"></a>
+        <a href="/home"><img src="imagens/logo.png" alt="logo" class="logo"></a>
 
-    <a href="/carrinho"><img src="imagens/cart.png" alt="carrinho" class="cart"></a>
-  </header>
-  <main>
-    <a href="/usuario"><img src="imagens/user.png" alt="user" class="user"></a>
+        <a href="/carrinho"><img src="imagens/cart.png" alt="carrinho" class="cart"></a>
+    </header>
+    
+    <main>
+        <section class="busca-wrapper"> 
+            <a href="/usuario"><img src="imagens/user.png" alt="user" class="user"></a>
 
-    <form>
-      <label for="busca">
-        <input type="text" placeholder="Buscar..." name="barra">
-      </label>
-    </form>
+            <form class="busca-form">
+                <label for="busca">
+                    <input type="text" placeholder="Buscar..." name="barra" id="busca">
+                </label>
+            </form>
+            
+            <img src="imagens/lupa.png" alt="lupa" class="lupa">
+        </section>
+        
+        </main>
 
-    <img src="imagens/lupa.png" alt="lupa" class="lupa">
-  </main>
-</body>
+    </body>
 
 </html>

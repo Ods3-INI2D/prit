@@ -14,33 +14,32 @@
     <header>
         <%- include('../partial/grid.ejs') %>
     </header>
-    
+
     <main>
         <section class="produtos-container">
             <% if(produtos && produtos.length > 0) { %>
                 <% produtos.forEach(function(produto) { %>
                     <article class="bloco-produto-home">
                         <a href="/produto/<%= produto.id %>" class="link-produto-home">
-                            <img src="<%= produto.imagem %>" class="imagem-produto-home" alt="<%= produto.nome %>">
-                            
+                            <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto-home">
+
                             <h2 class="nome-produto-home"><%= produto.nome %></h2>
-                            
+
                             <% if(produto.precoDesconto) { %>
-                                <article class="preco-container-home">
+                                <section class="preco-container-home">
                                     <p class="preco-original-home">R$ <%= produto.preco.toFixed(2) %></p>
-                                    <hr class="linha-preco">
                                     <p class="preco-desconto-home">R$ <%= produto.precoDesconto.toFixed(2) %></p>
-                                    <article class="badge-desconto">
+                                    <aside class="badge-desconto">
                                         <p class="percentual-home">-<%= Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100) %>%</p>
                                         <img src="/imagens/setab.png" alt="Desconto" class="seta-badge">
-                                    </article>
-                                </article>
+                                    </aside>
+                                </section>
                             <% } else { %>
                                 <p class="preco-unico-home">R$ <%= produto.preco.toFixed(2) %></p>
                             <% } %>
-                            
+
                             <p class="categoria-home"><%= produto.categoria %></p>
-                            
+
                             <% if(produto.avaliacoes && produto.avaliacoes.length > 0) { %>
                                 <section class="estrelas-home">
                                     <% 
@@ -48,9 +47,7 @@
                                     const media = somaNotas / produto.avaliacoes.length;
                                     const notaArredondada = Math.round(media);
                                     for(let i = 1; i <= 5; i++) { %>
-                                        <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.png" 
-                                             class="estrela-home" 
-                                             alt="Estrela">
+                                        <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.png" alt="Estrela" class="estrela-home">
                                     <% } %>
                                 </section>
                             <% } %>
