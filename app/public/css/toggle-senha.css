@@ -1,0 +1,89 @@
+/* =================================================== */
+/* --- ESTILOS PARA BOTÃO DE MOSTRAR/OCULTAR SENHA --- */
+/* =================================================== */
+
+.campo-senha {
+    position: relative;
+    width: 100%;
+    display: block;
+}
+
+.campo-senha input {
+    width: 100%;
+    padding-right: 3.5rem; /* Espaço para o botão */
+}
+
+.btn-toggle-senha {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+    opacity: 0.6;
+}
+
+.btn-toggle-senha:hover {
+    opacity: 1;
+}
+
+.btn-toggle-senha:focus {
+    outline: 2px solid #4da6ff;
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+    opacity: 1;
+}
+
+.btn-toggle-senha:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+/* Ícone do botão */
+.btn-toggle-senha::before {
+    content: '';
+    display: block;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* Ícone de olho aberto (mostrar senha) */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'%3E%3C/path%3E%3Ccircle cx='12' cy='12' r='3'%3E%3C/circle%3E%3C/svg%3E");
+}
+
+/* Quando a senha está visível (ícone de olho fechado) */
+.btn-toggle-senha[aria-label*="Ocultar"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24'%3E%3C/path%3E%3Cline x1='1' y1='1' x2='23' y2='23'%3E%3C/line%3E%3C/svg%3E");
+}
+
+.btn-toggle-senha:hover::before {
+    filter: brightness(1.2);
+}
+
+/* =================================================== */
+/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
+/* =================================================== */
+@media (min-width: 768px) {
+    .campo-senha input {
+        padding-right: 4rem;
+    }
+    
+    .btn-toggle-senha {
+        right: 1rem;
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    .btn-toggle-senha::before {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}

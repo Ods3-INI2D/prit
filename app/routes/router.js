@@ -13,7 +13,7 @@ router.use(session({
     cookie: { secure: false }
 }));
 
-router.get('/cadastro', function(req, res) {
+router.get('/', function(req, res) {
     res.render('pages/cadastro', { 
         erros: null, 
         valores: {nome: "", nasc: "", cpf: "", tel: "", email: "", senhan: "", csenha: ""},
@@ -113,7 +113,7 @@ router.post('/login',
     }
 );
 
-router.get('/', function(req, res) {
+router.get('/home', function(req, res) {
     const produtos = db.getProdutos();
     res.render('pages/home', { produtos: produtos });
 });
