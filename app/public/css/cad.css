@@ -57,18 +57,6 @@ section.txt {
     border-radius: 0;
 }
 
-<<<<<<< HEAD
-=======
-/* Estiliza o formulário (caixa escura que envolve os campos) */
-form {
-    width: 100%;
-    max-width: 400px;
-    margin: 20px auto; 
-    padding: 25px;
-    background-color: #2a2a2a; 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 10px rgba(77, 166, 255, 0.2); 
-}
->>>>>>> c1b059833c3bfe1b2381b8fd64d97099bca0958b
 
 
 /* --- TÍTULOS --- */
