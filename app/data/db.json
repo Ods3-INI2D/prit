@@ -1,0 +1,25 @@
+{
+  "produtos": [],
+  "avaliacoes": [],
+  "carrinho": [],
+  "usuarios": [
+    {
+      "nome": "swerr",
+      "nasc": "2002-02-22",
+      "cpf": "53847735888",
+      "tel": "994310266",
+      "email": "fw@gmail.com",
+      "senhan": "Senha123!",
+      "csenha": "Senha123!"
+    },
+    {
+      "nome": "saa",
+      "nasc": "2002-02-22",
+      "cpf": "53847735888",
+      "tel": "994310266",
+      "email": "sa@g.com",
+      "senhan": "Senha123!",
+      "csenha": "Senha123!"
+    }
+  ]
+}

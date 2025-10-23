@@ -5,11 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-
-    <!-- CSS -->
     <link rel="stylesheet" href="/css/login.css">
-    <!-- Validação do front-end -->
-    <script src="/js/validacao.js" defer></script>
 </head>
 <body>
     <header>
@@ -17,65 +13,57 @@
     </header>
 
     <main>
-        <section class="login-module">
-            <header class="title-group">
+        <section>
+            <header>
                 <h1 class="tit">Login</h1>
             </header>
 
-            <!-- Mensagem de erro do backend -->
             <% if(erro) { %>
                 <article class="erro-login">
                     <p class="mensagem-erro"><%= erro %></p>
                 </article>
             <% } %>
 
-            <form id="loginForm" method="POST" action="/login">
-                <!-- Campo E-mail -->
-                <label for="email">
-                    <h2>E-mail ou nome de usuário</h2>
-                </label>
-                <input 
-                    type="text" 
-                    placeholder="exemplo@dominio.com" 
-                    id="email" 
-                    name="email" 
-                    required
-                >
-                <small id="email-erro-msg" class="erro" style="display: none;"></small>
+            <form method="POST" action="/login" novalidate>
+                <fieldset>
+                    <legend>
+                        <h2>E-mail ou nome de usuário</h2>
+                    </legend>
+                    <label for="email">
+                        <input type="email" placeholder="exemplo@dominio.com" id="email" name="email" required>
+                    </label>
+                </fieldset>
 
-                <!-- Campo Senha -->
-                <label for="senha">
-                    <h2>Senha</h2>
-                </label>
-                <input 
-                    type="password" 
-                    placeholder="Sua senha" 
-                    id="senha" 
-                    name="senha" 
-                    required
-                >
-                <small id="senha-erro-msg" class="erro" style="display: none;"></small>
+                <fieldset>
+                    <legend>
+                        <h2>Senha</h2>
+                    </legend>
+                    <label for="senha">
+                        <input type="password" placeholder="Sua senha" id="senha" name="senha" required>
+                    </label>
+                </fieldset>
 
                 <button type="submit" id="btn-login">Login</button>
             </form>
         </section>
 
-        <!-- Separador "Ou" -->
         <p class="ou">Ou</p>
 
-        <!-- Botão de Login Social -->
         <button id="google" type="button">
             <img class="google" src="/imagens/google.png" alt="Ícone do Google">
             <strong>Entrar com o Google</strong>
         </button>
 
-        <!-- Prompt de cadastro -->
-        <p class="signup-prompt">
-            <a href="/" class="link">
-                Não tem uma conta?
-                <strong class="link2">Cadastre-se aqui</strong>
-            </a>
-        </p>
+        <article>
+            <nav>
+                <p>
+                    <a href="/" class="link">
+                        Não tem uma conta?
+                        <strong class="link2">Cadastre-se aqui</strong>
+                    </a>
+                </p>
+            </nav>
+        </article>
     </main>
 
     <footer></footer>

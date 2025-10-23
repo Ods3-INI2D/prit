@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/estilo.css">
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/bloco.css">
+    <link rel="stylesheet" href="/css/carousel.css">
 </head>
 <body>
     <header>
@@ -16,6 +17,34 @@
     </header>
 
     <main>
+        <section class="carousel-container" aria-label="Carrossel de destaques">
+            <figure class="carousel-slide active" aria-hidden="false">
+                <img src="/imagens/banner1.png" alt="Primeira imagem do carrossel - Promoções especiais">
+                <figcaption class="carousel-caption">Promoções Especiais</figcaption>
+            </figure>
+            
+            <figure class="carousel-slide" aria-hidden="true">
+                <img src="/imagens/banner2.png" alt="Segunda imagem do carrossel - Ofertas da semana">
+                <figcaption class="carousel-caption">Ofertas da Semana</figcaption>
+            </figure>
+            
+            <figure class="carousel-slide" aria-hidden="true">
+                <img src="/imagens/banner3.png" alt="Terceira imagem do carrossel - Ofertas da semana">
+                <figcaption class="carousel-caption">Ofertas da Semana</figcaption>
+            </figure>
+
+            <nav class="carousel-controls" aria-label="Controles do carrossel">
+                <button class="carousel-btn prev" aria-label="Slide anterior">❮</button>
+                <button class="carousel-btn next" aria-label="Próximo slide">❯</button>
+            </nav>
+
+            <nav class="carousel-indicators" aria-label="Indicadores do carrossel">
+                <button class="indicator active" aria-label="Ir para slide 1" data-slide="0"></button>
+                <button class="indicator" aria-label="Ir para slide 2" data-slide="1"></button>
+                <button class="indicator" aria-label="Ir para slide 3" data-slide="2"></button>
+            </nav>
+        </section>
+
         <section class="produtos-container">
             <% if(produtos && produtos.length > 0) { %>
                 <% produtos.forEach(function(produto) { %>
@@ -66,5 +95,72 @@
     <footer>
         <%- include('../partial/footer.ejs') %>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const prevBtn = document.querySelector('.carousel-btn.prev');
+            const nextBtn = document.querySelector('.carousel-btn.next');
+            const indicators = document.querySelectorAll('.indicator');
+            let currentSlide = 0;
+            let autoPlayInterval;
+
+            function showSlide(n) {
+                slides.forEach(slide => {
+                    slide.classList.remove('active');
+                    slide.setAttribute('aria-hidden', 'true');
+                });
+                indicators.forEach(ind => ind.classList.remove('active'));
+
+                currentSlide = (n + slides.length) % slides.length;
+                
+                slides[currentSlide].classList.add('active');
+                slides[currentSlide].setAttribute('aria-hidden', 'false');
+                indicators[currentSlide].classList.add('active');
+            }
+
+            function nextSlide() {
+                showSlide(currentSlide + 1);
+            }
+
+            function prevSlide() {
+                showSlide(currentSlide - 1);
+            }
+
+            function startAutoPlay() {
+                autoPlayInterval = setInterval(nextSlide, 5000);
+            }
+
+            function stopAutoPlay() {
+                clearInterval(autoPlayInterval);
+            }
+
+            prevBtn.addEventListener('click', function() {
+                prevSlide();
+                stopAutoPlay();
+                startAutoPlay();
+            });
+
+            nextBtn.addEventListener('click', function() {
+                nextSlide();
+                stopAutoPlay();
+                startAutoPlay();
+            });
+
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', function() {
+                    showSlide(index);
+                    stopAutoPlay();
+                    startAutoPlay();
+                });
+            });
+
+            startAutoPlay();
+
+            const carouselContainer = document.querySelector('.carousel-container');
+            carouselContainer.addEventListener('mouseenter', stopAutoPlay);
+            carouselContainer.addEventListener('mouseleave', startAutoPlay);
+        });
+    </script>
 </body>
 </html>
