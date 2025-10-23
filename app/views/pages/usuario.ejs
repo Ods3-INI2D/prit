@@ -1,28 +1,96 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>usuário</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/estilo.css">
-    <link rel="stylesheet" href="css/usuario.css">
+    <title>Minha Conta</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/usuario.css">
 </head>
-
 <body>
     <header>
-        
+        <%- include('../partial/grid.ejs') %>
     </header>
 
     <main>
-       
+        <section class="perfil-container">
+            <h1 class="titulo-perfil">Minha Conta</h1>
+
+            <% if(usuario) { %>
+                <article class="info-usuario">
+                    <h2 class="subtitulo">Informações Pessoais</h2>
+                    
+                    <article class="campo-info">
+                        <h3 class="label-info">Nome</h3>
+                        <p class="valor-info"><%= usuario.nome %></p>
+                    </article>
+
+                    <article class="campo-info">
+                        <h3 class="label-info">Data de Nascimento</h3>
+                        <p class="valor-info"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></p>
+                    </article>
+
+                    <article class="campo-info">
+                        <h3 class="label-info">CPF</h3>
+                        <p class="valor-info"><%= usuario.cpf %></p>
+                    </article>
+
+                    <article class="campo-info">
+                        <h3 class="label-info">E-mail</h3>
+                        <p class="valor-info"><%= usuario.email %></p>
+                    </article>
+                </article>
+
+                <article class="dados-editaveis">
+                    <h2 class="subtitulo">Dados Editáveis</h2>
+                    
+                    <form method="POST" action="/usuario/atualizar" class="form-edicao">
+                        <label for="tel">
+                            <h3 class="label-form">Telefone</h3>
+                        </label>
+                        <input type="tel" 
+                               id="tel" 
+                               name="tel" 
+                               value="<%= usuario.tel || '' %>" 
+                               placeholder="Digite seu telefone"
+                               maxlength="9"
+                               required>
+
+                        <label for="cep">
+                            <h3 class="label-form">CEP</h3>
+                        </label>
+                        <input type="text" 
+                               id="cep" 
+                               name="cep" 
+                               value="<%= usuario.cep || '' %>" 
+                               placeholder="Digite seu CEP"
+                               maxlength="8"
+                               required>
+
+                        <button type="submit" class="btn-salvar">Salvar Alterações</button>
+                    </form>
+                </article>
+
+                <nav class="menu-usuario">
+                    <ul class="lista-opcoes">
+                        <li><a href="/carrinho" class="opcao-menu">Meus Pedidos</a></li>
+                        <li><a href="/home" class="opcao-menu">Continuar Comprando</a></li>
+                        <li><a href="/login" class="opcao-menu logout">Sair da Conta</a></li>
+                    </ul>
+                </nav>
+
+            <% } else { %>
+                <article class="sem-usuario">
+                    <p class="mensagem-login">Você precisa estar logado para ver esta página.</p>
+                    <a href="/login" class="btn-login">Fazer Login</a>
+                </article>
+            <% } %>
+        </section>
     </main>
 
     <footer>
-        
+        <%- include('../partial/footer.ejs') %>
     </footer>
 </body>
-
 </html>

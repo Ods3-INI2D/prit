@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= categoria %></title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/categoria.css">
+</head>
+<body>
+    <header>
+        <%- include('../partial/grid.ejs') %>
+    </header>
+
+    <main>
+        <nav class="navegacao">
+            <a href="/home" class="voltar">
+                <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
+                Voltar
+            </a>
+        </nav>
+
+        <section class="categoria-container">
+            <h1 class="titulo-categoria"><%= categoria %></h1>
+
+            <% if(produtos.length === 0) { %>
+                <article class="categoria-vazia">
+                    <p class="mensagem-vazio">Nenhum produto encontrado nesta categoria.</p>
+                    <a href="/home" class="btn-voltar-home">Voltar para Home</a>
+                </article>
+            <% } else { %>
+                <section class="produtos-grid">
+                    <% produtos.forEach(function(produto) { %>
+                        <article class="produto-card">
+                            <a href="/produto/<%= produto.id %>" class="link-produto">
+                                <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto">
+                                
+                                <h2 class="nome-produto"><%= produto.nome %></h2>
+                                
+                                <% if(produto.precoDesconto) { %>
+                                    <article class="preco-container">
+                                        <p class="preco-original">R$ <%= produto.preco.toFixed(2) %></p>
+                                        <p class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                                    </article>
+                                    <p class="percentual">
+                                        -<%= Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100) %>%
+                                    </p>
+                                <% } else { %>
+                                    <p class="preco-normal">R$ <%= produto.preco.toFixed(2) %></p>
+                                <% } %>
+
+                                <p class="categoria-label"><%= produto.categoria %></p>
+
+                                <% if(produto.avaliacoes && produto.avaliacoes.length > 0) { %>
+                                    <section class="estrelas-container">
+                                        <% 
+                                        const somaNotas = produto.avaliacoes.reduce((sum, av) => sum + av.nota, 0);
+                                        const media = somaNotas / produto.avaliacoes.length;
+                                        const notaArredondada = Math.round(media);
+                                        for(let i = 1; i <= 5; i++) { %>
+                                            <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.png" 
+                                                 class="estrela" 
+                                                 alt="Estrela">
+                                        <% } %>
+                                    </section>
+                                <% } %>
+                            </a>
+                        </article>
+                    <% }); %>
+                </section>
+            <% } %>
+        </section>
+    </main>
+
+    <footer>
+        <%- include('../partial/footer.ejs') %>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <header>
+        <img src="/imagens/logo.png" alt="Logo" class="logo">
+        <h1 class="titulo">Painel Administrativo</h1>
+    </header>
+
+    <main>
+        <section class="estatisticas">
+            <h2 class="subtitulo">Estatísticas do Site</h2>
+            
+            <article class="card-stats">
+                <h3 class="stat-titulo">Total de Produtos</h3>
+                <p class="stat-valor"><%= totalProdutos %></p>
+            </article>
+
+            <article class="card-stats">
+                <h3 class="stat-titulo">Total de Avaliações</h3>
+                <p class="stat-valor"><%= totalAvaliacoes %></p>
+            </article>
+        </section>
+
+        <section class="adicionar-produto">
+            <h2 class="subtitulo">Adicionar Novo Produto</h2>
+            
+            <form method="POST" action="/admin/adicionar-produto" class="form-produto">
+                <label for="nome">
+                    <h3 class="label-titulo">Nome do Produto</h3>
+                </label>
+                <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" required>
+
+                <label for="preco">
+                    <h3 class="label-titulo">Preço</h3>
+                </label>
+                <input type="number" id="preco" name="preco" placeholder="0.00" step="0.01" min="0" required>
+
+                <label for="precoDesconto">
+                    <h3 class="label-titulo">Preço com Desconto (opcional)</h3>
+                </label>
+                <input type="number" id="precoDesconto" name="precoDesconto" placeholder="0.00" step="0.01" min="0">
+
+                <label for="categoria">
+                    <h3 class="label-titulo">Categoria</h3>
+                </label>
+                <select id="categoria" name="categoria" required>
+                    <option value="">Selecione uma categoria</option>
+                    <option value="Higiene Pessoal">Higiene Pessoal</option>
+                    <option value="Vitaminas e Suplementos">Vitaminas e Suplementos</option>
+                    <option value="Bebê">Bebê</option>
+                    <option value="Terceira Idade">Terceira Idade</option>
+                    <option value="Medicamentos">Medicamentos</option>
+                </select>
+
+                <label for="descricao">
+                    <h3 class="label-titulo">Descrição do Produto</h3>
+                </label>
+                <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto" rows="5" required></textarea>
+
+                <button type="submit" class="btn-adicionar">Adicionar Produto</button>
+            </form>
+        </section>
+
+        <section class="lista-produtos">
+            <h2 class="subtitulo">Produtos Cadastrados</h2>
+            
+            <% if(produtos.length === 0) { %>
+                <p class="mensagem-vazia">Nenhum produto cadastrado ainda.</p>
+            <% } else { %>
+                <ul class="produtos-lista">
+                    <% produtos.forEach(function(produto) { %>
+                        <li class="produto-item">
+                            <h3 class="produto-nome"><%= produto.nome %></h3>
+                            <p class="produto-info">Categoria: <%= produto.categoria %></p>
+                            <p class="produto-info">Preço: R$ <%= produto.preco.toFixed(2) %></p>
+                            <% if(produto.precoDesconto) { %>
+                                <p class="produto-info desconto">Com Desconto: R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                            <% } %>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } %>
+        </section>
+    </main>
+
+    <footer>
+        <nav>
+            <a href="/home" class="link-footer">Voltar ao Site</a>
+        </nav>
+    </footer>
+</body>
+</html>

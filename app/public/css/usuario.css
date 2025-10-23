@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+body {
+    background-color: #1f1f1f;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    width: 100vw;
+    min-height: 100vh;
+    margin: 0;
+}
+
+main {
+    min-height: 60vh;
+    padding: 2.34vh 0;
+}
+
+.perfil-container {
+    width: 90.84vw;
+    margin: 0 auto;
+}
+
+.titulo-perfil {
+    font-size: 6.62vw;
+    font-weight: 700;
+    margin-bottom: 2.34vh;
+    color: white;
+    text-align: center;
+}
+
+.info-usuario {
+    background-color: #2a2a2a;
+    border-radius: 2.54vw;
+    padding: 2.34vh 4.58vw;
+    margin-bottom: 2.34vh;
+}
+
+.subtitulo {
+    font-size: 5.09vw;
+    font-weight: 600;
+    margin-bottom: 2.34vh;
+    color: #4da6ff;
+}
+
+.campo-info {
+    margin-bottom: 1.76vh;
+    padding-bottom: 1.76vh;
+    border-bottom: 0.12vh solid rgba(255, 255, 255, 0.1);
+}
+
+.campo-info:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.label-info {
+    font-size: 3.82vw;
+    font-weight: 600;
+    color: #888;
+    margin-bottom: 0.59vh;
+}
+
+.valor-info {
+    font-size: 4.58vw;
+    font-weight: 500;
+    color: white;
+}
+
+.dados-editaveis {
+    background-color: #2a2a2a;
+    border-radius: 2.54vw;
+    padding: 2.34vh 4.58vw;
+    margin-bottom: 2.34vh;
+}
+
+.form-edicao {
+    width: 100%;
+}
+
+.label-form {
+    font-size: 4.07vw;
+    font-weight: 500;
+    margin-top: 1.17vh;
+    margin-bottom: 0.59vh;
+    color: white;
+}
+
+input[type="tel"],
+input[type="text"] {
+    width: 100%;
+    padding: 1.41vh 3.82vw;
+    margin-bottom: 1.76vh;
+    border: 0.51vw solid #555;
+    border-radius: 2.04vw;
+    background-color: #383838;
+    color: white;
+    font-size: 4.07vw;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.3s ease;
+}
+
+input[type="tel"]:focus,
+input[type="text"]:focus {
+    border-color: #4da6ff;
+    outline: none;
+    box-shadow: 0 0 0.71vh rgba(77, 166, 255, 0.4);
+}
+
+.btn-salvar {
+    width: 100%;
+    padding: 1.76vh 0;
+    background-color: #163069;
+    color: white;
+    border: none;
+    border-radius: 2.54vw;
+    font-size: 4.58vw;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1.17vh;
+    transition: background-color 0.3s ease;
+}
+
+.btn-salvar:hover {
+    background-color: #0d1f42;
+}
+
+.menu-usuario {
+    background-color: #2a2a2a;
+    border-radius: 2.54vw;
+    padding: 1.17vh 0;
+    margin-bottom: 2.34vh;
+}
+
+.lista-opcoes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.lista-opcoes li {
+    border-bottom: 0.12vh solid rgba(255, 255, 255, 0.1);
+}
+
+.lista-opcoes li:last-child {
+    border-bottom: none;
+}
+
+.opcao-menu {
+    display: block;
+    padding: 1.76vh 4.58vw;
+    color: white;
+    text-decoration: none;
+    font-size: 4.58vw;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.opcao-menu:hover {
+    background-color: rgba(77, 166, 255, 0.1);
+}
+
+.opcao-menu.logout {
+    color: #ff5555;
+}
+
+.sem-usuario {
+    text-align: center;
+    padding: 5.87vh 0;
+}
+
+.mensagem-login {
+    font-size: 4.58vw;
+    color: #888;
+    margin-bottom: 2.34vh;
+}
+
+.btn-login {
+    display: inline-block;
+    padding: 1.76vh 7.63vw;
+    background-color: #163069;
+    color: white;
+    text-decoration: none;
+    border-radius: 2.54vw;
+    font-size: 4.58vw;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-login:hover {
+    background-color: #0d1f42;
+}

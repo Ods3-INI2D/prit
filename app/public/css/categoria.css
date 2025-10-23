@@ -1,0 +1,170 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+body {
+    background-color: #1f1f1f;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    width: 100vw;
+    min-height: 100vh;
+    margin: 0;
+}
+
+main {
+    min-height: 60vh;
+    padding: 2.34vh 0;
+}
+
+.navegacao {
+    width: 90.84vw;
+    margin: 0 auto 2.34vh;
+}
+
+.voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 2.54vw;
+    color: white;
+    text-decoration: none;
+    font-size: 4.07vw;
+    font-weight: 500;
+}
+
+.seta-voltar {
+    width: 5.09vw;
+    height: auto;
+}
+
+.categoria-container {
+    width: 90.84vw;
+    margin: 0 auto;
+}
+
+.titulo-categoria {
+    font-size: 6.62vw;
+    font-weight: 700;
+    margin-bottom: 2.34vh;
+    color: white;
+    text-align: center;
+}
+
+.categoria-vazia {
+    text-align: center;
+    padding: 5.87vh 0;
+}
+
+.mensagem-vazio {
+    font-size: 4.58vw;
+    color: #888;
+    margin-bottom: 2.34vh;
+}
+
+.btn-voltar-home {
+    display: inline-block;
+    padding: 1.76vh 7.63vw;
+    background-color: #163069;
+    color: white;
+    text-decoration: none;
+    border-radius: 2.54vw;
+    font-size: 4.58vw;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-voltar-home:hover {
+    background-color: #0d1f42;
+}
+
+.produtos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.54vw;
+    margin-bottom: 3.52vh;
+}
+
+.produto-card {
+    background-color: #2a2a2a;
+    border-radius: 2.54vw;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.produto-card:hover {
+    transform: translateY(-0.59vh);
+    box-shadow: 0 0.94vh 1.88vh rgba(77, 166, 255, 0.2);
+}
+
+.link-produto {
+    text-decoration: none;
+    color: white;
+    display: block;
+}
+
+.imagem-produto {
+    width: 100%;
+    height: 20.09vh;
+    object-fit: cover;
+}
+
+.nome-produto {
+    font-size: 4.07vw;
+    font-weight: 600;
+    padding: 1.17vh 2.54vw 0.59vh;
+    color: white;
+    line-height: 1.3;
+    min-height: 5.87vh;
+}
+
+.preco-container {
+    padding: 0 2.54vw;
+    display: flex;
+    align-items: center;
+    gap: 1.27vw;
+    margin-bottom: 0.59vh;
+}
+
+.preco-original {
+    font-size: 3.56vw;
+    color: #888;
+    text-decoration: line-through;
+}
+
+.preco-desconto {
+    font-size: 4.58vw;
+    font-weight: 700;
+    color: #4da6ff;
+}
+
+.preco-normal {
+    font-size: 4.58vw;
+    font-weight: 700;
+    color: #4da6ff;
+    padding: 0 2.54vw 0.59vh;
+}
+
+.percentual {
+    background-color: #4da6ff;
+    color: #1f1f1f;
+    font-size: 3.05vw;
+    font-weight: 700;
+    padding: 0.29vh 1.27vw;
+    border-radius: 0.76vw;
+    display: inline-block;
+    margin: 0 2.54vw 0.59vh;
+}
+
+.categoria-label {
+    font-size: 3.56vw;
+    color: #888;
+    padding: 0 2.54vw 0.59vh;
+}
+
+.estrelas-container {
+    display: flex;
+    gap: 0.51vw;
+    padding: 0.59vh 2.54vw 1.17vh;
+}
+
+.estrela {
+    width: 4.07vw;
+    height: auto;
+}

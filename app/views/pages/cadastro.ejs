@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cadastro</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/estilo.css">
-    <link rel="stylesheet" href="css/cad.css">
-    </head>
-
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/estilo.css">
+    <link rel="stylesheet" href="/css/cad.css">
+    <script src="/js/validacao.js" defer></script>
+</head>
 <body>
     <%
     var cssErro = {"nome": "", "nasc": "", "cpf": "", "tel": "", "email": "", "senhan": "", "csenha": ""} 
@@ -49,58 +48,95 @@
     }; %>
     
     <header>
-        <img class="icon" src="imagens/logo.png">
+        <img class="icon" src="/imagens/logo.png" alt="Logo">
     </header>
+    
     <main>
         <section class="txt">
-        <br><h1 class="tit">Cadastro</h1><br>
+            <h1 class="tit">Cadastro</h1>
 
-        <form class="formulario" method="post" action="/cadastro">
-            <p><label for="nome"><h2>Nome</h2></label></p>
-            <input type="text" placeholder="Seu nome" name="nome" id="nome" value="<%= valores.nome %>" class="<%= cssErro.nome %>">
-            <span class="erro"><%= msgErro.nome %></span><br><br>
+            <form class="formulario" method="POST" action="/cadastro">
+                <fieldset>
+                    <label for="nome">
+                        <h2>Nome</h2>
+                    </label>
+                    <input type="text" placeholder="Seu nome" name="nome" id="nome" value="<%= valores.nome %>" class="<%= cssErro.nome %>">
+                    <% if(msgErro.nome) { %>
+                        <small class="erro"><%= msgErro.nome %></small>
+                    <% } %>
+                </fieldset>
 
-            <p><label for="nasc"><h2>Data de Nascimento</h2></label></p>
-            <input type="date" name="nasc" id="nasc" value="<%= valores.nasc %>" class="<%= cssErro.nasc %>">
-            <span class="erro"><%= msgErro.nasc %></span><br><br>
+                <fieldset>
+                    <label for="nasc">
+                        <h2>Data de Nascimento</h2>
+                    </label>
+                    <input type="date" name="nasc" id="nasc" value="<%= valores.nasc %>" class="<%= cssErro.nasc %>">
+                    <% if(msgErro.nasc) { %>
+                        <small class="erro"><%= msgErro.nasc %></small>
+                    <% } %>
+                </fieldset>
 
-            <p><label for="cpf"><h2>CPF</h2></label></p>
-            <input type="number" placeholder="Seu CPF" name="cpf" id="cpf" value="<%= valores.cpf %>" class="<%= cssErro.cpf %>">
-            <span class="erro"><%= msgErro.cpf %></span><br><br>
+                <fieldset>
+                    <label for="cpf">
+                        <h2>CPF</h2>
+                    </label>
+                    <input type="number" placeholder="Seu CPF" name="cpf" id="cpf" value="<%= valores.cpf %>" class="<%= cssErro.cpf %>">
+                    <% if(msgErro.cpf) { %>
+                        <small class="erro"><%= msgErro.cpf %></small>
+                    <% } %>
+                </fieldset>
 
-            <p><label for="tel"><h2>Telefone</h2></label></p>
-            <input type="number" placeholder="Seu Telefone" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>">
-            <span class="erro"><%= msgErro.tel %></span><br><br>
+                <fieldset>
+                    <label for="tel">
+                        <h2>Telefone</h2>
+                    </label>
+                    <input type="number" placeholder="Seu Telefone" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>">
+                    <% if(msgErro.tel) { %>
+                        <small class="erro"><%= msgErro.tel %></small>
+                    <% } %>
+                </fieldset>
 
-            <p><label for="email"><h2>E-mail</h2></label></p>
-            <input type="text" placeholder="Seu E-mail" name="email" id="email" value="<%= valores.email %>" class="<%= cssErro.email %>">
-            <span class="erro"><%= msgErro.email %></span><br><br>
+                <fieldset>
+                    <label for="email">
+                        <h2>E-mail</h2>
+                    </label>
+                    <input type="text" placeholder="exemplo@dominio.com" name="email" id="email" value="<%= valores.email %>" class="<%= cssErro.email %>">
+                    <% if(msgErro.email) { %>
+                        <small class="erro"><%= msgErro.email %></small>
+                    <% } %>
+                </fieldset>
 
-            <p><label for="senhan"><h2>Senha</h2></label></p>
-            <input type="password" placeholder="Sua Senha" name="senhan" id="senhan" value="<%= valores.senhan %>" class="<%= cssErro.senhan %>">
-            <span class="erro"><%= msgErro.senhan %></span><br><br>
+                <fieldset>
+                    <label for="senhan">
+                        <h2>Senha</h2>
+                    </label>
+                    <input type="password" placeholder="Sua Senha" name="senhan" id="senhan" value="<%= valores.senhan %>" class="<%= cssErro.senhan %>">
+                    <% if(msgErro.senhan) { %>
+                        <small class="erro"><%= msgErro.senhan %></small>
+                    <% } %>
+                </fieldset>
 
-            <p><label for="senha"><h2>Confirmar Senha</h2></label></p>
-            <input type="password" placeholder="Confirme sua Senha" name="senha" id="senha" value="<%= valores.csenha %>" class="<%= cssErro.csenha %>">
-            <span class="erro"><%= msgErro.csenha %></span><br><br>
+                <fieldset>
+                    <label for="senha">
+                        <h2>Confirmar Senha</h2>
+                    </label>
+                    <input type="password" placeholder="Confirme sua Senha" name="senha" id="senha" value="<%= valores.csenha %>" class="<%= cssErro.csenha %>">
+                    <% if(msgErro.csenha) { %>
+                        <small class="erro"><%= msgErro.csenha %></small>
+                    <% } %>
+                </fieldset>
 
-            <input id="btn" type="submit" onclick="location.href='/home'" value="Cadastro">
+                <button id="btn" type="submit">Cadastro</button>
 
-            <br><a href="/login" class="link">Já tem uma conta?
-                <br><h1 class="link2">Entre aqui</h1></a>
-        </form></section><br>
+                <nav class="link-group">
+                    <a href="/login" class="link">Já tem uma conta?
+                        <strong class="link2">Entre aqui</strong>
+                    </a>
+                </nav>
+            </form>
+        </section>
     </main>
 
-    <footer>
-        <a href="/home">home</a>
-        <a href="/usuario">usuario</a>
-        <a href="/bloco">bloco</a>
-        <a href="/blocod">blocod</a>
-        <a href="/grid">grid</a>
-        <a href="/menu">menu</a>
-        <a href="/produto">produto</a>
-        <a href="/footer">footer</a>
-    </footer>
+    <footer></footer>
 </body>
-
 </html>
