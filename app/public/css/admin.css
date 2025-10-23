@@ -1,324 +1,278 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <style>
+        /* Estilos para o campo de imagem */
+        .campo-imagem {
+            border: none;
+            padding: 0;
+            margin-bottom: 1.125rem;
+        }
 
-/* --- Reset e Configuração Base (Mobile First) --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        .campo-imagem legend {
+            padding: 0;
+            margin-bottom: 0.5rem;
+        }
 
-:root {
-    font-size: 16px; 
-}
+        .label-arquivo {
+            display: block;
+            margin-bottom: 0.75rem;
+        }
 
-body {
-    background-color: #1f1f1f;
-    font-family: 'Inter', sans-serif;
-    color: white;
-    width: 100%; 
-    min-height: 100vh;
-}
+        input[type="file"] {
+            width: 100%;
+            padding: 0.9375rem 0.75rem;
+            border: 2px solid #555;
+            border-radius: 0.625rem;
+            background-color: #383838;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
 
-/* --- HEADER --- */
-header {
-    background-color: #163069;
-    width: 100%;
-    height: 18vh; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0 0 0.625rem 0.625rem;
-}
+        input[type="file"]:focus {
+            border-color: #4da6ff;
+            outline: none;
+            box-shadow: 0 0 0.375rem rgba(77, 166, 255, 0.8);
+        }
 
-.logo {
-    width: 50%; 
-    max-width: 15rem;
-    height: auto;
-    margin-bottom: 0.625rem; 
-}
+        input[type="file"]::file-selector-button {
+            background-color: #163069;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-right: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
 
-.titulo {
-    font-size: 1.5rem; 
-    font-weight: 600;
-}
+        input[type="file"]::file-selector-button:hover {
+            background-color: #0d1f42;
+        }
 
-/* --- MAIN CONTENT & CONTAINERS --- */
-main {
-    width: 90%; 
-    max-width: 1200px; 
-    margin: 0 auto;
-    padding: 1.5rem 0; 
-}
+        .info-arquivo {
+            display: block;
+            font-size: 0.875rem;
+            color: #888;
+            margin-top: 0.5rem;
+            transition: color 0.3s ease;
+        }
 
-.subtitulo {
-    font-size: 1.75rem; 
-    font-weight: 600;
-    margin-bottom: 1.5rem; 
-    color: #4da6ff;
-}
+        .preview-container {
+            display: block;
+            margin-top: 1rem;
+        }
 
-.estatisticas, .adicionar-produto, .lista-produtos {
-    margin-bottom: 2.25rem; 
-}
+        .preview-figure {
+            margin: 0;
+            text-align: center;
+            background-color: #1f1f1f;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
 
-/* --- CARDS & FORM BASE --- */
-.card-stats, .form-produto {
-    background-color: #2a2a2a;
-    padding: 1.5rem 1.25rem; 
-    border-radius: 0.625rem; 
-    margin-bottom: 1.125rem; 
-    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3); 
-}
+        .preview-img {
+            max-width: 100%;
+            max-height: 300px;
+            height: auto;
+            border-radius: 0.5rem;
+            object-fit: contain;
+        }
 
-/* --- ESTATÍSTICAS --- */
-.stat-titulo {
-    font-size: 1.125rem; 
-    font-weight: 500;
-    margin-bottom: 0.625rem; 
-    color: #d9d9d9;
-}
+        .preview-caption {
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+            color: #d9d9d9;
+            word-break: break-word;
+        }
 
-.stat-valor {
-    font-size: 2rem; 
-    font-weight: 700;
-    color: #4da6ff;
-}
+        @media (min-width: 768px) {
+            .preview-img {
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="/imagens/logo.png" alt="Logo" class="logo">
+        <h1 class="titulo">Painel Administrativo</h1>
+    </header>
 
-/* --- FORMULÁRIO E INPUTS --- */
-.label-titulo {
-    font-size: 1rem; 
-    font-weight: 500;
-    margin-top: 1.125rem; 
-    margin-bottom: 0.5rem; 
-    color: white;
-    display: block; 
-}
+    <main>
+        <section class="estatisticas">
+            <h2 class="subtitulo">Estatísticas do Site</h2>
+            
+            <article class="card-stats">
+                <h3 class="stat-titulo">Total de Produtos</h3>
+                <p class="stat-valor"><%= totalProdutos %></p>
+            </article>
 
-input[type="text"], 
-input[type="number"], 
-select, 
-textarea {
-    width: 100%;
-    padding: 0.9375rem 0.75rem; 
-    margin-bottom: 1.125rem; 
-    border: 2px solid #555; 
-    border-radius: 0.625rem; 
-    background-color: #383838;
-    color: white;
-    font-size: 1rem; 
-    font-family: inherit;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
+            <article class="card-stats">
+                <h3 class="stat-titulo">Total de Avaliações</h3>
+                <p class="stat-valor"><%= totalAvaliacoes %></p>
+            </article>
+        </section>
 
-textarea {
-    resize: vertical;
-    min-height: 7.5rem; 
-}
+        <section class="adicionar-produto">
+            <h2 class="subtitulo">Adicionar Novo Produto</h2>
+            
+            <form method="POST" action="/admin/adicionar-produto" class="form-produto" enctype="multipart/form-data">
+                <label for="nome">
+                    <h3 class="label-titulo">Nome do Produto</h3>
+                </label>
+                <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" required>
 
-select {
-    cursor: pointer;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="white" d="M7 10l5 5 5-5z"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 1.25rem;
-}
+                <label for="preco">
+                    <h3 class="label-titulo">Preço</h3>
+                </label>
+                <input type="number" id="preco" name="preco" placeholder="0.00" step="0.01" min="0" required>
 
-input:focus, select:focus, textarea:focus {
-    border-color: #4da6ff;
-    outline: none;
-    box-shadow: 0 0 0.375rem rgba(77, 166, 255, 0.8);
-}
+                <label for="precoDesconto">
+                    <h3 class="label-titulo">Preço com Desconto (opcional)</h3>
+                </label>
+                <input type="number" id="precoDesconto" name="precoDesconto" placeholder="0.00" step="0.01" min="0">
 
-/* --- BOTÕES GERAIS --- */
-.btn-adicionar {
-    width: 100%;
-    padding: 1.125rem 0; 
-    background-color: #163069;
-    color: white;
-    border: none;
-    border-radius: 0.75rem; 
-    font-size: 1.125rem; 
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 0.75rem; 
-    transition: background-color 0.3s ease;
-}
+                <label for="categoria">
+                    <h3 class="label-titulo">Categoria</h3>
+                </label>
+                <select id="categoria" name="categoria" required>
+                    <option value="">Selecione uma categoria</option>
+                    <option value="Cuidados com a Pele">Cuidados com a Pele</option>
+                    <option value="Higiene Bucal">Higiene Bucal</option>
+                    <option value="Cabelo">Cabelo</option>
+                    <option value="Vitaminas e Suplementos">Vitaminas e Suplementos</option>
+                    <option value="Bebê">Bebê</option>
+                    <option value="Terceira Idade">Terceira Idade</option>
+                    <option value="Medicamentos">Medicamentos</option>
+                </select>
 
-.btn-adicionar:hover {
-    background-color: #0d1f42;
-}
+                <fieldset class="campo-imagem">
+                    <legend>
+                        <h3 class="label-titulo">Imagem do Produto</h3>
+                    </legend>
+                    <label for="imagem" class="label-arquivo">
+                        <input type="file" 
+                               id="imagem" 
+                               name="imagem" 
+                               accept="image/jpeg,image/jpg,image/png,image/webp"
+                               aria-describedby="imagem-info">
+                        <output id="imagem-info" class="info-arquivo">
+                            Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB)
+                        </output>
+                    </label>
+                    <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></output>
+                </fieldset>
 
-/* --- LISTA DE PRODUTOS --- */
-.mensagem-vazia {
-    text-align: center;
-    color: #888;
-    font-size: 1rem; 
-    padding: 1.5rem 0; 
-}
+                <label for="descricao">
+                    <h3 class="label-titulo">Descrição do Produto</h3>
+                </label>
+                <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto" rows="5" required></textarea>
 
-.produtos-lista {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+                <button type="submit" class="btn-adicionar">Adicionar Produto</button>
+            </form>
+        </section>
 
-.produto-item {
-    background-color: #2a2a2a;
-    padding: 1.5rem 1.25rem; 
-    border-radius: 0.625rem;
-    margin-bottom: 1.125rem; 
-    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
+        <section class="lista-produtos">
+            <h2 class="subtitulo">Produtos Cadastrados</h2>
+            
+            <% if(produtos.length === 0) { %>
+                <p class="mensagem-vazia">Nenhum produto cadastrado ainda.</p>
+            <% } else { %>
+                <ul class="produtos-lista">
+                    <% produtos.forEach(function(produto) { %>
+                        <li class="produto-item">
+                            <h3 class="produto-nome"><%= produto.nome %></h3>
+                            <p class="produto-info">Categoria: <%= produto.categoria %></p>
+                            <p class="produto-info">Preço: R$ <%= produto.preco.toFixed(2) %></p>
+                            <% if(produto.precoDesconto) { %>
+                                <p class="produto-info desconto">Com Desconto: R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                            <% } %>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } %>
+        </section>
+    </main>
 
-.produto-nome {
-    font-size: 1.125rem; 
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-}
+    <footer>
+        <nav>
+            <a href="/home" class="link-footer">Voltar ao Site</a>
+        </nav>
+    </footer>
 
-.produto-id, .produto-estoque {
-    font-size: 0.875rem;
-    color: #888;
-}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputImagem = document.getElementById('imagem');
+            const previewContainer = document.getElementById('preview-imagem');
+            const infoArquivo = document.getElementById('imagem-info');
 
-.produto-preco {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #4da6ff;
-    margin-bottom: 0.5rem;
-}
+            if (inputImagem) {
+                inputImagem.addEventListener('change', function(e) {
+                    const arquivo = e.target.files[0];
+                    
+                    if (!arquivo) {
+                        previewContainer.innerHTML = '';
+                        infoArquivo.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB)';
+                        return;
+                    }
 
-.produto-estoque {
-    color: #d9d9d9;
-}
+                    // Validação de tamanho (5MB)
+                    if (arquivo.size > 5 * 1024 * 1024) {
+                        infoArquivo.textContent = 'Erro: A imagem deve ter no máximo 5MB';
+                        infoArquivo.style.color = '#d93025';
+                        previewContainer.innerHTML = '';
+                        inputImagem.value = '';
+                        return;
+                    }
 
-.acoes-produto {
-    display: flex;
-    gap: 0.75rem;
-}
+                    // Validação de tipo
+                    const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                    if (!tiposPermitidos.includes(arquivo.type)) {
+                        infoArquivo.textContent = 'Erro: Formato não suportado. Use JPG, PNG ou WEBP';
+                        infoArquivo.style.color = '#d93025';
+                        previewContainer.innerHTML = '';
+                        inputImagem.value = '';
+                        return;
+                    }
 
-.btn-editar, .btn-excluir {
-    padding: 0.625rem 1rem;
-    border: none;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-editar {
-    background-color: #4da6ff;
-    color: #1f1f1f;
-}
-
-.btn-editar:hover {
-    background-color: #387cbf;
-}
-
-.btn-excluir {
-    background-color: #d93025;
-    color: white;
-}
-
-.btn-excluir:hover {
-    background-color: #a3241b;
-}
-
-/* =================================================== */
-/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
-/* =================================================== */
-@media (min-width: 768px) {
-    header {
-        height: 15vh;
-    }
-
-    .logo {
-        max-width: 18rem;
-    }
-
-    .titulo {
-        font-size: 2rem;
-    }
-
-    main {
-        padding: 3rem 0;
-    }
-
-    .estatisticas-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); 
-        gap: 2rem;
-    }
-
-    .subtitulo {
-        font-size: 2rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .card-stats {
-        margin-bottom: 0; 
-    }
-
-    .stat-titulo {
-        font-size: 1.25rem;
-    }
-
-    .stat-valor {
-        font-size: 3rem;
-    }
-
-    .form-produto {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 2rem;
-    }
-
-    .produto-item {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem 1.5rem;
-    }
-
-    .produto-info {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        flex-grow: 1;
-        width: 70%;
-    }
-    
-    .produto-nome {
-        width: 35%;
-        margin-bottom: 0;
-    }
-    
-    .produto-id, .produto-preco, .produto-estoque {
-        font-size: 1rem;
-        margin-bottom: 0;
-        width: 15%;
-    }
-    
-    .produto-preco, .produto-estoque {
-        text-align: right;
-    }
-
-    .acoes-produto {
-        flex-shrink: 0;
-        width: 20%;
-        justify-content: flex-end;
-    }
-
-    .btn-editar, .btn-excluir {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.9rem;
-    }
-}
+                    // Preview da imagem
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const figure = document.createElement('figure');
+                        figure.className = 'preview-figure';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = 'Preview da imagem do produto';
+                        img.className = 'preview-img';
+                        
+                        const figcaption = document.createElement('figcaption');
+                        figcaption.textContent = arquivo.name;
+                        figcaption.className = 'preview-caption';
+                        
+                        figure.appendChild(img);
+                        figure.appendChild(figcaption);
+                        previewContainer.innerHTML = '';
+                        previewContainer.appendChild(figure);
+                        
+                        infoArquivo.textContent = 'Imagem selecionada com sucesso!';
+                        infoArquivo.style.color = '#4da6ff';
+                    };
+                    reader.readAsDataURL(arquivo);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
