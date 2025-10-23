@@ -23,7 +23,7 @@
     background-color: #2D2D2D;
     z-index: 1000;
     color: white;
-    padding: 2.5rem 1rem; /* Ajustado para rem */
+    padding: 2.5rem 1rem;
     overflow-y: auto;
     transform: translateX(-100%);
     transition: transform 0.3s ease-out;
@@ -31,6 +31,23 @@
 
 .opcoes.is-open {
     transform: translateX(0);
+}
+
+/* --- LOGO E USER NO MENU --- */
+.opcoes .plogo {
+    width: 60%;
+    max-width: 180px;
+    height: auto;
+    display: block;
+    margin: 0 auto 1rem;
+}
+
+.opcoes .user {
+    width: 50px;
+    height: 50px;
+    display: block;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
 }
 
 /* --- HAMBURGER --- */
@@ -73,25 +90,43 @@
 
 /* --- USER INFO DENTRO DO MENU --- */
 .menu-content {
-    margin-top: 1rem; /* Ajustado */
+    margin-top: 1rem;
     padding: 0;
 }
 
+.perfil {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
 .nome {
-    font-size: 1.25rem; /* 20px */
+    font-size: 1.25rem;
     font-weight: 500;
-    margin-bottom: 0.5rem; /* Ajustado */
+    margin-bottom: 0.5rem;
+    color: white;
 }
 
 .conta {
-    font-size: 1.25rem; /* 20px */
-    margin-bottom: 2rem; /* Ajustado */
+    font-size: 1rem;
+    color: #4da6ff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.conta:hover {
+    color: #6bb5ff;
 }
 
 /* --- CATEGORIAS --- */
+.categorias {
+    margin-bottom: 2rem;
+}
+
 .tit {
-    font-size: 1.25rem; /* 20px */
-    margin-bottom: 1rem; /* Ajustado */
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: white;
+    font-weight: 600;
 }
 
 /* --- MENU PRINCIPAL --- */
@@ -105,45 +140,113 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.menu-item > a,
 .linkhp {
-    font-size: 1.5rem; /* 24px */
-    padding: 1rem 0; /* Ajustado */
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-size: 1.125rem;
+    padding: 1rem 0;
+    transition: background-color 0.3s ease;
+    position: relative;
+}
+
+.menu-item > a:hover,
+.linkhp:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.linkhp {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .seta {
-    font-size: 1.875rem; /* 30px */
+    font-size: 1.5rem;
+    font-style: normal;
+    transition: transform 0.3s ease;
+}
+
+.linkhp[aria-expanded="true"] .seta {
+    transform: rotate(90deg);
 }
 
 /* --- SUBMENU --- */
 .submenu {
-    background-color: #5B5B5B;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #1B1B1B;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.submenu.is-visible {
+    max-height: 500px;
+}
+
+.submenu li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .submenu a {
-    font-size: 1.25rem; /* 20px */
-    padding: 1rem 1.5rem; /* Ajustado */
+    display: block;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.submenu a:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: white;
 }
 
 /* --- OUTRO --- */
 .outro {
-    margin: 2rem -1rem 0; /* Ajustado para preencher a largura */
-    padding: 1.5rem 1rem; 
+    margin: 2rem -1rem 0;
+    padding: 1.5rem 1rem;
     background-color: #1B1B1B;
     width: calc(100% + 2rem);
+    list-style: none;
+}
+
+.outro .menu-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .outro a {
-    font-size: 1.125rem; /* 18px */
-    padding: 1rem 0;
+    display: block;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 0.75rem 0;
+    transition: color 0.3s ease;
 }
 
-/* --- FOOTER (Alinhado ao final) --- */
-footer {
-    margin: 0 -1rem;
+.outro a:hover {
+    color: white;
+}
+
+/* --- FOOTER DO MENU --- */
+.opcoes footer {
+    margin: 0 -1rem -2.5rem;
     background-color: #1B1B1B;
     width: calc(100% + 2rem);
-    padding: 1rem; /* Adicionado padding para o conteúdo */
+    padding: 1rem;
 }
 
-/* Elementos absolutos removidos (plogo, user) - devem ser injetados no header ou no .opcoes */
-/* plogo e user foram removidos por serem redundantes com grid.css e/ou mal posicionados */
+/* --- OVERLAY QUANDO MENU ABERTO --- */
+.opcoes.is-open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
