@@ -10,15 +10,12 @@ body {
   color: white;
   font-family: 'Inter', sans-serif;
 }
-<<<<<<< HEAD
-=======
 
 /* --- Estilos de Interação (Foco) --- */
 
 /* As regras básicas para input[type="..."] foram removidas porque já
    estão no outro CSS. Mantenho apenas os estilos de :focus que dão
    um feedback visual ao usuário, caso não estejam no outro arquivo. */
->>>>>>> bd43c7223e2b339963b2ffd0b0832fab47495560
 input[type="text"]:focus,
 input[type="number"]:focus,
 input[type="date"]:focus,

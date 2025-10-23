@@ -30,7 +30,6 @@ header {
     border-bottom-left-radius: 8px; 
     border-bottom-right-radius: 8px; 
 }
-
 img.icon {
     width: 40%; 
     max-width: 200px;
@@ -47,31 +46,47 @@ main {
 }
 
 section.txt {
-    width: 90%; 
+    width: 100%; 
     max-width: 500px; 
     font-size: 0.85rem; 
     text-align: center; 
     margin-bottom: 1rem;
+    background-color: transparent; /* GARANTE QUE NÃO HÁ FUNDO AZUL AQUI */
+    padding: 0; /* REMOVE O PADDING DA SEÇÃO PARA NÃO CRIAR ESPAÇAMENTO INVISÍVEL */
+    box-shadow: none; /* REMOVE QUALQUER SOMBRA INDESEJADA AQUI */
+    border-radius: 0;
 }
 
+<<<<<<< HEAD
+=======
+/* Estiliza o formulário (caixa escura que envolve os campos) */
+form {
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto; 
+    padding: 25px;
+    background-color: #2a2a2a; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 10px rgba(77, 166, 255, 0.2); 
+}
+>>>>>>> c1b059833c3bfe1b2381b8fd64d97099bca0958b
 
 
 /* --- TÍTULOS --- */
 h1.tit {
-    font-size: 1.3rem;
+    font-size: 2rem;
     text-align: center;
     font-family: 'Belanosima', sans-serif;
 }
 
 h2 {
     font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: white; /* Garante que o rótulo seja branco sobre o fundo escuro do form */
     margin-top: 1rem; 
-    margin-bottom: 0.1rem; /* Alinhamento Vertical Agressivo */
-    padding-left: 15px; /* AJUSTE CRÍTICO: Alinha o rótulo (h2) com o padding interno do input */
+    font-weight: 500;
+    margin-bottom: 0.4rem; /* Alinhamento Vertical Agressivo */
+    text-align: left;
 }
-
 
 /* -------------------------------------------------------------------------- */
 /* --- INPUT FIELDS (PADRONIZADO COM o ESTILO DARK DO LOGIN) --- */
