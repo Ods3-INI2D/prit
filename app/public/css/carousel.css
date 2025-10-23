@@ -28,9 +28,9 @@
 }
 
 .carousel-slide img {
-    width: 1200px;
+    width: 1000px;
     height: 250px;
-    object-fit: cover;
+    object-fit: fit;
     display: block;
 }
 
