@@ -5,33 +5,31 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/estilo.css">
+    <link rel="stylesheet" href="/css/cad.css">
     <link rel="stylesheet" href="/css/toggle-senha.css">
 </head>
 <body>
     <header>
-        <img class="icon" src="/imagens/logo.png" alt="Logo da Aplicação">
+        <img class="icon" src="/imagens/logo.png" alt="Logo">
     </header>
-
+    
     <main>
-        <section>
-            <header>
-                <h1 class="tit">Login</h1>
-            </header>
+        <section class="txt">
+            <h1 class="tit">Login</h1>
 
             <% if(erro) { %>
-                <article class="erro-login">
-                    <p class="mensagem-erro"><%= erro %></p>
-                </article>
+                <output class="erro" role="alert" aria-live="polite"><%= erro %></output>
             <% } %>
 
             <form method="POST" action="/login" novalidate>
                 <fieldset>
                     <legend>
-                        <h2>E-mail ou nome de usuário</h2>
+                        <h2>E-mail</h2>
                     </legend>
                     <label for="email">
-                        <input type="email" placeholder="exemplo@dominio.com" id="email" name="email" required>
+                        <input type="email" placeholder="exemplo@dominio.com" name="email" id="email" required>
                     </label>
                 </fieldset>
 
@@ -40,35 +38,29 @@
                         <h2>Senha</h2>
                     </legend>
                     <label for="senha" class="campo-senha">
-                        <input type="password" placeholder="Sua senha" id="senha" name="senha" required>
+                        <input type="password" placeholder="Sua Senha" name="senha" id="senha" required>
                         <button type="button" class="btn-toggle-senha" aria-label="Mostrar senha" data-target="senha"></button>
                     </label>
                 </fieldset>
 
-                <button type="submit" id="btn-login">Login</button>
+                <button id="btn" type="submit">Entrar</button>
+
+                <nav>
+                    <p>
+                        <a href="/" class="link">Não tem uma conta?
+                            <strong class="link2">Cadastre-se aqui</strong>
+                        </a>
+                    </p>
+                </nav>
             </form>
         </section>
-
-        <p class="ou">Ou</p>
-
-        <button id="google" type="button">
-            <img class="google" src="/imagens/google.png" alt="Ícone do Google">
-            <strong>Entrar com o Google</strong>
-        </button>
-
-        <article>
-            <nav>
-                <p>
-                    <a href="/" class="link">
-                        Não tem uma conta?
-                        <strong class="link2">Cadastre-se aqui</strong>
-                    </a>
-                </p>
-            </nav>
-        </article>
     </main>
 
-    <footer></footer>
+    <footer>
+        <nav>
+            <a href="/home">home</a>
+        </nav>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
