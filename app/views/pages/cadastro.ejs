@@ -12,8 +12,8 @@
 </head>
 <body>
     <%
-    var cssErro = {"nome": "", "nasc": "", "cpf": "", "tel": "", "email": "", "senhan": "", "csenha": ""} 
-    var msgErro = {"nome": "", "nasc": "", "cpf": "", "tel": "", "email": "", "senhan": "", "csenha": ""}
+    var cssErro = {nome: "", nasc: "", cpf: "", tel: "", email: "", senhan: "", csenha: ""} 
+    var msgErro = {nome: "", nasc: "", cpf: "", tel: "", email: "", senhan: "", csenha: ""}
     if(erros) { 
         listaErros.errors.forEach(function(itemErro){
             if (itemErro.path == "nome"){ 
@@ -62,7 +62,7 @@
                     </label>
                     <input type="text" placeholder="Seu nome" name="nome" id="nome" value="<%= valores.nome %>" class="<%= cssErro.nome %>">
                     <% if(msgErro.nome) { %>
-                        <small class="erro"><%= msgErro.nome %></small>
+                        <output class="erro"><%= msgErro.nome %></output>
                     <% } %>
                 </fieldset>
 
@@ -72,7 +72,7 @@
                     </label>
                     <input type="date" name="nasc" id="nasc" value="<%= valores.nasc %>" class="<%= cssErro.nasc %>">
                     <% if(msgErro.nasc) { %>
-                        <small class="erro"><%= msgErro.nasc %></small>
+                        <output class="erro"><%= msgErro.nasc %></output>
                     <% } %>
                 </fieldset>
 
@@ -82,7 +82,7 @@
                     </label>
                     <input type="number" placeholder="Seu CPF" name="cpf" id="cpf" value="<%= valores.cpf %>" class="<%= cssErro.cpf %>">
                     <% if(msgErro.cpf) { %>
-                        <small class="erro"><%= msgErro.cpf %></small>
+                        <output class="erro"><%= msgErro.cpf %></output>
                     <% } %>
                 </fieldset>
 
@@ -92,7 +92,7 @@
                     </label>
                     <input type="number" placeholder="Seu Telefone" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>">
                     <% if(msgErro.tel) { %>
-                        <small class="erro"><%= msgErro.tel %></small>
+                        <output class="erro"><%= msgErro.tel %></output>
                     <% } %>
                 </fieldset>
 
@@ -102,7 +102,7 @@
                     </label>
                     <input type="text" placeholder="exemplo@dominio.com" name="email" id="email" value="<%= valores.email %>" class="<%= cssErro.email %>">
                     <% if(msgErro.email) { %>
-                        <small class="erro"><%= msgErro.email %></small>
+                        <output class="erro"><%= msgErro.email %></output>
                     <% } %>
                 </fieldset>
 
@@ -112,7 +112,7 @@
                     </label>
                     <input type="password" placeholder="Sua Senha" name="senhan" id="senhan" value="<%= valores.senhan %>" class="<%= cssErro.senhan %>">
                     <% if(msgErro.senhan) { %>
-                        <small class="erro"><%= msgErro.senhan %></small>
+                        <output class="erro"><%= msgErro.senhan %></output>
                     <% } %>
                 </fieldset>
 
@@ -122,24 +122,27 @@
                     </label>
                     <input type="password" placeholder="Confirme sua Senha" name="senha" id="senha" value="<%= valores.csenha %>" class="<%= cssErro.csenha %>">
                     <% if(msgErro.csenha) { %>
-                        <small class="erro"><%= msgErro.csenha %></small>
+                        <output class="erro"><%= msgErro.csenha %></output>
                     <% } %>
                 </fieldset>
 
                 <button id="btn" type="submit">Cadastro</button>
 
                 <nav class="link-group">
-                    <a href="/login" class="link">Já tem uma conta?
-                        <strong class="link2">Entre aqui</strong>
-                    </a>
+                    <p>
+                        <a href="/login" class="link">Já tem uma conta?
+                            <strong class="link2">Entre aqui</strong>
+                        </a>
+                    </p>
                 </nav>
             </form>
         </section>
     </main>
 
     <footer>
-        <a href="/home">home</a>
-
+        <nav>
+            <a href="/home">home</a>
+        </nav>
     </footer>
 </body>
 </html>
