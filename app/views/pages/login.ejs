@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/toggle-senha.css">
 </head>
 <body>
     <header>
@@ -38,8 +39,9 @@
                     <legend>
                         <h2>Senha</h2>
                     </legend>
-                    <label for="senha">
+                    <label for="senha" class="campo-senha">
                         <input type="password" placeholder="Sua senha" id="senha" name="senha" required>
+                        <button type="button" class="btn-toggle-senha" aria-label="Mostrar senha" data-target="senha"></button>
                     </label>
                 </fieldset>
 
@@ -67,5 +69,26 @@
     </main>
 
     <footer></footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.querySelector('.btn-toggle-senha');
+            
+            if (toggleButton) {
+                toggleButton.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const input = document.getElementById(targetId);
+                    
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        this.setAttribute('aria-label', 'Ocultar senha');
+                    } else {
+                        input.type = 'password';
+                        this.setAttribute('aria-label', 'Mostrar senha');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
