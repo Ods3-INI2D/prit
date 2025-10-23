@@ -7,17 +7,23 @@ var db = require('../models/database');
 var session = require('express-session');
 
 router.use(session({
-    secret: 'chave-secreta-farmacia',
+    secret: 'chave-secreta-farmacia-super-segura-2024',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false }
+    cookie: { 
+        secure: false,
+        maxAge: 24 * 60 * 60 * 1000 // 24 horas
+    }
 }));
 
 // Middleware para disponibilizar o usuário em todas as views
 router.use(function(req, res, next) {
     res.locals.usuario = null;
-    if (req.session.usuarioEmail) {
-        res.locals.usuario = db.findUsuario(req.session.usuarioEmail);
+    if (req.session && req.session.usuarioEmail) {
+        const usuario = db.findUsuario(req.session.usuarioEmail);
+        if (usuario) {
+            res.locals.usuario = usuario;
+        }
     }
     next();
 });
@@ -115,9 +121,9 @@ router.post('/login',
         
         if (usuario && req.body.senha === usuario.senhan) {
             req.session.usuarioEmail = usuario.email;
-            res.redirect('/home');
+            return res.redirect('/home');
         } else {
-            res.render('pages/login', { erro: 'E-mail ou senha inválidos!' });
+            return res.render('pages/login', { erro: 'E-mail ou senha inválidos!' });
         }
     }
 );
@@ -206,8 +212,12 @@ router.get('/categoria/:nome', function(req, res) {
 });
 
 router.get('/logout', function(req, res) {
-    req.session.destroy();
-    res.redirect('/login');
+    req.session.destroy(function(err) {
+        if (err) {
+            console.error('Erro ao destruir sessão:', err);
+        }
+        res.redirect('/login');
+    });
 });
 
 module.exports = router;

@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/estilo.css">
-    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/estilo.css">
+    <link rel="stylesheet" href="/css/menu.css">
 </head>
-
 <body>
     <header>
         <button class="hamburger"
@@ -23,13 +21,18 @@
         </button>
 
         <nav class="opcoes" id="menuhamburger">
-            <img src="imagens/plogo.png" class="plogo" alt="Logo da Farmácia">
-            <img src="imagens/userb.png" class="user" alt="Ícone do usuário">
+            <img src="/imagens/plogo.png" class="plogo" alt="Logo da Farmácia">
+            <img src="/imagens/userb.png" class="user" alt="Ícone do usuário">
 
             <section class="menu-content">
                 <section class="perfil">
-                    <h1 class="nome">Olá, <%= usuario.nome %>!</h1>
-                    <a href="usuario.ejs" class="conta">Gerenciar sua Conta</a>
+                    <% if(usuario) { %>
+                        <h1 class="nome">Olá, <%= usuario.nome %>!</h1>
+                        <a href="/usuario" class="conta">Gerenciar sua Conta</a>
+                    <% } else { %>
+                        <h1 class="nome">Olá, Visitante!</h1>
+                        <a href="/login" class="conta">Fazer Login</a>
+                    <% } %>
                 </section>
 
                 <section class="categorias">
@@ -44,69 +47,64 @@
                                 <i class="seta">›</i>
                             </a>
                             <ul class="submenu" id="submenuhp" role="menu">
-                                <li><a href="/">Geral</a></li>
-                                <li><a href="/">Cuidados com a Pele</a></li>
-                                <li><a href="/">Higiene Bucal</a></li>
-                                <li><a href="/">Cabelo</a></li>
+                                <li><a href="/categoria/Geral">Geral</a></li>
+                                <li><a href="/categoria/Cuidados com a Pele">Cuidados com a Pele</a></li>
+                                <li><a href="/categoria/Higiene Bucal">Higiene Bucal</a></li>
+                                <li><a href="/categoria/Cabelo">Cabelo</a></li>
                             </ul>
                         </li>
-                        <li class="menu-item"><a href="/">Vitaminas e Suplementos</a></li>
-                        <li class="menu-item"><a href="/">Bebê</a></li>
-                        <li class="menu-item"><a href="/">Terceira Idade</a></li>
-                        <li class="menu-item"><a href="/">Descontos</a></li>
-                        <li class="menu-item"><a href="/">Mais Buscados</a></li>
-                        <li class="menu-item"><a href="/">Todas as Categorias</a></li>
+                        <li class="menu-item"><a href="/categoria/Vitaminas e Suplementos">Vitaminas e Suplementos</a></li>
+                        <li class="menu-item"><a href="/categoria/Bebê">Bebê</a></li>
+                        <li class="menu-item"><a href="/categoria/Terceira Idade">Terceira Idade</a></li>
+                        <li class="menu-item"><a href="/home">Descontos</a></li>
+                        <li class="menu-item"><a href="/home">Mais Buscados</a></li>
+                        <li class="menu-item"><a href="/home">Todas as Categorias</a></li>
                     </ul>
                 </section>
 
                 <footer>
                     <nav>
                         <ul class="outro" role="menu">
-                            <li class="menu-item"><a href="/">Parceiros</a></li>
-                            <li class="menu-item"><a href="/">Central de Atendimento</a></li>
+                            <li class="menu-item"><a href="/home">Parceiros</a></li>
+                            <li class="menu-item"><a href="/home">Central de Atendimento</a></li>
                         </ul>
                     </nav>
                 </footer>
             </section>
         </nav>
     </header>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        
-        const menuToggle = document.querySelector('.hamburger');
-        const navMenu = document.getElementById('menuhamburger');
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuToggle = document.querySelector('.hamburger');
+            const navMenu = document.getElementById('menuhamburger');
 
-        menuToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
-            menuToggle.setAttribute('aria-expanded', !isExpanded);
-            navMenu.classList.toggle('is-open');
+            if (menuToggle && navMenu) {
+                menuToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+                    menuToggle.setAttribute('aria-expanded', !isExpanded);
+                    navMenu.classList.toggle('is-open');
+                    
+                    const newLabel = isExpanded ? 'abrir menu hamburger' : 'fechar menu hamburger';
+                    menuToggle.setAttribute('aria-label', newLabel);
+                });
+            }
 
-            
-            const newLabel = isExpanded ? 'abrir menu hamburger' : 'fechar menu hamburger';
-            menuToggle.setAttribute('aria-label', newLabel);
+            const submenuToggleLink = document.querySelector('.linkhp');
+            const submenu = document.getElementById('submenuhp');
+
+            if (submenuToggleLink && submenu) {
+                submenuToggleLink.addEventListener('click', (e) => {
+                    e.preventDefault(); 
+                    e.stopPropagation(); 
+                    
+                    const isExpanded = submenuToggleLink.getAttribute('aria-expanded') === 'true';
+                    submenuToggleLink.setAttribute('aria-expanded', !isExpanded);
+                    submenu.classList.toggle('is-visible');
+                });
+            }
         });
-
-        
-        const submenuToggleLink = document.querySelector('.linkhp');
-        const submenu = document.getElementById('submenuhp');
-
-        if (submenuToggleLink && submenu) {
-            submenuToggleLink.addEventListener('click', (e) => {
-                e.preventDefault(); 
-                e.stopPropagation(); 
-                
-                const isExpanded = submenuToggleLink.getAttribute('aria-expanded') === 'true';
-                
-                
-                submenuToggleLink.setAttribute('aria-expanded', !isExpanded);
-
-                
-                submenu.classList.toggle('is-visible');
-            });
-        }
-    });
-</script>
+    </script>
 </body>
-
 </html>
