@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="/css/login.css">
-    <script src="/js/validacao.js" defer></script>
 </head>
 <body>
     <header>
@@ -14,8 +13,8 @@
     </header>
 
     <main>
-        <section class="login-module">
-            <header class="title-group">
+        <section>
+            <header>
                 <h1 class="tit">Login</h1>
             </header>
 
@@ -25,21 +24,23 @@
                 </article>
             <% } %>
 
-            <form id="loginForm" method="POST" action="/login">
+            <form method="POST" action="/login" novalidate>
                 <fieldset>
-                    <label for="email">
+                    <legend>
                         <h2>E-mail ou nome de usuário</h2>
+                    </legend>
+                    <label for="email">
+                        <input type="email" placeholder="exemplo@dominio.com" id="email" name="email" required>
                     </label>
-                    <input type="text" placeholder="exemplo@dominio.com" id="email" name="email" required>
-                    <output id="email-erro" class="erro" style="display: none;"></output>
                 </fieldset>
 
                 <fieldset>
-                    <label for="senha">
+                    <legend>
                         <h2>Senha</h2>
+                    </legend>
+                    <label for="senha">
+                        <input type="password" placeholder="Sua senha" id="senha" name="senha" required>
                     </label>
-                    <input type="password" placeholder="Sua senha" id="senha" name="senha" required>
-                    <output id="senha-erro" class="erro" style="display: none;"></output>
                 </fieldset>
 
                 <button type="submit" id="btn-login">Login</button>
@@ -53,13 +54,15 @@
             <strong>Entrar com o Google</strong>
         </button>
 
-        <article class="signup-prompt">
-            <p>
-                <a href="/" class="link">
-                    Não tem uma conta?
-                    <strong class="link2">Cadastre-se aqui</strong>
-                </a>
-            </p>
+        <article>
+            <nav>
+                <p>
+                    <a href="/" class="link">
+                        Não tem uma conta?
+                        <strong class="link2">Cadastre-se aqui</strong>
+                    </a>
+                </p>
+            </nav>
         </article>
     </main>
 

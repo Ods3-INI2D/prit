@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/estilo.css">
     <link rel="stylesheet" href="/css/cad.css">
-    <script src="/js/validacao.js" defer></script>
 </head>
 <body>
     <%
@@ -55,80 +54,94 @@
         <section class="txt">
             <h1 class="tit">Cadastro</h1>
 
-            <form class="formulario" method="POST" action="/cadastro">
+            <form method="POST" action="/cadastro" novalidate>
                 <fieldset>
-                    <label for="nome">
+                    <legend>
                         <h2>Nome</h2>
+                    </legend>
+                    <label for="nome">
+                        <input type="text" placeholder="Seu nome" name="nome" id="nome" value="<%= valores.nome %>" class="<%= cssErro.nome %>" required>
                     </label>
-                    <input type="text" placeholder="Seu nome" name="nome" id="nome" value="<%= valores.nome %>" class="<%= cssErro.nome %>">
                     <% if(msgErro.nome) { %>
-                        <output class="erro"><%= msgErro.nome %></output>
+                        <output class="erro" aria-live="polite"><%= msgErro.nome %></output>
                     <% } %>
                 </fieldset>
 
                 <fieldset>
-                    <label for="nasc">
+                    <legend>
                         <h2>Data de Nascimento</h2>
+                    </legend>
+                    <label for="nasc">
+                        <input type="date" name="nasc" id="nasc" value="<%= valores.nasc %>" class="<%= cssErro.nasc %>" required>
                     </label>
-                    <input type="date" name="nasc" id="nasc" value="<%= valores.nasc %>" class="<%= cssErro.nasc %>">
                     <% if(msgErro.nasc) { %>
-                        <output class="erro"><%= msgErro.nasc %></output>
+                        <output class="erro" aria-live="polite"><%= msgErro.nasc %></output>
                     <% } %>
                 </fieldset>
 
                 <fieldset>
-                    <label for="cpf">
+                    <legend>
                         <h2>CPF</h2>
+                    </legend>
+                    <label for="cpf">
+                        <input type="text" placeholder="Seu CPF" name="cpf" id="cpf" value="<%= valores.cpf %>" class="<%= cssErro.cpf %>" maxlength="11" required>
                     </label>
-                    <input type="number" placeholder="Seu CPF" name="cpf" id="cpf" value="<%= valores.cpf %>" class="<%= cssErro.cpf %>">
                     <% if(msgErro.cpf) { %>
-                        <output class="erro"><%= msgErro.cpf %></output>
+                        <output class="erro" aria-live="polite"><%= msgErro.cpf %></output>
                     <% } %>
                 </fieldset>
 
                 <fieldset>
-                    <label for="tel">
+                    <legend>
                         <h2>Telefone</h2>
+                    </legend>
+                    <label for="tel">
+                        <input type="tel" placeholder="Seu Telefone" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>" maxlength="9" required>
                     </label>
-                    <input type="number" placeholder="Seu Telefone" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>">
                     <% if(msgErro.tel) { %>
-                        <output class="erro"><%= msgErro.tel %></output>
+                        <output class="erro" aria-live="polite"><%= msgErro.tel %></output>
                     <% } %>
                 </fieldset>
 
                 <fieldset>
-                    <label for="email">
+                    <legend>
                         <h2>E-mail</h2>
+                    </legend>
+                    <label for="email">
+                        <input type="email" placeholder="exemplo@dominio.com" name="email" id="email" value="<%= valores.email %>" class="<%= cssErro.email %>" required>
                     </label>
-                    <input type="text" placeholder="exemplo@dominio.com" name="email" id="email" value="<%= valores.email %>" class="<%= cssErro.email %>">
                     <% if(msgErro.email) { %>
-                        <output class="erro"><%= msgErro.email %></output>
+                        <output class="erro" aria-live="polite"><%= msgErro.email %></output>
                     <% } %>
                 </fieldset>
 
                 <fieldset>
-                    <label for="senhan">
+                    <legend>
                         <h2>Senha</h2>
+                    </legend>
+                    <label for="senhan">
+                        <input type="password" placeholder="Sua Senha" name="senhan" id="senhan" value="<%= valores.senhan %>" class="<%= cssErro.senhan %>" required>
                     </label>
-                    <input type="password" placeholder="Sua Senha" name="senhan" id="senhan" value="<%= valores.senhan %>" class="<%= cssErro.senhan %>">
                     <% if(msgErro.senhan) { %>
-                        <output class="erro"><%= msgErro.senhan %></output>
+                        <output class="erro" aria-live="polite"><%= msgErro.senhan %></output>
                     <% } %>
                 </fieldset>
 
                 <fieldset>
-                    <label for="senha">
+                    <legend>
                         <h2>Confirmar Senha</h2>
+                    </legend>
+                    <label for="senha">
+                        <input type="password" placeholder="Confirme sua Senha" name="csenha" id="senha" value="<%= valores.csenha %>" class="<%= cssErro.csenha %>" required>
                     </label>
-                    <input type="password" placeholder="Confirme sua Senha" name="senha" id="senha" value="<%= valores.csenha %>" class="<%= cssErro.csenha %>">
                     <% if(msgErro.csenha) { %>
-                        <output class="erro"><%= msgErro.csenha %></output>
+                        <output class="erro" aria-live="polite"><%= msgErro.csenha %></output>
                     <% } %>
                 </fieldset>
 
                 <button id="btn" type="submit">Cadastro</button>
 
-                <nav class="link-group">
+                <nav>
                     <p>
                         <a href="/login" class="link">Já tem uma conta?
                             <strong class="link2">Entre aqui</strong>

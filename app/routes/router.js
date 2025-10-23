@@ -61,10 +61,10 @@ router.post("/cadastro",
             return true;
         }),
     body("senhan")
-    .isLength({ min: 6, max: 20 })
-    .withMessage('A senha deve conter de 6 a 20 caracteres!')
-    .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
-    .withMessage('A senha deve conter pelo menos um número, uma letra maiúscula e um caractere especial!')),
+        .isLength({ min: 6, max: 20 })
+        .withMessage('A senha deve conter de 6 a 20 caracteres!')
+        .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
+        .withMessage('A senha deve conter pelo menos um número, uma letra maiúscula e um caractere especial!'),
     body("csenha")
         .custom((value, { req }) => {
             if (value !== req.body.senhan) {
@@ -84,7 +84,8 @@ router.post("/cadastro",
         
         db.addUsuario(req.body);
         res.redirect('/login');
-    };
+    }
+);
 
 router.get('/login', function(req, res) {
     res.render('pages/login', { erro: null });
