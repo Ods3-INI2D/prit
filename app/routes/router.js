@@ -1,7 +1,7 @@
 var express = require('express');
 const { body, validationResult } = require('express-validator');
 var router = express.Router();
-var { valCPF, valTel, valNasc } = require('../helpers/validacao');
+var { valCPF, valTel, valNasc } = require('../helpers/validacoes');
 
 var produtos = [];
 var avaliacoes = [];

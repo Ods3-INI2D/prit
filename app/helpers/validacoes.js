@@ -1,6 +1,4 @@
-// Funções de Validação Corrigidas (JavaScript Puro)
-
-// --- Funções Auxiliares (Limpeza e Cálculo) ---
+// Funções de Validação para Node.js (Lado do Servidor)
 
 /**
  * Remove caracteres de formatação (ponto, hífen) do CPF/Telefone.
@@ -29,15 +27,17 @@ function calculateVerifierDigit(cpfBase) {
     return rest < 2 ? 0 : 11 - rest;
 }
 
-// --- Funções de Validação Principais ---
-
-// **1. VALIDAÇÃO DE CPF (Com algoritmo completo)**
+/**
+ * Validação de CPF com algoritmo completo
+ * @param {string} cpf - CPF a ser validado
+ * @returns {boolean} - true se válido, false se inválido
+ */
 function valCPF(cpf) {
     const cleanedCpf = cleanDigits(cpf);
 
     if (cleanedCpf.length !== 11) return false;
     
-    // Verifica CPFs com dígitos repetidos (que o algoritmo de cálculo não pega)
+    // Verifica CPFs com dígitos repetidos
     if (/^(\d)\1{10}$/.test(cleanedCpf)) return false;
 
     // 1º Dígito Verificador
@@ -55,11 +55,14 @@ function valCPF(cpf) {
     return true;
 }
 
-// **2. VALIDAÇÃO DE DATA DE NASCIMENTO (Máximo 110 anos e não futura)**
+/**
+ * Validação de Data de Nascimento (máximo 110 anos e não futura)
+ * @param {string} dataNascimentoStr - Data no formato ISO 8601 (AAAA-MM-DD)
+ * @returns {boolean} - true se válido, false se inválido
+ */
 function valNasc(dataNascimentoStr) {
     if (!dataNascimentoStr) return false;
 
-    // Tenta criar a data. O formato ISO 8601 (AAAA-MM-DD) é mais confiável.
     const dataNascimento = new Date(dataNascimentoStr);
     
     // Verifica se a data é inválida
@@ -71,15 +74,12 @@ function valNasc(dataNascimentoStr) {
     const dataLimite = new Date();
     dataLimite.setFullYear(hoje.getFullYear() - 110);
     
-    // Zera horas, minutos, segundos e milissegundos para comparação APENAS de dia.
-    // Isso evita problemas com fusos horários e validação.
+    // Zera horas para comparação apenas de data
     dataNascimento.setHours(0, 0, 0, 0);
     hoje.setHours(0, 0, 0, 0);
     dataLimite.setHours(0, 0, 0, 0);
 
-    // Condições:
-    // 1. Não pode ser no futuro (dataNascimento > hoje)
-    // 2. Não pode ser anterior ao limite de 110 anos (dataNascimento < dataLimite)
+    // Não pode ser no futuro nem anterior a 110 anos
     if (dataNascimento > hoje || dataNascimento < dataLimite) {
         return false;
     }
@@ -87,18 +87,21 @@ function valNasc(dataNascimentoStr) {
     return true;
 }
 
-
-// **3. VALIDAÇÃO DE TELEFONE (10 ou 11 dígitos, ignorando formatação)**
+/**
+ * Validação de Telefone (9 dígitos)
+ * @param {string} tel - Telefone a ser validado
+ * @returns {boolean} - true se válido, false se inválido
+ */
 function valTel(tel) {
     const cleanedTel = cleanDigits(tel);
     const length = cleanedTel.length;
 
-    // Verifica se tem 10 (fixo) ou 11 (celular) dígitos
-    if (length !== 10 && length !== 11) {
+    // Verifica se tem 9 dígitos (celular)
+    if (length !== 9) {
         return false;
     }
     
-    // Verifica se tem todos os dígitos repetidos (ex: "0000000000" ou "11111111111")
+    // Verifica se tem todos os dígitos repetidos
     if (new RegExp(`^(\\d)\\1{${length - 1}}$`).test(cleanedTel)) {
         return false;
     }
@@ -106,41 +109,45 @@ function valTel(tel) {
     return true;
 }
 
-// **4. VALIDAÇÃO DE SENHA (Regras customizadas em JS puro)**
-// OBS: A função foi refeita para não depender de express-validator.
+/**
+ * Validação de Senha (6 a 20 caracteres, com maiúscula, número e caractere especial)
+ * @param {string} senhan - Senha a ser validada
+ * @returns {boolean} - true se válido, false se inválido
+ */
 function valSenha(senhan) {
     if (typeof senhan !== 'string' || senhan === '') return false;
 
-    // 1. Tamanho: 6 a 20 caracteres
+    // Tamanho: 6 a 20 caracteres
     if (senhan.length < 6 || senhan.length > 20) {
-        // Em um sistema real, você retornaria a mensagem de erro ou um código
-        // console.error('A senha deve conter de 6 a 20 caracteres!'); 
         return false;
     }
 
-    // 2. Complexidade: Pelo menos um número, uma letra maiúscula e um caractere especial.
-    // ^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).*$ 
-    // Corrigido para incluir o caractere de início (^) e fim ($) e remover o ponto (.) solto
+    // Complexidade: Pelo menos um número, uma letra maiúscula e um caractere especial
     const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,20}$/; 
     
     if (!regex.test(senhan)) {
-        // console.error('A senha deve conter pelo menos um número, uma letra maiúscula e um caractere especial!');
         return false;
     }
 
     return true;
 }
 
-// **5. CONFIRMAÇÃO DE SENHA (Agora recebe a senha original como argumento)**
+/**
+ * Confirmação de Senha
+ * @param {string} csenha - Senha de confirmação
+ * @param {string} senhan - Senha original
+ * @returns {boolean} - true se as senhas são iguais, false se diferentes
+ */
 function valCsenha(csenha, senhan) {
-    // Verifica se ambas são strings válidas e se são iguais
     if (typeof csenha !== 'string' || typeof senhan !== 'string') return false;
-
     return csenha === senhan;
 }
 
-// **EXPORTAÇÃO ATUALIZADA**
-// Adicionei um placeholder para as funções ISO8601 que estavam incompletas.
+// Exportação das funções para uso no Node.js
 module.exports = { 
-    valCPF, valTel, valSenha,valCsenha, valNasc
+    valCPF, 
+    valTel, 
+    valSenha, 
+    valCsenha, 
+    valNasc
 };
