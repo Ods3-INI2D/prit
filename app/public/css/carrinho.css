@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+body {
+    background-color: #1f1f1f;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    width: 100vw;
+    min-height: 100vh;
+    margin: 0;
+}
+
+main {
+    min-height: 60vh;
+    padding: 2.34vh 0;
+}
+
+.carrinho-container {
+    width: 90.84vw;
+    margin: 0 auto;
+}
+
+.titulo-carrinho {
+    font-size: 6.62vw;
+    font-weight: 700;
+    margin-bottom: 2.34vh;
+    color: white;
+    text-align: center;
+}
+
+.carrinho-vazio {
+    text-align: center;
+    padding: 5.87vh 0;
+}
+
+.mensagem-vazio {
+    font-size: 5.09vw;
+    color: #888;
+    margin-bottom: 3.52vh;
+}
+
+.btn-continuar {
+    display: inline-block;
+    padding: 1.76vh 7.63vw;
+    background-color: #163069;
+    color: white;
+    text-decoration: none;
+    border-radius: 2.54vw;
+    font-size: 4.58vw;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-continuar:hover {
+    background-color: #0d1f42;
+}
+
+.lista-carrinho {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2.34vh 0;
+}
+
+.item-carrinho {
+    background-color: #2a2a2a;
+    border-radius: 2.54vw;
+    padding: 2.34vh 4.58vw;
+    margin-bottom: 2.34vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.76vh;
+}
+
+.imagem-produto {
+    width: 100%;
+    height: 23.47vh;
+    object-fit: cover;
+    border-radius: 1.27vw;
+}
+
+.info-produto {
+    flex: 1;
+}
+
+.nome-produto {
+    font-size: 5.09vw;
+    font-weight: 600;
+    margin-bottom: 0.94vh;
+    color: white;
+}
+
+.categoria-produto {
+    font-size: 3.82vw;
+    color: #888;
+    margin-bottom: 1.17vh;
+}
+
+.preco-produto {
+    font-size: 4.58vw;
+    font-weight: 600;
+    color: #4da6ff;
+}
+
+.preco-original {
+    font-size: 3.82vw;
+    color: #888;
+    text-decoration: line-through;
+    margin-bottom: 0.59vh;
+}
+
+.preco-desconto {
+    font-size: 4.58vw;
+    font-weight: 600;
+    color: #4da6ff;
+}
+
+.avaliar-container {
+    margin-top: 1.17vh;
+}
+
+.btn-avaliar {
+    display: inline-block;
+    padding: 1.17vh 5.09vw;
+    background-color: #163069;
+    color: white;
+    text-decoration: none;
+    border-radius: 1.27vw;
+    font-size: 3.82vw;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn-avaliar:hover {
+    background-color: #0d1f42;
+}
+
+.resumo-carrinho {
+    background-color: #2a2a2a;
+    border-radius: 2.54vw;
+    padding: 2.34vh 4.58vw;
+    margin-top: 2.34vh;
+}
+
+.total-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.34vh;
+}
+
+.label-total {
+    font-size: 5.09vw;
+    font-weight: 600;
+    color: white;
+}
+
+.valor-total {
+    font-size: 6.62vw;
+    font-weight: 700;
+    color: #4da6ff;
+}
+
+.btn-finalizar {
+    width: 100%;
+    padding: 1.76vh 0;
+    background-color: #163069;
+    color: white;
+    border: none;
+    border-radius: 2.54vw;
+    font-size: 4.58vw;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-finalizar:hover {
+    background-color: #0d1f42;
+}

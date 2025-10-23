@@ -200,12 +200,25 @@ main>p.ou {
 .link:hover {
     color: #8ac0ff;
 }
-
 .link2 {
     font-size: 1rem;
     font-weight: bold;
     display: block;
 }
+.erro-login {
+    background-color: rgba(255, 85, 85, 0.1);
+    border: 0.51vw solid #ff5555;
+    border-radius: 2.04vw;
+    padding: 1.76vh 4.58vw;
+    margin-bottom: 2.34vh;
+}
+
+.mensagem-erro {
+    color: #ff5555;
+    font-size: 4.07vw;
+    text-align: center;
+}
+footer {}
 
 /* --- FOOTER (Padrão Mobile) --- */
 footer {
@@ -270,10 +283,6 @@ footer {
     #google {
         padding: 14px;
         font-size: 1.05rem;
-    }
-
-    .link2 {
-        font-size: 1.1rem; 
     }
 
     /* --- FOOTER (Ajuste para Desktop) --- */

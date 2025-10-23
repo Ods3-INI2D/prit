@@ -1,92 +1,156 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produto</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/estilo.css">
-    <link rel="stylesheet" href="css/produto.css">
+    <title><%= produto.nome %></title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/produto.css">
+    <script src="/js/validacao.js" defer></script>
 </head>
-
 <body>
     <header>
         <%- include('../partial/grid.ejs') %>
     </header>
+
     <main>
-        <a href="/" class="voltar">
-            <img src="imagens/setae.png" alt="seta voltar" class="seta">
-            Voltar</a>
+        <nav class="navegacao">
+            <a href="/home" class="voltar">
+                <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
+                Voltar
+            </a>
+        </nav>
 
-            <img src="imagens/foto.jpg" class="produto" alt="produto">
-        
-        <h1 class="nome">Produto</h1>
-
-        <h1 class="categoria">Categoria</h1>
-
-        <h1 class="preco">R$ 00,00</h1>
-
-        <input id="botao" type="submit" value="Comprar">
-
-        <h1 class="calc">Calculo de Frete e Prazo</h1>
-
-        <h1 class="cep">Insira seu CEP para calcular o frete e o prazo para entrega do produto</h1>
-
-        <form></form>
-            <input type="text" name="cep" id="cep" placeholder="Digite seu CEP">
-            <input type="submit" value="Calcular">
-        </form>
-
-        <hr class="linha">
-
-        <h1 class="desc">Descrição do Produto</h1>
-
-        <h1 class="nomedesc">Produto</h1>
-
-        <h1 class="textodesc">texto</h1>
-
-        <hr class="linha">
-
-        <h1 class="titava">Avaliações</h1>
-
-        <h1 class="no">Nota Média</h1>
-
-        <section class="estrelas">
-
-            <img src="imagens/estr.png" class="estrela" alt="estrela">
-            <p class="espaco">
-            <img src="imagens/estr.png" class="estrela" alt="estrela">
-            </p>
-            <p class="espaco1">
-            <img src="imagens/estr.png" class="estrela" alt="estrela"> 
-            </p>
-            <p class="espaco2">
-            <img src="imagens/estr.png" class="estrela" alt="estrela"> 
-            </p>
-            <p class="espaco3">
-            <img src="imagens/estr.png" class="estrela" alt="estrela">
-            </p>
-
-        </section>
-
-        <a href="/" class="vermais">Ver todas as avaliações</a>
-
-        <section class="avaliacoes">
-
+        <section class="produto-detalhes">
+            <img src="<%= produto.imagem %>" class="imagem-produto" alt="<%= produto.nome %>">
             
+            <h1 class="nome-produto"><%= produto.nome %></h1>
+            
+            <p class="categoria-produto"><%= produto.categoria %></p>
+            
+            <% if(produto.precoDesconto) { %>
+                <article class="preco-container com-desconto">
+                    <p class="preco-original">R$ <%= produto.preco.toFixed(2) %></p>
+                    <p class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                    <p class="percentual-desconto">
+                        -<%= Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100) %>%
+                    </p>
+                </article>
+            <% } else { %>
+                <p class="preco-produto">R$ <%= produto.preco.toFixed(2) %></p>
+            <% } %>
+
+            <form method="POST" action="/produto/<%= produto.id %>/adicionar-carrinho">
+                <button type="submit" class="btn-comprar">Comprar</button>
+            </form>
         </section>
 
-        <h1 class="prod">Outros Produtos</h1>
+        <section class="frete-container">
+            <h2 class="titulo-frete">Cálculo de Frete e Prazo</h2>
+            
+            <p class="descricao-frete">Insira seu CEP para calcular o frete e o prazo para entrega do produto</p>
+            
+            <form class="form-frete">
+                <input type="text" name="cep" id="cep" placeholder="Digite seu CEP" maxlength="8">
+                <button type="submit" class="btn-calcular">Calcular</button>
+            </form>
+        </section>
 
-        <hr class="linha">
+        <hr class="divisor">
 
-        <section class="outrosprod">
-            <%- include('../partial/bloco.ejs') %>
-            <%- include('../partial/blocod.ejs') %>
-            <%- include('../partial/bloco.ejs') %>
-            <%- include('../partial/blocod.ejs') %>
+        <section class="descricao-container">
+            <h2 class="titulo-descricao">Descrição do Produto</h2>
+            <h3 class="nome-descricao"><%= produto.nome %></h3>
+            <p class="texto-descricao"><%= produto.descricao %></p>
+        </section>
+
+        <hr class="divisor">
+
+        <section class="avaliacoes-container" id="avaliar">
+            <h2 class="titulo-avaliacoes">Avaliações</h2>
+            
+            <% if(produto.avaliacoes && produto.avaliacoes.length > 0) { %>
+                <article class="nota-media">
+                    <h3 class="label-nota">Nota Média</h3>
+                    <% 
+                    const somaNotas = produto.avaliacoes.reduce((sum, av) => sum + av.nota, 0);
+                    const media = (somaNotas / produto.avaliacoes.length).toFixed(1);
+                    const notaArredondada = Math.round(media);
+                    %>
+                    <section class="estrelas-media">
+                        <% for(let i = 1; i <= 5; i++) { %>
+                            <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.png" 
+                                 class="estrela" 
+                                 alt="Estrela <%= i <= notaArredondada ? 'preenchida' : 'vazia' %>">
+                        <% } %>
+                    </section>
+                    <p class="valor-media"><%= media %></p>
+                </article>
+
+                <a href="#form-avaliacao" class="ver-mais">Ver todas as avaliações</a>
+
+                <ul class="lista-avaliacoes">
+                    <% produto.avaliacoes.forEach(function(avaliacao) { %>
+                        <li class="item-avaliacao">
+                            <section class="estrelas-avaliacao">
+                                <% for(let i = 1; i <= 5; i++) { %>
+                                    <img src="/imagens/estr<%= i <= avaliacao.nota ? '' : 'v' %>.png" 
+                                         class="estrela-pequena" 
+                                         alt="Estrela">
+                                <% } %>
+                            </section>
+                            <p class="texto-avaliacao"><%= avaliacao.texto %></p>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p class="sem-avaliacoes">Ainda não há avaliações para este produto.</p>
+            <% } %>
+
+            <article class="form-avaliacao-container" id="form-avaliacao">
+                <h3 class="titulo-form-avaliacao">Deixe sua avaliação</h3>
+                
+                <form method="POST" action="/produto/<%= produto.id %>/avaliar" class="form-avaliacao">
+                    <label for="nota">
+                        <h4 class="label-avaliacao">Nota (0 a 5 estrelas)</h4>
+                    </label>
+                    <select name="nota" id="nota" required>
+                        <option value="">Selecione</option>
+                        <option value="0">0 estrelas</option>
+                        <option value="1">1 estrela</option>
+                        <option value="2">2 estrelas</option>
+                        <option value="3">3 estrelas</option>
+                        <option value="4">4 estrelas</option>
+                        <option value="5">5 estrelas</option>
+                    </select>
+
+                    <label for="texto">
+                        <h4 class="label-avaliacao">Seu comentário</h4>
+                    </label>
+                    <textarea name="texto" id="texto" placeholder="Escreva sua avaliação" rows="4" required></textarea>
+
+                    <button type="submit" class="btn-enviar-avaliacao">Enviar Avaliação</button>
+                </form>
+            </article>
+        </section>
+
+        <h2 class="titulo-outros">Outros Produtos</h2>
+
+        <hr class="divisor">
+
+        <section class="outros-produtos">
+            <% produtos.slice(0, 4).forEach(function(outroProduto) { 
+                if(outroProduto.id !== produto.id) { %>
+                    <article class="bloco-produto">
+                        <a href="/produto/<%= outroProduto.id %>" class="link-produto">
+                            <img src="<%= outroProduto.imagem %>" class="img-produto-bloco" alt="<%= outroProduto.nome %>">
+                            <h3 class="nome-produto-bloco"><%= outroProduto.nome %></h3>
+                            <p class="preco-produto-bloco">R$ <%= (outroProduto.precoDesconto || outroProduto.preco).toFixed(2) %></p>
+                        </a>
+                    </article>
+            <% }
+            }); %>
         </section>
     </main>
 
@@ -94,5 +158,4 @@
         <%- include('../partial/footer.ejs') %>
     </footer>
 </body>
-
 </html>
