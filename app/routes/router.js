@@ -1,7 +1,7 @@
 var express = require('express');
 const { body, validationResult } = require('express-validator');
 var router = express.Router();
-var { valCPF, valTel, valNasc } = require('../helpers/validacoes');
+var { valCPF, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
 var db = require('../models/database');
 
 var session = require('express-session');
@@ -52,16 +52,19 @@ router.post("/cadastro",
             }
         }),
     body("email")
-        .isEmail().withMessage('O e-mail deve ser válido!'),
-    body("senhan")
-        .isLength({ min: 6, max: 20 }).withMessage('A senha deve conter de 6 a 20 caracteres!')
+        .isEmail().withMessage('O e-mail deve ser válido!')
         .custom((value) => {
-            const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,20}$/;
-            if (!regex.test(value)) {
-                throw new Error('A senha deve conter pelo menos um número, uma letra maiúscula e um caractere especial!');
+            const usuario = db.findUsuario(value);
+            if (usuario) {
+                throw new Error('E-mail já cadastrado!');
             }
             return true;
         }),
+    body("senhan")
+    .isLength({ min: 6, max: 20 })
+    .withMessage('A senha deve conter de 6 a 20 caracteres!')
+    .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
+    .withMessage('A senha deve conter pelo menos um número, uma letra maiúscula e um caractere especial!')),
     body("csenha")
         .custom((value, { req }) => {
             if (value !== req.body.senhan) {
@@ -81,23 +84,33 @@ router.post("/cadastro",
         
         db.addUsuario(req.body);
         res.redirect('/login');
-    }
-);
+    };
 
 router.get('/login', function(req, res) {
     res.render('pages/login', { erro: null });
 });
 
-router.post('/login', function(req, res) {
-    const usuario = db.findUsuario(req.body.email);
-    
-    if (usuario && req.body.senha === usuario.senhan) {
-        req.session.usuarioEmail = usuario.email;
-        res.redirect('/home');
-    } else {
-        res.render('pages/login', { erro: 'E-mail ou senha inválidos!' });
+router.post('/login', 
+    body("email")
+        .isEmail().withMessage('O e-mail deve ser válido!'),
+    body("senha")
+        .notEmpty().withMessage('A senha é obrigatória!'),
+    (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.render('pages/login', { erro: 'E-mail ou senha inválidos!' });
+        }
+
+        const usuario = db.findUsuario(req.body.email);
+        
+        if (usuario && req.body.senha === usuario.senhan) {
+            req.session.usuarioEmail = usuario.email;
+            res.redirect('/home');
+        } else {
+            res.render('pages/login', { erro: 'E-mail ou senha inválidos!' });
+        }
     }
-});
+);
 
 router.get('/home', function(req, res) {
     const produtos = db.getProdutos();
