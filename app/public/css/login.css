@@ -27,7 +27,7 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(92, 123, 225);
+    background-color: #001863;
     height: 18vh;
     width: 100%;
     border-bottom-left-radius: 8px;
