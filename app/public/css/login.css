@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-/* --- Estilos Globais e Reset (Mobile First - Padrão para Telas Pequenas) --- */
+/* =========================
+   ESTILOS GLOBAIS E RESET
+========================= */
 * {
     margin: 0;
     padding: 0;
@@ -9,35 +11,38 @@
 }
 
 body {
-    background-color: #1f1f1f; 
+    background-color: #1f1f1f;
     color: white;
     font-family: 'Inter', sans-serif;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     width: 100%;
-    margin: 0;
 }
 
-/* --- HEADER (Padrão Mobile) --- */
+/* =========================
+   HEADER
+========================= */
 header {
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    background-color: rgb(92, 123, 225); 
-    height: 18vh; 
-    width: 100%; 
-    border-bottom-left-radius: 8px; 
-    border-bottom-right-radius: 8px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(92, 123, 225);
+    height: 18vh;
+    width: 100%;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 img.icon {
-    width: 40%; 
+    width: 40%;
     max-width: 200px;
     height: auto;
 }
 
-/* --- MAIN CONTENT & LAYOUT (Padrão Mobile) --- */
+/* =========================
+   MAIN & LOGIN MODULE
+========================= */
 main {
     flex: 1;
     display: flex;
@@ -45,31 +50,21 @@ main {
     align-items: center;
     padding: 2rem 1rem;
 }
-section.txt {
-    width: 100%;
-    max-width: 400px; /* Limite de largura para o módulo de login em qualquer tela */
-    text-align: left;
-    background-color: transparent; /* GARANTE QUE NÃO HÁ FUNDO AZUL AQUI */
-    padding: 0; /* REMOVE O PADDING DA SEÇÃO PARA NÃO CRIAR ESPAÇAMENTO INVISÍVEL */
-    box-shadow: none; /* REMOVE QUALQUER SOMBRA INDESEJADA AQUI */
-    border-radius: 0; /* REMOVE QUALQUER ARREDONDAMENTO INDESEJADO AQUI */
-}
-/* * ALTERAÇÃO AQUI:*/
+
 section.login-module {
     width: 100%;
-    max-width: 400px; /* Limite de largura para o módulo de login em qualquer tela */
+    max-width: 400px;
     text-align: left;
-    background-color: transparent; /* GARANTE QUE NÃO HÁ FUNDO AZUL AQUI */
-    padding: 0; /* REMOVE O PADDING DA SEÇÃO PARA NÃO CRIAR ESPAÇAMENTO INVISÍVEL */
-    box-shadow: none; /* REMOVE QUALQUER SOMBRA INDESEJADA AQUI */
-    border-radius: 0; /* REMOVE QUALQUER ARREDONDAMENTO INDESEJADO AQUI */
+    background-color: transparent;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
 }
 
 .title-group {
     text-align: center;
-    margin-bottom: 1.5rem; /* Mantém o espaçamento abaixo do título */
-    /* Se a caixa azul for persistir, você pode adicionar: */
-    background-color: transparent; 
+    margin-bottom: 1.5rem;
+    background-color: transparent;
     padding: 0;
     border-radius: 0;
     box-shadow: none;
@@ -77,7 +72,7 @@ section.login-module {
 
 h1.tit {
     font-size: 2rem;
-    color: white; 
+    color: white;
 }
 
 h2 {
@@ -87,20 +82,22 @@ h2 {
     color: white;
 }
 
+/* =========================
+   FORMULÁRIO
+========================= */
 form {
     max-width: 100%;
     margin: 20px auto;
     padding: 25px;
-    background-color: #2a2a2a; 
+    background-color: #2a2a2a;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 10px rgba(77, 166, 255, 0.2);
 }
 
-/* --- INPUT FIELDS --- */
-input[type="text"]
- {
+input[type="text"],
+input[type="password"] {
     width: 100%;
-    padding: 12px 15px; 
+    padding: 12px 15px;
     border-radius: 8px;
     border: 2px solid #555;
     background-color: #383838;
@@ -110,15 +107,18 @@ input[type="text"]
     transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus,
+input[type="password"]:focus {
     border-color: #4da6ff;
     outline: none;
     box-shadow: 0 0 6px rgba(77, 166, 255, 0.8);
 }
 
-/* --- BUTTONS --- */
+/* =========================
+   BOTÃO LOGIN
+========================= */
 #btn-login {
-    background-color: #007bff; 
+    background-color: #007bff;
     color: #fff;
     border: none;
     padding: 12px;
@@ -137,10 +137,12 @@ input[type="text"]:focus {
     transform: translateY(-2px);
 }
 
+/* =========================
+   BOTÃO GOOGLE
+========================= */
 #google {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 10px;
     background-color: #fff;
     border: 2px solid #ddd;
@@ -150,10 +152,22 @@ input[type="text"]:focus {
     font-family: 'Belanosima', sans-serif;
     width: 100%;
     max-width: 400px;
-    margin: 0 auto;
+    margin: 1rem auto;
     cursor: pointer;
     transition: border-color 0.3s ease, transform 0.2s ease;
     color: #333;
+}
+
+#google strong {
+    flex-grow: 1;
+    text-align: left;
+    padding-right: 20px;
+}
+
+#google img.google {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
 }
 
 #google:hover {
@@ -161,12 +175,9 @@ input[type="text"]:focus {
     transform: translateY(-2px);
 }
 
-#google img.google {
-    width: 20px;
-    height: 20px;
-}
-
-/* --- UTILS --- */
+/* =========================
+   MENSAGENS DE ERRO
+========================= */
 small.erro {
     color: #ff5555;
     font-size: 0.9rem;
@@ -175,7 +186,24 @@ small.erro {
     display: block;
 }
 
-main>p.ou {
+.erro-login {
+    background-color: rgba(255, 85, 85, 0.1);
+    border: 0.5vw solid #ff5555;
+    border-radius: 2vw;
+    padding: 1.5vh 4vw;
+    margin-bottom: 2vh;
+}
+
+.mensagem-erro {
+    color: #ff5555;
+    font-size: 4vw;
+    text-align: center;
+}
+
+/* =========================
+   OUTROS ELEMENTOS
+========================= */
+main > p.ou {
     text-align: center;
     margin: 1rem 0;
     color: #aaa;
@@ -183,16 +211,15 @@ main>p.ou {
     max-width: 400px;
 }
 
-/* --- LINKS --- */
 .signup-prompt {
     width: 100%;
     max-width: 400px;
     text-align: center;
-    margin-top: 3.5rem; 
+    margin-top: 3.5rem;
 }
 
 .link {
-    color: #4da6ff; 
+    color: #4da6ff;
     text-decoration: none;
     transition: color 0.3s ease;
 }
@@ -200,78 +227,64 @@ main>p.ou {
 .link:hover {
     color: #8ac0ff;
 }
+
 .link2 {
     font-size: 1rem;
     font-weight: bold;
     display: block;
 }
-.erro-login {
-    background-color: rgba(255, 85, 85, 0.1);
-    border: 0.51vw solid #ff5555;
-    border-radius: 2.04vw;
-    padding: 1.76vh 4.58vw;
-    margin-bottom: 2.34vh;
-}
 
-.mensagem-erro {
-    color: #ff5555;
-    font-size: 4.07vw;
-    text-align: center;
-}
-footer {}
-
-/* --- FOOTER (Padrão Mobile) --- */
+/* =========================
+   FOOTER
+========================= */
 footer {
     margin-top: auto;
     width: 100%;
-    background-color: #1f1f1f; 
-    height: 6vh; 
+    background-color: #1f1f1f;
+    height: 6vh;
 }
 
-
-/* =================================================== */
-/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 601px) --- */
-/* =================================================== */
+/* =========================
+   RESPONSIVIDADE DESKTOP
+========================= */
 @media (min-width: 601px) {
-    
-    /* --- HEADER (Ajuste para Desktop) --- */
+
     header {
-        height: 18vh; 
-        border-bottom-left-radius: 10px; 
-        border-bottom-right-radius: 10px; 
+        height: 18vh;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
     }
 
-  img.icon {
-    width: 70%; /* Largura para desktop */
-    max-width: 300px; /* Largura máxima para desktop */
-  }
+    img.icon {
+        width: 70%;
+        max-width: 300px;
+    }
 
-    /* ALTERAÇÃO AQUI:*/
     section.login-module {
-        background-color: transparent; 
+        background-color: transparent;
         padding: 0;
         box-shadow: none;
         border-radius: 0;
     }
+
     .title-group {
-        background-color: transparent; 
+        background-color: transparent;
         padding: 0;
         border-radius: 0;
         box-shadow: none;
     }
 
-    /* --- FONTES & TAMANHOS DE COMPONENTES (Aumento para Desktop) --- */
     h1.tit {
-        font-size: 2.5rem; 
+        font-size: 2.5rem;
     }
 
     h2 {
-        font-size: 1.1rem; 
+        font-size: 1.1rem;
     }
 
-    input[type="email"],
+    input[type="text"],
     input[type="password"] {
-        padding: 14px 18px; 
+        padding: 14px 18px;
         font-size: 1.05rem;
     }
 
@@ -285,8 +298,7 @@ footer {
         font-size: 1.05rem;
     }
 
-    /* --- FOOTER (Ajuste para Desktop) --- */
     footer {
-        height: 5vh; 
+        height: 5vh;
     }
 }

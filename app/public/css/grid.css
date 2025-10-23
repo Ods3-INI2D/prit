@@ -1,57 +1,80 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-body{
-    font-family: 'Inter';
-    width: 100vw;
-    max-height: 124px;
-}
-header{
-    position: absolute;
-    min-height: 76px;
-    width: 100vw;
 
+body {
+    font-family: 'Inter', sans-serif;
 }
-main{
-    position: absolute;
+
+/* Nav principal */
+.nav-principal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     background-color: #163069;
-    fill: #163069;
+    padding: 0.5rem 5%;
+    flex-wrap: wrap;
 }
-.ham{
-    position: absolute;
+
+.logo {
+    width: 140px;
+    height: auto;
 }
-.logo{
-    position: absolute;
-    margin-top: 2.46vh;
-    
-    width: 24.173vw;
-    height: 4.23vh;
+
+.busca-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
-.cart{
-    position: absolute;
-    margin-top: 3.17vh;
-    margin-left: 91.09vw;
-    width: 6.11vw;
+
+/* Busca */
+.busca-form {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
-.user{
-    position: absolute;
-    margin-top: 10.56vh;
-    margin-left: 4.33vw;
-    width: 6.11vw;
+
+input[type="text"] {
+    padding: 0.4rem 0.75rem;
+    border-radius: 5px;
+    border: none;
+    font-size: 1rem;
+    width: 180px;
+    max-width: 300px;
 }
-input[type="text"]{
-    position: absolute;
-    margin-top: 10.56vh;
-    margin-left: 23.16vw;
-    width: 71.76vw;
-    height: 2.23vh;
-    border-radius: 10px;
+
+.lupa-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
 }
-::placeholder{
-    font-family: 'Inter';
-    margin-left: 50px;
+
+.lupa {
+    width: 24px;
+    height: 24px;
 }
-.lupa{
-    position: absolute;
-    margin-top: 10.56vh;
-    margin-left: 15.27vw;
-    width: 6.11vw;
+
+/* Ícones usuário e carrinho */
+.user, .cart {
+    width: 28px;
+    height: 28px;
+}
+
+/* Responsividade */
+@media (min-width: 768px) {
+    .nav-principal {
+        flex-wrap: nowrap;
+    }
+
+    .busca-container {
+        gap: 1.5rem;
+    }
+
+    input[type="text"] {
+        width: 250px;
+        max-width: 350px;
+    }
+
+    .logo {
+        width: 160px;
+    }
 }

@@ -1,381 +1,278 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
+/* --- Mobile First (Padrão de 16px = 1rem) --- */
 body {
     background-color: #1f1f1f;
     font-family: 'Inter', sans-serif;
     color: white;
-    width: 100vw;
+    width: 100%;
     margin: 0;
 }
 
 main {
-    width: 90.84vw;
+    width: 90%; 
+    max-width: 1200px; 
     margin: 0 auto;
-    padding: 2.34vh 0;
+    padding: 1.5rem 0;
 }
 
+/* --- NAVEGAÇÃO & TÍTULOS DE SEÇÃO --- */
 .navegacao {
-    margin-bottom: 2.34vh;
+    margin-bottom: 1.5rem; 
 }
 
 .voltar {
     display: inline-flex;
     align-items: center;
-    gap: 2.54vw;
+    gap: 0.5rem; 
     color: white;
     text-decoration: none;
-    font-size: 4.07vw;
+    font-size: 1rem; 
     font-weight: 500;
 }
 
-.seta-voltar {
-    width: 5.09vw;
-    height: auto;
+.titulo-secao { /* Consolidação para títulos (Frete, Descrição, Avaliações) */
+    font-size: 1.2rem; 
+    font-weight: 600;
+    margin-bottom: 0.5rem; 
+    color: white;
 }
 
+/* --- PRODUTO DETALHES --- */
 .produto-detalhes {
-    margin-bottom: 3.52vh;
+    margin-bottom: 2rem; 
 }
 
 .imagem-produto {
     width: 100%;
-    height: 35.21vh;
+    height: 300px; 
     object-fit: cover;
-    border-radius: 2.54vw;
-    margin-bottom: 2.34vh;
+    border-radius: 0.5rem; 
+    margin-bottom: 1.5rem; 
 }
 
 .nome-produto {
-    font-size: 6.62vw;
+    font-size: 1.8rem; 
     font-weight: 700;
-    margin-bottom: 1.17vh;
-    color: white;
+    margin-bottom: 0.5rem; 
 }
 
 .categoria-produto {
-    font-size: 4.07vw;
+    font-size: 1rem; 
     color: #888;
-    margin-bottom: 1.76vh;
+    margin-bottom: 1rem; 
 }
 
-.preco-produto {
-    font-size: 6.11vw;
-    font-weight: 700;
-    color: #4da6ff;
-    margin-bottom: 2.34vh;
-}
-
+/* --- PREÇO --- */
 .preco-container {
-    margin-bottom: 2.34vh;
+    margin-bottom: 1.5rem; 
 }
 
 .preco-container.com-desconto {
     display: flex;
     align-items: center;
-    gap: 2.54vw;
+    gap: 1rem; 
+}
+
+.preco-produto, .preco-desconto {
+    font-size: 1.5rem; 
+    font-weight: 700;
+    color: #4da6ff;
 }
 
 .preco-original {
-    font-size: 4.58vw;
+    font-size: 1.1rem; 
     color: #888;
     text-decoration: line-through;
-}
-
-.preco-desconto {
-    font-size: 6.11vw;
-    font-weight: 700;
-    color: #4da6ff;
 }
 
 .percentual-desconto {
     background-color: #4da6ff;
     color: #1f1f1f;
-    font-size: 3.82vw;
+    font-size: 0.9rem; 
     font-weight: 700;
-    padding: 0.59vh 2.54vw;
-    border-radius: 1.27vw;
+    padding: 0.3rem 0.75rem; 
+    border-radius: 0.25rem; 
 }
 
+/* --- BOTÃO DE COMPRA --- */
 .btn-comprar {
     width: 100%;
-    padding: 1.76vh 0;
+    padding: 1rem 0; 
     background-color: #163069;
     color: white;
     border: none;
-    border-radius: 2.54vw;
-    font-size: 5.09vw;
+    border-radius: 0.5rem; 
+    font-size: 1.2rem; 
     font-weight: 700;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-bottom: 2rem;
 }
 
 .btn-comprar:hover {
     background-color: #0d1f42;
 }
 
-.frete-container {
-    margin-bottom: 3.52vh;
-}
-
-.titulo-frete {
-    font-size: 5.09vw;
-    font-weight: 600;
-    margin-bottom: 1.17vh;
-    color: white;
-}
-
+/* --- FRETE --- */
 .descricao-frete {
-    font-size: 3.56vw;
+    font-size: 0.9rem; 
     color: #d9d9d9;
-    margin-bottom: 1.76vh;
+    margin-bottom: 1rem; 
     line-height: 1.5;
 }
 
 .form-frete {
     display: flex;
-    gap: 2.54vw;
+    gap: 0.75rem; 
 }
 
 .form-frete input {
     flex: 1;
-    padding: 1.41vh 3.82vw;
-    border: 0.51vw solid #555;
-    border-radius: 2.04vw;
+    padding: 0.75rem 1rem; 
+    border: 1px solid #555; 
+    border-radius: 0.5rem; 
     background-color: #383838;
     color: white;
-    font-size: 4.07vw;
+    font-size: 1rem; 
 }
 
 .btn-calcular {
-    padding: 1.41vh 5.09vw;
+    padding: 0.75rem 1rem; 
     background-color: #163069;
     color: white;
     border: none;
-    border-radius: 2.04vw;
-    font-size: 4.07vw;
+    border-radius: 0.5rem; 
+    font-size: 1rem; 
     font-weight: 600;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
+/* --- DESCRIÇÃO --- */
 .divisor {
     border: none;
-    border-top: 0.12vh solid rgba(255, 255, 255, 0.1);
-    margin: 3.52vh 0;
-}
-
-.descricao-container {
-    margin-bottom: 3.52vh;
-}
-
-.titulo-descricao {
-    font-size: 5.09vw;
-    font-weight: 600;
-    margin-bottom: 1.17vh;
-    color: white;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 2rem 0; 
 }
 
 .nome-descricao {
-    font-size: 4.58vw;
+    font-size: 1.1rem; 
     font-weight: 600;
-    margin-bottom: 1.17vh;
+    margin-bottom: 0.5rem; 
     color: #4da6ff;
 }
 
 .texto-descricao {
-    font-size: 3.82vw;
+    font-size: 0.9rem; 
     color: #d9d9d9;
     line-height: 1.6;
 }
 
-.avaliacoes-container {
-    margin-bottom: 3.52vh;
-}
-
-.titulo-avaliacoes {
-    font-size: 5.09vw;
-    font-weight: 600;
-    margin-bottom: 2.34vh;
-    color: white;
-}
-
+/* --- AVALIAÇÕES --- */
 .nota-media {
     background-color: #2a2a2a;
-    padding: 2.34vh 4.58vw;
-    border-radius: 2.54vw;
-    margin-bottom: 2.34vh;
-}
-
-.label-nota {
-    font-size: 4.58vw;
-    font-weight: 600;
-    margin-bottom: 1.17vh;
-    color: white;
+    padding: 1.5rem; 
+    border-radius: 0.5rem; 
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .estrelas-media {
     display: flex;
-    gap: 1.27vw;
-    margin-bottom: 1.17vh;
+    gap: 0.5rem; 
+    margin-bottom: 0.5rem; 
 }
 
 .estrela {
-    width: 6.11vw;
+    width: 1.5rem; 
     height: auto;
 }
 
 .valor-media {
-    font-size: 5.6vw;
+    font-size: 1.3rem; 
     font-weight: 700;
     color: #4da6ff;
 }
 
 .ver-mais {
-    display: inline-block;
-    color: #4da6ff;
-    font-size: 4.07vw;
-    text-decoration: none;
-    margin-bottom: 2.34vh;
-}
-
-.ver-mais:hover {
-    text-decoration: underline;
-}
-
-.sem-avaliacoes {
-    font-size: 4.07vw;
-    color: #888;
+    display: block;
     text-align: center;
-    padding: 2.34vh 0;
-}
-
-.lista-avaliacoes {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 2.34vh 0;
-}
-
-.item-avaliacao {
-    background-color: #2a2a2a;
-    padding: 1.76vh 3.82vw;
-    border-radius: 2.04vw;
-    margin-bottom: 1.76vh;
-}
-
-.estrelas-avaliacao {
-    display: flex;
-    gap: 1.27vw;
-    margin-bottom: 1.17vh;
-}
-
-.estrela-pequena {
-    width: 4.07vw;
-    height: auto;
-}
-
-.texto-avaliacao {
-    font-size: 3.82vw;
-    color: #d9d9d9;
-    line-height: 1.5;
+    color: #4da6ff;
+    font-size: 1rem; 
+    text-decoration: none;
+    margin-bottom: 1.5rem; 
 }
 
 .form-avaliacao-container {
     background-color: #2a2a2a;
-    padding: 2.34vh 4.58vw;
-    border-radius: 2.54vw;
-    margin-top: 2.34vh;
-}
-
-.titulo-form-avaliacao {
-    font-size: 4.58vw;
-    font-weight: 600;
-    margin-bottom: 1.76vh;
-    color: white;
-}
-
-.label-avaliacao {
-    font-size: 4.07vw;
-    font-weight: 500;
-    margin-top: 1.17vh;
-    margin-bottom: 0.59vh;
-    color: white;
-}
-
-.form-avaliacao select,
-.form-avaliacao textarea {
-    width: 100%;
-    padding: 1.41vh 3.82vw;
-    margin-bottom: 1.76vh;
-    border: 0.51vw solid #555;
-    border-radius: 2.04vw;
-    background-color: #383838;
-    color: white;
-    font-size: 4.07vw;
-    font-family: 'Inter', sans-serif;
-}
-
-.form-avaliacao textarea {
-    resize: vertical;
+    padding: 1.5rem; 
+    border-radius: 0.5rem; 
+    margin-top: 1.5rem; 
 }
 
 .btn-enviar-avaliacao {
     width: 100%;
-    padding: 1.76vh 0;
+    padding: 1rem 0; 
     background-color: #163069;
     color: white;
     border: none;
-    border-radius: 2.54vw;
-    font-size: 4.58vw;
+    border-radius: 0.5rem; 
+    font-size: 1.1rem; 
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.btn-enviar-avaliacao:hover {
-    background-color: #0d1f42;
-}
-
-.titulo-outros {
-    font-size: 5.09vw;
-    font-weight: 600;
-    margin-bottom: 1.17vh;
-    color: white;
-}
-
+/* --- OUTROS PRODUTOS --- */
 .outros-produtos {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2.54vw;
-    margin-bottom: 3.52vh;
+    gap: 0.75rem; 
+    margin-bottom: 2rem; 
 }
 
-.bloco-produto {
-    background-color: #2a2a2a;
-    border-radius: 2.04vw;
-    overflow: hidden;
-}
+/* =================================================== */
+/* --- OTIMIZAÇÃO PARA DESKTOPS (min-width: 768px) --- */
+/* =================================================== */
+@media (min-width: 768px) {
+    
+    .produto-detalhes {
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start;
+    }
+    
+    .imagem-produto {
+        width: 50%;
+        max-width: 450px;
+        height: 450px; 
+        margin-bottom: 0;
+    }
+    
+    .info-principal {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .btn-comprar {
+        width: auto;
+        max-width: 300px;
+    }
 
-.link-produto {
-    text-decoration: none;
-    color: white;
-    display: block;
-}
+    .outros-produtos {
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 1rem;
+    }
+    
+    .nome-produto {
+        font-size: 2.2rem;
+    }
 
-.img-produto-bloco {
-    width: 100%;
-    height: 20.09vh;
-    object-fit: cover;
-}
-
-.nome-produto-bloco {
-    font-size: 3.82vw;
-    font-weight: 600;
-    padding: 1.17vh 2.54vw;
-    color: white;
-}
-
-.preco-produto-bloco {
-    font-size: 4.07vw;
-    font-weight: 700;
-    color: #4da6ff;
-    padding: 0 2.54vw 1.17vh;
+    .preco-desconto, .preco-produto {
+        font-size: 1.8rem;
+    }
 }
