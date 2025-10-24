@@ -60,7 +60,6 @@
                                     <p class="preco-desconto-home">R$ <%= produto.precoDesconto.toFixed(2) %></p>
                                     <aside class="badge-desconto">
                                         <p class="percentual-home">-<%= Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100) %>%</p>
-                                        <img src="/imagens/setab.png" alt="Desconto" class="seta-badge">
                                     </aside>
                                 </section>
                             <% } else { %>

@@ -7,7 +7,7 @@
     <title>Login</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/estilo.css">
-    <link rel="stylesheet" href="/css/cad.css">
+    <link rel="stylesheet" href="/css/login.css">
     <link rel="stylesheet" href="/css/toggle-senha.css">
 </head>
 <body>
@@ -16,8 +16,10 @@
     </header>
     
     <main>
-        <section class="txt">
-            <h1 class="tit">Login</h1>
+        <section class="login-module">
+            <article class="title-group">
+                <h1 class="tit">Login</h1>
+            </article>
 
             <% if(erro) { %>
                 <output class="erro" role="alert" aria-live="polite"><%= erro %></output>
@@ -43,9 +45,9 @@
                     </label>
                 </fieldset>
 
-                <button id="btn" type="submit">Entrar</button>
+                <button id="btn-login" type="submit">Entrar</button>
 
-                <nav>
+                <nav class="signup-prompt">
                     <p>
                         <a href="/" class="link">Não tem uma conta?
                             <strong class="link2">Cadastre-se aqui</strong>

@@ -93,6 +93,10 @@ body {
     color: white;
 }
 
+.preco-unico-home {
+    padding: 0.5rem 0.75rem 0.25rem;
+}
+
 .badge-desconto {
     margin-left: auto;
     display: flex;
@@ -125,6 +129,7 @@ body {
 .sem-produtos {
     text-align: center;
     padding: 2rem 0;
+    grid-column: 1 / -1;
 }
 
 .mensagem-vazio {
