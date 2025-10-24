@@ -39,10 +39,10 @@
                                 <h2 class="nome-produto"><%= produto.nome %></h2>
                                 
                                 <% if(produto.precoDesconto) { %>
-                                    <article class="preco-container">
+                                    <section class="preco-container">
                                         <p class="preco-original">R$ <%= produto.preco.toFixed(2) %></p>
                                         <p class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></p>
-                                    </article>
+                                    </section>
                                     <p class="percentual">
                                         -<%= Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100) %>%
                                     </p>
@@ -55,7 +55,7 @@
                                 <% if(produto.avaliacoes && produto.avaliacoes.length > 0) { %>
                                     <section class="estrelas-container">
                                         <% 
-                                        const somaNotas = produto.avaliacoes.reduce((sum, av) => sum + av.nota, 0);
+                                        const somaNotas = produto.avaliacoes.reduce(function(sum, av) { return sum + av.nota; }, 0);
                                         const media = somaNotas / produto.avaliacoes.length;
                                         const notaArredondada = Math.round(media);
                                         for(let i = 1; i <= 5; i++) { %>

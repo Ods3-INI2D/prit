@@ -25,34 +25,38 @@
         <section class="produto-detalhes">
             <img src="<%= produto.imagem %>" class="imagem-produto" alt="<%= produto.nome %>">
             
-            <h1 class="nome-produto"><%= produto.nome %></h1>
-            
-            <p class="categoria-produto"><%= produto.categoria %></p>
-            
-            <% if(produto.precoDesconto) { %>
-                <article class="preco-container com-desconto">
-                    <p class="preco-original">R$ <%= produto.preco.toFixed(2) %></p>
-                    <p class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></p>
-                    <p class="percentual-desconto">
-                        -<%= Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100) %>%
-                    </p>
-                </article>
-            <% } else { %>
-                <p class="preco-produto">R$ <%= produto.preco.toFixed(2) %></p>
-            <% } %>
+            <article class="info-principal">
+                <h1 class="nome-produto"><%= produto.nome %></h1>
+                
+                <p class="categoria-produto"><%= produto.categoria %></p>
+                
+                <% if(produto.precoDesconto) { %>
+                    <section class="preco-container com-desconto">
+                        <p class="preco-original">R$ <%= produto.preco.toFixed(2) %></p>
+                        <p class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                        <p class="percentual-desconto">
+                            -<%= Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100) %>%
+                        </p>
+                    </section>
+                <% } else { %>
+                    <p class="preco-produto">R$ <%= produto.preco.toFixed(2) %></p>
+                <% } %>
 
-            <form method="POST" action="/produto/<%= produto.id %>/adicionar-carrinho">
-                <button type="submit" class="btn-comprar">Comprar</button>
-            </form>
+                <form method="POST" action="/produto/<%= produto.id %>/adicionar-carrinho">
+                    <button type="submit" class="btn-comprar">Comprar</button>
+                </form>
+            </article>
         </section>
 
         <section class="frete-container">
-            <h2 class="titulo-frete">Cálculo de Frete e Prazo</h2>
+            <h2 class="titulo-secao">Cálculo de Frete e Prazo</h2>
             
             <p class="descricao-frete">Insira seu CEP para calcular o frete e o prazo para entrega do produto</p>
             
             <form class="form-frete">
-                <input type="text" name="cep" id="cep" placeholder="Digite seu CEP" maxlength="8">
+                <label for="cep">
+                    <input type="text" name="cep" id="cep" placeholder="Digite seu CEP" maxlength="8">
+                </label>
                 <button type="submit" class="btn-calcular">Calcular</button>
             </form>
         </section>
@@ -60,7 +64,7 @@
         <hr class="divisor">
 
         <section class="descricao-container">
-            <h2 class="titulo-descricao">Descrição do Produto</h2>
+            <h2 class="titulo-secao">Descrição do Produto</h2>
             <h3 class="nome-descricao"><%= produto.nome %></h3>
             <p class="texto-descricao"><%= produto.descricao %></p>
         </section>
@@ -68,13 +72,13 @@
         <hr class="divisor">
 
         <section class="avaliacoes-container" id="avaliar">
-            <h2 class="titulo-avaliacoes">Avaliações</h2>
+            <h2 class="titulo-secao">Avaliações</h2>
             
             <% if(produto.avaliacoes && produto.avaliacoes.length > 0) { %>
                 <article class="nota-media">
                     <h3 class="label-nota">Nota Média</h3>
                     <% 
-                    const somaNotas = produto.avaliacoes.reduce((sum, av) => sum + av.nota, 0);
+                    const somaNotas = produto.avaliacoes.reduce(function(sum, av) { return sum + av.nota; }, 0);
                     const media = (somaNotas / produto.avaliacoes.length).toFixed(1);
                     const notaArredondada = Math.round(media);
                     %>
@@ -114,21 +118,21 @@
                 <form method="POST" action="/produto/<%= produto.id %>/avaliar" class="form-avaliacao">
                     <label for="nota">
                         <h4 class="label-avaliacao">Nota (0 a 5 estrelas)</h4>
+                        <select name="nota" id="nota" required>
+                            <option value="">Selecione</option>
+                            <option value="0">0 estrelas</option>
+                            <option value="1">1 estrela</option>
+                            <option value="2">2 estrelas</option>
+                            <option value="3">3 estrelas</option>
+                            <option value="4">4 estrelas</option>
+                            <option value="5">5 estrelas</option>
+                        </select>
                     </label>
-                    <select name="nota" id="nota" required>
-                        <option value="">Selecione</option>
-                        <option value="0">0 estrelas</option>
-                        <option value="1">1 estrela</option>
-                        <option value="2">2 estrelas</option>
-                        <option value="3">3 estrelas</option>
-                        <option value="4">4 estrelas</option>
-                        <option value="5">5 estrelas</option>
-                    </select>
 
                     <label for="texto">
                         <h4 class="label-avaliacao">Seu comentário</h4>
+                        <textarea name="texto" id="texto" placeholder="Escreva sua avaliação" rows="4" required></textarea>
                     </label>
-                    <textarea name="texto" id="texto" placeholder="Escreva sua avaliação" rows="4" required></textarea>
 
                     <button type="submit" class="btn-enviar-avaliacao">Enviar Avaliação</button>
                 </form>
