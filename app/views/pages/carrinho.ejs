@@ -23,42 +23,62 @@
                     <a href="/home" class="btn-continuar">Continuar Comprando</a>
                 </article>
             <% } else { %>
-                <ul class="lista-carrinho">
-                    <% 
-                    let total = 0;
-                    carrinho.forEach(function(produto) { 
-                        const precoFinal = produto.precoDesconto || produto.preco;
-                        total += precoFinal;
-                    %>
-                        <li class="item-carrinho">
-                            <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto">
-                            
-                            <article class="info-produto">
-                                <h2 class="nome-produto"><%= produto.nome %></h2>
-                                <p class="categoria-produto"><%= produto.categoria %></p>
-                                
-                                <% if(produto.precoDesconto) { %>
-                                    <p class="preco-original">R$ <%= produto.preco.toFixed(2) %></p>
-                                    <p class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></p>
-                                <% } else { %>
-                                    <p class="preco-produto">R$ <%= produto.preco.toFixed(2) %></p>
-                                <% } %>
-                            </article>
+                <section class="carrinho-layout">
+                    <section class="lista-carrinho-wrapper">
+                        <ul class="lista-carrinho">
+                            <% 
+                            let total = 0;
+                            carrinho.forEach(function(produto) { 
+                                const precoFinal = produto.precoDesconto || produto.preco;
+                                total += precoFinal;
+                            %>
+                                <li class="item-carrinho">
+                                    <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto">
+                                    
+                                    <article class="info-produto">
+                                        <h2 class="nome-produto"><%= produto.nome %></h2>
+                                        <p class="categoria-produto"><%= produto.categoria %></p>
+                                        
+                                        <section class="preco-container">
+                                            <% if(produto.precoDesconto) { %>
+                                                <p class="preco-original">R$ <%= produto.preco.toFixed(2) %></p>
+                                                <p class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                                            <% } else { %>
+                                                <p class="preco-produto">R$ <%= produto.preco.toFixed(2) %></p>
+                                            <% } %>
+                                        </section>
+                                    </article>
 
-                            <article class="avaliar-container">
-                                <a href="/produto/<%= produto.id %>#avaliar" class="btn-avaliar">Avaliar Produto</a>
-                            </article>
-                        </li>
-                    <% }); %>
-                </ul>
+                                    <nav class="acoes-item">
+                                        <a href="/produto/<%= produto.id %>#avaliar" class="btn-avaliar">Avaliar Produto</a>
+                                        <button class="btn-remover" type="button" aria-label="Remover <%= produto.nome %> do carrinho">Remover</button>
+                                    </nav>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </section>
 
-                <section class="resumo-carrinho">
-                    <article class="total-container">
-                        <h3 class="label-total">Total:</h3>
-                        <p class="valor-total">R$ <%= total.toFixed(2) %></p>
-                    </article>
+                    <aside class="resumo-carrinho">
+                        <h2 class="titulo-resumo">Resumo do Pedido</h2>
+                        
+                        <section class="linhas-resumo">
+                            <p class="linha-resumo">
+                                <strong>Subtotal:</strong>
+                                <output>R$ <%= total.toFixed(2) %></output>
+                            </p>
+                            <p class="linha-resumo">
+                                <strong>Frete:</strong>
+                                <output>A calcular</output>
+                            </p>
+                        </section>
+                        
+                        <p class="total-resumo">
+                            <strong>Total:</strong>
+                            <output>R$ <%= total.toFixed(2) %></output>
+                        </p>
 
-                    <button class="btn-finalizar">Finalizar Compra</button>
+                        <button class="btn-finalizar" type="button">Finalizar Compra</button>
+                    </aside>
                 </section>
             <% } %>
         </section>

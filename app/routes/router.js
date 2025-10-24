@@ -6,7 +6,6 @@ var db = require('../models/database');
 var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
-
 var session = require('express-session');
 
 router.use(session({
@@ -68,6 +67,7 @@ router.use(function(req, res, next) {
     next();
 });
 
+// Rota raiz redireciona para cadastro
 router.get('/', function(req, res) {
     res.render('pages/cadastro', { 
         erros: null, 
@@ -76,6 +76,7 @@ router.get('/', function(req, res) {
     });
 });
 
+// Rota de cadastro POST
 router.post("/cadastro",
     body("nome")
         .isLength({ min: 3, max: 50 }).withMessage("Nome deve conter de 3 a 50 caracteres!"),
@@ -142,10 +143,12 @@ router.post("/cadastro",
     }
 );
 
+// Rota de login GET
 router.get('/login', function(req, res) {
     res.render('pages/login', { erro: null });
 });
 
+// Rota de login POST
 router.post('/login', 
     body("email")
         .isEmail().withMessage('O e-mail deve ser válido!'),
@@ -168,11 +171,13 @@ router.post('/login',
     }
 );
 
+// Rota home
 router.get('/home', function(req, res) {
     const produtos = db.getProdutos();
     res.render('pages/home', { produtos: produtos });
 });
 
+// Rota usuário
 router.get('/usuario', function(req, res) {
     if (!req.session.usuarioEmail) {
         return res.render('pages/usuario', { usuario: null });
@@ -182,6 +187,7 @@ router.get('/usuario', function(req, res) {
     res.render('pages/usuario', { usuario: usuario });
 });
 
+// Atualizar dados do usuário
 router.post('/usuario/atualizar', function(req, res) {
     if (req.session.usuarioEmail) {
         db.updateUsuario(req.session.usuarioEmail, {
@@ -192,6 +198,7 @@ router.post('/usuario/atualizar', function(req, res) {
     res.redirect('/usuario');
 });
 
+// Rota admin
 router.get('/admin', function(req, res) {
     const produtos = db.getProdutos();
     const totalAvaliacoes = db.getTotalAvaliacoes();
@@ -205,6 +212,7 @@ router.get('/admin', function(req, res) {
     });
 });
 
+// Adicionar produto
 router.post('/admin/adicionar-produto', upload.single('imagem'), function(req, res) {
     try {
         // Define o caminho da imagem
@@ -240,6 +248,7 @@ router.post('/admin/adicionar-produto', upload.single('imagem'), function(req, r
     }
 });
 
+// Ver produto específico
 router.get('/produto/:id', function(req, res) {
     const produto = db.getProdutoById(req.params.id);
     if (!produto) {
@@ -250,16 +259,19 @@ router.get('/produto/:id', function(req, res) {
     res.render('pages/produto', { produto: produto, produtos: produtos });
 });
 
+// Adicionar ao carrinho
 router.post('/produto/:id/adicionar-carrinho', function(req, res) {
     db.addToCarrinho(req.params.id);
     res.redirect('/carrinho');
 });
 
+// Ver carrinho
 router.get('/carrinho', function(req, res) {
     const carrinho = db.getCarrinho();
     res.render('pages/carrinho', { carrinho: carrinho });
 });
 
+// Avaliar produto
 router.post('/produto/:id/avaliar', function(req, res) {
     const novaAvaliacao = {
         nota: parseInt(req.body.nota),
@@ -270,11 +282,13 @@ router.post('/produto/:id/avaliar', function(req, res) {
     res.redirect('/produto/' + req.params.id);
 });
 
+// Ver categoria
 router.get('/categoria/:nome', function(req, res) {
     const produtosCategoria = db.getProdutosByCategoria(req.params.nome);
     res.render('pages/categoria', { categoria: req.params.nome, produtos: produtosCategoria });
 });
 
+// Logout
 router.get('/logout', function(req, res) {
     req.session.destroy(function(err) {
         if (err) {
