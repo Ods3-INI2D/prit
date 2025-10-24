@@ -3,6 +3,9 @@ const { body, validationResult } = require('express-validator');
 var router = express.Router();
 var { valCPF, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
 var db = require('../models/database');
+var multer = require('multer');
+var path = require('path');
+var fs = require('fs');
 
 var session = require('express-session');
 
@@ -15,6 +18,43 @@ router.use(session({
         maxAge: 24 * 60 * 60 * 1000 // 24 horas
     }
 }));
+
+// Configuração do Multer para upload de imagens
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const uploadDir = path.join(__dirname, '../public/imagens/produtos');
+        
+        // Cria o diretório se não existir
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        // Gera um nome único para o arquivo
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'produto-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB
+    },
+    fileFilter: function (req, file, cb) {
+        const allowedTypes = /jpeg|jpg|png|webp/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Apenas imagens são permitidas (JPG, JPEG, PNG, WEBP)!'));
+        }
+    }
+});
 
 // Middleware para disponibilizar o usuário em todas as views
 router.use(function(req, res, next) {
@@ -159,21 +199,45 @@ router.get('/admin', function(req, res) {
     res.render('pages/admin', { 
         produtos: produtos, 
         totalProdutos: produtos.length, 
-        totalAvaliacoes: totalAvaliacoes 
+        totalAvaliacoes: totalAvaliacoes,
+        erro: null,
+        sucesso: null
     });
 });
 
-router.post('/admin/adicionar-produto', function(req, res) {
-    const novoProduto = {
-        nome: req.body.nome,
-        preco: parseFloat(req.body.preco),
-        precoDesconto: req.body.precoDesconto ? parseFloat(req.body.precoDesconto) : null,
-        categoria: req.body.categoria,
-        descricao: req.body.descricao
-    };
-    
-    db.addProduto(novoProduto);
-    res.redirect('/admin');
+router.post('/admin/adicionar-produto', upload.single('imagem'), function(req, res) {
+    try {
+        // Define o caminho da imagem
+        let imagemPath = '/imagens/foto.jpg'; // Imagem padrão
+        
+        if (req.file) {
+            imagemPath = '/imagens/produtos/' + req.file.filename;
+        }
+        
+        const novoProduto = {
+            nome: req.body.nome,
+            preco: parseFloat(req.body.preco),
+            precoDesconto: req.body.precoDesconto ? parseFloat(req.body.precoDesconto) : null,
+            categoria: req.body.categoria,
+            descricao: req.body.descricao,
+            imagem: imagemPath
+        };
+        
+        db.addProduto(novoProduto);
+        res.redirect('/admin');
+    } catch (error) {
+        console.error('Erro ao adicionar produto:', error);
+        const produtos = db.getProdutos();
+        const totalAvaliacoes = db.getTotalAvaliacoes();
+        
+        res.render('pages/admin', { 
+            produtos: produtos, 
+            totalProdutos: produtos.length, 
+            totalAvaliacoes: totalAvaliacoes,
+            erro: 'Erro ao adicionar produto: ' + error.message,
+            sucesso: null
+        });
+    }
 });
 
 router.get('/produto/:id', function(req, res) {

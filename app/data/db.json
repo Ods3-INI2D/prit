@@ -1,5 +1,13 @@
 {
-  "produtos": [],
+  "produtos": [
+    {
+      "preco": null,
+      "precoDesconto": null,
+      "id": 1761342573267,
+      "imagem": "/imagens/foto.jpg",
+      "avaliacoes": []
+    }
+  ],
   "avaliacoes": [],
   "carrinho": [],
   "usuarios": [

@@ -44,7 +44,12 @@ function writeDatabase(data) {
 function addProduto(produto) {
     const db = readDatabase();
     produto.id = Date.now();
-    produto.imagem = '/imagens/foto.jpg';
+    
+    // Usa a imagem fornecida ou define uma padrão
+    if (!produto.imagem) {
+        produto.imagem = '/imagens/foto.jpg';
+    }
+    
     produto.avaliacoes = [];
     db.produtos.push(produto);
     writeDatabase(db);

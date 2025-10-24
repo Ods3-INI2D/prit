@@ -85,6 +85,28 @@ main {
     color: #4da6ff;
 }
 
+/* --- MENSAGENS DE ERRO/SUCESSO --- */
+.mensagem-erro,
+.mensagem-sucesso {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+.mensagem-erro {
+    background-color: rgba(217, 48, 37, 0.2);
+    border: 2px solid #d93025;
+    color: #ff6b6b;
+}
+
+.mensagem-sucesso {
+    background-color: rgba(77, 166, 255, 0.2);
+    border: 2px solid #4da6ff;
+    color: #4da6ff;
+}
+
 /* --- FORMULÁRIO E INPUTS --- */
 .label-titulo {
     font-size: 1rem; 
@@ -183,9 +205,15 @@ input:focus, select:focus, textarea:focus {
     margin-bottom: 0.25rem;
 }
 
-.produto-id, .produto-estoque {
+.produto-info {
     font-size: 0.875rem;
-    color: #888;
+    color: #d9d9d9;
+    margin-bottom: 0.25rem;
+}
+
+.produto-info.desconto {
+    color: #4da6ff;
+    font-weight: 600;
 }
 
 .produto-preco {
@@ -193,10 +221,6 @@ input:focus, select:focus, textarea:focus {
     font-weight: 600;
     color: #4da6ff;
     margin-bottom: 0.5rem;
-}
-
-.produto-estoque {
-    color: #d9d9d9;
 }
 
 .acoes-produto {
@@ -288,7 +312,7 @@ input:focus, select:focus, textarea:focus {
         padding: 1rem 1.5rem;
     }
 
-    .produto-info {
+    .produto-info-container {
         display: flex;
         align-items: center;
         gap: 1.5rem;
@@ -301,13 +325,13 @@ input:focus, select:focus, textarea:focus {
         margin-bottom: 0;
     }
     
-    .produto-id, .produto-preco, .produto-estoque {
+    .produto-info {
         font-size: 1rem;
         margin-bottom: 0;
         width: 15%;
     }
     
-    .produto-preco, .produto-estoque {
+    .produto-preco {
         text-align: right;
     }
 

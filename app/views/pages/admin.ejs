@@ -4,162 +4,81 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrador</title>
+    <title>Administrador - Painel de Controle</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/admin.css">
-    <style>
-        /* Estilos para o campo de imagem */
-        .campo-imagem {
-            border: none;
-            padding: 0;
-            margin-bottom: 1.125rem;
-        }
- 
-        .campo-imagem legend {
-            padding: 0;
-            margin-bottom: 0.5rem;
-        }
- 
-        .label-arquivo {
-            display: block;
-            margin-bottom: 0.75rem;
-        }
- 
-        input[type="file"] {
-            width: 100%;
-            padding: 0.9375rem 0.75rem;
-            border: 2px solid #555;
-            border-radius: 0.625rem;
-            background-color: #383838;
-            color: white;
-            font-size: 1rem;
-            font-family: inherit;
-            cursor: pointer;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
- 
-        input[type="file"]:focus {
-            border-color: #4da6ff;
-            outline: none;
-            box-shadow: 0 0 0.375rem rgba(77, 166, 255, 0.8);
-        }
- 
-        input[type="file"]::file-selector-button {
-            background-color: #163069;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            margin-right: 1rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-        }
- 
-        input[type="file"]::file-selector-button:hover {
-            background-color: #0d1f42;
-        }
- 
-        .info-arquivo {
-            display: block;
-            font-size: 0.875rem;
-            color: #888;
-            margin-top: 0.5rem;
-            transition: color 0.3s ease;
-        }
- 
-        .preview-container {
-            display: block;
-            margin-top: 1rem;
-        }
- 
-        .preview-figure {
-            margin: 0;
-            text-align: center;
-            background-color: #1f1f1f;
-            padding: 1rem;
-            border-radius: 0.5rem;
-        }
- 
-        .preview-img {
-            max-width: 100%;
-            max-height: 300px;
-            height: auto;
-            border-radius: 0.5rem;
-            object-fit: contain;
-        }
- 
-        .preview-caption {
-            margin-top: 0.75rem;
-            font-size: 0.875rem;
-            color: #d9d9d9;
-            word-break: break-word;
-        }
- 
-        @media (min-width: 768px) {
-            .preview-img {
-                max-height: 400px;
-            }
-        }
-    </style>
 </head>
 <body>
     <header>
-        <img src="/imagens/logo.png" alt="Logo" class="logo">
+        <img src="/imagens/logo.png" alt="Logotipo da Farmácia" class="logo">
         <h1 class="titulo">Painel Administrativo</h1>
     </header>
  
     <main>
-        <section class="estatisticas">
-            <h2 class="subtitulo">Estatísticas do Site</h2>
+        <% if(erro) { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                <%= erro %>
+            </output>
+        <% } %>
+        
+        <% if(sucesso) { %>
+            <output class="mensagem-sucesso" role="status" aria-live="polite">
+                <%= sucesso %>
+            </output>
+        <% } %>
+
+        <section class="estatisticas" aria-labelledby="titulo-estatisticas">
+            <h2 id="titulo-estatisticas" class="subtitulo">Estatísticas do Site</h2>
             
-            <article class="card-stats">
-                <h3 class="stat-titulo">Total de Produtos</h3>
-                <p class="stat-valor"><%= totalProdutos %></p>
-            </article>
- 
-            <article class="card-stats">
-                <h3 class="stat-titulo">Total de Avaliações</h3>
-                <p class="stat-valor"><%= totalAvaliacoes %></p>
-            </article>
+            <div class="estatisticas-grid">
+                <article class="card-stats">
+                    <h3 class="stat-titulo">Total de Produtos</h3>
+                    <p class="stat-valor" aria-label="<%= totalProdutos %> produtos cadastrados"><%= totalProdutos %></p>
+                </article>
+     
+                <article class="card-stats">
+                    <h3 class="stat-titulo">Total de Avaliações</h3>
+                    <p class="stat-valor" aria-label="<%= totalAvaliacoes %> avaliações recebidas"><%= totalAvaliacoes %></p>
+                </article>
+            </div>
         </section>
  
-        <section class="adicionar-produto">
-            <h2 class="subtitulo">Adicionar Novo Produto</h2>
+        <section class="adicionar-produto" aria-labelledby="titulo-adicionar">
+            <h2 id="titulo-adicionar" class="subtitulo">Adicionar Novo Produto</h2>
             
-            <form method="POST" action="/admin/adicionar-produto" class="form-produto" enctype="multipart/form-data">
+            <form method="POST" action="/admin/adicionar-produto" class="form-produto" enctype="multipart/form-data" aria-label="Formulário de cadastro de produto">
                 <label for="nome">
-                    <h3 class="label-titulo">Nome do Produto</h3>
+                    <span class="label-titulo">Nome do Produto</span>
+                    <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" required aria-required="true">
                 </label>
-                <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" required>
  
                 <label for="preco">
-                    <h3 class="label-titulo">Preço</h3>
+                    <span class="label-titulo">Preço</span>
+                    <input type="number" id="preco" name="preco" placeholder="0.00" step="0.01" min="0" required aria-required="true">
                 </label>
-                <input type="number" id="preco" name="preco" placeholder="0.00" step="0.01" min="0" required>
  
                 <label for="precoDesconto">
-                    <h3 class="label-titulo">Preço com Desconto (opcional)</h3>
+                    <span class="label-titulo">Preço com Desconto (opcional)</span>
+                    <input type="number" id="precoDesconto" name="precoDesconto" placeholder="0.00" step="0.01" min="0" aria-required="false">
                 </label>
-                <input type="number" id="precoDesconto" name="precoDesconto" placeholder="0.00" step="0.01" min="0">
  
                 <label for="categoria">
-                    <h3 class="label-titulo">Categoria</h3>
+                    <span class="label-titulo">Categoria</span>
+                    <select id="categoria" name="categoria" required aria-required="true">
+                        <option value="">Selecione uma categoria</option>
+                        <option value="Cuidados com a Pele">Cuidados com a Pele</option>
+                        <option value="Higiene Bucal">Higiene Bucal</option>
+                        <option value="Cabelo">Cabelo</option>
+                        <option value="Vitaminas e Suplementos">Vitaminas e Suplementos</option>
+                        <option value="Bebê">Bebê</option>
+                        <option value="Terceira Idade">Terceira Idade</option>
+                        <option value="Medicamentos">Medicamentos</option>
+                    </select>
                 </label>
-                <select id="categoria" name="categoria" required>
-                    <option value="">Selecione uma categoria</option>
-                    <option value="Cuidados com a Pele">Cuidados com a Pele</option>
-                    <option value="Higiene Bucal">Higiene Bucal</option>
-                    <option value="Cabelo">Cabelo</option>
-                    <option value="Vitaminas e Suplementos">Vitaminas e Suplementos</option>
-                    <option value="Bebê">Bebê</option>
-                    <option value="Terceira Idade">Terceira Idade</option>
-                    <option value="Medicamentos">Medicamentos</option>
-                </select>
  
                 <fieldset class="campo-imagem">
                     <legend>
-                        <h3 class="label-titulo">Imagem do Produto</h3>
+                        <span class="label-titulo">Imagem do Produto</span>
                     </legend>
                     <label for="imagem" class="label-arquivo">
                         <input type="file"
@@ -175,29 +94,38 @@
                 </fieldset>
  
                 <label for="descricao">
-                    <h3 class="label-titulo">Descrição do Produto</h3>
+                    <span class="label-titulo">Descrição do Produto</span>
+                    <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto" rows="5" required aria-required="true"></textarea>
                 </label>
-                <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto" rows="5" required></textarea>
  
                 <button type="submit" class="btn-adicionar">Adicionar Produto</button>
             </form>
         </section>
  
-        <section class="lista-produtos">
-            <h2 class="subtitulo">Produtos Cadastrados</h2>
+        <section class="lista-produtos" aria-labelledby="titulo-lista">
+            <h2 id="titulo-lista" class="subtitulo">Produtos Cadastrados</h2>
             
             <% if(produtos.length === 0) { %>
                 <p class="mensagem-vazia">Nenhum produto cadastrado ainda.</p>
             <% } else { %>
-                <ul class="produtos-lista">
+                <ul class="produtos-lista" role="list">
                     <% produtos.forEach(function(produto) { %>
-                        <li class="produto-item">
-                            <h3 class="produto-nome"><%= produto.nome %></h3>
-                            <p class="produto-info">Categoria: <%= produto.categoria %></p>
-                            <p class="produto-info">Preço: R$ <%= produto.preco.toFixed(2) %></p>
-                            <% if(produto.precoDesconto) { %>
-                                <p class="produto-info desconto">Com Desconto: R$ <%= produto.precoDesconto.toFixed(2) %></p>
-                            <% } %>
+                        <li class="produto-item" role="listitem">
+                            <div class="produto-info-container">
+                                <div>
+                                    <h3 class="produto-nome"><%= produto.nome %></h3>
+                                    <p class="produto-info">ID: <%= produto.id %></p>
+                                </div>
+                                <p class="produto-info">Categoria: <%= produto.categoria %></p>
+                                <p class="produto-info produto-preco">R$ <%= produto.preco.toFixed(2) %></p>
+                                <% if(produto.precoDesconto) { %>
+                                    <p class="produto-info desconto">Com Desconto: R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                                <% } %>
+                            </div>
+                            <nav class="acoes-produto" aria-label="Ações do produto <%= produto.nome %>">
+                                <button class="btn-editar" type="button" aria-label="Editar produto <%= produto.nome %>">Editar</button>
+                                <button class="btn-excluir" type="button" aria-label="Excluir produto <%= produto.nome %>">Excluir</button>
+                            </nav>
                         </li>
                     <% }); %>
                 </ul>
@@ -206,7 +134,7 @@
     </main>
  
     <footer>
-        <nav>
+        <nav aria-label="Navegação do rodapé">
             <a href="/home" class="link-footer">Voltar ao Site</a>
         </nav>
     </footer>
@@ -224,6 +152,7 @@
                     if (!arquivo) {
                         previewContainer.innerHTML = '';
                         infoArquivo.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB)';
+                        infoArquivo.style.color = '';
                         return;
                     }
  
