@@ -247,7 +247,7 @@
                 <section class="lista-banners-section">
                     <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners do Carrossel</h2>
                     
-                    <output class="mensagem-info">Edite os banners que aparecem no carrossel da página inicial. São 3 banners disponíveis. Você pode alterar a legenda e/ou a imagem de cada banner.</output>
+                    <output class="mensagem-info">Edite os banners que aparecem no carrossel da página inicial. São 3 banners disponíveis. Você pode alterar a legenda, o link e/ou a imagem de cada banner.</o>
                     
                     <% if(banners && banners.length > 0) { %>
                         <ul class="usuarios-lista" role="list">
@@ -259,13 +259,15 @@
                                             <figcaption class="usuario-info">Banner <%= index + 1 %></figcaption>
                                         </figure>
                                         <output class="usuario-info">Legenda: <%= banner.legenda %></o>
+                                        <output class="usuario-info">Link: <%= banner.link || '/home' %></o>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do banner <%= index + 1 %>">
                                         <button class="btn-editar" 
                                                 type="button" 
                                                 data-banner-id="<%= banner.id %>"
                                                 data-banner-legenda="<%= banner.legenda %>"
-                                                onclick="abrirModalBanner(this.dataset.bannerId, this.dataset.bannerLegenda)"
+                                                data-banner-link="<%= banner.link || '/home' %>"
+                                                onclick="abrirModalBanner(this.dataset.bannerId, this.dataset.bannerLegenda, this.dataset.bannerLink)"
                                                 aria-label="Editar banner <%= index + 1 %>">Editar</button>
                                     </nav>
                                 </li>
@@ -295,6 +297,16 @@
                     <label for="legenda-banner">
                         <input type="text" id="legenda-banner" name="legenda" placeholder="Digite a legenda" required>
                     </label>
+                </fieldset>
+
+                <fieldset>
+                    <legend class="label-titulo">Link do Banner</legend>
+                    <label for="link-banner">
+                        <input type="text" id="link-banner" name="link" placeholder="/home ou /categoria/nome" required>
+                    </label>
+                    <output class="info-arquivo">
+                        Exemplos: /home, /categoria/Cuidados com a Pele, /produto/123
+                    </o>
                 </fieldset>
 
                 <fieldset class="campo-imagem">
@@ -460,13 +472,15 @@
             }
         });
 
-        function abrirModalBanner(id, legenda) {
+        function abrirModalBanner(id, legenda, link) {
             const modal = document.getElementById('modal-banner');
             const form = document.getElementById('form-editar-banner');
             const inputLegenda = document.getElementById('legenda-banner');
+            const inputLink = document.getElementById('link-banner');
             
             form.action = '/admin/editar-banner/' + id;
             inputLegenda.value = legenda;
+            inputLink.value = link || '/home';
             
             modal.classList.add('active');
         }

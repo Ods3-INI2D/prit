@@ -21,8 +21,10 @@
             <% if(banners && banners.length > 0) { %>
                 <% banners.forEach(function(banner, index) { %>
                     <figure class="carousel-slide <%= index === 0 ? 'active' : '' %>" aria-hidden="<%= index === 0 ? 'false' : 'true' %>">
-                        <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>">
-                        <figcaption class="carousel-caption"><%= banner.legenda %></figcaption>
+                        <a href="<%= banner.link || '/home' %>" aria-label="<%= banner.legenda %>">
+                            <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>">
+                            <figcaption class="carousel-caption"><%= banner.legenda %></figcaption>
+                        </a>
                     </figure>
                 <% }); %>
             <% } %>
@@ -76,17 +78,17 @@
 
                             <% if(temDesconto) { %>
                                 <section class="preco-container-home">
-                                    <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></output>
-                                    <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></output>
+                                    <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></o>
+                                    <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></o>
                                     <aside class="badge-desconto">
-                                        <output class="percentual-home">-<%= percentualDesconto %>%</output>
+                                        <output class="percentual-home">-<%= percentualDesconto %>%</o>
                                     </aside>
                                 </section>
                             <% } else { %>
-                                <output class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                <output class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></o>
                             <% } %>
 
-                            <output class="categoria-home"><%= produto.categoria %></output>
+                            <output class="categoria-home"><%= produto.categoria %></o>
 
                             <% if(temAvaliacoes) { %>
                                 <section class="estrelas-home">
@@ -100,7 +102,7 @@
                 <% }); %>
             <% } else { %>
                 <article class="sem-produtos">
-                    <output class="mensagem-vazio">Nenhum produto disponível no momento.</output>
+                    <output class="mensagem-vazio">Nenhum produto disponível no momento.</o>
                     <% if(isAdmin) { %>
                         <a href="/admin" class="btn-admin">Gerenciar o Site</a>
                     <% } %>

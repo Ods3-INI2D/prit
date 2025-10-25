@@ -17,9 +17,9 @@ function initDatabase() {
             carrinho: [],
             usuarios: [],
             banners: [
-                { id: 1, imagem: '/imagens/1.png', legenda: 'Promoções Especiais' },
-                { id: 2, imagem: '/imagens/2.png', legenda: 'Ofertas da Semana' },
-                { id: 3, imagem: '/imagens/3.png', legenda: 'Ofertas da Semana' }
+                { id: 1, imagem: '/imagens/1.png', legenda: 'Promoções Especiais', link: '/home' },
+                { id: 2, imagem: '/imagens/2.png', legenda: 'Ofertas da Semana', link: '/home' },
+                { id: 3, imagem: '/imagens/3.png', legenda: 'Ofertas da Semana', link: '/home' }
             ]
         };
         fs.writeFileSync(dbPath, JSON.stringify(initialData, null, 2));
@@ -78,7 +78,8 @@ function updateBanner(id, dadosAtualizados) {
     db.banners[index] = {
         id: db.banners[index].id,
         imagem: dadosAtualizados.imagem || db.banners[index].imagem,
-        legenda: dadosAtualizados.legenda || db.banners[index].legenda
+        legenda: dadosAtualizados.legenda || db.banners[index].legenda,
+        link: dadosAtualizados.link || db.banners[index].link || '/home'
     };
     
     console.log('Dados novos:', db.banners[index]);

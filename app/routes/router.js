@@ -475,10 +475,30 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
                 console.log('Nenhuma imagem nova enviada, mantendo:', imagemPath);
             }
             
+            // Validação e sanitização do link
+            let link = req.body.link || '/home';
+            
+            // Remove espaços em branco
+            link = link.trim();
+            
+            // Garante que o link começa com /
+            if (!link.startsWith('/')) {
+                link = '/' + link;
+            }
+            
+            // Validação básica de segurança para evitar links maliciosos
+            if (link.includes('javascript:') || link.includes('<script')) {
+                console.error('Link potencialmente malicioso detectado:', link);
+                return res.redirect('/admin?erro=editar_banner');
+            }
+            
+            console.log('Link sanitizado:', link);
+            
             // Prepara os dados atualizados do banner
             const bannerAtualizado = {
                 legenda: req.body.legenda || banner.legenda,
-                imagem: imagemPath
+                imagem: imagemPath,
+                link: link
             };
             
             console.log('Dados para atualizar:', bannerAtualizado);
