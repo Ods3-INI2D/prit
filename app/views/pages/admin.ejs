@@ -476,12 +476,21 @@
             const form = document.getElementById('form-editar-banner');
             const inputLegenda = document.getElementById('legenda-banner');
             const inputLink = document.getElementById('link-banner');
+            const previewBanner = document.getElementById('preview-banner');
+            const inputBanner = document.getElementById('imagem-banner');
+            const infoBanner = document.getElementById('banner-info');
+            
+            previewBanner.innerHTML = '';
+            inputBanner.value = '';
+            infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.';
+            infoBanner.style.color = '';
             
             form.action = '/admin/editar-banner/' + id;
             inputLegenda.value = legenda;
             inputLink.value = link || '/home';
             
             modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
         function fecharModalBanner() {
@@ -498,11 +507,21 @@
             infoBanner.style.color = '';
             
             modal.classList.remove('active');
+            document.body.style.overflow = '';
         }
 
         document.getElementById('modal-banner').addEventListener('click', function(e) {
             if (e.target === this) {
                 fecharModalBanner();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('modal-banner');
+                if (modal.classList.contains('active')) {
+                    fecharModalBanner();
+                }
             }
         });
     </script>
