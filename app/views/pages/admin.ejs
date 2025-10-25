@@ -266,12 +266,14 @@
                                         <output class="usuario-info">Link: <%= banner.link || '/home' %></output>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do banner <%= index + 1 %>">
+                                        <% 
+                                        const bannerId = banner.id;
+                                        const bannerLegenda = banner.legenda.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                                        const bannerLink = (banner.link || '/home').replace(/'/g, "\\'").replace(/"/g, '\\"');
+                                        %>
                                         <button class="btn-editar" 
                                                 type="button" 
-                                                data-banner-id="<%= banner.id %>"
-                                                data-banner-legenda="<%= banner.legenda %>"
-                                                data-banner-link="<%= banner.link || '/home' %>"
-                                                onclick="abrirModalBanner(this.dataset.bannerId, this.dataset.bannerLegenda, this.dataset.bannerLink)"
+                                                onclick="abrirModalBanner('<%= bannerId %>', '<%= bannerLegenda %>', '<%= bannerLink %>')"
                                                 aria-label="Editar banner <%= index + 1 %>">
                                             Editar Banner
                                         </button>
@@ -498,24 +500,54 @@
         });
 
         function abrirModalBanner(id, legenda, link) {
+            console.log('Abrindo modal para banner ID:', id);
+            console.log('Legenda:', legenda);
+            console.log('Link:', link);
+            
             const modal = document.getElementById('modal-banner');
             const form = document.getElementById('form-editar-banner');
             const inputLegenda = document.getElementById('legenda-banner');
             const inputLink = document.getElementById('link-banner');
+            const inputImagem = document.getElementById('imagem-banner');
+            const previewBanner = document.getElementById('preview-banner');
+            const infoBanner = document.getElementById('banner-info');
+            
+            if (!modal || !form || !inputLegenda || !inputLink) {
+                console.error('Elementos do modal não encontrados!');
+                return;
+            }
             
             form.action = '/admin/editar-banner/' + id;
             inputLegenda.value = legenda;
             inputLink.value = link || '/home';
             
+            if (inputImagem) {
+                inputImagem.value = '';
+            }
+            if (previewBanner) {
+                previewBanner.innerHTML = '';
+            }
+            if (infoBanner) {
+                infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual. Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).';
+                infoBanner.style.color = '';
+            }
+            
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            console.log('Modal aberto com sucesso!');
         }
 
         function fecharModalBanner() {
             const modal = document.getElementById('modal-banner');
             const form = document.getElementById('form-editar-banner');
+            const previewBanner = document.getElementById('preview-banner');
+            const infoBanner = document.getElementById('banner-info');
             
             form.reset();
+            previewBanner.innerHTML = '';
+            infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual. Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).';
+            infoBanner.style.color = '';
             modal.classList.remove('active');
             document.body.style.overflow = '';
         }
