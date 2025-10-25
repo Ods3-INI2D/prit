@@ -29,7 +29,9 @@
                     </button>
                 </form>
 
-                <a href="/carrinho"><img src="/imagens/cart.png" alt="carrinho" class="cart"></a>
+                <% if(!isAdmin) { %>
+                    <a href="/carrinho"><img src="/imagens/cart.png" alt="carrinho" class="cart"></a>
+                <% } %>
             </section>
         </section>
     </nav>

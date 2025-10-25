@@ -276,14 +276,12 @@ router.post('/usuario/atualizar', requireLogin, function(req, res) {
 // Rota admin (requer autenticação de administrador)
 router.get('/admin', requireAdmin, function(req, res) {
     const produtos = db.getProdutos();
-    const totalAvaliacoes = db.getTotalAvaliacoes();
     const usuarios = db.getAllUsuarios();
     const banners = db.getBanners();
     
     res.render('pages/admin', { 
         produtos: produtos, 
-        totalProdutos: produtos.length, 
-        totalAvaliacoes: totalAvaliacoes,
+        totalProdutos: produtos.length,
         usuarios: usuarios,
         banners: banners,
         erro: null,

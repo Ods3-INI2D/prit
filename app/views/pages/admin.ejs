@@ -93,11 +93,6 @@
                     <h3 class="stat-titulo">Total de Produtos</h3>
                     <output class="stat-valor" aria-label="<%= totalProdutos %> produtos cadastrados"><%= totalProdutos %></output>
                 </article>
-     
-                <article class="card-stats">
-                    <h3 class="stat-titulo">Total de Avaliações</h3>
-                    <output class="stat-valor" aria-label="<%= totalAvaliacoes %> avaliações recebidas"><%= totalAvaliacoes %></output>
-                </article>
 
                 <article class="card-stats">
                     <h3 class="stat-titulo">Total de Usuários</h3>
@@ -252,7 +247,7 @@
                 <section class="lista-banners-section">
                     <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners do Carrossel</h2>
                     
-                    <output class="mensagem-info">Edite os banners que aparecem no carrossel da página inicial. São 3 banners disponíveis.</output>
+                    <output class="mensagem-info">Edite os banners que aparecem no carrossel da página inicial. São 3 banners disponíveis. Você pode alterar a legenda e/ou a imagem de cada banner.</output>
                     
                     <% if(banners && banners.length > 0) { %>
                         <ul class="usuarios-lista" role="list">
@@ -276,6 +271,8 @@
                                 </li>
                             <% }); %>
                         </ul>
+                    <% } else { %>
+                        <output class="mensagem-vazia">Nenhum banner disponível.</output>
                     <% } %>
                 </section>
             </article>
