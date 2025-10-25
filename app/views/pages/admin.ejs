@@ -17,7 +17,6 @@
  
     <main>
         <% 
-        const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : { get: () => null };
         const queryString = typeof window !== 'undefined' ? window.location.search : '';
         const sucesso = queryString.includes('sucesso=produto_adicionado') ? 'produto_adicionado' :
                        queryString.includes('sucesso=produto_editado') ? 'produto_editado' :
@@ -247,7 +246,7 @@
                 <section class="lista-banners-section">
                     <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners do Carrossel</h2>
                     
-                    <output class="mensagem-info">Edite os banners que aparecem no carrossel da página inicial. São 3 banners disponíveis. Você pode alterar a legenda, o link e/ou a imagem de cada banner.</o>
+                    <output class="mensagem-info">Edite os banners que aparecem no carrossel da página inicial. São 3 banners disponíveis. Você pode alterar a legenda, o link e/ou a imagem de cada banner.</output>
                     
                     <% if(banners && banners.length > 0) { %>
                         <ul class="usuarios-lista" role="list">
@@ -258,8 +257,8 @@
                                             <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>" style="max-width: 200px; height: auto; border-radius: 0.5rem;">
                                             <figcaption class="usuario-info">Banner <%= index + 1 %></figcaption>
                                         </figure>
-                                        <output class="usuario-info">Legenda: <%= banner.legenda %></o>
-                                        <output class="usuario-info">Link: <%= banner.link || '/home' %></o>
+                                        <output class="usuario-info">Legenda: <%= banner.legenda %></output>
+                                        <output class="usuario-info">Link: <%= banner.link || '/home' %></output>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do banner <%= index + 1 %>">
                                         <button class="btn-editar" 
@@ -274,7 +273,7 @@
                             <% }); %>
                         </ul>
                     <% } else { %>
-                        <output class="mensagem-vazia">Nenhum banner disponível.</o>
+                        <output class="mensagem-vazia">Nenhum banner disponível.</output>
                     <% } %>
                 </section>
             </article>
@@ -306,7 +305,7 @@
                     </label>
                     <output class="info-arquivo">
                         Exemplos: /home, /categoria/Cuidados com a Pele, /produto/123
-                    </o>
+                    </output>
                 </fieldset>
 
                 <fieldset class="campo-imagem">
@@ -321,9 +320,9 @@
                                aria-describedby="banner-info">
                         <output id="banner-info" class="info-arquivo">
                             Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
-                        </o>
+                        </output>
                     </label>
-                    <output id="preview-banner" class="preview-container" role="status" aria-live="polite"></o>
+                    <output id="preview-banner" class="preview-container" role="status" aria-live="polite"></output>
                 </fieldset>
 
                 <button type="submit" class="btn-adicionar">Salvar Alterações</button>
