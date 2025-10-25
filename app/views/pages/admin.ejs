@@ -266,14 +266,11 @@
                                         <output class="usuario-info">Link: <%= banner.link || '/home' %></output>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do banner <%= index + 1 %>">
-                                        <% 
-                                        const bannerId = banner.id;
-                                        const bannerLegenda = banner.legenda.replace(/'/g, "\\'").replace(/"/g, '\\"');
-                                        const bannerLink = (banner.link || '/home').replace(/'/g, "\\'").replace(/"/g, '\\"');
-                                        %>
                                         <button class="btn-editar" 
                                                 type="button" 
-                                                onclick="abrirModalBanner('<%= bannerId %>', '<%= bannerLegenda %>', '<%= bannerLink %>')"
+                                                data-banner-id="<%= banner.id %>"
+                                                data-banner-legenda="<%= banner.legenda %>"
+                                                data-banner-link="<%= banner.link || '/home' %>"
                                                 aria-label="Editar banner <%= index + 1 %>">
                                             Editar Banner
                                         </button>
@@ -354,7 +351,7 @@
                 </fieldset>
 
                 <button type="submit" class="btn-adicionar">Salvar Alterações do Banner</button>
-                <button type="button" class="btn-adicionar" onclick="fecharModalBanner()" style="background-color: #555; margin-top: 1rem;">Cancelar Edição</button>
+                <button type="button" class="btn-adicionar" id="btn-fechar-modal" style="background-color: #555; margin-top: 1rem;">Cancelar Edição</button>
             </form>
         </article>
     </aside>
@@ -497,74 +494,82 @@
                     reader.readAsDataURL(arquivo);
                 });
             }
-        });
 
-        function abrirModalBanner(id, legenda, link) {
-            console.log('Abrindo modal para banner ID:', id);
-            console.log('Legenda:', legenda);
-            console.log('Link:', link);
-            
+            // CORREÇÃO PRINCIPAL: Gerenciamento do modal de banner
             const modal = document.getElementById('modal-banner');
             const form = document.getElementById('form-editar-banner');
+            const btnFecharModal = document.getElementById('btn-fechar-modal');
             const inputLegenda = document.getElementById('legenda-banner');
             const inputLink = document.getElementById('link-banner');
-            const inputImagem = document.getElementById('imagem-banner');
-            const previewBanner = document.getElementById('preview-banner');
-            const infoBanner = document.getElementById('banner-info');
-            
-            if (!modal || !form || !inputLegenda || !inputLink) {
-                console.error('Elementos do modal não encontrados!');
-                return;
-            }
-            
-            form.action = '/admin/editar-banner/' + id;
-            inputLegenda.value = legenda;
-            inputLink.value = link || '/home';
-            
-            if (inputImagem) {
-                inputImagem.value = '';
-            }
-            if (previewBanner) {
-                previewBanner.innerHTML = '';
-            }
-            if (infoBanner) {
-                infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual. Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).';
-                infoBanner.style.color = '';
-            }
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
-            console.log('Modal aberto com sucesso!');
-        }
+            const botoesEditar = document.querySelectorAll('[data-banner-id]');
 
-        function fecharModalBanner() {
-            const modal = document.getElementById('modal-banner');
-            const form = document.getElementById('form-editar-banner');
-            const previewBanner = document.getElementById('preview-banner');
-            const infoBanner = document.getElementById('banner-info');
-            
-            form.reset();
-            previewBanner.innerHTML = '';
-            infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual. Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).';
-            infoBanner.style.color = '';
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        document.getElementById('modal-banner').addEventListener('click', function(e) {
-            if (e.target === this) {
-                fecharModalBanner();
+            // Função para abrir o modal
+            function abrirModalBanner(bannerId, legenda, link) {
+                console.log('Abrindo modal para banner:', bannerId);
+                
+                // Define a action do formulário
+                form.action = '/admin/editar-banner/' + bannerId;
+                
+                // Preenche os campos
+                inputLegenda.value = legenda;
+                inputLink.value = link;
+                
+                // Limpa preview e mensagens
+                if (inputBanner) inputBanner.value = '';
+                if (previewBanner) previewBanner.innerHTML = '';
+                if (infoBanner) {
+                    infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual. Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).';
+                    infoBanner.style.color = '';
+                }
+                
+                // Abre o modal
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                
+                console.log('Modal aberto! Action:', form.action);
             }
-        });
 
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                const modal = document.getElementById('modal-banner');
-                if (modal.classList.contains('active')) {
+            // Função para fechar o modal
+            function fecharModalBanner() {
+                form.reset();
+                if (previewBanner) previewBanner.innerHTML = '';
+                if (infoBanner) {
+                    infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual. Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).';
+                    infoBanner.style.color = '';
+                }
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            // Adiciona eventos aos botões de editar
+            botoesEditar.forEach(function(botao) {
+                botao.addEventListener('click', function() {
+                    const bannerId = this.getAttribute('data-banner-id');
+                    const legenda = this.getAttribute('data-banner-legenda');
+                    const link = this.getAttribute('data-banner-link');
+                    
+                    abrirModalBanner(bannerId, legenda, link);
+                });
+            });
+
+            // Botão de fechar modal
+            if (btnFecharModal) {
+                btnFecharModal.addEventListener('click', fecharModalBanner);
+            }
+
+            // Fecha ao clicar no overlay
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
                     fecharModalBanner();
                 }
-            }
+            });
+
+            // Fecha com tecla ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    fecharModalBanner();
+                }
+            });
         });
     </script>
 </body>

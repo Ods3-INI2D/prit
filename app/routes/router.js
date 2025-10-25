@@ -422,11 +422,14 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, function(req, res) {
     }
 });
 
-// EDITAR BANNER - POST (ROTA COMPLETA E FUNCIONAL)
+// EDITAR BANNER - POST (ROTA CORRIGIDA E OTIMIZADA)
 router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
     uploadBanner.single('imagem')(req, res, function(err) {
-        if (err) {
-            console.error('Erro no upload do banner:', err);
+        if (err instanceof multer.MulterError) {
+            console.error('Erro Multer ao fazer upload do banner:', err);
+            return res.redirect('/admin?erro=editar_banner');
+        } else if (err) {
+            console.error('Erro ao fazer upload do banner:', err);
             return res.redirect('/admin?erro=editar_banner');
         }
         
@@ -434,29 +437,32 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
             const bannerId = parseInt(req.params.id);
             
             console.log('=== INICIANDO EDIÇÃO DE BANNER ===');
-            console.log('Banner ID:', bannerId);
-            console.log('Dados recebidos - legenda:', req.body.legenda);
-            console.log('Dados recebidos - link:', req.body.link);
-            console.log('Arquivo recebido:', req.file ? req.file.filename : 'Nenhum arquivo');
+            console.log('Banner ID recebido:', bannerId);
+            console.log('Body recebido:', req.body);
+            console.log('Arquivo recebido:', req.file ? req.file.filename : 'Nenhum');
+            
+            if (isNaN(bannerId)) {
+                console.error('ID do banner inválido:', req.params.id);
+                return res.redirect('/admin?erro=banner_nao_encontrado');
+            }
             
             const banner = db.getBannerById(bannerId);
             
             if (!banner) {
-                console.error(`Banner com ID ${bannerId} não encontrado`);
+                console.error(`Banner com ID ${bannerId} não encontrado no banco`);
                 return res.redirect('/admin?erro=banner_nao_encontrado');
             }
             
-            console.log('Banner encontrado:', banner);
+            console.log('Banner atual encontrado:', JSON.stringify(banner, null, 2));
             
             let imagemPath = banner.imagem;
             
-            // Se uma nova imagem foi enviada, processa o upload
+            // Processa nova imagem se enviada
             if (req.file) {
                 imagemPath = '/imagens/' + req.file.filename;
+                console.log('Nova imagem recebida:', imagemPath);
                 
-                console.log('Nova imagem enviada:', imagemPath);
-                
-                // Remove a imagem antiga apenas se não for uma das originais padrão
+                // Remove imagem antiga se não for padrão
                 const imagensOriginais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
                 if (!imagensOriginais.includes(banner.imagem)) {
                     const imagemAntiga = path.join(__dirname, '../public', banner.imagem);
@@ -470,74 +476,88 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
                     }
                 }
             } else {
-                console.log('Nenhuma imagem nova enviada, mantendo:', imagemPath);
+                console.log('Mantendo imagem atual:', imagemPath);
             }
             
-            // Validação e sanitização do link
-            let link = req.body.link || '/home';
-            
-            // Remove espaços em branco
-            link = link.trim();
-            
-            // Garante que o link começa com /
-            if (!link.startsWith('/')) {
-                link = '/' + link;
-            }
-            
-            // Validação básica de segurança para evitar links maliciosos
-            if (link.includes('javascript:') || link.includes('<script')) {
-                console.error('Link potencialmente malicioso detectado:', link);
-                return res.redirect('/admin?erro=editar_banner');
-            }
-            
-            console.log('Link sanitizado:', link);
-            
-            // Validação da legenda
-            let legenda = req.body.legenda || banner.legenda;
+            // Validação e sanitização da legenda
+            let legenda = req.body.legenda || '';
             legenda = legenda.trim();
             
             if (legenda.length === 0) {
                 legenda = banner.legenda;
+                console.log('Legenda vazia, mantendo atual:', legenda);
+            } else {
+                console.log('Nova legenda:', legenda);
             }
             
-            console.log('Legenda sanitizada:', legenda);
+            // Validação e sanitização do link
+            let link = req.body.link || '/home';
+            link = link.trim();
             
-            // Prepara os dados atualizados do banner
+            // Garante que começa com /
+            if (!link.startsWith('/')) {
+                link = '/' + link;
+            }
+            
+            // Segurança: bloqueia links maliciosos
+            if (link.includes('javascript:') || link.includes('<script') || link.includes('onclick')) {
+                console.error('Link potencialmente malicioso bloqueado:', link);
+                return res.redirect('/admin?erro=editar_banner');
+            }
+            
+            console.log('Link processado:', link);
+            
+            // Prepara dados atualizados
             const bannerAtualizado = {
                 legenda: legenda,
                 imagem: imagemPath,
                 link: link
             };
             
-            console.log('Dados para atualizar:', bannerAtualizado);
+            console.log('Dados para atualização:', JSON.stringify(bannerAtualizado, null, 2));
             
-            // Atualiza o banner no banco de dados
+            // Atualiza no banco de dados
             const sucesso = db.updateBanner(bannerId, bannerAtualizado);
             
             if (sucesso) {
                 console.log('=== BANNER ATUALIZADO COM SUCESSO! ===');
-                res.redirect('/admin?sucesso=banner_editado');
+                return res.redirect('/admin?sucesso=banner_editado');
             } else {
                 console.error('Falha ao atualizar banner no banco de dados');
-                res.redirect('/admin?erro=editar_banner');
+                
+                // Se falhou, remove arquivo enviado
+                if (req.file) {
+                    const arquivoNovo = path.join(__dirname, '../public/imagens', req.file.filename);
+                    if (fs.existsSync(arquivoNovo)) {
+                        try {
+                            fs.unlinkSync(arquivoNovo);
+                            console.log('Arquivo enviado removido após falha');
+                        } catch (err) {
+                            console.error('Erro ao remover arquivo após falha:', err);
+                        }
+                    }
+                }
+                
+                return res.redirect('/admin?erro=editar_banner');
             }
         } catch (error) {
-            console.error('Erro ao editar banner:', error);
+            console.error('Erro crítico ao editar banner:', error);
+            console.error('Stack:', error.stack);
             
-            // Se houver erro e um arquivo foi enviado, tenta removê-lo
+            // Remove arquivo enviado em caso de erro
             if (req.file) {
                 const arquivoPath = path.join(__dirname, '../public/imagens', req.file.filename);
                 if (fs.existsSync(arquivoPath)) {
                     try {
                         fs.unlinkSync(arquivoPath);
-                        console.log('Arquivo enviado removido após erro');
+                        console.log('Arquivo enviado removido após erro crítico');
                     } catch (err) {
-                        console.error('Erro ao remover arquivo após falha:', err);
+                        console.error('Erro ao remover arquivo após erro crítico:', err);
                     }
                 }
             }
             
-            res.redirect('/admin?erro=editar_banner');
+            return res.redirect('/admin?erro=editar_banner');
         }
     });
 });
