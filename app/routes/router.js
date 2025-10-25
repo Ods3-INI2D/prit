@@ -427,9 +427,11 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, function(req, res) {
 // ==========================================
 router.post('/admin/editar-banner/:id', requireAdmin, uploadBanner.single('imagem'), function(req, res) {
     try {
-        const banner = db.getBannerById(req.params.id);
+        const bannerId = parseInt(req.params.id);
+        const banner = db.getBannerById(bannerId);
         
         if (!banner) {
+            console.error(`Banner com ID ${bannerId} não encontrado`);
             return res.redirect('/admin?erro=banner_nao_encontrado');
         }
 
@@ -439,13 +441,16 @@ router.post('/admin/editar-banner/:id', requireAdmin, uploadBanner.single('image
         if (req.file) {
             imagemPath = '/imagens/' + req.file.filename;
             
-            // Remove a imagem antiga apenas se não for uma das originais
+            console.log('Nova imagem enviada:', imagemPath);
+            
+            // Remove a imagem antiga apenas se não for uma das originais padrão
             const imagensOriginais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
             if (!imagensOriginais.includes(banner.imagem)) {
                 const imagemAntiga = path.join(__dirname, '../public', banner.imagem);
                 if (fs.existsSync(imagemAntiga)) {
                     try {
                         fs.unlinkSync(imagemAntiga);
+                        console.log('Imagem antiga removida:', banner.imagem);
                     } catch (err) {
                         console.error('Erro ao deletar imagem antiga:', err);
                     }
@@ -459,12 +464,16 @@ router.post('/admin/editar-banner/:id', requireAdmin, uploadBanner.single('image
             imagem: imagemPath
         };
         
+        console.log('Atualizando banner:', bannerId, bannerAtualizado);
+        
         // Atualiza o banner no banco de dados
-        const sucesso = db.updateBanner(req.params.id, bannerAtualizado);
+        const sucesso = db.updateBanner(bannerId, bannerAtualizado);
         
         if (sucesso) {
+            console.log('Banner atualizado com sucesso!');
             res.redirect('/admin?sucesso=banner_editado');
         } else {
+            console.error('Falha ao atualizar banner no banco de dados');
             res.redirect('/admin?erro=editar_banner');
         }
     } catch (error) {
@@ -476,6 +485,7 @@ router.post('/admin/editar-banner/:id', requireAdmin, uploadBanner.single('image
             if (fs.existsSync(arquivoPath)) {
                 try {
                     fs.unlinkSync(arquivoPath);
+                    console.log('Arquivo enviado removido após erro');
                 } catch (err) {
                     console.error('Erro ao remover arquivo após falha:', err);
                 }

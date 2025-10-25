@@ -258,7 +258,7 @@
                                             <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>" style="max-width: 200px; height: auto; border-radius: 0.5rem;">
                                             <figcaption class="usuario-info">Banner <%= index + 1 %></figcaption>
                                         </figure>
-                                        <output class="usuario-info">Legenda: <%= banner.legenda %></output>
+                                        <output class="usuario-info">Legenda: <%= banner.legenda %></o>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do banner <%= index + 1 %>">
                                         <button class="btn-editar" 
@@ -272,7 +272,7 @@
                             <% }); %>
                         </ul>
                     <% } else { %>
-                        <output class="mensagem-vazia">Nenhum banner disponível.</output>
+                        <output class="mensagem-vazia">Nenhum banner disponível.</o>
                     <% } %>
                 </section>
             </article>
@@ -290,10 +290,12 @@
             <h2 class="subtitulo" id="modal-titulo">Editar Banner</h2>
             
             <form method="POST" id="form-editar-banner" enctype="multipart/form-data" class="form-produto">
-                <label for="legenda-banner">
-                    <strong class="label-titulo">Legenda do Banner</strong>
-                    <input type="text" id="legenda-banner" name="legenda" placeholder="Digite a legenda" required>
-                </label>
+                <fieldset>
+                    <legend class="label-titulo">Legenda do Banner</legend>
+                    <label for="legenda-banner">
+                        <input type="text" id="legenda-banner" name="legenda" placeholder="Digite a legenda" required>
+                    </label>
+                </fieldset>
 
                 <fieldset class="campo-imagem">
                     <legend>
@@ -307,9 +309,9 @@
                                aria-describedby="banner-info">
                         <output id="banner-info" class="info-arquivo">
                             Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
-                        </output>
+                        </o>
                     </label>
-                    <output id="preview-banner" class="preview-container" role="status" aria-live="polite"></output>
+                    <output id="preview-banner" class="preview-container" role="status" aria-live="polite"></o>
                 </fieldset>
 
                 <button type="submit" class="btn-adicionar">Salvar Alterações</button>

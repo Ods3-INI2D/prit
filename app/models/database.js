@@ -54,25 +54,51 @@ function getBanners() {
 
 function updateBanner(id, dadosAtualizados) {
     const db = readDatabase();
-    const index = db.banners.findIndex(b => b.id == id);
+    
+    // Garante que banners existe
+    if (!db.banners) {
+        db.banners = [];
+    }
+    
+    // Converte o ID para número para garantir comparação correta
+    const bannerId = parseInt(id);
+    
+    // Encontra o índice do banner
+    const index = db.banners.findIndex(b => parseInt(b.id) === bannerId);
     
     if (index === -1) {
+        console.error(`Banner com ID ${bannerId} não encontrado`);
         return false;
     }
     
+    console.log('Banner encontrado no índice:', index);
+    console.log('Dados antigos:', db.banners[index]);
+    
+    // Atualiza o banner mantendo o ID original
     db.banners[index] = {
-        ...db.banners[index],
-        ...dadosAtualizados,
-        id: db.banners[index].id
+        id: db.banners[index].id,
+        imagem: dadosAtualizados.imagem || db.banners[index].imagem,
+        legenda: dadosAtualizados.legenda || db.banners[index].legenda
     };
     
-    writeDatabase(db);
-    return true;
+    console.log('Dados novos:', db.banners[index]);
+    
+    // Salva no banco de dados
+    const sucesso = writeDatabase(db);
+    
+    if (sucesso) {
+        console.log('Banner atualizado com sucesso no banco de dados!');
+    } else {
+        console.error('Falha ao salvar banner no banco de dados');
+    }
+    
+    return sucesso;
 }
 
 function getBannerById(id) {
     const db = readDatabase();
-    return db.banners.find(b => b.id == id);
+    const bannerId = parseInt(id);
+    return db.banners ? db.banners.find(b => parseInt(b.id) === bannerId) : null;
 }
 
 // Funções existentes de produtos
