@@ -45,27 +45,23 @@ function addProduto(produto) {
     const db = readDatabase();
     produto.id = Date.now();
     
-    // Garantir que preco sempre tenha um valor válido
     produto.preco = produto.preco !== null && produto.preco !== undefined ? parseFloat(produto.preco) : 0;
     
-    // Garantir que precoDesconto seja null ou um número válido
     if (produto.precoDesconto !== null && produto.precoDesconto !== undefined && produto.precoDesconto !== '') {
         produto.precoDesconto = parseFloat(produto.precoDesconto);
     } else {
         produto.precoDesconto = null;
     }
     
-    // Usa a imagem fornecida ou define uma padrão
     if (!produto.imagem) {
         produto.imagem = '/imagens/foto.jpg';
     }
     
-    // Garantir que categoria e descricao existam
     produto.categoria = produto.categoria || 'Geral';
     produto.descricao = produto.descricao || '';
     produto.nome = produto.nome || 'Produto sem nome';
-    
     produto.avaliacoes = [];
+    
     db.produtos.push(produto);
     writeDatabase(db);
     return produto;
@@ -73,7 +69,6 @@ function addProduto(produto) {
 
 function getProdutos() {
     const db = readDatabase();
-    // Filtrar e normalizar produtos antes de retornar
     return db.produtos.map(produto => {
         return {
             ...produto,
@@ -96,7 +91,6 @@ function getProdutoById(id) {
         return null;
     }
     
-    // Normalizar produto antes de retornar
     return {
         ...produto,
         preco: produto.preco !== null && produto.preco !== undefined ? produto.preco : 0,
@@ -109,9 +103,18 @@ function getProdutoById(id) {
     };
 }
 
-function addAvaliacao(produtoId, avaliacao) {
+function addAvaliacao(produtoId, avaliacao, usuarioEmail) {
     const db = readDatabase();
     const produto = db.produtos.find(p => p.id == produtoId);
+    
+    // Verifica se o usuário tem o produto no carrinho
+    const temNoCarrinho = db.carrinho.some(item => 
+        item.produtoId == produtoId && item.usuarioEmail === usuarioEmail
+    );
+    
+    if (!temNoCarrinho) {
+        return false;
+    }
     
     if (produto) {
         avaliacao.data = new Date();
@@ -126,31 +129,100 @@ function addAvaliacao(produtoId, avaliacao) {
     return false;
 }
 
-function addToCarrinho(produtoId) {
+function addToCarrinho(produtoId, usuarioEmail) {
     const db = readDatabase();
     const produto = db.produtos.find(p => p.id == produtoId);
     
-    if (produto) {
-        db.carrinho.push(produto);
-        writeDatabase(db);
-        return true;
+    if (!produto) {
+        return false;
     }
-    return false;
+    
+    // Verifica se já existe no carrinho
+    const itemExistente = db.carrinho.find(item => 
+        item.produtoId == produtoId && item.usuarioEmail === usuarioEmail
+    );
+    
+    if (itemExistente) {
+        // Aumenta a quantidade
+        itemExistente.quantidade += 1;
+    } else {
+        // Adiciona novo item
+        db.carrinho.push({
+            produtoId: produtoId.toString(),
+            usuarioEmail: usuarioEmail,
+            quantidade: 1,
+            dataAdicionado: new Date()
+        });
+    }
+    
+    writeDatabase(db);
+    return true;
 }
 
-function getCarrinho() {
+function getCarrinho(usuarioEmail) {
     const db = readDatabase();
-    // Normalizar produtos do carrinho
-    return db.carrinho.map(produto => {
+    
+    // Filtra itens do usuário
+    const itensUsuario = db.carrinho.filter(item => item.usuarioEmail === usuarioEmail);
+    
+    // Mapeia com os dados completos do produto
+    return itensUsuario.map(item => {
+        const produto = db.produtos.find(p => p.id == item.produtoId);
+        
+        if (!produto) {
+            return null;
+        }
+        
         return {
             ...produto,
+            quantidade: item.quantidade || 1,
             preco: produto.preco !== null && produto.preco !== undefined ? produto.preco : 0,
             precoDesconto: produto.precoDesconto || null,
             categoria: produto.categoria || 'Geral',
             nome: produto.nome || 'Produto sem nome',
             imagem: produto.imagem || '/imagens/foto.jpg'
         };
-    });
+    }).filter(item => item !== null);
+}
+
+function updateQuantidadeCarrinho(produtoId, usuarioEmail, novaQuantidade) {
+    const db = readDatabase();
+    
+    const item = db.carrinho.find(item => 
+        item.produtoId == produtoId && item.usuarioEmail === usuarioEmail
+    );
+    
+    if (item) {
+        if (novaQuantidade <= 0) {
+            // Remove se quantidade for 0 ou negativa
+            db.carrinho = db.carrinho.filter(i => 
+                !(i.produtoId == produtoId && i.usuarioEmail === usuarioEmail)
+            );
+        } else {
+            item.quantidade = novaQuantidade;
+        }
+        writeDatabase(db);
+        return true;
+    }
+    return false;
+}
+
+function removeFromCarrinho(produtoId, usuarioEmail) {
+    const db = readDatabase();
+    
+    db.carrinho = db.carrinho.filter(item => 
+        !(item.produtoId == produtoId && item.usuarioEmail === usuarioEmail)
+    );
+    
+    writeDatabase(db);
+    return true;
+}
+
+function usuarioTemProdutoNoCarrinho(produtoId, usuarioEmail) {
+    const db = readDatabase();
+    return db.carrinho.some(item => 
+        item.produtoId == produtoId && item.usuarioEmail === usuarioEmail
+    );
 }
 
 function clearCarrinho() {
@@ -185,10 +257,8 @@ function updateUsuario(email, updates) {
 function getProdutosByCategoria(categoria) {
     const db = readDatabase();
     
-    // Categorias que devem aparecer em "Geral"
     const categoriasGerais = ['Cuidados com a Pele', 'Higiene Bucal', 'Cabelo'];
     
-    // Se a categoria for "Geral", retorna produtos dessas categorias específicas
     if (categoria.toLowerCase() === 'geral') {
         return db.produtos
             .filter(p => p.categoria && categoriasGerais.includes(p.categoria))
@@ -205,7 +275,6 @@ function getProdutosByCategoria(categoria) {
             });
     }
     
-    // Para outras categorias, retorna normalmente
     return db.produtos
         .filter(p => p.categoria && p.categoria.toLowerCase() === categoria.toLowerCase())
         .map(produto => {
@@ -241,5 +310,8 @@ module.exports = {
     updateUsuario,
     readDatabase,
     getProdutosByCategoria,
-    getTotalAvaliacoes
+    getTotalAvaliacoes,
+    updateQuantidadeCarrinho,
+    removeFromCarrinho,
+    usuarioTemProdutoNoCarrinho
 };

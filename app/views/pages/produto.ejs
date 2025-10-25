@@ -162,20 +162,20 @@
                 <h3 class="titulo-form-avaliacao">Deixe sua avaliação</h3>
                 
                 <% if(!usuarioLogado) { %>
-                    <o class="mensagem-aviso" role="alert">
+                    <output class="mensagem-aviso" role="alert">
                         Você precisa estar logado para avaliar este produto.
                         <a href="/login?redirect=/produto/<%= produto.id %>" style="color: #ffc107; text-decoration: underline;">Fazer login</a>
-                    </o>
+                    </output>
                 <% } else if(!temProdutoNoCarrinho) { %>
-                    <o class="mensagem-aviso" role="alert">
+                    <output class="mensagem-aviso" role="alert">
                         Você precisa adicionar este produto ao carrinho antes de avaliá-lo.
-                    </o>
+                    </output>
                 <% } %>
 
                 <% if(typeof erro !== 'undefined' && erro === 'carrinho') { %>
-                    <o class="mensagem-erro-avaliacao" role="alert">
+                    <output class="mensagem-erro-avaliacao" role="alert">
                         Erro: Você precisa ter este produto no carrinho para avaliá-lo!
-                    </o>
+                    </output>
                 <% } %>
                 
                 <form method="POST" 
@@ -237,7 +237,6 @@
     </footer>
 
     <script>
-        // Verifica se há parâmetro de erro na URL
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('erro') === 'carrinho') {
             const formAvaliacao = document.getElementById('form-avaliacao');
