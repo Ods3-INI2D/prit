@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link rel="stylesheet" href="/css/admin-extended.css">
+    
 </head>
 <body>
     <header>
@@ -23,13 +24,14 @@
                        queryString.includes('sucesso=produto_editado') ? 'produto_editado' :
                        queryString.includes('sucesso=produto_excluido') ? 'produto_excluido' :
                        queryString.includes('sucesso=usuario_excluido') ? 'usuario_excluido' :
-                       queryString.includes('sucesso=avaliacao_excluida') ? 'avaliacao_excluida' : null;
+                       queryString.includes('sucesso=banner_editado') ? 'banner_editado' : null;
         const erro = queryString.includes('erro=adicionar_produto') ? 'adicionar_produto' :
                     queryString.includes('erro=editar_produto') ? 'editar_produto' :
                     queryString.includes('erro=excluir_produto') ? 'excluir_produto' :
                     queryString.includes('erro=produto_nao_encontrado') ? 'produto_nao_encontrado' :
                     queryString.includes('erro=excluir_usuario') ? 'excluir_usuario' :
-                    queryString.includes('erro=excluir_avaliacao') ? 'excluir_avaliacao' : null;
+                    queryString.includes('erro=editar_banner') ? 'editar_banner' :
+                    queryString.includes('erro=banner_nao_encontrado') ? 'banner_nao_encontrado' : null;
         %>
 
         <% if(sucesso === 'produto_adicionado') { %>
@@ -48,9 +50,9 @@
             <output class="mensagem-sucesso" role="status" aria-live="polite">
                 Usuário excluído com sucesso!
             </output>
-        <% } else if(sucesso === 'avaliacao_excluida') { %>
+        <% } else if(sucesso === 'banner_editado') { %>
             <output class="mensagem-sucesso" role="status" aria-live="polite">
-                Avaliação excluída com sucesso!
+                Banner editado com sucesso!
             </output>
         <% } %>
 
@@ -74,9 +76,13 @@
             <output class="mensagem-erro" role="alert" aria-live="assertive">
                 Erro ao excluir usuário!
             </output>
-        <% } else if(erro === 'excluir_avaliacao') { %>
+        <% } else if(erro === 'editar_banner') { %>
             <output class="mensagem-erro" role="alert" aria-live="assertive">
-                Erro ao excluir avaliação!
+                Erro ao editar banner!
+            </output>
+        <% } else if(erro === 'banner_nao_encontrado') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Banner não encontrado!
             </output>
         <% } %>
 
@@ -106,7 +112,7 @@
                 <button class="tab-button active" data-tab="adicionar" role="tab" aria-selected="true" aria-controls="tab-adicionar">Adicionar Produto</button>
                 <button class="tab-button" data-tab="produtos" role="tab" aria-selected="false" aria-controls="tab-produtos">Gerenciar Produtos</button>
                 <button class="tab-button" data-tab="usuarios" role="tab" aria-selected="false" aria-controls="tab-usuarios">Gerenciar Usuários</button>
-                <button class="tab-button" data-tab="avaliacoes" role="tab" aria-selected="false" aria-controls="tab-avaliacoes">Gerenciar Avaliações</button>
+                <button class="tab-button" data-tab="banners" role="tab" aria-selected="false" aria-controls="tab-banners">Gerenciar Banners</button>
             </nav>
 
             <article class="tab-content active" id="tab-adicionar" role="tabpanel" aria-labelledby="titulo-adicionar">
@@ -235,43 +241,30 @@
                 </section>
             </article>
 
-            <article class="tab-content" id="tab-avaliacoes" role="tabpanel" aria-labelledby="titulo-avaliacoes-lista">
-                <section class="lista-avaliacoes-section">
-                    <h2 id="titulo-avaliacoes-lista" class="subtitulo">Avaliações dos Produtos</h2>
+            <article class="tab-content" id="tab-banners" role="tabpanel" aria-labelledby="titulo-banners">
+                <section class="lista-banners-section">
+                    <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners do Carrossel</h2>
                     
-                    <% 
-                    let temAvaliacoes = false;
-                    produtos.forEach(function(produto) {
-                        if(produto.avaliacoes && produto.avaliacoes.length > 0) {
-                            temAvaliacoes = true;
-                        }
-                    });
-                    %>
-
-                    <% if(!temAvaliacoes) { %>
-                        <p class="mensagem-vazia">Nenhuma avaliação cadastrada ainda.</p>
-                    <% } else { %>
-                        <ul class="avaliacoes-lista" role="list">
-                            <% produtos.forEach(function(produto) { %>
-                                <% if(produto.avaliacoes && produto.avaliacoes.length > 0) { %>
-                                    <% produto.avaliacoes.forEach(function(avaliacao, index) { %>
-                                        <li class="avaliacao-item" role="listitem">
-                                            <article>
-                                                <h3 class="avaliacao-produto"><%= produto.nome %></h3>
-                                                <p class="avaliacao-nota">Nota: <%= avaliacao.nota %>/5 ⭐</p>
-                                                <p class="avaliacao-texto"><%= avaliacao.texto %></p>
-                                                <time class="avaliacao-data" datetime="<%= new Date(avaliacao.data).toISOString() %>">
-                                                    <%= new Date(avaliacao.data).toLocaleDateString('pt-BR') %> às <%= new Date(avaliacao.data).toLocaleTimeString('pt-BR') %>
-                                                </time>
-                                                <nav aria-label="Ações da avaliação">
-                                                    <form method="POST" action="/admin/excluir-avaliacao/<%= produto.id %>/<%= index %>" class="form-inline">
-                                                        <button class="btn-excluir-avaliacao" type="submit" onclick="return confirm('Tem certeza que deseja excluir esta avaliação?')">Excluir Avaliação</button>
-                                                    </form>
-                                                </nav>
-                                            </article>
-                                        </li>
-                                    <% }); %>
-                                <% } %>
+                    <p class="mensagem-info">Edite os banners que aparecem no carrossel da página inicial. São 3 banners disponíveis.</p>
+                    
+                    <% if(banners && banners.length > 0) { %>
+                        <ul class="usuarios-lista" role="list">
+                            <% banners.forEach(function(banner, index) { %>
+                                <li class="usuario-item" role="listitem">
+                                    <article class="usuario-info-container">
+                                        <figure>
+                                            <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>" style="max-width: 200px; height: auto; border-radius: 0.5rem;">
+                                            <figcaption class="usuario-info">Banner <%= index + 1 %></figcaption>
+                                        </figure>
+                                        <p class="usuario-info">Legenda: <%= banner.legenda %></p>
+                                    </article>
+                                    <nav class="acoes-usuario" aria-label="Ações do banner <%= index + 1 %>">
+                                        <button class="btn-editar" 
+                                                type="button" 
+                                                onclick="abrirModalBanner(<%= banner.id %>, '<%= banner.legenda %>')"
+                                                aria-label="Editar banner <%= index + 1 %>">Editar</button>
+                                    </nav>
+                                </li>
                             <% }); %>
                         </ul>
                     <% } %>
@@ -285,6 +278,39 @@
             <a href="/home" class="link-footer">Voltar ao Site</a>
         </nav>
     </footer>
+
+    <aside id="modal-banner" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+        <article class="modal-content">
+            <h2 class="subtitulo" id="modal-titulo">Editar Banner</h2>
+            
+            <form method="POST" id="form-editar-banner" enctype="multipart/form-data" class="form-produto">
+                <label for="legenda-banner">
+                    <strong class="label-titulo">Legenda do Banner</strong>
+                    <input type="text" id="legenda-banner" name="legenda" placeholder="Digite a legenda" required>
+                </label>
+
+                <fieldset class="campo-imagem">
+                    <legend>
+                        <strong class="label-titulo">Nova Imagem (opcional)</strong>
+                    </legend>
+                    <label for="imagem-banner" class="label-arquivo">
+                        <input type="file"
+                               id="imagem-banner"
+                               name="imagem"
+                               accept="image/jpeg,image/jpg,image/png,image/webp"
+                               aria-describedby="banner-info">
+                        <output id="banner-info" class="info-arquivo">
+                            Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
+                        </output>
+                    </label>
+                    <output id="preview-banner" class="preview-container" role="status" aria-live="polite"></output>
+                </fieldset>
+
+                <button type="submit" class="btn-adicionar">Salvar Alterações</button>
+                <button type="button" class="btn-adicionar" onclick="fecharModalBanner()" style="background-color: #555; margin-top: 1rem;">Cancelar</button>
+            </form>
+        </article>
+    </aside>
  
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -365,6 +391,97 @@
                     };
                     reader.readAsDataURL(arquivo);
                 });
+            }
+
+            const inputBanner = document.getElementById('imagem-banner');
+            const previewBanner = document.getElementById('preview-banner');
+            const infoBanner = document.getElementById('banner-info');
+
+            if (inputBanner) {
+                inputBanner.addEventListener('change', function(e) {
+                    const arquivo = e.target.files[0];
+                    
+                    if (!arquivo) {
+                        previewBanner.innerHTML = '';
+                        infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.';
+                        infoBanner.style.color = '';
+                        return;
+                    }
+
+                    if (arquivo.size > 5 * 1024 * 1024) {
+                        infoBanner.textContent = 'Erro: A imagem deve ter no máximo 5MB';
+                        infoBanner.style.color = '#d93025';
+                        previewBanner.innerHTML = '';
+                        inputBanner.value = '';
+                        return;
+                    }
+
+                    const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                    if (!tiposPermitidos.includes(arquivo.type)) {
+                        infoBanner.textContent = 'Erro: Formato não suportado. Use JPG, PNG ou WEBP';
+                        infoBanner.style.color = '#d93025';
+                        previewBanner.innerHTML = '';
+                        inputBanner.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const figure = document.createElement('figure');
+                        figure.className = 'preview-figure';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = 'Preview da nova imagem do banner';
+                        img.className = 'preview-img';
+                        
+                        const figcaption = document.createElement('figcaption');
+                        figcaption.textContent = arquivo.name;
+                        figcaption.className = 'preview-caption';
+                        
+                        figure.appendChild(img);
+                        figure.appendChild(figcaption);
+                        previewBanner.innerHTML = '';
+                        previewBanner.appendChild(figure);
+                        
+                        infoBanner.textContent = 'Nova imagem selecionada com sucesso!';
+                        infoBanner.style.color = '#4da6ff';
+                    };
+                    reader.readAsDataURL(arquivo);
+                });
+            }
+        });
+
+        function abrirModalBanner(id, legenda) {
+            const modal = document.getElementById('modal-banner');
+            const form = document.getElementById('form-editar-banner');
+            const inputLegenda = document.getElementById('legenda-banner');
+            
+            form.action = '/admin/editar-banner/' + id;
+            inputLegenda.value = legenda;
+            
+            modal.classList.add('active');
+        }
+
+        function fecharModalBanner() {
+            const modal = document.getElementById('modal-banner');
+            const form = document.getElementById('form-editar-banner');
+            const inputBanner = document.getElementById('imagem-banner');
+            const previewBanner = document.getElementById('preview-banner');
+            const infoBanner = document.getElementById('banner-info');
+            
+            form.reset();
+            inputBanner.value = '';
+            previewBanner.innerHTML = '';
+            infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.';
+            infoBanner.style.color = '';
+            
+            modal.classList.remove('active');
+        }
+
+        document.getElementById('modal-banner').addEventListener('click', function(e) {
+            if (e.target === this) {
+                fecharModalBanner();
             }
         });
     </script>

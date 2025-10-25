@@ -18,20 +18,14 @@
 
     <main>
         <section class="carousel-container" aria-label="Carrossel de destaques">
-            <figure class="carousel-slide active" aria-hidden="false">
-                <img src="/imagens/1.png" alt="Primeira imagem do carrossel - Promoções especiais">
-                <figcaption class="carousel-caption">Promoções Especiais</figcaption>
-            </figure>
-            
-            <figure class="carousel-slide" aria-hidden="true">
-                <img src="/imagens/2.png" alt="Segunda imagem do carrossel - Ofertas da semana">
-                <figcaption class="carousel-caption">Ofertas da Semana</figcaption>
-            </figure>
-            
-            <figure class="carousel-slide" aria-hidden="true">
-                <img src="/imagens/3.png" alt="Terceira imagem do carrossel - Ofertas da semana">
-                <figcaption class="carousel-caption">Ofertas da Semana</figcaption>
-            </figure>
+            <% if(banners && banners.length > 0) { %>
+                <% banners.forEach(function(banner, index) { %>
+                    <figure class="carousel-slide <%= index === 0 ? 'active' : '' %>" aria-hidden="<%= index === 0 ? 'false' : 'true' %>">
+                        <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>">
+                        <figcaption class="carousel-caption"><%= banner.legenda %></figcaption>
+                    </figure>
+                <% }); %>
+            <% } %>
 
             <nav class="carousel-controls" aria-label="Controles do carrossel">
                 <button class="carousel-btn prev" aria-label="Slide anterior">❮</button>
@@ -39,16 +33,19 @@
             </nav>
 
             <nav class="carousel-indicators" aria-label="Indicadores do carrossel">
-                <button class="indicator active" aria-label="Ir para slide 1" data-slide="0"></button>
-                <button class="indicator" aria-label="Ir para slide 2" data-slide="1"></button>
-                <button class="indicator" aria-label="Ir para slide 3" data-slide="2"></button>
+                <% if(banners && banners.length > 0) { %>
+                    <% banners.forEach(function(banner, index) { %>
+                        <button class="indicator <%= index === 0 ? 'active' : '' %>" 
+                                aria-label="Ir para slide <%= index + 1 %>" 
+                                data-slide="<%= index %>"></button>
+                    <% }); %>
+                <% } %>
             </nav>
         </section>
 
         <section class="produtos-container">
             <% if(produtos && produtos.length > 0) { %>
                 <% produtos.forEach(function(produto) { 
-                    // Garantir que preco nunca seja null
                     var precoAtual = produto.preco || 0;
                     var precoComDesconto = produto.precoDesconto || null;
                     
@@ -104,7 +101,9 @@
             <% } else { %>
                 <article class="sem-produtos">
                     <p class="mensagem-vazio">Nenhum produto disponível no momento.</p>
-                    <a href="/admin" class="btn-admin">Ir para Administração</a>
+                    <% if(isAdmin) { %>
+                        <a href="/admin" class="btn-admin">Gerenciar o Site</a>
+                    <% } %>
                 </article>
             <% } %>
         </section>
@@ -123,6 +122,8 @@
             var currentSlide = 0;
             var autoPlayInterval;
 
+            if(slides.length === 0) return;
+
             function showSlide(n) {
                 for(var i = 0; i < slides.length; i++) {
                     slides[i].classList.remove('active');
@@ -136,7 +137,9 @@
                 
                 slides[currentSlide].classList.add('active');
                 slides[currentSlide].setAttribute('aria-hidden', 'false');
-                indicators[currentSlide].classList.add('active');
+                if(indicators[currentSlide]) {
+                    indicators[currentSlide].classList.add('active');
+                }
             }
 
             function nextSlide() {
@@ -155,17 +158,21 @@
                 clearInterval(autoPlayInterval);
             }
 
-            prevBtn.addEventListener('click', function() {
-                prevSlide();
-                stopAutoPlay();
-                startAutoPlay();
-            });
+            if(prevBtn) {
+                prevBtn.addEventListener('click', function() {
+                    prevSlide();
+                    stopAutoPlay();
+                    startAutoPlay();
+                });
+            }
 
-            nextBtn.addEventListener('click', function() {
-                nextSlide();
-                stopAutoPlay();
-                startAutoPlay();
-            });
+            if(nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    nextSlide();
+                    stopAutoPlay();
+                    startAutoPlay();
+                });
+            }
 
             for(var i = 0; i < indicators.length; i++) {
                 indicators[i].addEventListener('click', function() {
@@ -179,8 +186,10 @@
             startAutoPlay();
 
             var carouselContainer = document.querySelector('.carousel-container');
-            carouselContainer.addEventListener('mouseenter', stopAutoPlay);
-            carouselContainer.addEventListener('mouseleave', startAutoPlay);
+            if(carouselContainer) {
+                carouselContainer.addEventListener('mouseenter', stopAutoPlay);
+                carouselContainer.addEventListener('mouseleave', startAutoPlay);
+            }
         });
     </script>
 </body>

@@ -15,7 +15,12 @@ function initDatabase() {
             produtos: [],
             avaliacoes: [],
             carrinho: [],
-            usuarios: []
+            usuarios: [],
+            banners: [
+                { id: 1, imagem: '/imagens/1.png', legenda: 'Promoções Especiais' },
+                { id: 2, imagem: '/imagens/2.png', legenda: 'Ofertas da Semana' },
+                { id: 3, imagem: '/imagens/3.png', legenda: 'Ofertas da Semana' }
+            ]
         };
         fs.writeFileSync(dbPath, JSON.stringify(initialData, null, 2));
     }
@@ -27,7 +32,7 @@ function readDatabase() {
         return JSON.parse(data);
     } catch (error) {
         console.error('Erro ao ler banco de dados:', error);
-        return { produtos: [], avaliacoes: [], carrinho: [], usuarios: [] };
+        return { produtos: [], avaliacoes: [], carrinho: [], usuarios: [], banners: [] };
     }
 }
 
@@ -41,6 +46,36 @@ function writeDatabase(data) {
     }
 }
 
+// Funções de Banners
+function getBanners() {
+    const db = readDatabase();
+    return db.banners || [];
+}
+
+function updateBanner(id, dadosAtualizados) {
+    const db = readDatabase();
+    const index = db.banners.findIndex(b => b.id == id);
+    
+    if (index === -1) {
+        return false;
+    }
+    
+    db.banners[index] = {
+        ...db.banners[index],
+        ...dadosAtualizados,
+        id: db.banners[index].id
+    };
+    
+    writeDatabase(db);
+    return true;
+}
+
+function getBannerById(id) {
+    const db = readDatabase();
+    return db.banners.find(b => b.id == id);
+}
+
+// Funções existentes de produtos
 function addProduto(produto) {
     const db = readDatabase();
     produto.id = Date.now();
@@ -125,10 +160,7 @@ function updateProduto(id, dadosAtualizados) {
 function deleteProduto(id) {
     const db = readDatabase();
     
-    // Remove o produto
     db.produtos = db.produtos.filter(p => p.id != id);
-    
-    // Remove itens do carrinho relacionados ao produto
     db.carrinho = db.carrinho.filter(item => item.produtoId != id);
     
     writeDatabase(db);
@@ -168,7 +200,6 @@ function deleteAvaliacao(produtoId, avaliacaoIndex) {
         return false;
     }
     
-    // Remove a avaliação do produto
     produto.avaliacoes.splice(avaliacaoIndex, 1);
     
     writeDatabase(db);
@@ -302,10 +333,7 @@ function updateUsuario(email, updates) {
 function deleteUsuario(email) {
     const db = readDatabase();
     
-    // Remove o usuário
     db.usuarios = db.usuarios.filter(u => u.email !== email);
-    
-    // Remove itens do carrinho do usuário
     db.carrinho = db.carrinho.filter(item => item.usuarioEmail !== email);
     
     writeDatabase(db);
@@ -376,5 +404,8 @@ module.exports = {
     getTotalAvaliacoes,
     updateQuantidadeCarrinho,
     removeFromCarrinho,
-    usuarioTemProdutoNoCarrinho
+    usuarioTemProdutoNoCarrinho,
+    getBanners,
+    updateBanner,
+    getBannerById
 };

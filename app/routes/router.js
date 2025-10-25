@@ -35,8 +35,43 @@ const storage = multer.diskStorage({
     }
 });
 
+// Storage para banners
+const storageBanner = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const uploadDir = path.join(__dirname, '../public/imagens');
+        
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'banner-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
 const upload = multer({
     storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    },
+    fileFilter: function (req, file, cb) {
+        const allowedTypes = /jpeg|jpg|png|webp/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Apenas imagens são permitidas (JPG, JPEG, PNG, WEBP)!'));
+        }
+    }
+});
+
+const uploadBanner = multer({
+    storage: storageBanner,
     limits: {
         fileSize: 5 * 1024 * 1024
     },
@@ -215,7 +250,8 @@ router.post('/login',
 // Rota home
 router.get('/home', function(req, res) {
     const produtos = db.getProdutos();
-    res.render('pages/home', { produtos: produtos });
+    const banners = db.getBanners();
+    res.render('pages/home', { produtos: produtos, banners: banners });
 });
 
 // Rota usuário
@@ -242,12 +278,14 @@ router.get('/admin', requireAdmin, function(req, res) {
     const produtos = db.getProdutos();
     const totalAvaliacoes = db.getTotalAvaliacoes();
     const usuarios = db.getAllUsuarios();
+    const banners = db.getBanners();
     
     res.render('pages/admin', { 
         produtos: produtos, 
         totalProdutos: produtos.length, 
         totalAvaliacoes: totalAvaliacoes,
         usuarios: usuarios,
+        banners: banners,
         erro: null,
         sucesso: null
     });
@@ -314,7 +352,6 @@ router.post('/admin/editar-produto/:id', requireAdmin, upload.single('imagem'), 
         if (req.file) {
             imagemPath = '/imagens/produtos/' + req.file.filename;
             
-            // Remove a imagem antiga se não for a padrão
             if (produto.imagem !== '/imagens/foto.jpg') {
                 const imagemAntiga = path.join(__dirname, '../public', produto.imagem);
                 if (fs.existsSync(imagemAntiga)) {
@@ -361,7 +398,6 @@ router.post('/admin/excluir-produto/:id', requireAdmin, function(req, res) {
             return res.redirect('/admin?erro=produto_nao_encontrado');
         }
 
-        // Remove a imagem se não for a padrão
         if (produto.imagem !== '/imagens/foto.jpg') {
             const imagemPath = path.join(__dirname, '../public', produto.imagem);
             if (fs.existsSync(imagemPath)) {
@@ -388,14 +424,38 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, function(req, res) {
     }
 });
 
-// Excluir avaliação
-router.post('/admin/excluir-avaliacao/:produtoId/:avaliacaoIndex', requireAdmin, function(req, res) {
+// Editar banner - POST
+router.post('/admin/editar-banner/:id', requireAdmin, uploadBanner.single('imagem'), function(req, res) {
     try {
-        db.deleteAvaliacao(req.params.produtoId, parseInt(req.params.avaliacaoIndex));
-        res.redirect('/admin?sucesso=avaliacao_excluida');
+        const banner = db.getBannerById(req.params.id);
+        if (!banner) {
+            return res.redirect('/admin?erro=banner_nao_encontrado');
+        }
+
+        let imagemPath = banner.imagem;
+        
+        if (req.file) {
+            imagemPath = '/imagens/' + req.file.filename;
+            
+            const imagensOriginais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
+            if (!imagensOriginais.includes(banner.imagem)) {
+                const imagemAntiga = path.join(__dirname, '../public', banner.imagem);
+                if (fs.existsSync(imagemAntiga)) {
+                    fs.unlinkSync(imagemAntiga);
+                }
+            }
+        }
+        
+        const bannerAtualizado = {
+            legenda: req.body.legenda || banner.legenda,
+            imagem: imagemPath
+        };
+        
+        db.updateBanner(req.params.id, bannerAtualizado);
+        res.redirect('/admin?sucesso=banner_editado');
     } catch (error) {
-        console.error('Erro ao excluir avaliação:', error);
-        res.redirect('/admin?erro=excluir_avaliacao');
+        console.error('Erro ao editar banner:', error);
+        res.redirect('/admin?erro=editar_banner');
     }
 });
 

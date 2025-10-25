@@ -44,6 +44,19 @@
     display: block;
 }
 
+/* --- MENSAGEM INFO --- */
+.mensagem-info {
+    background-color: rgba(77, 166, 255, 0.1);
+    border: 2px solid #4da6ff;
+    color: #4da6ff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
 /* --- LISTA DE USUÁRIOS --- */
 .usuarios-lista {
     list-style: none;
@@ -90,78 +103,6 @@
     gap: 0.75rem;
 }
 
-/* --- LISTA DE AVALIAÇÕES --- */
-.avaliacoes-lista {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.avaliacao-item {
-    background-color: #2a2a2a;
-    padding: 1.5rem 1.25rem;
-    border-radius: 0.625rem;
-    margin-bottom: 1.125rem;
-    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
-}
-
-.avaliacao-item article {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.avaliacao-produto {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #4da6ff;
-}
-
-.avaliacao-nota {
-    font-size: 0.9375rem;
-    color: #ffc107;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-}
-
-.avaliacao-texto {
-    font-size: 0.9375rem;
-    color: #d9d9d9;
-    margin-bottom: 1rem;
-    line-height: 1.5;
-}
-
-.avaliacao-data {
-    font-size: 0.8125rem;
-    color: #888;
-    margin-bottom: 1rem;
-}
-
-.btn-excluir-avaliacao {
-    background-color: #d93025;
-    color: white;
-    border: none;
-    padding: 0.625rem 1rem;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: fit-content;
-}
-
-.btn-excluir-avaliacao:hover {
-    background-color: #a3241b;
-}
-
-/* --- ESTATÍSTICAS GRID --- */
-.estatisticas-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-}
-
 /* --- FORMULÁRIOS INLINE --- */
 .form-inline {
     display: inline;
@@ -179,6 +120,10 @@
 
     .tab-content {
         padding: 2.5rem 0;
+    }
+
+    .mensagem-info {
+        font-size: 1.125rem;
     }
 
     /* --- LAYOUT DE USUÁRIOS EM LINHA --- */
@@ -261,20 +206,6 @@
         justify-content: flex-end;
     }
 
-    /* --- AVALIAÇÕES --- */
-    .avaliacao-item article {
-        gap: 0.75rem;
-    }
-
-    .avaliacao-produto {
-        font-size: 1.25rem;
-    }
-
-    .avaliacao-nota,
-    .avaliacao-texto {
-        font-size: 1rem;
-    }
-
     /* --- ESTATÍSTICAS GRID DESKTOP --- */
     .estatisticas-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -284,4 +215,28 @@
     .card-stats {
         margin-bottom: 0;
     }
+}
+.modal-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0,0,0,0.8);
+z-index: 9999;
+justify-content: center;
+align-items: center;
+}
+.modal-overlay.active {
+display: flex;
+}
+.modal-content {
+background-color: #2a2a2a;
+padding: 2rem;
+border-radius: 0.75rem;
+max-width: 600px;
+width: 90%;
+max-height: 90vh;
+overflow-y: auto;
 }

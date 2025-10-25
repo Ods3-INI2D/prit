@@ -28,7 +28,11 @@
                 <section class="perfil">
                     <% if(usuario) { %>
                         <h1 class="nome">Olá, <%= usuario.nome %>!</h1>
-                        <a href="/usuario" class="conta">Gerenciar sua Conta</a>
+                        <% if(isAdmin) { %>
+                            <a href="/admin" class="conta">Gerenciar o Site</a>
+                        <% } else { %>
+                            <a href="/usuario" class="conta">Gerenciar sua Conta</a>
+                        <% } %>
                     <% } else { %>
                         <h1 class="nome">Olá, Visitante!</h1>
                         <a href="/login" class="conta">Fazer Login</a>
