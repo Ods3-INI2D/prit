@@ -53,13 +53,24 @@ const upload = multer({
     }
 });
 
+// Credenciais do administrador
+const ADMIN_EMAIL = 'maisaudeods3@gmail.com';
+const ADMIN_PASSWORD = '+SaudeINI2D';
+
 // Middleware para disponibilizar o usuário em todas as views
 router.use(function(req, res, next) {
     res.locals.usuario = null;
+    res.locals.isAdmin = false;
+    
     if (req.session && req.session.usuarioEmail) {
-        const usuario = db.findUsuario(req.session.usuarioEmail);
-        if (usuario) {
-            res.locals.usuario = usuario;
+        if (req.session.usuarioEmail === ADMIN_EMAIL && req.session.isAdmin) {
+            res.locals.isAdmin = true;
+            res.locals.usuario = { email: ADMIN_EMAIL, nome: 'Administrador' };
+        } else {
+            const usuario = db.findUsuario(req.session.usuarioEmail);
+            if (usuario) {
+                res.locals.usuario = usuario;
+            }
         }
     }
     next();
@@ -69,6 +80,14 @@ router.use(function(req, res, next) {
 function requireLogin(req, res, next) {
     if (!req.session.usuarioEmail) {
         return res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
+    }
+    next();
+}
+
+// Middleware para verificar se é administrador
+function requireAdmin(req, res, next) {
+    if (!req.session.isAdmin || req.session.usuarioEmail !== ADMIN_EMAIL) {
+        return res.redirect('/login?erro=admin');
     }
     next();
 }
@@ -156,7 +175,8 @@ router.post("/cadastro",
 
 // Rota de login GET
 router.get('/login', function(req, res) {
-    res.render('pages/login', { erro: null, redirect: req.query.redirect || '/home' });
+    const erroAdmin = req.query.erro === 'admin' ? 'Acesso negado. Apenas administradores podem acessar esta área.' : null;
+    res.render('pages/login', { erro: erroAdmin, redirect: req.query.redirect || '/home' });
 });
 
 // Rota de login POST
@@ -171,10 +191,19 @@ router.post('/login',
             return res.render('pages/login', { erro: 'E-mail ou senha inválidos!', redirect: '/home' });
         }
 
+        // Verifica se é o administrador
+        if (req.body.email === ADMIN_EMAIL && req.body.senha === ADMIN_PASSWORD) {
+            req.session.usuarioEmail = ADMIN_EMAIL;
+            req.session.isAdmin = true;
+            return res.redirect('/admin');
+        }
+
+        // Login de usuário normal
         const usuario = db.findUsuario(req.body.email);
         
         if (usuario && req.body.senha === usuario.senhan) {
             req.session.usuarioEmail = usuario.email;
+            req.session.isAdmin = false;
             const redirectUrl = req.body.redirect || '/home';
             return res.redirect(redirectUrl);
         } else {
@@ -208,22 +237,24 @@ router.post('/usuario/atualizar', requireLogin, function(req, res) {
     res.redirect('/usuario');
 });
 
-// Rota admin
-router.get('/admin', function(req, res) {
+// Rota admin (requer autenticação de administrador)
+router.get('/admin', requireAdmin, function(req, res) {
     const produtos = db.getProdutos();
     const totalAvaliacoes = db.getTotalAvaliacoes();
+    const usuarios = db.getAllUsuarios();
     
     res.render('pages/admin', { 
         produtos: produtos, 
         totalProdutos: produtos.length, 
         totalAvaliacoes: totalAvaliacoes,
+        usuarios: usuarios,
         erro: null,
         sucesso: null
     });
 });
 
 // Adicionar produto
-router.post('/admin/adicionar-produto', upload.single('imagem'), function(req, res) {
+router.post('/admin/adicionar-produto', requireAdmin, upload.single('imagem'), function(req, res) {
     try {
         let imagemPath = '/imagens/foto.jpg';
         
@@ -254,19 +285,117 @@ router.post('/admin/adicionar-produto', upload.single('imagem'), function(req, r
         };
         
         db.addProduto(novoProduto);
-        res.redirect('/admin');
+        res.redirect('/admin?sucesso=produto_adicionado');
     } catch (error) {
         console.error('Erro ao adicionar produto:', error);
-        const produtos = db.getProdutos();
-        const totalAvaliacoes = db.getTotalAvaliacoes();
+        res.redirect('/admin?erro=adicionar_produto');
+    }
+});
+
+// Editar produto - GET
+router.get('/admin/editar-produto/:id', requireAdmin, function(req, res) {
+    const produto = db.getProdutoById(req.params.id);
+    if (!produto) {
+        return res.redirect('/admin?erro=produto_nao_encontrado');
+    }
+    res.render('pages/editar-produto', { produto: produto, erro: null });
+});
+
+// Editar produto - POST
+router.post('/admin/editar-produto/:id', requireAdmin, upload.single('imagem'), function(req, res) {
+    try {
+        const produto = db.getProdutoById(req.params.id);
+        if (!produto) {
+            return res.redirect('/admin?erro=produto_nao_encontrado');
+        }
+
+        let imagemPath = produto.imagem;
         
-        res.render('pages/admin', { 
-            produtos: produtos, 
-            totalProdutos: produtos.length, 
-            totalAvaliacoes: totalAvaliacoes,
-            erro: 'Erro ao adicionar produto: ' + error.message,
-            sucesso: null
-        });
+        if (req.file) {
+            imagemPath = '/imagens/produtos/' + req.file.filename;
+            
+            // Remove a imagem antiga se não for a padrão
+            if (produto.imagem !== '/imagens/foto.jpg') {
+                const imagemAntiga = path.join(__dirname, '../public', produto.imagem);
+                if (fs.existsSync(imagemAntiga)) {
+                    fs.unlinkSync(imagemAntiga);
+                }
+            }
+        }
+        
+        let preco = parseFloat(req.body.preco);
+        if (isNaN(preco) || preco < 0) {
+            preco = 0;
+        }
+        
+        let precoDesconto = null;
+        if (req.body.precoDesconto && req.body.precoDesconto !== '') {
+            precoDesconto = parseFloat(req.body.precoDesconto);
+            if (isNaN(precoDesconto) || precoDesconto < 0) {
+                precoDesconto = null;
+            }
+        }
+        
+        const produtoAtualizado = {
+            nome: req.body.nome || produto.nome,
+            preco: preco,
+            precoDesconto: precoDesconto,
+            categoria: req.body.categoria || produto.categoria,
+            descricao: req.body.descricao || produto.descricao,
+            imagem: imagemPath
+        };
+        
+        db.updateProduto(req.params.id, produtoAtualizado);
+        res.redirect('/admin?sucesso=produto_editado');
+    } catch (error) {
+        console.error('Erro ao editar produto:', error);
+        res.redirect('/admin?erro=editar_produto');
+    }
+});
+
+// Excluir produto
+router.post('/admin/excluir-produto/:id', requireAdmin, function(req, res) {
+    try {
+        const produto = db.getProdutoById(req.params.id);
+        if (!produto) {
+            return res.redirect('/admin?erro=produto_nao_encontrado');
+        }
+
+        // Remove a imagem se não for a padrão
+        if (produto.imagem !== '/imagens/foto.jpg') {
+            const imagemPath = path.join(__dirname, '../public', produto.imagem);
+            if (fs.existsSync(imagemPath)) {
+                fs.unlinkSync(imagemPath);
+            }
+        }
+
+        db.deleteProduto(req.params.id);
+        res.redirect('/admin?sucesso=produto_excluido');
+    } catch (error) {
+        console.error('Erro ao excluir produto:', error);
+        res.redirect('/admin?erro=excluir_produto');
+    }
+});
+
+// Excluir usuário
+router.post('/admin/excluir-usuario/:email', requireAdmin, function(req, res) {
+    try {
+        db.deleteUsuario(req.params.email);
+        res.redirect('/admin?sucesso=usuario_excluido');
+    } catch (error) {
+        console.error('Erro ao excluir usuário:', error);
+        res.redirect('/admin?erro=excluir_usuario');
+    }
+});
+
+// Excluir avaliação
+router.post('/admin/excluir-avaliacao/:produtoId/:avaliacaoIndex', requireAdmin, function(req, res) {
+    try {
+        db.deleteAvaliacao(req.params.produtoId, parseInt(req.params.avaliacaoIndex));
+        res.redirect('/admin?sucesso=avaliacao_excluida');
+    } catch (error) {
+        console.error('Erro ao excluir avaliação:', error);
+        res.redirect('/admin?erro=excluir_avaliacao');
     }
 });
 
@@ -325,7 +454,6 @@ router.post('/produto/:id/avaliar', requireLogin, function(req, res) {
     const sucesso = db.addAvaliacao(req.params.id, novaAvaliacao, req.session.usuarioEmail);
     
     if (!sucesso) {
-        // Adiciona mensagem de erro se não tiver o produto no carrinho
         return res.redirect('/produto/' + req.params.id + '?erro=carrinho');
     }
     

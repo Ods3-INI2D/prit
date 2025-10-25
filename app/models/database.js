@@ -103,11 +103,42 @@ function getProdutoById(id) {
     };
 }
 
+function updateProduto(id, dadosAtualizados) {
+    const db = readDatabase();
+    const index = db.produtos.findIndex(p => p.id == id);
+    
+    if (index === -1) {
+        return false;
+    }
+    
+    db.produtos[index] = {
+        ...db.produtos[index],
+        ...dadosAtualizados,
+        id: db.produtos[index].id,
+        avaliacoes: db.produtos[index].avaliacoes
+    };
+    
+    writeDatabase(db);
+    return true;
+}
+
+function deleteProduto(id) {
+    const db = readDatabase();
+    
+    // Remove o produto
+    db.produtos = db.produtos.filter(p => p.id != id);
+    
+    // Remove itens do carrinho relacionados ao produto
+    db.carrinho = db.carrinho.filter(item => item.produtoId != id);
+    
+    writeDatabase(db);
+    return true;
+}
+
 function addAvaliacao(produtoId, avaliacao, usuarioEmail) {
     const db = readDatabase();
     const produto = db.produtos.find(p => p.id == produtoId);
     
-    // Verifica se o usuário tem o produto no carrinho
     const temNoCarrinho = db.carrinho.some(item => 
         item.produtoId == produtoId && item.usuarioEmail === usuarioEmail
     );
@@ -129,6 +160,21 @@ function addAvaliacao(produtoId, avaliacao, usuarioEmail) {
     return false;
 }
 
+function deleteAvaliacao(produtoId, avaliacaoIndex) {
+    const db = readDatabase();
+    const produto = db.produtos.find(p => p.id == produtoId);
+    
+    if (!produto || !produto.avaliacoes || avaliacaoIndex >= produto.avaliacoes.length) {
+        return false;
+    }
+    
+    // Remove a avaliação do produto
+    produto.avaliacoes.splice(avaliacaoIndex, 1);
+    
+    writeDatabase(db);
+    return true;
+}
+
 function addToCarrinho(produtoId, usuarioEmail) {
     const db = readDatabase();
     const produto = db.produtos.find(p => p.id == produtoId);
@@ -137,16 +183,13 @@ function addToCarrinho(produtoId, usuarioEmail) {
         return false;
     }
     
-    // Verifica se já existe no carrinho
     const itemExistente = db.carrinho.find(item => 
         item.produtoId == produtoId && item.usuarioEmail === usuarioEmail
     );
     
     if (itemExistente) {
-        // Aumenta a quantidade
         itemExistente.quantidade += 1;
     } else {
-        // Adiciona novo item
         db.carrinho.push({
             produtoId: produtoId.toString(),
             usuarioEmail: usuarioEmail,
@@ -162,10 +205,8 @@ function addToCarrinho(produtoId, usuarioEmail) {
 function getCarrinho(usuarioEmail) {
     const db = readDatabase();
     
-    // Filtra itens do usuário
     const itensUsuario = db.carrinho.filter(item => item.usuarioEmail === usuarioEmail);
     
-    // Mapeia com os dados completos do produto
     return itensUsuario.map(item => {
         const produto = db.produtos.find(p => p.id == item.produtoId);
         
@@ -194,7 +235,6 @@ function updateQuantidadeCarrinho(produtoId, usuarioEmail, novaQuantidade) {
     
     if (item) {
         if (novaQuantidade <= 0) {
-            // Remove se quantidade for 0 ou negativa
             db.carrinho = db.carrinho.filter(i => 
                 !(i.produtoId == produtoId && i.usuarioEmail === usuarioEmail)
             );
@@ -242,6 +282,11 @@ function findUsuario(email) {
     return db.usuarios.find(u => u.email === email);
 }
 
+function getAllUsuarios() {
+    const db = readDatabase();
+    return db.usuarios || [];
+}
+
 function updateUsuario(email, updates) {
     const db = readDatabase();
     const usuario = db.usuarios.find(u => u.email === email);
@@ -252,6 +297,19 @@ function updateUsuario(email, updates) {
         return usuario;
     }
     return null;
+}
+
+function deleteUsuario(email) {
+    const db = readDatabase();
+    
+    // Remove o usuário
+    db.usuarios = db.usuarios.filter(u => u.email !== email);
+    
+    // Remove itens do carrinho do usuário
+    db.carrinho = db.carrinho.filter(item => item.usuarioEmail !== email);
+    
+    writeDatabase(db);
+    return true;
 }
 
 function getProdutosByCategoria(categoria) {
@@ -301,13 +359,18 @@ module.exports = {
     addProduto,
     getProdutos,
     getProdutoById,
+    updateProduto,
+    deleteProduto,
     addAvaliacao,
+    deleteAvaliacao,
     addToCarrinho,
     getCarrinho,
     clearCarrinho,
     addUsuario,
     findUsuario,
+    getAllUsuarios,
     updateUsuario,
+    deleteUsuario,
     readDatabase,
     getProdutosByCategoria,
     getTotalAvaliacoes,

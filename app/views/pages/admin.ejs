@@ -7,6 +7,7 @@
     <title>Administrador - Painel de Controle</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/admin-extended.css">
 </head>
 <body>
     <header>
@@ -15,121 +16,267 @@
     </header>
  
     <main>
-        <% if(erro) { %>
-            <output class="mensagem-erro" role="alert" aria-live="assertive">
-                <%= erro %>
+        <% 
+        const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : { get: () => null };
+        const queryString = typeof window !== 'undefined' ? window.location.search : '';
+        const sucesso = queryString.includes('sucesso=produto_adicionado') ? 'produto_adicionado' :
+                       queryString.includes('sucesso=produto_editado') ? 'produto_editado' :
+                       queryString.includes('sucesso=produto_excluido') ? 'produto_excluido' :
+                       queryString.includes('sucesso=usuario_excluido') ? 'usuario_excluido' :
+                       queryString.includes('sucesso=avaliacao_excluida') ? 'avaliacao_excluida' : null;
+        const erro = queryString.includes('erro=adicionar_produto') ? 'adicionar_produto' :
+                    queryString.includes('erro=editar_produto') ? 'editar_produto' :
+                    queryString.includes('erro=excluir_produto') ? 'excluir_produto' :
+                    queryString.includes('erro=produto_nao_encontrado') ? 'produto_nao_encontrado' :
+                    queryString.includes('erro=excluir_usuario') ? 'excluir_usuario' :
+                    queryString.includes('erro=excluir_avaliacao') ? 'excluir_avaliacao' : null;
+        %>
+
+        <% if(sucesso === 'produto_adicionado') { %>
+            <output class="mensagem-sucesso" role="status" aria-live="polite">
+                Produto adicionado com sucesso!
+            </output>
+        <% } else if(sucesso === 'produto_editado') { %>
+            <output class="mensagem-sucesso" role="status" aria-live="polite">
+                Produto editado com sucesso!
+            </output>
+        <% } else if(sucesso === 'produto_excluido') { %>
+            <output class="mensagem-sucesso" role="status" aria-live="polite">
+                Produto excluído com sucesso!
+            </output>
+        <% } else if(sucesso === 'usuario_excluido') { %>
+            <output class="mensagem-sucesso" role="status" aria-live="polite">
+                Usuário excluído com sucesso!
+            </output>
+        <% } else if(sucesso === 'avaliacao_excluida') { %>
+            <output class="mensagem-sucesso" role="status" aria-live="polite">
+                Avaliação excluída com sucesso!
             </output>
         <% } %>
-        
-        <% if(sucesso) { %>
-            <output class="mensagem-sucesso" role="status" aria-live="polite">
-                <%= sucesso %>
+
+        <% if(erro === 'adicionar_produto') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Erro ao adicionar produto!
+            </output>
+        <% } else if(erro === 'editar_produto') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Erro ao editar produto!
+            </output>
+        <% } else if(erro === 'excluir_produto') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Erro ao excluir produto!
+            </output>
+        <% } else if(erro === 'produto_nao_encontrado') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Produto não encontrado!
+            </output>
+        <% } else if(erro === 'excluir_usuario') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Erro ao excluir usuário!
+            </output>
+        <% } else if(erro === 'excluir_avaliacao') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Erro ao excluir avaliação!
             </output>
         <% } %>
 
         <section class="estatisticas" aria-labelledby="titulo-estatisticas">
             <h2 id="titulo-estatisticas" class="subtitulo">Estatísticas do Site</h2>
             
-            <div class="estatisticas-grid">
+            <article class="estatisticas-grid">
                 <article class="card-stats">
                     <h3 class="stat-titulo">Total de Produtos</h3>
-                    <p class="stat-valor" aria-label="<%= totalProdutos %> produtos cadastrados"><%= totalProdutos %></p>
+                    <output class="stat-valor" aria-label="<%= totalProdutos %> produtos cadastrados"><%= totalProdutos %></output>
                 </article>
      
                 <article class="card-stats">
                     <h3 class="stat-titulo">Total de Avaliações</h3>
-                    <p class="stat-valor" aria-label="<%= totalAvaliacoes %> avaliações recebidas"><%= totalAvaliacoes %></p>
+                    <output class="stat-valor" aria-label="<%= totalAvaliacoes %> avaliações recebidas"><%= totalAvaliacoes %></output>
                 </article>
-            </div>
+
+                <article class="card-stats">
+                    <h3 class="stat-titulo">Total de Usuários</h3>
+                    <output class="stat-valor" aria-label="<%= usuarios.length %> usuários cadastrados"><%= usuarios.length %></output>
+                </article>
+            </article>
         </section>
- 
-        <section class="adicionar-produto" aria-labelledby="titulo-adicionar">
-            <h2 id="titulo-adicionar" class="subtitulo">Adicionar Novo Produto</h2>
-            
-            <form method="POST" action="/admin/adicionar-produto" class="form-produto" enctype="multipart/form-data" aria-label="Formulário de cadastro de produto">
-                <label for="nome">
-                    <span class="label-titulo">Nome do Produto</span>
-                    <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" required aria-required="true">
-                </label>
- 
-                <label for="preco">
-                    <span class="label-titulo">Preço</span>
-                    <input type="number" id="preco" name="preco" placeholder="0.00" step="0.01" min="0" required aria-required="true">
-                </label>
- 
-                <label for="precoDesconto">
-                    <span class="label-titulo">Preço com Desconto (opcional)</span>
-                    <input type="number" id="precoDesconto" name="precoDesconto" placeholder="0.00" step="0.01" min="0" aria-required="false">
-                </label>
- 
-                <label for="categoria">
-                    <span class="label-titulo">Categoria</span>
-                    <select id="categoria" name="categoria" required aria-required="true">
-                        <option value="">Selecione uma categoria</option>
-                        <option value="Cuidados com a Pele">Cuidados com a Pele</option>
-                        <option value="Higiene Bucal">Higiene Bucal</option>
-                        <option value="Cabelo">Cabelo</option>
-                        <option value="Vitaminas e Suplementos">Vitaminas e Suplementos</option>
-                        <option value="Bebê">Bebê</option>
-                        <option value="Terceira Idade">Terceira Idade</option>
-                        <option value="Medicamentos">Medicamentos</option>
-                    </select>
-                </label>
- 
-                <fieldset class="campo-imagem">
-                    <legend>
-                        <span class="label-titulo">Imagem do Produto</span>
-                    </legend>
-                    <label for="imagem" class="label-arquivo">
-                        <input type="file"
-                               id="imagem"
-                               name="imagem"
-                               accept="image/jpeg,image/jpg,image/png,image/webp"
-                               aria-describedby="imagem-info">
-                        <output id="imagem-info" class="info-arquivo">
-                            Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB)
-                        </output>
-                    </label>
-                    <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></output>
-                </fieldset>
- 
-                <label for="descricao">
-                    <span class="label-titulo">Descrição do Produto</span>
-                    <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto" rows="5" required aria-required="true"></textarea>
-                </label>
- 
-                <button type="submit" class="btn-adicionar">Adicionar Produto</button>
-            </form>
-        </section>
- 
-        <section class="lista-produtos" aria-labelledby="titulo-lista">
-            <h2 id="titulo-lista" class="subtitulo">Produtos Cadastrados</h2>
-            
-            <% if(produtos.length === 0) { %>
-                <p class="mensagem-vazia">Nenhum produto cadastrado ainda.</p>
-            <% } else { %>
-                <ul class="produtos-lista" role="list">
-                    <% produtos.forEach(function(produto) { %>
-                        <li class="produto-item" role="listitem">
-                            <div class="produto-info-container">
-                                <div>
-                                    <h3 class="produto-nome"><%= produto.nome %></h3>
-                                    <p class="produto-info">ID: <%= produto.id %></p>
-                                </div>
-                                <p class="produto-info">Categoria: <%= produto.categoria %></p>
-                                <p class="produto-info produto-preco">R$ <%= produto.preco.toFixed(2) %></p>
-                                <% if(produto.precoDesconto) { %>
-                                    <p class="produto-info desconto">Com Desconto: R$ <%= produto.precoDesconto.toFixed(2) %></p>
+
+        <section class="tabs-container">
+            <nav class="tabs-header" role="tablist">
+                <button class="tab-button active" data-tab="adicionar" role="tab" aria-selected="true" aria-controls="tab-adicionar">Adicionar Produto</button>
+                <button class="tab-button" data-tab="produtos" role="tab" aria-selected="false" aria-controls="tab-produtos">Gerenciar Produtos</button>
+                <button class="tab-button" data-tab="usuarios" role="tab" aria-selected="false" aria-controls="tab-usuarios">Gerenciar Usuários</button>
+                <button class="tab-button" data-tab="avaliacoes" role="tab" aria-selected="false" aria-controls="tab-avaliacoes">Gerenciar Avaliações</button>
+            </nav>
+
+            <article class="tab-content active" id="tab-adicionar" role="tabpanel" aria-labelledby="titulo-adicionar">
+                <section class="adicionar-produto">
+                    <h2 id="titulo-adicionar" class="subtitulo">Adicionar Novo Produto</h2>
+                    
+                    <form method="POST" action="/admin/adicionar-produto" class="form-produto" enctype="multipart/form-data" aria-label="Formulário de cadastro de produto">
+                        <label for="nome">
+                            <strong class="label-titulo">Nome do Produto</strong>
+                            <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" required aria-required="true">
+                        </label>
+         
+                        <label for="preco">
+                            <strong class="label-titulo">Preço</strong>
+                            <input type="number" id="preco" name="preco" placeholder="0.00" step="0.01" min="0" required aria-required="true">
+                        </label>
+         
+                        <label for="precoDesconto">
+                            <strong class="label-titulo">Preço com Desconto (opcional)</strong>
+                            <input type="number" id="precoDesconto" name="precoDesconto" placeholder="0.00" step="0.01" min="0" aria-required="false">
+                        </label>
+         
+                        <label for="categoria">
+                            <strong class="label-titulo">Categoria</strong>
+                            <select id="categoria" name="categoria" required aria-required="true">
+                                <option value="">Selecione uma categoria</option>
+                                <option value="Cuidados com a Pele">Cuidados com a Pele</option>
+                                <option value="Higiene Bucal">Higiene Bucal</option>
+                                <option value="Cabelo">Cabelo</option>
+                                <option value="Vitaminas e Suplementos">Vitaminas e Suplementos</option>
+                                <option value="Bebê">Bebê</option>
+                                <option value="Terceira Idade">Terceira Idade</option>
+                                <option value="Medicamentos">Medicamentos</option>
+                            </select>
+                        </label>
+         
+                        <fieldset class="campo-imagem">
+                            <legend>
+                                <strong class="label-titulo">Imagem do Produto</strong>
+                            </legend>
+                            <label for="imagem" class="label-arquivo">
+                                <input type="file"
+                                       id="imagem"
+                                       name="imagem"
+                                       accept="image/jpeg,image/jpg,image/png,image/webp"
+                                       aria-describedby="imagem-info">
+                                <output id="imagem-info" class="info-arquivo">
+                                    Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB)
+                                </output>
+                            </label>
+                            <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></output>
+                        </fieldset>
+         
+                        <label for="descricao">
+                            <strong class="label-titulo">Descrição do Produto</strong>
+                            <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto" rows="5" required aria-required="true"></textarea>
+                        </label>
+         
+                        <button type="submit" class="btn-adicionar">Adicionar Produto</button>
+                    </form>
+                </section>
+            </article>
+
+            <article class="tab-content" id="tab-produtos" role="tabpanel" aria-labelledby="titulo-lista">
+                <section class="lista-produtos">
+                    <h2 id="titulo-lista" class="subtitulo">Produtos Cadastrados</h2>
+                    
+                    <% if(produtos.length === 0) { %>
+                        <p class="mensagem-vazia">Nenhum produto cadastrado ainda.</p>
+                    <% } else { %>
+                        <ul class="produtos-lista" role="list">
+                            <% produtos.forEach(function(produto) { %>
+                                <li class="produto-item" role="listitem">
+                                    <article class="produto-info-container">
+                                        <figure>
+                                            <h3 class="produto-nome"><%= produto.nome %></h3>
+                                            <figcaption class="produto-info">ID: <%= produto.id %></figcaption>
+                                        </figure>
+                                        <p class="produto-info">Categoria: <%= produto.categoria %></p>
+                                        <p class="produto-info produto-preco">R$ <%= produto.preco.toFixed(2) %></p>
+                                        <% if(produto.precoDesconto) { %>
+                                            <p class="produto-info desconto">Com Desconto: R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                                        <% } %>
+                                    </article>
+                                    <nav class="acoes-produto" aria-label="Ações do produto <%= produto.nome %>">
+                                        <a href="/admin/editar-produto/<%= produto.id %>" class="btn-editar" aria-label="Editar produto <%= produto.nome %>">Editar</a>
+                                        <form method="POST" action="/admin/excluir-produto/<%= produto.id %>" class="form-inline">
+                                            <button class="btn-excluir" type="submit" onclick="return confirm('Tem certeza que deseja excluir este produto?')" aria-label="Excluir produto <%= produto.nome %>">Excluir</button>
+                                        </form>
+                                    </nav>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+                </section>
+            </article>
+
+            <article class="tab-content" id="tab-usuarios" role="tabpanel" aria-labelledby="titulo-usuarios">
+                <section class="lista-usuarios-section">
+                    <h2 id="titulo-usuarios" class="subtitulo">Usuários Cadastrados</h2>
+                    
+                    <% if(usuarios.length === 0) { %>
+                        <p class="mensagem-vazia">Nenhum usuário cadastrado ainda.</p>
+                    <% } else { %>
+                        <ul class="usuarios-lista" role="list">
+                            <% usuarios.forEach(function(usuario) { %>
+                                <li class="usuario-item" role="listitem">
+                                    <article class="usuario-info-container">
+                                        <figure>
+                                            <h3 class="usuario-email"><%= usuario.email %></h3>
+                                            <figcaption class="usuario-info">Nome: <%= usuario.nome %></figcaption>
+                                        </figure>
+                                        <p class="usuario-info">CPF: <%= usuario.cpf %></p>
+                                        <p class="usuario-info">Telefone: <%= usuario.tel %></p>
+                                        <time class="usuario-info" datetime="<%= usuario.nasc %>">Nascimento: <%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></time>
+                                    </article>
+                                    <nav class="acoes-usuario" aria-label="Ações do usuário <%= usuario.email %>">
+                                        <form method="POST" action="/admin/excluir-usuario/<%= encodeURIComponent(usuario.email) %>" class="form-inline">
+                                            <button class="btn-excluir" type="submit" onclick="return confirm('Tem certeza que deseja excluir este usuário?')" aria-label="Excluir usuário <%= usuario.email %>">Excluir</button>
+                                        </form>
+                                    </nav>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+                </section>
+            </article>
+
+            <article class="tab-content" id="tab-avaliacoes" role="tabpanel" aria-labelledby="titulo-avaliacoes-lista">
+                <section class="lista-avaliacoes-section">
+                    <h2 id="titulo-avaliacoes-lista" class="subtitulo">Avaliações dos Produtos</h2>
+                    
+                    <% 
+                    let temAvaliacoes = false;
+                    produtos.forEach(function(produto) {
+                        if(produto.avaliacoes && produto.avaliacoes.length > 0) {
+                            temAvaliacoes = true;
+                        }
+                    });
+                    %>
+
+                    <% if(!temAvaliacoes) { %>
+                        <p class="mensagem-vazia">Nenhuma avaliação cadastrada ainda.</p>
+                    <% } else { %>
+                        <ul class="avaliacoes-lista" role="list">
+                            <% produtos.forEach(function(produto) { %>
+                                <% if(produto.avaliacoes && produto.avaliacoes.length > 0) { %>
+                                    <% produto.avaliacoes.forEach(function(avaliacao, index) { %>
+                                        <li class="avaliacao-item" role="listitem">
+                                            <article>
+                                                <h3 class="avaliacao-produto"><%= produto.nome %></h3>
+                                                <p class="avaliacao-nota">Nota: <%= avaliacao.nota %>/5 ⭐</p>
+                                                <p class="avaliacao-texto"><%= avaliacao.texto %></p>
+                                                <time class="avaliacao-data" datetime="<%= new Date(avaliacao.data).toISOString() %>">
+                                                    <%= new Date(avaliacao.data).toLocaleDateString('pt-BR') %> às <%= new Date(avaliacao.data).toLocaleTimeString('pt-BR') %>
+                                                </time>
+                                                <nav aria-label="Ações da avaliação">
+                                                    <form method="POST" action="/admin/excluir-avaliacao/<%= produto.id %>/<%= index %>" class="form-inline">
+                                                        <button class="btn-excluir-avaliacao" type="submit" onclick="return confirm('Tem certeza que deseja excluir esta avaliação?')">Excluir Avaliação</button>
+                                                    </form>
+                                                </nav>
+                                            </article>
+                                        </li>
+                                    <% }); %>
                                 <% } %>
-                            </div>
-                            <nav class="acoes-produto" aria-label="Ações do produto <%= produto.nome %>">
-                                <button class="btn-editar" type="button" aria-label="Editar produto <%= produto.nome %>">Editar</button>
-                                <button class="btn-excluir" type="button" aria-label="Excluir produto <%= produto.nome %>">Excluir</button>
-                            </nav>
-                        </li>
-                    <% }); %>
-                </ul>
-            <% } %>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+                </section>
+            </article>
         </section>
     </main>
  
@@ -141,6 +288,27 @@
  
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+
+                    tabButtons.forEach(function(btn) {
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-selected', 'false');
+                    });
+                    tabContents.forEach(function(content) {
+                        content.classList.remove('active');
+                    });
+
+                    this.classList.add('active');
+                    this.setAttribute('aria-selected', 'true');
+                    document.getElementById('tab-' + tabId).classList.add('active');
+                });
+            });
+
             const inputImagem = document.getElementById('imagem');
             const previewContainer = document.getElementById('preview-imagem');
             const infoArquivo = document.getElementById('imagem-info');
@@ -156,7 +324,6 @@
                         return;
                     }
  
-                    // Validação de tamanho (5MB)
                     if (arquivo.size > 5 * 1024 * 1024) {
                         infoArquivo.textContent = 'Erro: A imagem deve ter no máximo 5MB';
                         infoArquivo.style.color = '#d93025';
@@ -165,7 +332,6 @@
                         return;
                     }
  
-                    // Validação de tipo
                     const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
                     if (!tiposPermitidos.includes(arquivo.type)) {
                         infoArquivo.textContent = 'Erro: Formato não suportado. Use JPG, PNG ou WEBP';
@@ -175,7 +341,6 @@
                         return;
                     }
  
-                    // Preview da imagem
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const figure = document.createElement('figure');

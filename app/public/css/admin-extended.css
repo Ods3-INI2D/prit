@@ -1,0 +1,287 @@
+/* =================================================== */
+/* --- EXTENSÃO DO CSS ADMIN - FUNCIONALIDADES COMPLETAS --- */
+/* =================================================== */
+
+/* --- TABS --- */
+.tabs-container {
+    width: 100%;
+    margin: 2rem 0;
+}
+
+.tabs-header {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 2px solid #555;
+    flex-wrap: wrap;
+}
+
+.tab-button {
+    padding: 1rem 1.5rem;
+    background-color: #2a2a2a;
+    color: white;
+    border: none;
+    border-radius: 0.5rem 0.5rem 0 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button:hover {
+    background-color: #383838;
+}
+
+.tab-button.active {
+    background-color: #163069;
+}
+
+.tab-content {
+    display: none;
+    padding: 2rem 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* --- LISTA DE USUÁRIOS --- */
+.usuarios-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.usuario-item {
+    background-color: #2a2a2a;
+    padding: 1.5rem 1.25rem;
+    border-radius: 0.625rem;
+    margin-bottom: 1.125rem;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.usuario-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.usuario-info-container figure {
+    margin: 0;
+}
+
+.usuario-email {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #4da6ff;
+}
+
+.usuario-info {
+    font-size: 0.875rem;
+    color: #d9d9d9;
+    margin-bottom: 0.25rem;
+}
+
+.acoes-usuario {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* --- LISTA DE AVALIAÇÕES --- */
+.avaliacoes-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.avaliacao-item {
+    background-color: #2a2a2a;
+    padding: 1.5rem 1.25rem;
+    border-radius: 0.625rem;
+    margin-bottom: 1.125rem;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
+}
+
+.avaliacao-item article {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.avaliacao-produto {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #4da6ff;
+}
+
+.avaliacao-nota {
+    font-size: 0.9375rem;
+    color: #ffc107;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.avaliacao-texto {
+    font-size: 0.9375rem;
+    color: #d9d9d9;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.avaliacao-data {
+    font-size: 0.8125rem;
+    color: #888;
+    margin-bottom: 1rem;
+}
+
+.btn-excluir-avaliacao {
+    background-color: #d93025;
+    color: white;
+    border: none;
+    padding: 0.625rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: fit-content;
+}
+
+.btn-excluir-avaliacao:hover {
+    background-color: #a3241b;
+}
+
+/* --- ESTATÍSTICAS GRID --- */
+.estatisticas-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+/* --- FORMULÁRIOS INLINE --- */
+.form-inline {
+    display: inline;
+    margin: 0;
+}
+
+/* =================================================== */
+/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
+/* =================================================== */
+@media (min-width: 768px) {
+    .tab-button {
+        font-size: 1.125rem;
+        padding: 1.125rem 2rem;
+    }
+
+    .tab-content {
+        padding: 2.5rem 0;
+    }
+
+    /* --- LAYOUT DE USUÁRIOS EM LINHA --- */
+    .usuario-item {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+    }
+
+    .usuario-info-container {
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem;
+        flex-grow: 1;
+        width: 70%;
+    }
+
+    .usuario-info-container figure {
+        display: flex;
+        flex-direction: column;
+        width: 35%;
+    }
+
+    .usuario-email {
+        margin-bottom: 0.25rem;
+    }
+
+    .usuario-info {
+        font-size: 1rem;
+        margin-bottom: 0;
+        width: auto;
+    }
+
+    .acoes-usuario {
+        flex-shrink: 0;
+        width: auto;
+        justify-content: flex-end;
+    }
+
+    /* --- LAYOUT DE PRODUTOS EM LINHA --- */
+    .produto-item {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+    }
+
+    .produto-info-container {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-grow: 1;
+        width: 70%;
+    }
+    
+    .produto-info-container figure {
+        width: 35%;
+        margin: 0;
+    }
+
+    .produto-nome {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .produto-info {
+        font-size: 1rem;
+        margin-bottom: 0;
+        width: 15%;
+    }
+    
+    .produto-preco {
+        text-align: right;
+    }
+
+    .acoes-produto {
+        flex-shrink: 0;
+        width: 20%;
+        justify-content: flex-end;
+    }
+
+    /* --- AVALIAÇÕES --- */
+    .avaliacao-item article {
+        gap: 0.75rem;
+    }
+
+    .avaliacao-produto {
+        font-size: 1.25rem;
+    }
+
+    .avaliacao-nota,
+    .avaliacao-texto {
+        font-size: 1rem;
+    }
+
+    /* --- ESTATÍSTICAS GRID DESKTOP --- */
+    .estatisticas-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+
+    .card-stats {
+        margin-bottom: 0;
+    }
+}
