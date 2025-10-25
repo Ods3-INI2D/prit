@@ -18,7 +18,7 @@ router.use(session({
     }
 }));
 
-// Configuração do Multer para upload de imagens
+// Configuração do Multer para upload de imagens de produtos
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const uploadDir = path.join(__dirname, '../public/imagens/produtos');
@@ -422,37 +422,66 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, function(req, res) {
     }
 });
 
-// Editar banner - POST
+// ==========================================
+// EDITAR BANNER - POST (FUNCIONALIDADE COMPLETA)
+// ==========================================
 router.post('/admin/editar-banner/:id', requireAdmin, uploadBanner.single('imagem'), function(req, res) {
     try {
         const banner = db.getBannerById(req.params.id);
+        
         if (!banner) {
             return res.redirect('/admin?erro=banner_nao_encontrado');
         }
 
         let imagemPath = banner.imagem;
         
+        // Se uma nova imagem foi enviada, processa o upload
         if (req.file) {
             imagemPath = '/imagens/' + req.file.filename;
             
+            // Remove a imagem antiga apenas se não for uma das originais
             const imagensOriginais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
             if (!imagensOriginais.includes(banner.imagem)) {
                 const imagemAntiga = path.join(__dirname, '../public', banner.imagem);
                 if (fs.existsSync(imagemAntiga)) {
-                    fs.unlinkSync(imagemAntiga);
+                    try {
+                        fs.unlinkSync(imagemAntiga);
+                    } catch (err) {
+                        console.error('Erro ao deletar imagem antiga:', err);
+                    }
                 }
             }
         }
         
+        // Prepara os dados atualizados do banner
         const bannerAtualizado = {
             legenda: req.body.legenda || banner.legenda,
             imagem: imagemPath
         };
         
-        db.updateBanner(req.params.id, bannerAtualizado);
-        res.redirect('/admin?sucesso=banner_editado');
+        // Atualiza o banner no banco de dados
+        const sucesso = db.updateBanner(req.params.id, bannerAtualizado);
+        
+        if (sucesso) {
+            res.redirect('/admin?sucesso=banner_editado');
+        } else {
+            res.redirect('/admin?erro=editar_banner');
+        }
     } catch (error) {
         console.error('Erro ao editar banner:', error);
+        
+        // Se houver erro e um arquivo foi enviado, tenta removê-lo
+        if (req.file) {
+            const arquivoPath = path.join(__dirname, '../public/imagens', req.file.filename);
+            if (fs.existsSync(arquivoPath)) {
+                try {
+                    fs.unlinkSync(arquivoPath);
+                } catch (err) {
+                    console.error('Erro ao remover arquivo após falha:', err);
+                }
+            }
+        }
+        
         res.redirect('/admin?erro=editar_banner');
     }
 });
