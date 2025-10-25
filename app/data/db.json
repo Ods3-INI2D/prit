@@ -1,15 +1,51 @@
 {
   "produtos": [
     {
-      "preco": null,
-      "precoDesconto": null,
-      "id": 1761342573267,
-      "imagem": "/imagens/foto.jpg",
+      "nome": "sss",
+      "preco": 16,
+      "precoDesconto": 15,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "dedef",
+      "imagem": "/imagens/produtos/produto-1761351491795-577365296.png",
+      "id": 1761351491812,
+      "avaliacoes": [
+        {
+          "nota": 2,
+          "texto": "pintox manox\r\n",
+          "data": "2025-10-25T00:29:14.658Z"
+        }
+      ]
+    }
+  ],
+  "avaliacoes": [
+    {
+      "nota": 2,
+      "texto": "pintox manox\r\n",
+      "data": "2025-10-25T00:29:14.658Z"
+    }
+  ],
+  "carrinho": [
+    {
+      "nome": "sss",
+      "preco": 16,
+      "precoDesconto": 15,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "dedef",
+      "imagem": "/imagens/produtos/produto-1761351491795-577365296.png",
+      "id": 1761351491812,
+      "avaliacoes": []
+    },
+    {
+      "nome": "sss",
+      "preco": 16,
+      "precoDesconto": 15,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "dedef",
+      "imagem": "/imagens/produtos/produto-1761351491795-577365296.png",
+      "id": 1761351491812,
       "avaliacoes": []
     }
   ],
-  "avaliacoes": [],
-  "carrinho": [],
   "usuarios": [
     {
       "nome": "swerr",

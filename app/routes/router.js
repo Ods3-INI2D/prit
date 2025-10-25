@@ -67,8 +67,13 @@ router.use(function(req, res, next) {
     next();
 });
 
-// Rota raiz redireciona para cadastro
+// Rota raiz redireciona para home
 router.get('/', function(req, res) {
+    res.redirect('/home');
+});
+
+// Rota GET de cadastro
+router.get('/cadastro', function(req, res) {
     res.render('pages/cadastro', { 
         erros: null, 
         valores: {nome: "", nasc: "", cpf: "", tel: "", email: "", senhan: "", csenha: ""},
@@ -222,12 +227,27 @@ router.post('/admin/adicionar-produto', upload.single('imagem'), function(req, r
             imagemPath = '/imagens/produtos/' + req.file.filename;
         }
         
+        // Garantir que preco sempre tenha valor válido
+        let preco = parseFloat(req.body.preco);
+        if (isNaN(preco) || preco < 0) {
+            preco = 0;
+        }
+        
+        // Garantir que precoDesconto seja null ou um valor válido
+        let precoDesconto = null;
+        if (req.body.precoDesconto && req.body.precoDesconto !== '') {
+            precoDesconto = parseFloat(req.body.precoDesconto);
+            if (isNaN(precoDesconto) || precoDesconto < 0) {
+                precoDesconto = null;
+            }
+        }
+        
         const novoProduto = {
-            nome: req.body.nome,
-            preco: parseFloat(req.body.preco),
-            precoDesconto: req.body.precoDesconto ? parseFloat(req.body.precoDesconto) : null,
-            categoria: req.body.categoria,
-            descricao: req.body.descricao,
+            nome: req.body.nome || 'Produto sem nome',
+            preco: preco,
+            precoDesconto: precoDesconto,
+            categoria: req.body.categoria || 'Geral',
+            descricao: req.body.descricao || '',
             imagem: imagemPath
         };
         

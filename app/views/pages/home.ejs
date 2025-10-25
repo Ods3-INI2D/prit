@@ -48,14 +48,20 @@
         <section class="produtos-container">
             <% if(produtos && produtos.length > 0) { %>
                 <% produtos.forEach(function(produto) { 
-                    var temDesconto = produto.precoDesconto ? true : false;
+                    // Garantir que preco nunca seja null
+                    var precoAtual = produto.preco || 0;
+                    var precoComDesconto = produto.precoDesconto || null;
+                    
+                    var temDesconto = precoComDesconto !== null && precoComDesconto > 0;
                     var percentualDesconto = 0;
-                    if(temDesconto) {
-                        percentualDesconto = Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100);
+                    
+                    if(temDesconto && precoAtual > 0) {
+                        percentualDesconto = Math.round(((precoAtual - precoComDesconto) / precoAtual) * 100);
                     }
                     
                     var temAvaliacoes = produto.avaliacoes && produto.avaliacoes.length > 0;
                     var notaArredondada = 0;
+                    
                     if(temAvaliacoes) {
                         var somaNotas = 0;
                         produto.avaliacoes.forEach(function(avaliacao) {
@@ -73,14 +79,14 @@
 
                             <% if(temDesconto) { %>
                                 <section class="preco-container-home">
-                                    <p class="preco-original-home">R$ <%= produto.preco.toFixed(2) %></p>
-                                    <p class="preco-desconto-home">R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                                    <p class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></p>
+                                    <p class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></p>
                                     <aside class="badge-desconto">
                                         <p class="percentual-home">-<%= percentualDesconto %>%</p>
                                     </aside>
                                 </section>
                             <% } else { %>
-                                <p class="preco-unico-home">R$ <%= produto.preco.toFixed(2) %></p>
+                                <p class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></p>
                             <% } %>
 
                             <p class="categoria-home"><%= produto.categoria %></p>

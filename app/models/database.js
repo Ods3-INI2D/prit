@@ -45,10 +45,25 @@ function addProduto(produto) {
     const db = readDatabase();
     produto.id = Date.now();
     
+    // Garantir que preco sempre tenha um valor válido
+    produto.preco = produto.preco !== null && produto.preco !== undefined ? parseFloat(produto.preco) : 0;
+    
+    // Garantir que precoDesconto seja null ou um número válido
+    if (produto.precoDesconto !== null && produto.precoDesconto !== undefined && produto.precoDesconto !== '') {
+        produto.precoDesconto = parseFloat(produto.precoDesconto);
+    } else {
+        produto.precoDesconto = null;
+    }
+    
     // Usa a imagem fornecida ou define uma padrão
     if (!produto.imagem) {
         produto.imagem = '/imagens/foto.jpg';
     }
+    
+    // Garantir que categoria e descricao existam
+    produto.categoria = produto.categoria || 'Geral';
+    produto.descricao = produto.descricao || '';
+    produto.nome = produto.nome || 'Produto sem nome';
     
     produto.avaliacoes = [];
     db.produtos.push(produto);
@@ -58,12 +73,40 @@ function addProduto(produto) {
 
 function getProdutos() {
     const db = readDatabase();
-    return db.produtos;
+    // Filtrar e normalizar produtos antes de retornar
+    return db.produtos.map(produto => {
+        return {
+            ...produto,
+            preco: produto.preco !== null && produto.preco !== undefined ? produto.preco : 0,
+            precoDesconto: produto.precoDesconto || null,
+            categoria: produto.categoria || 'Geral',
+            descricao: produto.descricao || '',
+            nome: produto.nome || 'Produto sem nome',
+            imagem: produto.imagem || '/imagens/foto.jpg',
+            avaliacoes: produto.avaliacoes || []
+        };
+    });
 }
 
 function getProdutoById(id) {
     const db = readDatabase();
-    return db.produtos.find(p => p.id == id);
+    const produto = db.produtos.find(p => p.id == id);
+    
+    if (!produto) {
+        return null;
+    }
+    
+    // Normalizar produto antes de retornar
+    return {
+        ...produto,
+        preco: produto.preco !== null && produto.preco !== undefined ? produto.preco : 0,
+        precoDesconto: produto.precoDesconto || null,
+        categoria: produto.categoria || 'Geral',
+        descricao: produto.descricao || '',
+        nome: produto.nome || 'Produto sem nome',
+        imagem: produto.imagem || '/imagens/foto.jpg',
+        avaliacoes: produto.avaliacoes || []
+    };
 }
 
 function addAvaliacao(produtoId, avaliacao) {
@@ -72,6 +115,9 @@ function addAvaliacao(produtoId, avaliacao) {
     
     if (produto) {
         avaliacao.data = new Date();
+        if (!produto.avaliacoes) {
+            produto.avaliacoes = [];
+        }
         produto.avaliacoes.push(avaliacao);
         db.avaliacoes.push(avaliacao);
         writeDatabase(db);
@@ -94,7 +140,17 @@ function addToCarrinho(produtoId) {
 
 function getCarrinho() {
     const db = readDatabase();
-    return db.carrinho;
+    // Normalizar produtos do carrinho
+    return db.carrinho.map(produto => {
+        return {
+            ...produto,
+            preco: produto.preco !== null && produto.preco !== undefined ? produto.preco : 0,
+            precoDesconto: produto.precoDesconto || null,
+            categoria: produto.categoria || 'Geral',
+            nome: produto.nome || 'Produto sem nome',
+            imagem: produto.imagem || '/imagens/foto.jpg'
+        };
+    });
 }
 
 function clearCarrinho() {
@@ -126,17 +182,29 @@ function updateUsuario(email, updates) {
     return null;
 }
 
-initDatabase();
-
 function getProdutosByCategoria(categoria) {
     const db = readDatabase();
-    return db.produtos.filter(p => p.categoria.toLowerCase() === categoria.toLowerCase());
+    return db.produtos
+        .filter(p => p.categoria && p.categoria.toLowerCase() === categoria.toLowerCase())
+        .map(produto => {
+            return {
+                ...produto,
+                preco: produto.preco !== null && produto.preco !== undefined ? produto.preco : 0,
+                precoDesconto: produto.precoDesconto || null,
+                categoria: produto.categoria || 'Geral',
+                nome: produto.nome || 'Produto sem nome',
+                imagem: produto.imagem || '/imagens/foto.jpg',
+                avaliacoes: produto.avaliacoes || []
+            };
+        });
 }
 
 function getTotalAvaliacoes() {
     const db = readDatabase();
     return db.avaliacoes.length;
 }
+
+initDatabase();
 
 module.exports = {
     addProduto,
