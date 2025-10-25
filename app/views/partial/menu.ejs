@@ -27,14 +27,14 @@
             <section class="menu-content">
                 <section class="perfil">
                     <% if(usuario) { %>
-                        <h1 class="nome">Olá, <%= usuario.nome %>!</h1>
+                        <h2 class="nome">Olá, <%= usuario.nome %>!</h2>
                         <% if(isAdmin) { %>
                             <a href="/admin" class="conta">Gerenciar o Site</a>
                         <% } else { %>
                             <a href="/usuario" class="conta">Gerenciar sua Conta</a>
                         <% } %>
                     <% } else { %>
-                        <h1 class="nome">Olá, Visitante!</h1>
+                        <h2 class="nome">Olá, Visitante!</h2>
                         <a href="/login" class="conta">Fazer Login</a>
                     <% } %>
                 </section>
@@ -47,8 +47,8 @@
                                class="linkhp"
                                aria-controls="submenuhp"
                                aria-expanded="false">
-                                Higiene Pessoal
-                                <i class="seta">›</i>
+                                <output>Higiene Pessoal</o>
+                                <output class="seta">›</o>
                             </a>
                             <ul class="submenu" id="submenuhp" role="menu">
                                 <li><a href="/categoria/Geral">Geral</a></li>

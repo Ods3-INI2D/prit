@@ -18,46 +18,53 @@
         <% if(erro) { %>
             <output class="mensagem-erro" role="alert" aria-live="assertive">
                 <%= erro %>
-            </output>
+            </o>
         <% } %>
 
         <section class="adicionar-produto" aria-labelledby="titulo-editar">
             <h2 id="titulo-editar" class="subtitulo">Editar: <%= produto.nome %></h2>
             
             <form method="POST" action="/admin/editar-produto/<%= produto.id %>" class="form-produto" enctype="multipart/form-data" aria-label="Formulário de edição de produto">
-                <label for="nome">
-                    <span class="label-titulo">Nome do Produto</span>
-                    <input type="text" id="nome" name="nome" value="<%= produto.nome %>" placeholder="Digite o nome do produto" required aria-required="true">
-                </label>
+                <fieldset>
+                    <legend class="label-titulo">Nome do Produto</legend>
+                    <label for="nome">
+                        <input type="text" id="nome" name="nome" value="<%= produto.nome %>" placeholder="Digite o nome do produto" required aria-required="true">
+                    </label>
+                </fieldset>
  
-                <label for="preco">
-                    <span class="label-titulo">Preço</span>
-                    <input type="number" id="preco" name="preco" value="<%= produto.preco %>" placeholder="0.00" step="0.01" min="0" required aria-required="true">
-                </label>
+                <fieldset>
+                    <legend class="label-titulo">Preço</legend>
+                    <label for="preco">
+                        <input type="number" id="preco" name="preco" value="<%= produto.preco %>" placeholder="0.00" step="0.01" min="0" required aria-required="true">
+                    </label>
+                </fieldset>
  
-                <label for="precoDesconto">
-                    <span class="label-titulo">Preço com Desconto (opcional)</span>
-                    <input type="number" id="precoDesconto" name="precoDesconto" value="<%= produto.precoDesconto || '' %>" placeholder="0.00" step="0.01" min="0" aria-required="false">
-                </label>
+                <fieldset>
+                    <legend class="label-titulo">Preço com Desconto (opcional)</legend>
+                    <label for="precoDesconto">
+                        <input type="number" id="precoDesconto" name="precoDesconto" value="<%= produto.precoDesconto || '' %>" placeholder="0.00" step="0.01" min="0" aria-required="false">
+                    </label>
+                </fieldset>
  
-                <label for="categoria">
-                    <span class="label-titulo">Categoria</span>
-                    <select id="categoria" name="categoria" required aria-required="true">
-                        <option value="">Selecione uma categoria</option>
-                        <option value="Cuidados com a Pele" <%= produto.categoria === 'Cuidados com a Pele' ? 'selected' : '' %>>Cuidados com a Pele</option>
-                        <option value="Higiene Bucal" <%= produto.categoria === 'Higiene Bucal' ? 'selected' : '' %>>Higiene Bucal</option>
-                        <option value="Cabelo" <%= produto.categoria === 'Cabelo' ? 'selected' : '' %>>Cabelo</option>
-                        <option value="Vitaminas e Suplementos" <%= produto.categoria === 'Vitaminas e Suplementos' ? 'selected' : '' %>>Vitaminas e Suplementos</option>
-                        <option value="Bebê" <%= produto.categoria === 'Bebê' ? 'selected' : '' %>>Bebê</option>
-                        <option value="Terceira Idade" <%= produto.categoria === 'Terceira Idade' ? 'selected' : '' %>>Terceira Idade</option>
-                        <option value="Medicamentos" <%= produto.categoria === 'Medicamentos' ? 'selected' : '' %>>Medicamentos</option>
-                    </select>
-                </label>
+                <fieldset>
+                    <legend class="label-titulo">Categoria</legend>
+                    <label for="categoria">
+                        <select id="categoria" name="categoria" required aria-required="true">
+                            <option value="">Selecione uma categoria</option>
+                            <option value="Cuidados com a Pele" <%= produto.categoria === 'Cuidados com a Pele' ? 'selected' : '' %>>Cuidados com a Pele</option>
+                            <option value="Higiene Bucal" <%= produto.categoria === 'Higiene Bucal' ? 'selected' : '' %>>Higiene Bucal</option>
+                            <option value="Cabelo" <%= produto.categoria === 'Cabelo' ? 'selected' : '' %>>Cabelo</option>
+                            <option value="Vitaminas e Suplementos" <%= produto.categoria === 'Vitaminas e Suplementos' ? 'selected' : '' %>>Vitaminas e Suplementos</option>
+                            <option value="Bebê" <%= produto.categoria === 'Bebê' ? 'selected' : '' %>>Bebê</option>
+                            <option value="Terceira Idade" <%= produto.categoria === 'Terceira Idade' ? 'selected' : '' %>>Terceira Idade</option>
+                            <option value="Medicamentos" <%= produto.categoria === 'Medicamentos' ? 'selected' : '' %>>Medicamentos</option>
+                        </select>
+                    </label>
+                </fieldset>
+                </fieldset>
 
                 <fieldset class="campo-imagem">
-                    <legend>
-                        <span class="label-titulo">Imagem Atual</span>
-                    </legend>
+                    <legend class="label-titulo">Imagem Atual</legend>
                     <figure class="preview-container">
                         <img src="<%= produto.imagem %>" alt="Imagem atual do produto" class="preview-img" style="display: block;">
                         <figcaption class="preview-caption">Imagem atual</figcaption>
@@ -65,9 +72,7 @@
                 </fieldset>
  
                 <fieldset class="campo-imagem">
-                    <legend>
-                        <span class="label-titulo">Nova Imagem (opcional)</span>
-                    </legend>
+                    <legend class="label-titulo">Nova Imagem (opcional)</legend>
                     <label for="imagem" class="label-arquivo">
                         <input type="file"
                                id="imagem"
@@ -76,15 +81,17 @@
                                aria-describedby="imagem-info">
                         <output id="imagem-info" class="info-arquivo">
                             Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
-                        </output>
+                        </o>
                     </label>
-                    <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></output>
+                    <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></o>
                 </fieldset>
  
-                <label for="descricao">
-                    <span class="label-titulo">Descrição do Produto</span>
-                    <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto" rows="5" required aria-required="true"><%= produto.descricao %></textarea>
-                </label>
+                <fieldset>
+                    <legend class="label-titulo">Descrição do Produto</legend>
+                    <label for="descricao">
+                        <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto" rows="5" required aria-required="true"><%= produto.descricao %></textarea>
+                    </label>
+                </fieldset>
  
                 <button type="submit" class="btn-adicionar">Salvar Alterações</button>
                 <a href="/admin" class="btn-adicionar" style="display: inline-block; text-align: center; text-decoration: none; background-color: #555; margin-top: 1rem;">Cancelar</a>

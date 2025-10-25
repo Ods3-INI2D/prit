@@ -89,7 +89,7 @@
         <section class="estatisticas" aria-labelledby="titulo-estatisticas">
             <h2 id="titulo-estatisticas" class="subtitulo">Estatísticas do Site</h2>
             
-            <article class="estatisticas-grid">
+            <section class="estatisticas-grid">
                 <article class="card-stats">
                     <h3 class="stat-titulo">Total de Produtos</h3>
                     <output class="stat-valor" aria-label="<%= totalProdutos %> produtos cadastrados"><%= totalProdutos %></output>
@@ -104,7 +104,7 @@
                     <h3 class="stat-titulo">Total de Usuários</h3>
                     <output class="stat-valor" aria-label="<%= usuarios.length %> usuários cadastrados"><%= usuarios.length %></output>
                 </article>
-            </article>
+            </section>
         </section>
 
         <section class="tabs-container">
@@ -120,34 +120,43 @@
                     <h2 id="titulo-adicionar" class="subtitulo">Adicionar Novo Produto</h2>
                     
                     <form method="POST" action="/admin/adicionar-produto" class="form-produto" enctype="multipart/form-data" aria-label="Formulário de cadastro de produto">
-                        <label for="nome">
-                            <strong class="label-titulo">Nome do Produto</strong>
-                            <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" required aria-required="true">
-                        </label>
+                        <fieldset>
+                            <legend class="label-titulo">Nome do Produto</legend>
+                            <label for="nome">
+                                <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" required aria-required="true">
+                            </label>
+                        </fieldset>
+                        </fieldset>
          
-                        <label for="preco">
-                            <strong class="label-titulo">Preço</strong>
-                            <input type="number" id="preco" name="preco" placeholder="0.00" step="0.01" min="0" required aria-required="true">
-                        </label>
+                        <fieldset>
+                            <legend class="label-titulo">Preço</legend>
+                            <label for="preco">
+                                <input type="number" id="preco" name="preco" placeholder="0.00" step="0.01" min="0" required aria-required="true">
+                            </label>
+                        </fieldset>
          
-                        <label for="precoDesconto">
-                            <strong class="label-titulo">Preço com Desconto (opcional)</strong>
-                            <input type="number" id="precoDesconto" name="precoDesconto" placeholder="0.00" step="0.01" min="0" aria-required="false">
-                        </label>
+                        <fieldset>
+                            <legend class="label-titulo">Preço com Desconto (opcional)</legend>
+                            <label for="precoDesconto">
+                                <input type="number" id="precoDesconto" name="precoDesconto" placeholder="0.00" step="0.01" min="0" aria-required="false">
+                            </label>
+                        </fieldset>
          
-                        <label for="categoria">
-                            <strong class="label-titulo">Categoria</strong>
-                            <select id="categoria" name="categoria" required aria-required="true">
-                                <option value="">Selecione uma categoria</option>
-                                <option value="Cuidados com a Pele">Cuidados com a Pele</option>
-                                <option value="Higiene Bucal">Higiene Bucal</option>
-                                <option value="Cabelo">Cabelo</option>
-                                <option value="Vitaminas e Suplementos">Vitaminas e Suplementos</option>
-                                <option value="Bebê">Bebê</option>
-                                <option value="Terceira Idade">Terceira Idade</option>
-                                <option value="Medicamentos">Medicamentos</option>
-                            </select>
-                        </label>
+                        <fieldset>
+                            <legend class="label-titulo">Categoria</legend>
+                            <label for="categoria">
+                                <select id="categoria" name="categoria" required aria-required="true">
+                                    <option value="">Selecione uma categoria</option>
+                                    <option value="Cuidados com a Pele">Cuidados com a Pele</option>
+                                    <option value="Higiene Bucal">Higiene Bucal</option>
+                                    <option value="Cabelo">Cabelo</option>
+                                    <option value="Vitaminas e Suplementos">Vitaminas e Suplementos</option>
+                                    <option value="Bebê">Bebê</option>
+                                    <option value="Terceira Idade">Terceira Idade</option>
+                                    <option value="Medicamentos">Medicamentos</option>
+                                </select>
+                            </label>
+                        </fieldset>
          
                         <fieldset class="campo-imagem">
                             <legend>
@@ -181,7 +190,7 @@
                     <h2 id="titulo-lista" class="subtitulo">Produtos Cadastrados</h2>
                     
                     <% if(produtos.length === 0) { %>
-                        <p class="mensagem-vazia">Nenhum produto cadastrado ainda.</p>
+                        <output class="mensagem-vazia">Nenhum produto cadastrado ainda.</output>
                     <% } else { %>
                         <ul class="produtos-lista" role="list">
                             <% produtos.forEach(function(produto) { %>
@@ -191,10 +200,10 @@
                                             <h3 class="produto-nome"><%= produto.nome %></h3>
                                             <figcaption class="produto-info">ID: <%= produto.id %></figcaption>
                                         </figure>
-                                        <p class="produto-info">Categoria: <%= produto.categoria %></p>
-                                        <p class="produto-info produto-preco">R$ <%= produto.preco.toFixed(2) %></p>
+                                        <output class="produto-info">Categoria: <%= produto.categoria %></output>
+                                        <output class="produto-info produto-preco">R$ <%= produto.preco.toFixed(2) %></output>
                                         <% if(produto.precoDesconto) { %>
-                                            <p class="produto-info desconto">Com Desconto: R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                                            <output class="produto-info desconto">Com Desconto: R$ <%= produto.precoDesconto.toFixed(2) %></output>
                                         <% } %>
                                     </article>
                                     <nav class="acoes-produto" aria-label="Ações do produto <%= produto.nome %>">
@@ -215,7 +224,7 @@
                     <h2 id="titulo-usuarios" class="subtitulo">Usuários Cadastrados</h2>
                     
                     <% if(usuarios.length === 0) { %>
-                        <p class="mensagem-vazia">Nenhum usuário cadastrado ainda.</p>
+                        <output class="mensagem-vazia">Nenhum usuário cadastrado ainda.</output>
                     <% } else { %>
                         <ul class="usuarios-lista" role="list">
                             <% usuarios.forEach(function(usuario) { %>
@@ -225,8 +234,8 @@
                                             <h3 class="usuario-email"><%= usuario.email %></h3>
                                             <figcaption class="usuario-info">Nome: <%= usuario.nome %></figcaption>
                                         </figure>
-                                        <p class="usuario-info">CPF: <%= usuario.cpf %></p>
-                                        <p class="usuario-info">Telefone: <%= usuario.tel %></p>
+                                        <output class="usuario-info">CPF: <%= usuario.cpf %></output>
+                                        <output class="usuario-info">Telefone: <%= usuario.tel %></output>
                                         <time class="usuario-info" datetime="<%= usuario.nasc %>">Nascimento: <%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></time>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do usuário <%= usuario.email %>">
@@ -245,7 +254,7 @@
                 <section class="lista-banners-section">
                     <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners do Carrossel</h2>
                     
-                    <p class="mensagem-info">Edite os banners que aparecem no carrossel da página inicial. São 3 banners disponíveis.</p>
+                    <output class="mensagem-info">Edite os banners que aparecem no carrossel da página inicial. São 3 banners disponíveis.</output>
                     
                     <% if(banners && banners.length > 0) { %>
                         <ul class="usuarios-lista" role="list">
@@ -256,7 +265,7 @@
                                             <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>" style="max-width: 200px; height: auto; border-radius: 0.5rem;">
                                             <figcaption class="usuario-info">Banner <%= index + 1 %></figcaption>
                                         </figure>
-                                        <p class="usuario-info">Legenda: <%= banner.legenda %></p>
+                                        <output class="usuario-info">Legenda: <%= banner.legenda %></output>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do banner <%= index + 1 %>">
                                         <button class="btn-editar" 

@@ -76,17 +76,17 @@
 
                             <% if(temDesconto) { %>
                                 <section class="preco-container-home">
-                                    <p class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></p>
-                                    <p class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></p>
+                                    <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                    <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></output>
                                     <aside class="badge-desconto">
-                                        <p class="percentual-home">-<%= percentualDesconto %>%</p>
+                                        <output class="percentual-home">-<%= percentualDesconto %>%</output>
                                     </aside>
                                 </section>
                             <% } else { %>
-                                <p class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></p>
+                                <output class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></output>
                             <% } %>
 
-                            <p class="categoria-home"><%= produto.categoria %></p>
+                            <output class="categoria-home"><%= produto.categoria %></output>
 
                             <% if(temAvaliacoes) { %>
                                 <section class="estrelas-home">
@@ -100,7 +100,7 @@
                 <% }); %>
             <% } else { %>
                 <article class="sem-produtos">
-                    <p class="mensagem-vazio">Nenhum produto disponível no momento.</p>
+                    <output class="mensagem-vazio">Nenhum produto disponível no momento.</output>
                     <% if(isAdmin) { %>
                         <a href="/admin" class="btn-admin">Gerenciar o Site</a>
                     <% } %>

@@ -52,6 +52,13 @@
             gap: 0.5rem;
         }
 
+        .subtotal-item {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4da6ff;
+            margin-top: 0.5rem;
+        }
+
         @media (min-width: 768px) {
             .controles-quantidade {
                 margin-top: 0;
@@ -75,7 +82,7 @@
 
             <% if(carrinho.length === 0) { %>
                 <article class="carrinho-vazio">
-                    <p class="mensagem-vazio">Seu carrinho está vazio!</p>
+                    <output class="mensagem-vazio">Seu carrinho está vazio!</o>
                     <a href="/home" class="btn-continuar">Continuar Comprando</a>
                 </article>
             <% } else { %>
@@ -94,14 +101,14 @@
                                     
                                     <article class="info-produto">
                                         <h2 class="nome-produto"><%= produto.nome %></h2>
-                                        <p class="categoria-produto"><%= produto.categoria %></p>
+                                        <output class="categoria-produto"><%= produto.categoria %></o>
                                         
                                         <section class="preco-container">
                                             <% if(produto.precoDesconto) { %>
-                                                <p class="preco-original">R$ <%= produto.preco.toFixed(2) %></p>
-                                                <p class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                                                <output class="preco-original">R$ <%= produto.preco.toFixed(2) %></o>
+                                                <output class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></o>
                                             <% } else { %>
-                                                <p class="preco-produto">R$ <%= produto.preco.toFixed(2) %></p>
+                                                <output class="preco-produto">R$ <%= produto.preco.toFixed(2) %></o>
                                             <% } %>
                                         </section>
 
@@ -111,7 +118,7 @@
                                                 <button type="submit" class="btn-quantidade" aria-label="Diminuir quantidade">−</button>
                                             </form>
                                             
-                                            <output class="quantidade-atual"><%= produto.quantidade %></output>
+                                            <output class="quantidade-atual"><%= produto.quantidade %></o>
                                             
                                             <form method="POST" action="/carrinho/atualizar/<%= produto.id %>" class="form-quantidade">
                                                 <input type="hidden" name="quantidade" value="<%= produto.quantidade + 1 %>">
@@ -119,7 +126,7 @@
                                             </form>
                                         </section>
 
-                                        <p class="subtotal-item">Subtotal: R$ <%= subtotal.toFixed(2) %></p>
+                                        <output class="subtotal-item">Subtotal: R$ <%= subtotal.toFixed(2) %></o>
                                     </article>
 
                                     <nav class="acoes-item">
@@ -137,20 +144,20 @@
                         <h2 class="titulo-resumo">Resumo do Pedido</h2>
                         
                         <section class="linhas-resumo">
-                            <p class="linha-resumo">
+                            <output class="linha-resumo">
                                 <strong>Subtotal:</strong>
-                                <output>R$ <%= total.toFixed(2) %></output>
-                            </p>
-                            <p class="linha-resumo">
+                                <o>R$ <%= total.toFixed(2) %></o>
+                            </o>
+                            <output class="linha-resumo">
                                 <strong>Frete:</strong>
-                                <output>A calcular</output>
-                            </p>
+                                <o>A calcular</o>
+                            </o>
                         </section>
                         
-                        <p class="total-resumo">
+                        <output class="total-resumo">
                             <strong>Total:</strong>
-                            <output>R$ <%= total.toFixed(2) %></output>
-                        </p>
+                            <o>R$ <%= total.toFixed(2) %></o>
+                        </o>
 
                         <button class="btn-finalizar" type="button">Finalizar Compra</button>
                     </aside>

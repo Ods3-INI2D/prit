@@ -17,7 +17,7 @@
         <nav class="navegacao">
             <a href="/home" class="voltar">
                 <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
-                Voltar
+                <output>Voltar</o>
             </a>
         </nav>
 
@@ -26,7 +26,7 @@
 
             <% if(produtos.length === 0) { %>
                 <article class="categoria-vazia">
-                    <p class="mensagem-vazio">Nenhum produto encontrado nesta categoria.</p>
+                    <output class="mensagem-vazio">Nenhum produto encontrado nesta categoria.</o>
                     <a href="/home" class="btn-voltar-home">Voltar para Home</a>
                 </article>
             <% } else { %>
@@ -40,17 +40,17 @@
                                 
                                 <% if(produto.precoDesconto) { %>
                                     <section class="preco-container">
-                                        <p class="preco-original">R$ <%= produto.preco.toFixed(2) %></p>
-                                        <p class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                                        <output class="preco-original">R$ <%= produto.preco.toFixed(2) %></o>
+                                        <output class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></o>
                                     </section>
-                                    <p class="percentual">
+                                    <output class="percentual">
                                         -<%= Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100) %>%
-                                    </p>
+                                    </o>
                                 <% } else { %>
-                                    <p class="preco-normal">R$ <%= produto.preco.toFixed(2) %></p>
+                                    <output class="preco-normal">R$ <%= produto.preco.toFixed(2) %></o>
                                 <% } %>
 
-                                <p class="categoria-label"><%= produto.categoria %></p>
+                                <output class="categoria-label"><%= produto.categoria %></o>
 
                                 <% if(produto.avaliacoes && produto.avaliacoes.length > 0) { %>
                                     <section class="estrelas-container">
