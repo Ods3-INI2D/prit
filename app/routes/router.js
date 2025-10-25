@@ -423,77 +423,95 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, function(req, res) {
 });
 
 // ==========================================
-// EDITAR BANNER - POST (FUNCIONALIDADE COMPLETA)
+// EDITAR BANNER - POST (FUNCIONALIDADE 100% COMPLETA)
 // ==========================================
-router.post('/admin/editar-banner/:id', requireAdmin, uploadBanner.single('imagem'), function(req, res) {
-    try {
-        const bannerId = parseInt(req.params.id);
-        const banner = db.getBannerById(bannerId);
-        
-        if (!banner) {
-            console.error(`Banner com ID ${bannerId} não encontrado`);
-            return res.redirect('/admin?erro=banner_nao_encontrado');
+router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
+    // Usar uploadBanner como middleware e capturar erros
+    uploadBanner.single('imagem')(req, res, function(err) {
+        if (err) {
+            console.error('Erro no upload do banner:', err);
+            return res.redirect('/admin?erro=editar_banner');
         }
-
-        let imagemPath = banner.imagem;
         
-        // Se uma nova imagem foi enviada, processa o upload
-        if (req.file) {
-            imagemPath = '/imagens/' + req.file.filename;
+        try {
+            const bannerId = parseInt(req.params.id);
             
-            console.log('Nova imagem enviada:', imagemPath);
+            console.log('=== INICIANDO EDIÇÃO DE BANNER ===');
+            console.log('Banner ID:', bannerId);
+            console.log('Dados recebidos - body:', req.body);
+            console.log('Arquivo recebido:', req.file ? req.file.filename : 'Nenhum arquivo');
             
-            // Remove a imagem antiga apenas se não for uma das originais padrão
-            const imagensOriginais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
-            if (!imagensOriginais.includes(banner.imagem)) {
-                const imagemAntiga = path.join(__dirname, '../public', banner.imagem);
-                if (fs.existsSync(imagemAntiga)) {
+            const banner = db.getBannerById(bannerId);
+            
+            if (!banner) {
+                console.error(`Banner com ID ${bannerId} não encontrado`);
+                return res.redirect('/admin?erro=banner_nao_encontrado');
+            }
+            
+            console.log('Banner encontrado:', banner);
+            
+            let imagemPath = banner.imagem;
+            
+            // Se uma nova imagem foi enviada, processa o upload
+            if (req.file) {
+                imagemPath = '/imagens/' + req.file.filename;
+                
+                console.log('Nova imagem enviada:', imagemPath);
+                
+                // Remove a imagem antiga apenas se não for uma das originais padrão
+                const imagensOriginais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
+                if (!imagensOriginais.includes(banner.imagem)) {
+                    const imagemAntiga = path.join(__dirname, '../public', banner.imagem);
+                    if (fs.existsSync(imagemAntiga)) {
+                        try {
+                            fs.unlinkSync(imagemAntiga);
+                            console.log('Imagem antiga removida:', banner.imagem);
+                        } catch (err) {
+                            console.error('Erro ao deletar imagem antiga:', err);
+                        }
+                    }
+                }
+            } else {
+                console.log('Nenhuma imagem nova enviada, mantendo:', imagemPath);
+            }
+            
+            // Prepara os dados atualizados do banner
+            const bannerAtualizado = {
+                legenda: req.body.legenda || banner.legenda,
+                imagem: imagemPath
+            };
+            
+            console.log('Dados para atualizar:', bannerAtualizado);
+            
+            // Atualiza o banner no banco de dados
+            const sucesso = db.updateBanner(bannerId, bannerAtualizado);
+            
+            if (sucesso) {
+                console.log('=== BANNER ATUALIZADO COM SUCESSO! ===');
+                res.redirect('/admin?sucesso=banner_editado');
+            } else {
+                console.error('Falha ao atualizar banner no banco de dados');
+                res.redirect('/admin?erro=editar_banner');
+            }
+        } catch (error) {
+            console.error('Erro ao editar banner:', error);
+            
+            // Se houver erro e um arquivo foi enviado, tenta removê-lo
+            if (req.file) {
+                const arquivoPath = path.join(__dirname, '../public/imagens', req.file.filename);
+                if (fs.existsSync(arquivoPath)) {
                     try {
-                        fs.unlinkSync(imagemAntiga);
-                        console.log('Imagem antiga removida:', banner.imagem);
+                        fs.unlinkSync(arquivoPath);
+                        console.log('Arquivo enviado removido após erro');
                     } catch (err) {
-                        console.error('Erro ao deletar imagem antiga:', err);
+                        console.error('Erro ao remover arquivo após falha:', err);
                     }
                 }
             }
-        }
-        
-        // Prepara os dados atualizados do banner
-        const bannerAtualizado = {
-            legenda: req.body.legenda || banner.legenda,
-            imagem: imagemPath
-        };
-        
-        console.log('Atualizando banner:', bannerId, bannerAtualizado);
-        
-        // Atualiza o banner no banco de dados
-        const sucesso = db.updateBanner(bannerId, bannerAtualizado);
-        
-        if (sucesso) {
-            console.log('Banner atualizado com sucesso!');
-            res.redirect('/admin?sucesso=banner_editado');
-        } else {
-            console.error('Falha ao atualizar banner no banco de dados');
+            
             res.redirect('/admin?erro=editar_banner');
         }
-    } catch (error) {
-        console.error('Erro ao editar banner:', error);
-        
-        // Se houver erro e um arquivo foi enviado, tenta removê-lo
-        if (req.file) {
-            const arquivoPath = path.join(__dirname, '../public/imagens', req.file.filename);
-            if (fs.existsSync(arquivoPath)) {
-                try {
-                    fs.unlinkSync(arquivoPath);
-                    console.log('Arquivo enviado removido após erro');
-                } catch (err) {
-                    console.error('Erro ao remover arquivo após falha:', err);
-                }
-            }
-        }
-        
-        res.redirect('/admin?erro=editar_banner');
-    }
+    });
 });
 
 // Ver produto específico
