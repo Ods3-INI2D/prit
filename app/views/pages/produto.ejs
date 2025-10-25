@@ -78,12 +78,15 @@
                 <article class="nota-media">
                     <h3 class="label-nota">Nota Média</h3>
                     <% 
-                    const somaNotas = produto.avaliacoes.reduce(function(sum, av) { return sum + av.nota; }, 0);
-                    const media = (somaNotas / produto.avaliacoes.length).toFixed(1);
-                    const notaArredondada = Math.round(media);
+                    var somaNotas = 0;
+                    produto.avaliacoes.forEach(function(avaliacao) {
+                        somaNotas += avaliacao.nota;
+                    });
+                    var media = (somaNotas / produto.avaliacoes.length).toFixed(1);
+                    var notaArredondada = Math.round(media);
                     %>
                     <section class="estrelas-media">
-                        <% for(let i = 1; i <= 5; i++) { %>
+                        <% for(var i = 1; i <= 5; i++) { %>
                             <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.png" 
                                  class="estrela" 
                                  alt="Estrela <%= i <= notaArredondada ? 'preenchida' : 'vazia' %>">
@@ -98,7 +101,7 @@
                     <% produto.avaliacoes.forEach(function(avaliacao) { %>
                         <li class="item-avaliacao">
                             <section class="estrelas-avaliacao">
-                                <% for(let i = 1; i <= 5; i++) { %>
+                                <% for(var i = 1; i <= 5; i++) { %>
                                     <img src="/imagens/estr<%= i <= avaliacao.nota ? '' : 'v' %>.png" 
                                          class="estrela-pequena" 
                                          alt="Estrela">

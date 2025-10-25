@@ -58,9 +58,9 @@
                     var notaArredondada = 0;
                     if(temAvaliacoes) {
                         var somaNotas = 0;
-                        for(var j = 0; j < produto.avaliacoes.length; j++) {
-                            somaNotas += produto.avaliacoes[j].nota;
-                        }
+                        produto.avaliacoes.forEach(function(avaliacao) {
+                            somaNotas += avaliacao.nota;
+                        });
                         var media = somaNotas / produto.avaliacoes.length;
                         notaArredondada = Math.round(media);
                     }
