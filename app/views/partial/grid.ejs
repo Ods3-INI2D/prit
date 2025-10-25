@@ -18,7 +18,7 @@
             <a href="/home"><img src="/imagens/logo.png" alt="logo" class="logo"></a>
 
             <section class="busca-container">
-                <a href="/usuario"><img src="/imagens/user.png" alt="user" class="user"></a>
+                <a href="<%= isAdmin ? '/admin' : '/usuario' %>"><img src="/imagens/user.png" alt="user" class="user"></a>
 
                 <form class="busca-form">
                     <label for="busca">

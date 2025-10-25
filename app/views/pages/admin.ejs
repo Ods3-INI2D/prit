@@ -268,7 +268,9 @@
                                     <nav class="acoes-usuario" aria-label="Ações do banner <%= index + 1 %>">
                                         <button class="btn-editar" 
                                                 type="button" 
-                                                onclick="abrirModalBanner(<%= banner.id %>, '<%= banner.legenda %>')"
+                                                data-banner-id="<%= banner.id %>"
+                                                data-banner-legenda="<%= banner.legenda %>"
+                                                onclick="abrirModalBanner(this.dataset.bannerId, this.dataset.bannerLegenda)"
                                                 aria-label="Editar banner <%= index + 1 %>">Editar</button>
                                     </nav>
                                 </li>
