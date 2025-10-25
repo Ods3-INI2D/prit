@@ -23,10 +23,12 @@
             </article>
 
             <% if(erro) { %>
-                <output class="erro" role="alert" aria-live="polite"><%= erro %></output>
+                <o class="erro" role="alert" aria-live="polite"><%= erro %></o>
             <% } %>
 
             <form method="POST" action="/login" novalidate>
+                <input type="hidden" name="redirect" value="<%= typeof redirect !== 'undefined' ? redirect : '/home' %>">
+                
                 <fieldset>
                     <legend>
                         <h2>E-mail</h2>

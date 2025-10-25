@@ -7,6 +7,62 @@
     <title>Carrinho</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/carrinho.css">
+    <style>
+        .controles-quantidade {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .btn-quantidade {
+            width: 2rem;
+            height: 2rem;
+            background-color: #163069;
+            color: white;
+            border: none;
+            border-radius: 0.25rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-quantidade:hover {
+            background-color: #0d1f42;
+        }
+
+        .btn-quantidade:active {
+            transform: scale(0.95);
+        }
+
+        .quantidade-atual {
+            font-size: 1.125rem;
+            font-weight: 600;
+            min-width: 2rem;
+            text-align: center;
+        }
+
+        .form-quantidade {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .controles-quantidade {
+                margin-top: 0;
+            }
+            
+            .btn-quantidade {
+                width: 2.25rem;
+                height: 2.25rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -30,7 +86,8 @@
                             let total = 0;
                             carrinho.forEach(function(produto) { 
                                 const precoFinal = produto.precoDesconto || produto.preco;
-                                total += precoFinal;
+                                const subtotal = precoFinal * produto.quantidade;
+                                total += subtotal;
                             %>
                                 <li class="item-carrinho">
                                     <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto">
@@ -47,11 +104,29 @@
                                                 <p class="preco-produto">R$ <%= produto.preco.toFixed(2) %></p>
                                             <% } %>
                                         </section>
+
+                                        <section class="controles-quantidade">
+                                            <form method="POST" action="/carrinho/atualizar/<%= produto.id %>" class="form-quantidade">
+                                                <input type="hidden" name="quantidade" value="<%= produto.quantidade - 1 %>">
+                                                <button type="submit" class="btn-quantidade" aria-label="Diminuir quantidade">−</button>
+                                            </form>
+                                            
+                                            <output class="quantidade-atual"><%= produto.quantidade %></output>
+                                            
+                                            <form method="POST" action="/carrinho/atualizar/<%= produto.id %>" class="form-quantidade">
+                                                <input type="hidden" name="quantidade" value="<%= produto.quantidade + 1 %>">
+                                                <button type="submit" class="btn-quantidade" aria-label="Aumentar quantidade">+</button>
+                                            </form>
+                                        </section>
+
+                                        <p class="subtotal-item">Subtotal: R$ <%= subtotal.toFixed(2) %></p>
                                     </article>
 
                                     <nav class="acoes-item">
                                         <a href="/produto/<%= produto.id %>#avaliar" class="btn-avaliar">Avaliar Produto</a>
-                                        <button class="btn-remover" type="button" aria-label="Remover <%= produto.nome %> do carrinho">Remover</button>
+                                        <form method="POST" action="/carrinho/remover/<%= produto.id %>">
+                                            <button type="submit" class="btn-remover" aria-label="Remover <%= produto.nome %> do carrinho">Remover</button>
+                                        </form>
                                     </nav>
                                 </li>
                             <% }); %>

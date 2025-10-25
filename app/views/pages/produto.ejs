@@ -7,6 +7,41 @@
     <title><%= produto.nome %></title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/produto.css">
+    <style>
+        .mensagem-aviso {
+            background-color: rgba(255, 193, 7, 0.2);
+            border: 2px solid #ffc107;
+            color: #ffc107;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .mensagem-erro-avaliacao {
+            background-color: rgba(217, 48, 37, 0.2);
+            border: 2px solid #d93025;
+            color: #ff6b6b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .form-avaliacao-desabilitado {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .subtotal-item {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4da6ff;
+            margin-top: 0.5rem;
+        }
+    </style>
     <script src="/js/validacao.js" defer></script>
 </head>
 <body>
@@ -42,9 +77,17 @@
                     <p class="preco-produto">R$ <%= produto.preco.toFixed(2) %></p>
                 <% } %>
 
-                <form method="POST" action="/produto/<%= produto.id %>/adicionar-carrinho">
-                    <button type="submit" class="btn-comprar">Comprar</button>
-                </form>
+                <% if(usuarioLogado) { %>
+                    <form method="POST" action="/produto/<%= produto.id %>/adicionar-carrinho">
+                        <button type="submit" class="btn-comprar">
+                            <%= temProdutoNoCarrinho ? 'Adicionar Mais ao Carrinho' : 'Adicionar ao Carrinho' %>
+                        </button>
+                    </form>
+                <% } else { %>
+                    <a href="/login?redirect=/produto/<%= produto.id %>" class="btn-comprar" style="display: block; text-align: center; text-decoration: none;">
+                        Fazer Login para Comprar
+                    </a>
+                <% } %>
             </article>
         </section>
 
@@ -78,15 +121,15 @@
                 <article class="nota-media">
                     <h3 class="label-nota">Nota Média</h3>
                     <% 
-                    var somaNotas = 0;
+                    let somaNotas = 0;
                     produto.avaliacoes.forEach(function(avaliacao) {
                         somaNotas += avaliacao.nota;
                     });
-                    var media = (somaNotas / produto.avaliacoes.length).toFixed(1);
-                    var notaArredondada = Math.round(media);
+                    let media = (somaNotas / produto.avaliacoes.length).toFixed(1);
+                    let notaArredondada = Math.round(media);
                     %>
                     <section class="estrelas-media">
-                        <% for(var i = 1; i <= 5; i++) { %>
+                        <% for(let i = 1; i <= 5; i++) { %>
                             <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.png" 
                                  class="estrela" 
                                  alt="Estrela <%= i <= notaArredondada ? 'preenchida' : 'vazia' %>">
@@ -101,7 +144,7 @@
                     <% produto.avaliacoes.forEach(function(avaliacao) { %>
                         <li class="item-avaliacao">
                             <section class="estrelas-avaliacao">
-                                <% for(var i = 1; i <= 5; i++) { %>
+                                <% for(let i = 1; i <= 5; i++) { %>
                                     <img src="/imagens/estr<%= i <= avaliacao.nota ? '' : 'v' %>.png" 
                                          class="estrela-pequena" 
                                          alt="Estrela">
@@ -118,10 +161,29 @@
             <article class="form-avaliacao-container" id="form-avaliacao">
                 <h3 class="titulo-form-avaliacao">Deixe sua avaliação</h3>
                 
-                <form method="POST" action="/produto/<%= produto.id %>/avaliar" class="form-avaliacao">
+                <% if(!usuarioLogado) { %>
+                    <o class="mensagem-aviso" role="alert">
+                        Você precisa estar logado para avaliar este produto.
+                        <a href="/login?redirect=/produto/<%= produto.id %>" style="color: #ffc107; text-decoration: underline;">Fazer login</a>
+                    </o>
+                <% } else if(!temProdutoNoCarrinho) { %>
+                    <o class="mensagem-aviso" role="alert">
+                        Você precisa adicionar este produto ao carrinho antes de avaliá-lo.
+                    </o>
+                <% } %>
+
+                <% if(typeof erro !== 'undefined' && erro === 'carrinho') { %>
+                    <o class="mensagem-erro-avaliacao" role="alert">
+                        Erro: Você precisa ter este produto no carrinho para avaliá-lo!
+                    </o>
+                <% } %>
+                
+                <form method="POST" 
+                      action="/produto/<%= produto.id %>/avaliar" 
+                      class="form-avaliacao <%= (!usuarioLogado || !temProdutoNoCarrinho) ? 'form-avaliacao-desabilitado' : '' %>">
                     <label for="nota">
                         <h4 class="label-avaliacao">Nota (0 a 5 estrelas)</h4>
-                        <select name="nota" id="nota" required>
+                        <select name="nota" id="nota" required <%= (!usuarioLogado || !temProdutoNoCarrinho) ? 'disabled' : '' %>>
                             <option value="">Selecione</option>
                             <option value="0">0 estrelas</option>
                             <option value="1">1 estrela</option>
@@ -134,10 +196,19 @@
 
                     <label for="texto">
                         <h4 class="label-avaliacao">Seu comentário</h4>
-                        <textarea name="texto" id="texto" placeholder="Escreva sua avaliação" rows="4" required></textarea>
+                        <textarea name="texto" 
+                                  id="texto" 
+                                  placeholder="Escreva sua avaliação" 
+                                  rows="4" 
+                                  required
+                                  <%= (!usuarioLogado || !temProdutoNoCarrinho) ? 'disabled' : '' %>></textarea>
                     </label>
 
-                    <button type="submit" class="btn-enviar-avaliacao">Enviar Avaliação</button>
+                    <button type="submit" 
+                            class="btn-enviar-avaliacao"
+                            <%= (!usuarioLogado || !temProdutoNoCarrinho) ? 'disabled' : '' %>>
+                        Enviar Avaliação
+                    </button>
                 </form>
             </article>
         </section>
@@ -164,5 +235,16 @@
     <footer>
         <%- include('../partial/footer.ejs') %>
     </footer>
+
+    <script>
+        // Verifica se há parâmetro de erro na URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('erro') === 'carrinho') {
+            const formAvaliacao = document.getElementById('form-avaliacao');
+            if (formAvaliacao) {
+                formAvaliacao.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    </script>
 </body>
 </html>

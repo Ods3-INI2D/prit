@@ -184,6 +184,28 @@ function updateUsuario(email, updates) {
 
 function getProdutosByCategoria(categoria) {
     const db = readDatabase();
+    
+    // Categorias que devem aparecer em "Geral"
+    const categoriasGerais = ['Cuidados com a Pele', 'Higiene Bucal', 'Cabelo'];
+    
+    // Se a categoria for "Geral", retorna produtos dessas categorias específicas
+    if (categoria.toLowerCase() === 'geral') {
+        return db.produtos
+            .filter(p => p.categoria && categoriasGerais.includes(p.categoria))
+            .map(produto => {
+                return {
+                    ...produto,
+                    preco: produto.preco !== null && produto.preco !== undefined ? produto.preco : 0,
+                    precoDesconto: produto.precoDesconto || null,
+                    categoria: produto.categoria || 'Geral',
+                    nome: produto.nome || 'Produto sem nome',
+                    imagem: produto.imagem || '/imagens/foto.jpg',
+                    avaliacoes: produto.avaliacoes || []
+                };
+            });
+    }
+    
+    // Para outras categorias, retorna normalmente
     return db.produtos
         .filter(p => p.categoria && p.categoria.toLowerCase() === categoria.toLowerCase())
         .map(produto => {
