@@ -422,11 +422,8 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, function(req, res) {
     }
 });
 
-// ==========================================
-// EDITAR BANNER - POST (FUNCIONALIDADE 100% COMPLETA)
-// ==========================================
+// EDITAR BANNER - POST (ROTA COMPLETA E FUNCIONAL)
 router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
-    // Usar uploadBanner como middleware e capturar erros
     uploadBanner.single('imagem')(req, res, function(err) {
         if (err) {
             console.error('Erro no upload do banner:', err);
@@ -438,7 +435,8 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
             
             console.log('=== INICIANDO EDIÇÃO DE BANNER ===');
             console.log('Banner ID:', bannerId);
-            console.log('Dados recebidos - body:', req.body);
+            console.log('Dados recebidos - legenda:', req.body.legenda);
+            console.log('Dados recebidos - link:', req.body.link);
             console.log('Arquivo recebido:', req.file ? req.file.filename : 'Nenhum arquivo');
             
             const banner = db.getBannerById(bannerId);
@@ -494,9 +492,19 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
             
             console.log('Link sanitizado:', link);
             
+            // Validação da legenda
+            let legenda = req.body.legenda || banner.legenda;
+            legenda = legenda.trim();
+            
+            if (legenda.length === 0) {
+                legenda = banner.legenda;
+            }
+            
+            console.log('Legenda sanitizada:', legenda);
+            
             // Prepara os dados atualizados do banner
             const bannerAtualizado = {
-                legenda: req.body.legenda || banner.legenda,
+                legenda: legenda,
                 imagem: imagemPath,
                 link: link
             };

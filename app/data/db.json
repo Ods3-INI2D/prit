@@ -1,5 +1,16 @@
 {
-  "produtos": [],
+  "produtos": [
+    {
+      "nome": "ss",
+      "preco": 1,
+      "precoDesconto": 500,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "ee",
+      "imagem": "/imagens/produtos/produto-1761410214472-880566659.png",
+      "id": 1761410214504,
+      "avaliacoes": []
+    }
+  ],
   "avaliacoes": [
     {
       "nota": 2,

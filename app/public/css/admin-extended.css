@@ -109,20 +109,22 @@
     margin: 0;
 }
 
-/* --- MODAL OVERLAY --- */
+/* --- MODAL OVERLAY (SOLUÇÃO DEFINITIVA) --- */
 .modal-overlay {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 9999;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 99999;
+    display: none;
     justify-content: center;
     align-items: center;
-    overflow-y: auto;
     padding: 1rem;
+    overflow-y: auto;
 }
 
 .modal-overlay.active {
@@ -133,18 +135,21 @@
     background-color: #2a2a2a;
     padding: 2rem;
     border-radius: 0.75rem;
-    max-width: 600px;
     width: 90%;
+    max-width: 600px;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.5);
     position: relative;
+    z-index: 100000;
 }
 
 /* --- ESTILOS DO MODAL DE BANNER --- */
 .modal-content .subtitulo {
     margin-bottom: 1.5rem;
     text-align: center;
+    color: white;
+    font-size: 1.5rem;
 }
 
 .modal-content .form-produto {
@@ -156,6 +161,12 @@
 
 .modal-content fieldset {
     margin-bottom: 1.5rem;
+    border: none;
+    padding: 0;
+}
+
+.modal-content legend {
+    margin-bottom: 0.5rem;
 }
 
 .modal-content .label-titulo {
@@ -176,6 +187,7 @@
     color: white;
     font-size: 1rem;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Inter', sans-serif;
 }
 
 .modal-content input[type="text"]:focus,
@@ -209,6 +221,7 @@
     height: auto;
     border-radius: 0.5rem;
     margin-bottom: 0.5rem;
+    display: block;
 }
 
 .modal-content .preview-caption {
@@ -221,6 +234,7 @@
     padding: 1rem;
     font-size: 1.125rem;
     margin-top: 0.5rem;
+    cursor: pointer;
 }
 
 /* --- ESTILOS PARA IMAGEM DE BANNER NA LISTA --- */
