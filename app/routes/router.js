@@ -273,19 +273,23 @@ router.post('/usuario/atualizar', requireLogin, function(req, res) {
     res.redirect('/usuario');
 });
 
-// Rota admin (requer autenticação de administrador)
+// Rota admin (CORRIGIDA - com banners)
 router.get('/admin', requireAdmin, function(req, res) {
     const produtos = db.getProdutos();
     const usuarios = db.getAllUsuarios();
     const banners = db.getBanners();
+    
+    console.log('=== DEBUG ADMIN ===');
+    console.log('Banners carregados:', banners);
+    console.log('Total de banners:', banners ? banners.length : 0);
     
     res.render('pages/admin', { 
         produtos: produtos, 
         totalProdutos: produtos.length,
         usuarios: usuarios,
         banners: banners,
-        erro: null,
-        sucesso: null
+        erro: req.query.erro || null,
+        sucesso: req.query.sucesso || null
     });
 });
 
@@ -422,7 +426,7 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, function(req, res) {
     }
 });
 
-// EDITAR BANNER - POST (ROTA CORRIGIDA E OTIMIZADA)
+// EDITAR BANNER - POST (ROTA TOTALMENTE CORRIGIDA)
 router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
     uploadBanner.single('imagem')(req, res, function(err) {
         if (err instanceof multer.MulterError) {
@@ -457,12 +461,10 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
             
             let imagemPath = banner.imagem;
             
-            // Processa nova imagem se enviada
             if (req.file) {
                 imagemPath = '/imagens/' + req.file.filename;
                 console.log('Nova imagem recebida:', imagemPath);
                 
-                // Remove imagem antiga se não for padrão
                 const imagensOriginais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
                 if (!imagensOriginais.includes(banner.imagem)) {
                     const imagemAntiga = path.join(__dirname, '../public', banner.imagem);
@@ -479,7 +481,6 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
                 console.log('Mantendo imagem atual:', imagemPath);
             }
             
-            // Validação e sanitização da legenda
             let legenda = req.body.legenda || '';
             legenda = legenda.trim();
             
@@ -490,16 +491,13 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
                 console.log('Nova legenda:', legenda);
             }
             
-            // Validação e sanitização do link
             let link = req.body.link || '/home';
             link = link.trim();
             
-            // Garante que começa com /
             if (!link.startsWith('/')) {
                 link = '/' + link;
             }
             
-            // Segurança: bloqueia links maliciosos
             if (link.includes('javascript:') || link.includes('<script') || link.includes('onclick')) {
                 console.error('Link potencialmente malicioso bloqueado:', link);
                 return res.redirect('/admin?erro=editar_banner');
@@ -507,7 +505,6 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
             
             console.log('Link processado:', link);
             
-            // Prepara dados atualizados
             const bannerAtualizado = {
                 legenda: legenda,
                 imagem: imagemPath,
@@ -516,7 +513,6 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
             
             console.log('Dados para atualização:', JSON.stringify(bannerAtualizado, null, 2));
             
-            // Atualiza no banco de dados
             const sucesso = db.updateBanner(bannerId, bannerAtualizado);
             
             if (sucesso) {
@@ -525,7 +521,6 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
             } else {
                 console.error('Falha ao atualizar banner no banco de dados');
                 
-                // Se falhou, remove arquivo enviado
                 if (req.file) {
                     const arquivoNovo = path.join(__dirname, '../public/imagens', req.file.filename);
                     if (fs.existsSync(arquivoNovo)) {
@@ -544,7 +539,6 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
             console.error('Erro crítico ao editar banner:', error);
             console.error('Stack:', error.stack);
             
-            // Remove arquivo enviado em caso de erro
             if (req.file) {
                 const arquivoPath = path.join(__dirname, '../public/imagens', req.file.filename);
                 if (fs.existsSync(arquivoPath)) {

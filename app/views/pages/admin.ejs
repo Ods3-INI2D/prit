@@ -16,69 +16,53 @@
     </header>
  
     <main>
-        <% 
-        const queryString = typeof window !== 'undefined' ? window.location.search : '';
-        const sucesso = queryString.includes('sucesso=produto_adicionado') ? 'produto_adicionado' :
-                       queryString.includes('sucesso=produto_editado') ? 'produto_editado' :
-                       queryString.includes('sucesso=produto_excluido') ? 'produto_excluido' :
-                       queryString.includes('sucesso=usuario_excluido') ? 'usuario_excluido' :
-                       queryString.includes('sucesso=banner_editado') ? 'banner_editado' : null;
-        const erro = queryString.includes('erro=adicionar_produto') ? 'adicionar_produto' :
-                    queryString.includes('erro=editar_produto') ? 'editar_produto' :
-                    queryString.includes('erro=excluir_produto') ? 'excluir_produto' :
-                    queryString.includes('erro=produto_nao_encontrado') ? 'produto_nao_encontrado' :
-                    queryString.includes('erro=excluir_usuario') ? 'excluir_usuario' :
-                    queryString.includes('erro=editar_banner') ? 'editar_banner' :
-                    queryString.includes('erro=banner_nao_encontrado') ? 'banner_nao_encontrado' : null;
-        %>
-
-        <% if(sucesso === 'produto_adicionado') { %>
+        <% if(typeof sucesso !== 'undefined' && sucesso === 'produto_adicionado') { %>
             <output class="mensagem-sucesso" role="status" aria-live="polite">
                 Produto adicionado com sucesso!
             </output>
-        <% } else if(sucesso === 'produto_editado') { %>
+        <% } else if(typeof sucesso !== 'undefined' && sucesso === 'produto_editado') { %>
             <output class="mensagem-sucesso" role="status" aria-live="polite">
                 Produto editado com sucesso!
             </output>
-        <% } else if(sucesso === 'produto_excluido') { %>
+        <% } else if(typeof sucesso !== 'undefined' && sucesso === 'produto_excluido') { %>
             <output class="mensagem-sucesso" role="status" aria-live="polite">
                 Produto excluído com sucesso!
             </output>
-        <% } else if(sucesso === 'usuario_excluido') { %>
+        <% } else if(typeof sucesso !== 'undefined' && sucesso === 'usuario_excluido') { %>
             <output class="mensagem-sucesso" role="status" aria-live="polite">
                 Usuário excluído com sucesso!
             </output>
-        <% } else if(sucesso === 'banner_editado') { %>
+        <% } else if(typeof sucesso !== 'undefined' && sucesso === 'banner_editado') { %>
             <output class="mensagem-sucesso" role="status" aria-live="polite">
                 Banner editado com sucesso!
             </output>
         <% } %>
 
-        <% if(erro === 'adicionar_produto') { %>
+        <% if(typeof erro !== 'undefined' && erro === 'adicionar_produto') { %>
             <output class="mensagem-erro" role="alert" aria-live="assertive">
                 Erro ao adicionar produto!
             </output>
-        <% } else if(erro === 'editar_produto') { %>
+        <% } else if(typeof erro !== 'undefined' && erro === 'editar_produto') { %>
             <output class="mensagem-erro" role="alert" aria-live="assertive">
                 Erro ao editar produto!
             </output>
-        <% } else if(erro === 'excluir_produto') { %>
+        <% } else if(typeof erro !== 'undefined' && erro === 'excluir_produto') { %>
             <output class="mensagem-erro" role="alert" aria-live="assertive">
                 Erro ao excluir produto!
             </output>
-        <% } else if(erro === 'produto_nao_encontrado') { %>
+        <% } else if(typeof erro !== 'undefined' && erro === 'produto_nao_encontrado') { %>
             <output class="mensagem-erro" role="alert" aria-live="assertive">
                 Produto não encontrado!
             </output>
-        <% } else if(erro === 'excluir_usuario') { %>
+        <% } else if(typeof erro !== 'undefined' && erro === 'excluir_usuario') { %>
             <output class="mensagem-erro" role="alert" aria-live="assertive">
                 Erro ao excluir usuário!
             </output>
-        <% } else if(erro === 'editar_banner') { %>
+        <% } else if(typeof erro !== 'undefined' && erro === 'editar_banner') { %>
             <output class="mensagem-erro" role="alert" aria-live="assertive">
                 Erro ao editar banner! Verifique se a imagem é válida (JPG, PNG ou WEBP com máximo de 5MB).
             </output>
-        <% } else if(erro === 'banner_nao_encontrado') { %>
+        <% } else if(typeof erro !== 'undefined' && erro === 'banner_nao_encontrado') { %>
             <output class="mensagem-erro" role="alert" aria-live="assertive">
                 Banner não encontrado!
             </output>
@@ -251,7 +235,7 @@
                         Você pode alterar a legenda (descrição), o link de destino e a imagem de cada banner.
                     </output>
                     
-                    <% if(banners && banners.length > 0) { %>
+                    <% if(typeof banners !== 'undefined' && banners && banners.length > 0) { %>
                         <ul class="usuarios-lista" role="list">
                             <% banners.forEach(function(banner, index) { %>
                                 <li class="usuario-item" role="listitem">
@@ -279,7 +263,7 @@
                             <% }); %>
                         </ul>
                     <% } else { %>
-                        <output class="mensagem-vazia">Nenhum banner disponível.</output>
+                        <output class="mensagem-vazia">Nenhum banner disponível. Verifique o banco de dados.</output>
                     <% } %>
                 </section>
             </article>
@@ -358,6 +342,8 @@
  
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== SCRIPT CARREGADO ===');
+            
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
 
@@ -495,26 +481,26 @@
                 });
             }
 
-            // CORREÇÃO PRINCIPAL: Gerenciamento do modal de banner
             const modal = document.getElementById('modal-banner');
             const form = document.getElementById('form-editar-banner');
             const btnFecharModal = document.getElementById('btn-fechar-modal');
             const inputLegenda = document.getElementById('legenda-banner');
             const inputLink = document.getElementById('link-banner');
+            
+            console.log('Procurando botões com [data-banner-id]...');
             const botoesEditar = document.querySelectorAll('[data-banner-id]');
+            console.log('Botões encontrados:', botoesEditar.length, botoesEditar);
 
-            // Função para abrir o modal
             function abrirModalBanner(bannerId, legenda, link) {
-                console.log('Abrindo modal para banner:', bannerId);
+                console.log('=== ABRINDO MODAL ===');
+                console.log('ID:', bannerId, 'Legenda:', legenda, 'Link:', link);
                 
-                // Define a action do formulário
                 form.action = '/admin/editar-banner/' + bannerId;
+                console.log('Action do form:', form.action);
                 
-                // Preenche os campos
-                inputLegenda.value = legenda;
-                inputLink.value = link;
+                inputLegenda.value = legenda || '';
+                inputLink.value = link || '/home';
                 
-                // Limpa preview e mensagens
                 if (inputBanner) inputBanner.value = '';
                 if (previewBanner) previewBanner.innerHTML = '';
                 if (infoBanner) {
@@ -522,14 +508,11 @@
                     infoBanner.style.color = '';
                 }
                 
-                // Abre o modal
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                
-                console.log('Modal aberto! Action:', form.action);
+                console.log('Modal aberto!');
             }
 
-            // Função para fechar o modal
             function fecharModalBanner() {
                 form.reset();
                 if (previewBanner) previewBanner.innerHTML = '';
@@ -541,9 +524,10 @@
                 document.body.style.overflow = '';
             }
 
-            // Adiciona eventos aos botões de editar
-            botoesEditar.forEach(function(botao) {
+            botoesEditar.forEach(function(botao, index) {
+                console.log('Configurando botão', index, botao);
                 botao.addEventListener('click', function() {
+                    console.log('Botão clicado!');
                     const bannerId = this.getAttribute('data-banner-id');
                     const legenda = this.getAttribute('data-banner-legenda');
                     const link = this.getAttribute('data-banner-link');
@@ -552,24 +536,25 @@
                 });
             });
 
-            // Botão de fechar modal
             if (btnFecharModal) {
                 btnFecharModal.addEventListener('click', fecharModalBanner);
             }
 
-            // Fecha ao clicar no overlay
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    fecharModalBanner();
-                }
-            });
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        fecharModalBanner();
+                    }
+                });
+            }
 
-            // Fecha com tecla ESC
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
                     fecharModalBanner();
                 }
             });
+            
+            console.log('=== FIM DA CONFIGURAÇÃO ===');
         });
     </script>
 </body>

@@ -59,5 +59,25 @@
       "senhan": "Senha123!",
       "csenha": "Senha123!"
     }
+  ],
+  "banners": [
+    {
+      "id": 1,
+      "imagem": "/imagens/banner-1761422621721-242949781.png",
+      "legenda": "maciel foi pro ceu",
+      "link": "/home"
+    },
+    {
+      "id": 2,
+      "imagem": "/imagens/2.png",
+      "legenda": "Ofertas da Semana",
+      "link": "/home"
+    },
+    {
+      "id": 3,
+      "imagem": "/imagens/3.png",
+      "legenda": "Novidades",
+      "link": "/home"
+    }
   ]
 }
