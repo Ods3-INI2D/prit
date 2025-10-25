@@ -55,15 +55,11 @@ function getBanners() {
 function updateBanner(id, dadosAtualizados) {
     const db = readDatabase();
     
-    // Garante que banners existe
     if (!db.banners) {
         db.banners = [];
     }
     
-    // Converte o ID para número para garantir comparação correta
     const bannerId = parseInt(id);
-    
-    // Encontra o índice do banner
     const index = db.banners.findIndex(b => parseInt(b.id) === bannerId);
     
     if (index === -1) {
@@ -74,7 +70,6 @@ function updateBanner(id, dadosAtualizados) {
     console.log('Banner encontrado no índice:', index);
     console.log('Dados antigos:', db.banners[index]);
     
-    // Atualiza o banner mantendo o ID original
     db.banners[index] = {
         id: db.banners[index].id,
         imagem: dadosAtualizados.imagem || db.banners[index].imagem,
@@ -84,7 +79,6 @@ function updateBanner(id, dadosAtualizados) {
     
     console.log('Dados novos:', db.banners[index]);
     
-    // Salva no banco de dados
     const sucesso = writeDatabase(db);
     
     if (sucesso) {
@@ -102,7 +96,7 @@ function getBannerById(id) {
     return db.banners ? db.banners.find(b => parseInt(b.id) === bannerId) : null;
 }
 
-// Funções existentes de produtos
+// Funções de produtos
 function addProduto(produto) {
     const db = readDatabase();
     produto.id = Date.now();
@@ -123,6 +117,7 @@ function addProduto(produto) {
     produto.descricao = produto.descricao || '';
     produto.nome = produto.nome || 'Produto sem nome';
     produto.avaliacoes = [];
+    produto.status = produto.status || 'em-estoque';
     
     db.produtos.push(produto);
     writeDatabase(db);
@@ -140,7 +135,8 @@ function getProdutos() {
             descricao: produto.descricao || '',
             nome: produto.nome || 'Produto sem nome',
             imagem: produto.imagem || '/imagens/foto.jpg',
-            avaliacoes: produto.avaliacoes || []
+            avaliacoes: produto.avaliacoes || [],
+            status: produto.status || 'em-estoque'
         };
     });
 }
@@ -161,7 +157,8 @@ function getProdutoById(id) {
         descricao: produto.descricao || '',
         nome: produto.nome || 'Produto sem nome',
         imagem: produto.imagem || '/imagens/foto.jpg',
-        avaliacoes: produto.avaliacoes || []
+        avaliacoes: produto.avaliacoes || [],
+        status: produto.status || 'em-estoque'
     };
 }
 
@@ -241,6 +238,10 @@ function addToCarrinho(produtoId, usuarioEmail) {
         return false;
     }
     
+    if (produto.status === 'fora-de-estoque') {
+        return false;
+    }
+    
     const itemExistente = db.carrinho.find(item => 
         item.produtoId == produtoId && item.usuarioEmail === usuarioEmail
     );
@@ -279,7 +280,8 @@ function getCarrinho(usuarioEmail) {
             precoDesconto: produto.precoDesconto || null,
             categoria: produto.categoria || 'Geral',
             nome: produto.nome || 'Produto sem nome',
-            imagem: produto.imagem || '/imagens/foto.jpg'
+            imagem: produto.imagem || '/imagens/foto.jpg',
+            status: produto.status || 'em-estoque'
         };
     }).filter(item => item !== null);
 }
@@ -383,7 +385,8 @@ function getProdutosByCategoria(categoria) {
                     categoria: produto.categoria || 'Geral',
                     nome: produto.nome || 'Produto sem nome',
                     imagem: produto.imagem || '/imagens/foto.jpg',
-                    avaliacoes: produto.avaliacoes || []
+                    avaliacoes: produto.avaliacoes || [],
+                    status: produto.status || 'em-estoque'
                 };
             });
     }
@@ -398,7 +401,8 @@ function getProdutosByCategoria(categoria) {
                 categoria: produto.categoria || 'Geral',
                 nome: produto.nome || 'Produto sem nome',
                 imagem: produto.imagem || '/imagens/foto.jpg',
-                avaliacoes: produto.avaliacoes || []
+                avaliacoes: produto.avaliacoes || [],
+                status: produto.status || 'em-estoque'
             };
         });
 }

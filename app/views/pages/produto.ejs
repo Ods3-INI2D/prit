@@ -30,6 +30,18 @@
             font-weight: 500;
         }
 
+        .mensagem-fora-estoque {
+            background-color: rgba(217, 48, 37, 0.2);
+            border: 2px solid #d93025;
+            color: #ff6b6b;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
         .form-avaliacao-desabilitado {
             opacity: 0.6;
             pointer-events: none;
@@ -46,7 +58,7 @@
         <nav class="navegacao">
             <a href="/home" class="voltar">
                 <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
-                <o>Voltar</o>
+                <output>Voltar</o>
             </a>
         </nav>
 
@@ -70,16 +82,28 @@
                     <output class="preco-produto">R$ <%= produto.preco.toFixed(2) %></o>
                 <% } %>
 
-                <% if(usuarioLogado) { %>
-                    <form method="POST" action="/produto/<%= produto.id %>/adicionar-carrinho">
-                        <button type="submit" class="btn-comprar">
-                            <%= temProdutoNoCarrinho ? 'Adicionar Mais ao Carrinho' : 'Adicionar ao Carrinho' %>
-                        </button>
-                    </form>
+                <% if(produto.status === 'fora-de-estoque') { %>
+                    <output class="mensagem-fora-estoque" role="alert" aria-live="assertive">
+                        ⚠️ Este produto está temporariamente fora de estoque
+                    </o>
                 <% } else { %>
-                    <a href="/login?redirect=/produto/<%= produto.id %>" class="btn-comprar" style="display: block; text-align: center; text-decoration: none;">
-                        Fazer Login para Comprar
-                    </a>
+                    <% if(usuarioLogado) { %>
+                        <form method="POST" action="/produto/<%= produto.id %>/adicionar-carrinho">
+                            <button type="submit" class="btn-comprar">
+                                <%= temProdutoNoCarrinho ? 'Adicionar Mais ao Carrinho' : 'Adicionar ao Carrinho' %>
+                            </button>
+                        </form>
+                    <% } else { %>
+                        <a href="/login?redirect=/produto/<%= produto.id %>" class="btn-comprar" style="display: block; text-align: center; text-decoration: none;">
+                            Fazer Login para Comprar
+                        </a>
+                    <% } %>
+                <% } %>
+
+                <% if(typeof erro !== 'undefined' && erro === 'fora_de_estoque') { %>
+                    <output class="mensagem-erro-avaliacao" role="alert" aria-live="assertive">
+                        Não é possível adicionar este produto ao carrinho pois está fora de estoque!
+                    </o>
                 <% } %>
             </article>
         </section>
@@ -236,6 +260,9 @@
             if (formAvaliacao) {
                 formAvaliacao.scrollIntoView({ behavior: 'smooth' });
             }
+        }
+        if (urlParams.get('erro') === 'fora_de_estoque') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 </body>

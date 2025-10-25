@@ -273,15 +273,11 @@ router.post('/usuario/atualizar', requireLogin, function(req, res) {
     res.redirect('/usuario');
 });
 
-// Rota admin (CORRIGIDA - com banners)
+// Rota admin
 router.get('/admin', requireAdmin, function(req, res) {
     const produtos = db.getProdutos();
     const usuarios = db.getAllUsuarios();
     const banners = db.getBanners();
-    
-    console.log('=== DEBUG ADMIN ===');
-    console.log('Banners carregados:', banners);
-    console.log('Total de banners:', banners ? banners.length : 0);
     
     res.render('pages/admin', { 
         produtos: produtos, 
@@ -321,7 +317,8 @@ router.post('/admin/adicionar-produto', requireAdmin, upload.single('imagem'), f
             precoDesconto: precoDesconto,
             categoria: req.body.categoria || 'Geral',
             descricao: req.body.descricao || '',
-            imagem: imagemPath
+            imagem: imagemPath,
+            status: req.body.status || 'em-estoque'
         };
         
         db.addProduto(novoProduto);
@@ -381,7 +378,8 @@ router.post('/admin/editar-produto/:id', requireAdmin, upload.single('imagem'), 
             precoDesconto: precoDesconto,
             categoria: req.body.categoria || produto.categoria,
             descricao: req.body.descricao || produto.descricao,
-            imagem: imagemPath
+            imagem: imagemPath,
+            status: req.body.status || produto.status
         };
         
         db.updateProduto(req.params.id, produtoAtualizado);
@@ -426,7 +424,7 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, function(req, res) {
     }
 });
 
-// EDITAR BANNER - POST (ROTA TOTALMENTE CORRIGIDA)
+// EDITAR BANNER - POST
 router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
     uploadBanner.single('imagem')(req, res, function(err) {
         if (err instanceof multer.MulterError) {
@@ -440,11 +438,6 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
         try {
             const bannerId = parseInt(req.params.id);
             
-            console.log('=== INICIANDO EDIÇÃO DE BANNER ===');
-            console.log('Banner ID recebido:', bannerId);
-            console.log('Body recebido:', req.body);
-            console.log('Arquivo recebido:', req.file ? req.file.filename : 'Nenhum');
-            
             if (isNaN(bannerId)) {
                 console.error('ID do banner inválido:', req.params.id);
                 return res.redirect('/admin?erro=banner_nao_encontrado');
@@ -457,13 +450,10 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
                 return res.redirect('/admin?erro=banner_nao_encontrado');
             }
             
-            console.log('Banner atual encontrado:', JSON.stringify(banner, null, 2));
-            
             let imagemPath = banner.imagem;
             
             if (req.file) {
                 imagemPath = '/imagens/' + req.file.filename;
-                console.log('Nova imagem recebida:', imagemPath);
                 
                 const imagensOriginais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
                 if (!imagensOriginais.includes(banner.imagem)) {
@@ -471,14 +461,11 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
                     if (fs.existsSync(imagemAntiga)) {
                         try {
                             fs.unlinkSync(imagemAntiga);
-                            console.log('Imagem antiga removida:', banner.imagem);
                         } catch (err) {
                             console.error('Erro ao deletar imagem antiga:', err);
                         }
                     }
                 }
-            } else {
-                console.log('Mantendo imagem atual:', imagemPath);
             }
             
             let legenda = req.body.legenda || '';
@@ -486,9 +473,6 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
             
             if (legenda.length === 0) {
                 legenda = banner.legenda;
-                console.log('Legenda vazia, mantendo atual:', legenda);
-            } else {
-                console.log('Nova legenda:', legenda);
             }
             
             let link = req.body.link || '/home';
@@ -503,30 +487,22 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
                 return res.redirect('/admin?erro=editar_banner');
             }
             
-            console.log('Link processado:', link);
-            
             const bannerAtualizado = {
                 legenda: legenda,
                 imagem: imagemPath,
                 link: link
             };
             
-            console.log('Dados para atualização:', JSON.stringify(bannerAtualizado, null, 2));
-            
             const sucesso = db.updateBanner(bannerId, bannerAtualizado);
             
             if (sucesso) {
-                console.log('=== BANNER ATUALIZADO COM SUCESSO! ===');
                 return res.redirect('/admin?sucesso=banner_editado');
             } else {
-                console.error('Falha ao atualizar banner no banco de dados');
-                
                 if (req.file) {
                     const arquivoNovo = path.join(__dirname, '../public/imagens', req.file.filename);
                     if (fs.existsSync(arquivoNovo)) {
                         try {
                             fs.unlinkSync(arquivoNovo);
-                            console.log('Arquivo enviado removido após falha');
                         } catch (err) {
                             console.error('Erro ao remover arquivo após falha:', err);
                         }
@@ -537,14 +513,12 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
             }
         } catch (error) {
             console.error('Erro crítico ao editar banner:', error);
-            console.error('Stack:', error.stack);
             
             if (req.file) {
                 const arquivoPath = path.join(__dirname, '../public/imagens', req.file.filename);
                 if (fs.existsSync(arquivoPath)) {
                     try {
                         fs.unlinkSync(arquivoPath);
-                        console.log('Arquivo enviado removido após erro crítico');
                     } catch (err) {
                         console.error('Erro ao remover arquivo após erro crítico:', err);
                     }
@@ -578,6 +552,12 @@ router.get('/produto/:id', function(req, res) {
 
 // Adicionar ao carrinho (requer login)
 router.post('/produto/:id/adicionar-carrinho', requireLogin, function(req, res) {
+    const produto = db.getProdutoById(req.params.id);
+    
+    if (!produto || produto.status === 'fora-de-estoque') {
+        return res.redirect('/produto/' + req.params.id + '?erro=fora_de_estoque');
+    }
+    
     db.addToCarrinho(req.params.id, req.session.usuarioEmail);
     res.redirect('/carrinho');
 });

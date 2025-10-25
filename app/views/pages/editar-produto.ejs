@@ -18,7 +18,7 @@
         <% if(erro) { %>
             <output class="mensagem-erro" role="alert" aria-live="assertive">
                 <%= erro %>
-            </o>
+            </output>
         <% } %>
 
         <section class="adicionar-produto" aria-labelledby="titulo-editar">
@@ -61,6 +61,15 @@
                         </select>
                     </label>
                 </fieldset>
+
+                <fieldset>
+                    <legend class="label-titulo">Status do Produto</legend>
+                    <label for="status">
+                        <select id="status" name="status" required aria-required="true">
+                            <option value="em-estoque" <%= (produto.status === 'em-estoque' || !produto.status) ? 'selected' : '' %>>Em Estoque</option>
+                            <option value="fora-de-estoque" <%= produto.status === 'fora-de-estoque' ? 'selected' : '' %>>Fora de Estoque</option>
+                        </select>
+                    </label>
                 </fieldset>
 
                 <fieldset class="campo-imagem">
@@ -81,9 +90,9 @@
                                aria-describedby="imagem-info">
                         <output id="imagem-info" class="info-arquivo">
                             Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
-                        </o>
+                        </output>
                     </label>
-                    <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></o>
+                    <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></output>
                 </fieldset>
  
                 <fieldset>

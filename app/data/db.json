@@ -8,7 +8,8 @@
       "descricao": "ee",
       "imagem": "/imagens/produtos/produto-1761410214472-880566659.png",
       "id": 1761410214504,
-      "avaliacoes": []
+      "avaliacoes": [],
+      "status": "fora-de-estoque"
     }
   ],
   "avaliacoes": [

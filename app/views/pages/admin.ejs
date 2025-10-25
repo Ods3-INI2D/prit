@@ -133,6 +133,16 @@
                                 </select>
                             </label>
                         </fieldset>
+
+                        <fieldset>
+                            <legend class="label-titulo">Status do Produto</legend>
+                            <label for="status">
+                                <select id="status" name="status" required aria-required="true">
+                                    <option value="em-estoque">Em Estoque</option>
+                                    <option value="fora-de-estoque">Fora de Estoque</option>
+                                </select>
+                            </label>
+                        </fieldset>
          
                         <fieldset class="campo-imagem">
                             <legend>
@@ -181,6 +191,9 @@
                                         <% if(produto.precoDesconto) { %>
                                             <output class="produto-info desconto">Com Desconto: R$ <%= produto.precoDesconto.toFixed(2) %></output>
                                         <% } %>
+                                        <output class="produto-info <%= produto.status === 'em-estoque' ? '' : 'desconto' %>">
+                                            Status: <%= produto.status === 'em-estoque' ? 'Em Estoque' : 'Fora de Estoque' %>
+                                        </output>
                                     </article>
                                     <nav class="acoes-produto" aria-label="Ações do produto <%= produto.nome %>">
                                         <a href="/admin/editar-produto/<%= produto.id %>" class="btn-editar" aria-label="Editar produto <%= produto.nome %>">Editar</a>
@@ -342,8 +355,6 @@
  
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('=== SCRIPT CARREGADO ===');
-            
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
 
@@ -487,16 +498,10 @@
             const inputLegenda = document.getElementById('legenda-banner');
             const inputLink = document.getElementById('link-banner');
             
-            console.log('Procurando botões com [data-banner-id]...');
             const botoesEditar = document.querySelectorAll('[data-banner-id]');
-            console.log('Botões encontrados:', botoesEditar.length, botoesEditar);
 
             function abrirModalBanner(bannerId, legenda, link) {
-                console.log('=== ABRINDO MODAL ===');
-                console.log('ID:', bannerId, 'Legenda:', legenda, 'Link:', link);
-                
                 form.action = '/admin/editar-banner/' + bannerId;
-                console.log('Action do form:', form.action);
                 
                 inputLegenda.value = legenda || '';
                 inputLink.value = link || '/home';
@@ -510,7 +515,6 @@
                 
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                console.log('Modal aberto!');
             }
 
             function fecharModalBanner() {
@@ -524,10 +528,8 @@
                 document.body.style.overflow = '';
             }
 
-            botoesEditar.forEach(function(botao, index) {
-                console.log('Configurando botão', index, botao);
+            botoesEditar.forEach(function(botao) {
                 botao.addEventListener('click', function() {
-                    console.log('Botão clicado!');
                     const bannerId = this.getAttribute('data-banner-id');
                     const legenda = this.getAttribute('data-banner-legenda');
                     const link = this.getAttribute('data-banner-link');
@@ -553,8 +555,6 @@
                     fecharModalBanner();
                 }
             });
-            
-            console.log('=== FIM DA CONFIGURAÇÃO ===');
         });
     </script>
 </body>
