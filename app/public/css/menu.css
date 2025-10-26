@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 :root {
-    --menu-width: 280px;
-    --menu-max-width: 280px;
+    --menu-width: 260px;
+    --menu-max-width: 260px;
     --menu-height: 100vh;
 }
 
@@ -12,25 +12,25 @@
     box-sizing: border-box;
 }
 
-/* --- HAMBURGER --- */
+/* HAMBURGER */
 .hamburger {
     position: relative;
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     background: none;
     border: none;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 5px;
+    gap: 4px;
     z-index: 1001;
     padding: 0;
 }
 
 .hamburger hr {
     width: 100%;
-    height: 3px;
+    height: 2.5px;
     background-color: white;
     border: none;
     transition: all 0.3s ease-in-out;
@@ -52,7 +52,7 @@
     transform: rotate(-45deg);
 }
 
-/* --- MENU LATERAL --- */
+/* MENU LATERAL */
 .opcoes {
     position: fixed;
     top: 0;
@@ -73,50 +73,50 @@
     transform: translateX(0);
 }
 
-/* --- LOGO E USER NO MENU --- */
+/* LOGO E USER NO MENU */
 .opcoes .plogo {
-    width: 20px;
+    width: 18px;
     height: auto;
     display: block;
     position: absolute;
-    top: 1.5rem;
-    right: 1rem;
+    top: 1.25rem;
+    right: 0.875rem;
     cursor: pointer;
     z-index: 10;
 }
 
 .opcoes .user {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     display: block;
-    margin: 4rem auto 1rem;
+    margin: 3.5rem auto 0.875rem;
     border-radius: 50%;
 }
 
-/* --- USER INFO DENTRO DO MENU --- */
+/* USER INFO DENTRO DO MENU */
 .menu-content {
     margin-top: 0;
     padding: 0;
 }
 
 .perfil {
-    margin-bottom: 2rem;
+    margin-bottom: 1.75rem;
     text-align: center;
-    padding: 0 1rem;
+    padding: 0 0.875rem;
     background-color: rgba(0, 0, 0, 0.2);
-    padding-top: 1rem;
-    padding-bottom: 1.5rem;
+    padding-top: 0.875rem;
+    padding-bottom: 1.25rem;
 }
 
 .nome {
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
     color: white;
 }
 
 .conta {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: #4da6ff;
     text-decoration: none;
     transition: color 0.3s ease;
@@ -126,22 +126,22 @@
     color: #6bb5ff;
 }
 
-/* --- CATEGORIAS --- */
+/* CATEGORIAS */
 .categorias {
     margin-bottom: 0;
     padding: 0;
 }
 
 .tit {
-    font-size: 1rem;
+    font-size: 0.9375rem;
     margin-bottom: 0;
     color: white;
     font-weight: 600;
-    padding: 1rem 1rem 0.5rem;
+    padding: 0.875rem 0.875rem 0.5rem;
     background-color: rgba(0, 0, 0, 0.15);
 }
 
-/* --- MENU PRINCIPAL --- */
+/* MENU PRINCIPAL */
 .menu-principal {
     list-style: none;
     padding: 0;
@@ -157,8 +157,8 @@
     display: block;
     color: white;
     text-decoration: none;
-    font-size: 0.9375rem;
-    padding: 1rem 1rem;
+    font-size: 0.875rem;
+    padding: 0.875rem 0.875rem;
     transition: background-color 0.3s ease;
     position: relative;
 }
@@ -175,7 +175,7 @@
 }
 
 .seta {
-    font-size: 1.5rem;
+    font-size: 1.375rem;
     font-style: normal;
     transition: transform 0.3s ease;
 }
@@ -184,7 +184,7 @@
     transform: rotate(90deg);
 }
 
-/* --- SUBMENU --- */
+/* SUBMENU */
 .submenu {
     list-style: none;
     padding: 0;
@@ -196,7 +196,7 @@
 }
 
 .submenu.is-visible {
-    max-height: 500px;
+    max-height: 400px;
 }
 
 .submenu li {
@@ -207,8 +207,8 @@
     display: block;
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 0.875rem;
-    padding: 0.875rem 1.5rem;
+    font-size: 0.8125rem;
+    padding: 0.8125rem 1.375rem;
     transition: background-color 0.3s ease;
 }
 
@@ -217,10 +217,10 @@
     color: white;
 }
 
-/* --- OUTRO --- */
+/* OUTRO */
 .outro {
     margin: 0;
-    padding: 1rem 0 0 0;
+    padding: 0.875rem 0 0 0;
     background-color: #1B1B1B;
     width: 100%;
     list-style: none;
@@ -235,8 +235,8 @@
     display: block;
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 0.875rem;
-    padding: 0.875rem 1rem;
+    font-size: 0.8125rem;
+    padding: 0.8125rem 0.875rem;
     transition: color 0.3s ease;
 }
 
@@ -244,7 +244,7 @@
     color: white;
 }
 
-/* --- FOOTER DO MENU --- */
+/* FOOTER DO MENU */
 .opcoes footer {
     margin: 0;
     background-color: #1B1B1B;
@@ -252,7 +252,7 @@
     padding: 0;
 }
 
-/* --- OVERLAY QUANDO MENU ABERTO --- */
+/* OVERLAY QUANDO MENU ABERTO */
 .opcoes.is-open::before {
     content: '';
     position: fixed;
@@ -264,11 +264,21 @@
     z-index: -1;
 }
 
-/* --- RESPONSIVIDADE DESKTOP --- */
+/* RESPONSIVIDADE DESKTOP */
 @media (min-width: 768px) {
     :root {
         --menu-width: 320px;
         --menu-max-width: 320px;
+    }
+
+    .hamburger {
+        width: 28px;
+        height: 28px;
+        gap: 5px;
+    }
+
+    .hamburger hr {
+        height: 3px;
     }
 
     .opcoes {
@@ -276,42 +286,42 @@
     }
 
     .opcoes .plogo {
-        width: 24px;
-        top: 2rem;
-        right: 1.5rem;
+        width: 22px;
+        top: 1.75rem;
+        right: 1.25rem;
     }
 
     .opcoes .user {
-        width: 90px;
-        height: 90px;
-        margin-bottom: 1.5rem;
+        width: 85px;
+        height: 85px;
+        margin-bottom: 1.25rem;
     }
 
     .nome {
-        font-size: 1.25rem;
+        font-size: 1.1875rem;
     }
 
     .conta {
-        font-size: 0.95rem;
+        font-size: 0.9375rem;
     }
 
     .tit {
-        font-size: 1.125rem;
+        font-size: 1.0625rem;
     }
 
     .menu-item > a,
     .linkhp {
-        font-size: 1rem;
-        padding: 1.125rem 1.5rem;
+        font-size: 0.9375rem;
+        padding: 1rem 1.25rem;
     }
 
     .submenu a {
-        font-size: 0.9375rem;
-        padding: 1rem 2rem;
+        font-size: 0.875rem;
+        padding: 0.9375rem 1.75rem;
     }
 
     .outro a {
-        font-size: 0.9375rem;
-        padding: 1rem 1.5rem;
+        font-size: 0.875rem;
+        padding: 0.9375rem 1.25rem;
     }
 }
