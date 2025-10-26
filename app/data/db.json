@@ -1,5 +1,17 @@
 {
-  "produtos": [],
+  "produtos": [
+    {
+      "nome": "3",
+      "preco": 4,
+      "precoDesconto": 5,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "bb",
+      "imagem": "/imagens/produtos/produto-1761494899184-686463534.png",
+      "status": "em-estoque",
+      "id": 1761494899200,
+      "avaliacoes": []
+    }
+  ],
   "avaliacoes": [
     {
       "nota": 2,

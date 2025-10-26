@@ -5,30 +5,42 @@ footer {
     background-color: rgb(91, 123, 225); 
     font-family: 'Inter', sans-serif;
     width: 100%;
-    padding: 1.5rem 1rem; 
-    border-top-left-radius: 0.625rem; 
-    border-top-right-radius: 0.625rem; 
+    padding: 1.25rem 1rem; 
+    border-top-left-radius: 0; 
+    border-top-right-radius: 0; 
     margin-top: auto; 
     display: flex;
     flex-direction: column; 
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
 }
 
-/* Classe genérica para itens do footer (antigo .c, .a, .w, .e) */
+/* Classe genérica para itens do footer */
 .footer-item {
     color: black; 
-    font-size: 1.125rem; 
-    margin: 0.5rem 0; 
-    position: static; 
+    font-size: 0.95rem; 
+    margin: 0 0 0.5rem 0; 
+    position: static;
+    font-weight: 600;
 }
 
 /* Sub-textos */
 .footer-text-secondary {
     color: rgb(49, 49, 49); 
-    font-size: 0.9375rem; 
-    margin: 0.5rem 0;
+    font-size: 0.85rem; 
+    margin: 0 0 1rem 0;
     position: static;
+    font-weight: 400;
+}
+
+.footer-content-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.5rem;
+}
+
+.footer-content-group:last-child .footer-text-secondary {
+    margin-bottom: 0;
 }
 
 /* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
@@ -37,8 +49,8 @@ footer {
         flex-direction: row; 
         justify-content: space-around;
         align-items: flex-start;
-        padding: 2rem 5%;
-        min-height: 10rem;
+        padding: 1.75rem 5%;
+        min-height: auto;
     }
 
     .footer-content-group {
@@ -46,15 +58,16 @@ footer {
         flex-direction: column;
         text-align: left;
         align-items: flex-start;
+        margin-bottom: 0;
     }
     
     .footer-item {
-        font-size: 1.25rem;
-        margin: 0.5rem 0;
+        font-size: 1.05rem;
+        margin: 0 0 0.5rem 0;
     }
     
     .footer-text-secondary {
-        font-size: 1rem;
-        margin: 0.25rem 0;
+        font-size: 0.9rem;
+        margin: 0;
     }
 }
