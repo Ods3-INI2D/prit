@@ -1,5 +1,5 @@
 /* ============================================== */
-/* LOGIN.CSS - ATUALIZADO */
+/* LOGIN/CADASTRO.CSS - ATUALIZADO MOBILE FIRST */
 /* ============================================== */
 @import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
@@ -31,15 +31,15 @@ header {
     justify-content: center;
     align-items: center;
     background-color: #001863;
-    height: 18vh;
+    height: 16vh;
     width: 100%;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 img.icon {
-    width: 45%;
-    max-width: 220px;
+    width: 38%;
+    max-width: 180px;
     height: auto;
 }
 
@@ -51,12 +51,12 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2.5rem 1rem;
+    padding: 1.75rem 0.875rem;
 }
 
 section.login-module {
     width: 100%;
-    max-width: 420px;
+    max-width: 380px;
     text-align: left;
     background-color: transparent;
     padding: 0;
@@ -66,7 +66,7 @@ section.login-module {
 
 .title-group {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
     background-color: transparent;
     padding: 0;
     border-radius: 0;
@@ -74,14 +74,14 @@ section.login-module {
 }
 
 h1.tit {
-    font-size: 2.25rem;
+    font-size: 1.875rem;
     color: white;
     font-family: 'Belanosima', sans-serif;
 }
 
 h2 {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.9375rem;
+    margin-bottom: 0.4rem;
     font-weight: 500;
     color: white;
 }
@@ -91,49 +91,53 @@ h2 {
 ========================= */
 form {
     max-width: 100%;
-    margin: 1.5rem auto;
-    padding: 2rem 1.75rem;
+    margin: 1.25rem auto;
+    padding: 1.5rem 1.375rem;
     background-color: #2a2a2a;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 12px rgba(77, 166, 255, 0.15);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 10px rgba(77, 166, 255, 0.12);
 }
 
 input[type="text"],
 input[type="password"],
-input[type="email"] {
+input[type="email"],
+input[type="date"],
+input[type="tel"] {
     width: 100%;
-    padding: 0.9375rem 1.125rem;
-    border-radius: 10px;
+    padding: 0.8125rem 1rem;
+    border-radius: 8px;
     border: 2px solid #555;
     background-color: #383838;
     color: #fff;
-    font-size: 1rem;
-    margin-bottom: 1.125rem;
+    font-size: 0.9375rem;
+    margin-bottom: 1rem;
     transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
 input[type="text"]:focus,
 input[type="password"]:focus,
-input[type="email"]:focus {
+input[type="email"]:focus,
+input[type="date"]:focus,
+input[type="tel"]:focus {
     border-color: #4da6ff;
     outline: none;
-    box-shadow: 0 0 8px rgba(77, 166, 255, 0.6);
+    box-shadow: 0 0 6px rgba(77, 166, 255, 0.6);
 }
 
 /* =========================
-   BOTÃO LOGIN
+   BOTÃO LOGIN/CADASTRO
 ========================= */
 #btn,
 #btn-login {
     background-color: #007bff;
     color: #fff;
     border: none;
-    padding: 0.9375rem;
-    border-radius: 10px;
-    font-size: 1.125rem;
+    padding: 0.8125rem;
+    border-radius: 8px;
+    font-size: 1rem;
     font-family: 'Belanosima', sans-serif;
     width: 100%;
-    margin: 1.25rem auto;
+    margin: 1rem auto;
     display: block;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -151,9 +155,9 @@ input[type="email"]:focus {
 small.erro,
 output.erro {
     color: #ff5555;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     margin-top: -0.5rem;
-    margin-bottom: 0.875rem;
+    margin-bottom: 0.75rem;
     display: block;
 }
 
@@ -161,32 +165,44 @@ output.erro {
     background-color: rgba(255, 85, 85, 0.15);
     border: 2px solid #ff5555;
     border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1.25rem;
+    padding: 0.875rem;
+    margin-bottom: 1rem;
 }
 
 .mensagem-erro {
     color: #ff5555;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     text-align: center;
 }
 
 /* =========================
    OUTROS ELEMENTOS
 ========================= */
+section.txt {
+    width: 100%;
+    max-width: 380px;
+    font-size: 0.875rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    background-color: transparent;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+}
+
 main > p.ou {
     text-align: center;
-    margin: 1.25rem 0;
+    margin: 1rem 0;
     color: #aaa;
     width: 100%;
-    max-width: 420px;
+    max-width: 380px;
 }
 
 .signup-prompt {
     width: 100%;
-    max-width: 420px;
+    max-width: 380px;
     text-align: center;
-    margin-top: 2rem;
+    margin-top: 1.75rem;
 }
 
 .link {
@@ -200,10 +216,15 @@ main > p.ou {
 }
 
 .link2 {
-    font-size: 1rem;
+    font-size: 0.9375rem;
     font-weight: bold;
     display: block;
-    margin-top: 0.25rem;
+    margin-top: 0.2rem;
+}
+
+::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    opacity: 1;
 }
 
 /* =========================
@@ -213,7 +234,7 @@ footer {
     margin-top: auto;
     width: 100%;
     background-color: #1f1f1f;
-    min-height: 6vh;
+    min-height: 5vh;
 }
 
 /* =========================
@@ -222,116 +243,63 @@ footer {
 @media (min-width: 601px) {
 
     header {
-        height: 20vh;
-        border-bottom-left-radius: 12px;
-        border-bottom-right-radius: 12px;
+        height: 18vh;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
     }
 
     img.icon {
-        width: 70%;
-        max-width: 320px;
+        width: 65%;
+        max-width: 280px;
     }
 
     main {
-        padding: 3rem 1rem;
+        padding: 2.5rem 0.875rem;
     }
 
-    section.login-module {
-        max-width: 480px;
+    section.login-module,
+    section.txt,
+    .signup-prompt,
+    main > p.ou {
+        max-width: 440px;
     }
 
     .title-group {
-        margin-bottom: 2.5rem;
+        margin-bottom: 2rem;
     }
 
     h1.tit {
-        font-size: 2.75rem;
+        font-size: 2.5rem;
     }
 
     h2 {
-        font-size: 1.125rem;
+        font-size: 1.0625rem;
     }
 
     form {
-        padding: 2.5rem 2.25rem;
+        padding: 2rem 1.875rem;
     }
 
     input[type="text"],
     input[type="password"],
-    input[type="email"] {
-        padding: 1.0625rem 1.25rem;
-        font-size: 1.0625rem;
+    input[type="email"],
+    input[type="date"],
+    input[type="tel"] {
+        padding: 0.9375rem 1.125rem;
+        font-size: 1rem;
     }
 
     #btn,
     #btn-login {
-        padding: 1.0625rem;
-        font-size: 1.25rem;
+        padding: 0.9375rem;
+        font-size: 1.125rem;
     }
 
-    .signup-prompt {
-        max-width: 480px;
-    }
-}
-
-
-/* ============================================== */
-/* CAD.CSS - ATUALIZADO (COMPLEMENTO) */
-/* ============================================== */
-
-/* Ajustes específicos para cadastro */
-section.txt {
-    width: 100%;
-    max-width: 420px;
-    font-size: 0.9375rem;
-    text-align: center;
-    margin-bottom: 1.25rem;
-    background-color: transparent;
-    padding: 0;
-    box-shadow: none;
-    border-radius: 0;
-}
-
-input[type="date"],
-input[type="tel"],
-input[type="number"] {
-    width: 100%;
-    padding: 0.9375rem 1.125rem;
-    border-radius: 10px;
-    border: 2px solid #555;
-    background-color: #383838;
-    color: #fff;
-    font-size: 1rem;
-    margin-bottom: 1.125rem;
-    transition: border 0.3s ease, box-shadow 0.3s ease;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-}
-
-input[type="date"]:focus,
-input[type="tel"]:focus,
-input[type="number"]:focus {
-    border-color: #4da6ff;
-    outline: none;
-    box-shadow: 0 0 8px rgba(77, 166, 255, 0.6);
-}
-
-::placeholder {
-    color: rgba(255, 255, 255, 0.6);
-    opacity: 1;
-}
-
-@media (min-width: 601px) {
     section.txt {
-        max-width: 480px;
-        font-size: 1rem;
+        font-size: 0.9375rem;
     }
 
-    input[type="date"],
-    input[type="tel"],
-    input[type="number"] {
-        padding: 1.0625rem 1.25rem;
-        font-size: 1.0625rem;
+    footer {
+        min-height: 5vh;
     }
 }

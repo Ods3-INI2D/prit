@@ -15,22 +15,22 @@
 /* HAMBURGER */
 .hamburger {
     position: relative;
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     background: none;
     border: none;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 4px;
+    gap: 3px;
     z-index: 1001;
     padding: 0;
 }
 
 .hamburger hr {
     width: 100%;
-    height: 2.5px;
+    height: 1.75px;
     background-color: white;
     border: none;
     transition: all 0.3s ease-in-out;
@@ -75,21 +75,21 @@
 
 /* LOGO E USER NO MENU */
 .opcoes .plogo {
-    width: 16px;
+    width: 13px;
     height: auto;
     display: block;
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 0.75rem;
+    right: 0.75rem;
     cursor: pointer;
     z-index: 10;
 }
 
 .opcoes .user {
-    width: 60px;
-    height: 60px;
+    width: 52px;
+    height: 52px;
     display: block;
-    margin: 3rem auto 0.75rem;
+    margin: 2.25rem auto 0.5rem;
     border-radius: 50%;
 }
 
@@ -100,23 +100,23 @@
 }
 
 .perfil {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.125rem;
     text-align: center;
-    padding: 0 1rem;
+    padding: 0 0.75rem;
     background-color: rgba(0, 0, 0, 0.2);
-    padding-top: 0.75rem;
-    padding-bottom: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.75rem;
 }
 
 .nome {
-    font-size: 0.9375rem;
+    font-size: 0.8125rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.35rem;
     color: white;
 }
 
 .conta {
-    font-size: 0.8125rem;
+    font-size: 0.6875rem;
     color: #4da6ff;
     text-decoration: none;
     transition: color 0.3s ease;
@@ -133,11 +133,11 @@
 }
 
 .tit {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     margin-bottom: 0;
     color: white;
     font-weight: 600;
-    padding: 0.75rem 1rem 0.5rem;
+    padding: 0.5625rem 0.75rem 0.375rem;
     background-color: rgba(0, 0, 0, 0.15);
 }
 
@@ -157,8 +157,8 @@
     display: block;
     color: white;
     text-decoration: none;
-    font-size: 0.8125rem;
-    padding: 0.875rem 1rem;
+    font-size: 0.6875rem;
+    padding: 0.6875rem 0.75rem;
     transition: background-color 0.3s ease;
     position: relative;
 }
@@ -175,7 +175,7 @@
 }
 
 .seta {
-    font-size: 1.25rem;
+    font-size: 1.0625rem;
     font-style: normal;
     transition: transform 0.3s ease;
 }
@@ -196,7 +196,7 @@
 }
 
 .submenu.is-visible {
-    max-height: 400px;
+    max-height: 380px;
 }
 
 .submenu li {
@@ -207,8 +207,8 @@
     display: block;
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 0.75rem;
-    padding: 0.75rem 1.5rem;
+    font-size: 0.625rem;
+    padding: 0.5625rem 1.125rem;
     transition: background-color 0.3s ease;
 }
 
@@ -220,7 +220,7 @@
 /* OUTRO */
 .outro {
     margin: 0;
-    padding: 0.75rem 0 0 0;
+    padding: 0.5625rem 0 0 0;
     background-color: #1B1B1B;
     width: 100%;
     list-style: none;
@@ -235,8 +235,8 @@
     display: block;
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 0.75rem;
-    padding: 0.75rem 1rem;
+    font-size: 0.625rem;
+    padding: 0.5625rem 0.75rem;
     transition: color 0.3s ease;
 }
 
@@ -260,18 +260,18 @@
 /* RESPONSIVIDADE DESKTOP */
 @media (min-width: 768px) {
     :root {
-        --menu-width: 320px;
-        --menu-max-width: 320px;
+        --menu-width: 290px;
+        --menu-max-width: 290px;
     }
 
     .hamburger {
-        width: 28px;
-        height: 28px;
-        gap: 5px;
+        width: 24px;
+        height: 24px;
+        gap: 3.5px;
     }
 
     .hamburger hr {
-        height: 3px;
+        height: 2.25px;
     }
 
     .opcoes {
@@ -279,43 +279,43 @@
     }
 
     .opcoes .plogo {
-        width: 22px;
-        top: 1.75rem;
-        right: 1.25rem;
+        width: 19px;
+        top: 1.375rem;
+        right: 0.9375rem;
     }
 
     .opcoes .user {
-        width: 85px;
-        height: 85px;
-        margin-bottom: 1.25rem;
+        width: 72px;
+        height: 72px;
+        margin-bottom: 0.875rem;
     }
 
     .nome {
-        font-size: 1.1875rem;
+        font-size: 1.0625rem;
     }
 
     .conta {
-        font-size: 0.9375rem;
+        font-size: 0.875rem;
     }
 
     .tit {
-        font-size: 1.0625rem;
+        font-size: 0.9375rem;
     }
 
     .menu-item > a,
     .linkhp {
-        font-size: 0.9375rem;
-        padding: 1rem 1.25rem;
+        font-size: 0.875rem;
+        padding: 0.8125rem 0.9375rem;
     }
 
     .submenu a {
-        font-size: 0.875rem;
-        padding: 0.9375rem 1.75rem;
+        font-size: 0.8125rem;
+        padding: 0.75rem 1.4375rem;
     }
 
     .outro a {
-        font-size: 0.875rem;
-        padding: 0.9375rem 1.25rem;
+        font-size: 0.8125rem;
+        padding: 0.75rem 0.9375rem;
     }
 
     /* OVERLAY APARECE NO DESKTOP */
