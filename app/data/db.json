@@ -1,17 +1,5 @@
 {
-  "produtos": [
-    {
-      "nome": "ss",
-      "preco": 1,
-      "precoDesconto": 500,
-      "categoria": "Cuidados com a Pele",
-      "descricao": "ee",
-      "imagem": "/imagens/produtos/produto-1761410214472-880566659.png",
-      "id": 1761410214504,
-      "avaliacoes": [],
-      "status": "fora-de-estoque"
-    }
-  ],
+  "produtos": [],
   "avaliacoes": [
     {
       "nota": 2,
@@ -41,26 +29,7 @@
       "avaliacoes": []
     }
   ],
-  "usuarios": [
-    {
-      "nome": "swerr",
-      "nasc": "2002-02-22",
-      "cpf": "53847735888",
-      "tel": "994310266",
-      "email": "fw@gmail.com",
-      "senhan": "Senha123!",
-      "csenha": "Senha123!"
-    },
-    {
-      "nome": "saa",
-      "nasc": "2002-02-22",
-      "cpf": "53847735888",
-      "tel": "994310266",
-      "email": "sa@g.com",
-      "senhan": "Senha123!",
-      "csenha": "Senha123!"
-    }
-  ],
+  "usuarios": [],
   "banners": [
     {
       "id": 1,

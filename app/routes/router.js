@@ -127,6 +127,14 @@ function requireAdmin(req, res, next) {
     next();
 }
 
+// Middleware para bloquear administrador de acessar funcionalidades de usuário
+function blockAdmin(req, res, next) {
+    if (req.session.isAdmin && req.session.usuarioEmail === ADMIN_EMAIL) {
+        return res.redirect('/admin?erro=funcao_restrita');
+    }
+    next();
+}
+
 // Rota raiz redireciona para home
 router.get('/', function(req, res) {
     res.redirect('/home');
@@ -539,19 +547,21 @@ router.get('/produto/:id', function(req, res) {
     
     const produtos = db.getProdutos();
     const usuarioLogado = req.session.usuarioEmail ? true : false;
-    const temProdutoNoCarrinho = usuarioLogado ? 
+    const isAdmin = req.session.isAdmin || false;
+    const temProdutoNoCarrinho = (usuarioLogado && !isAdmin) ? 
         db.usuarioTemProdutoNoCarrinho(req.params.id, req.session.usuarioEmail) : false;
     
     res.render('pages/produto', { 
         produto: produto, 
         produtos: produtos,
         usuarioLogado: usuarioLogado,
-        temProdutoNoCarrinho: temProdutoNoCarrinho
+        temProdutoNoCarrinho: temProdutoNoCarrinho,
+        isAdmin: isAdmin
     });
 });
 
-// Adicionar ao carrinho (requer login)
-router.post('/produto/:id/adicionar-carrinho', requireLogin, function(req, res) {
+// Adicionar ao carrinho (requer login E bloqueia admin)
+router.post('/produto/:id/adicionar-carrinho', requireLogin, blockAdmin, function(req, res) {
     const produto = db.getProdutoById(req.params.id);
     
     if (!produto || produto.status === 'fora-de-estoque') {
@@ -562,27 +572,27 @@ router.post('/produto/:id/adicionar-carrinho', requireLogin, function(req, res) 
     res.redirect('/carrinho');
 });
 
-// Ver carrinho (requer login)
-router.get('/carrinho', requireLogin, function(req, res) {
+// Ver carrinho (requer login E bloqueia admin)
+router.get('/carrinho', requireLogin, blockAdmin, function(req, res) {
     const carrinho = db.getCarrinho(req.session.usuarioEmail);
     res.render('pages/carrinho', { carrinho: carrinho });
 });
 
-// Atualizar quantidade no carrinho
-router.post('/carrinho/atualizar/:id', requireLogin, function(req, res) {
+// Atualizar quantidade no carrinho (bloqueia admin)
+router.post('/carrinho/atualizar/:id', requireLogin, blockAdmin, function(req, res) {
     const novaQuantidade = parseInt(req.body.quantidade);
     db.updateQuantidadeCarrinho(req.params.id, req.session.usuarioEmail, novaQuantidade);
     res.redirect('/carrinho');
 });
 
-// Remover do carrinho
-router.post('/carrinho/remover/:id', requireLogin, function(req, res) {
+// Remover do carrinho (bloqueia admin)
+router.post('/carrinho/remover/:id', requireLogin, blockAdmin, function(req, res) {
     db.removeFromCarrinho(req.params.id, req.session.usuarioEmail);
     res.redirect('/carrinho');
 });
 
-// Avaliar produto (requer produto no carrinho)
-router.post('/produto/:id/avaliar', requireLogin, function(req, res) {
+// Avaliar produto (requer produto no carrinho E bloqueia admin)
+router.post('/produto/:id/avaliar', requireLogin, blockAdmin, function(req, res) {
     const novaAvaliacao = {
         nota: parseInt(req.body.nota),
         texto: req.body.texto

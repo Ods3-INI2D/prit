@@ -66,6 +66,10 @@
             <output class="mensagem-erro" role="alert" aria-live="assertive">
                 Banner não encontrado!
             </output>
+        <% } else if(typeof erro !== 'undefined' && erro === 'funcao_restrita') { %>
+            <output class="mensagem-info" role="alert" aria-live="assertive">
+                ⚠️ Esta funcionalidade está restrita a usuários clientes. Como administrador, você não pode acessar o carrinho ou avaliar produtos.
+            </output>
         <% } %>
 
         <section class="estatisticas" aria-labelledby="titulo-estatisticas">
