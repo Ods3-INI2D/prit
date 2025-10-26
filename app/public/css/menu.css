@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 :root {
-    --menu-width: 260px;
-    --menu-max-width: 260px;
+    --menu-width: 100vw;
+    --menu-max-width: 100vw;
     --menu-height: 100vh;
 }
 
@@ -15,8 +15,8 @@
 /* HAMBURGER */
 .hamburger {
     position: relative;
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
     background: none;
     border: none;
     cursor: pointer;
@@ -52,7 +52,7 @@
     transform: rotate(-45deg);
 }
 
-/* MENU LATERAL */
+/* MENU LATERAL - COBRE TELA INTEIRA NO MOBILE */
 .opcoes {
     position: fixed;
     top: 0;
@@ -75,21 +75,21 @@
 
 /* LOGO E USER NO MENU */
 .opcoes .plogo {
-    width: 18px;
+    width: 16px;
     height: auto;
     display: block;
     position: absolute;
-    top: 1.25rem;
-    right: 0.875rem;
+    top: 1rem;
+    right: 1rem;
     cursor: pointer;
     z-index: 10;
 }
 
 .opcoes .user {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
     display: block;
-    margin: 3.5rem auto 0.875rem;
+    margin: 3rem auto 0.75rem;
     border-radius: 50%;
 }
 
@@ -100,16 +100,16 @@
 }
 
 .perfil {
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.5rem;
     text-align: center;
-    padding: 0 0.875rem;
+    padding: 0 1rem;
     background-color: rgba(0, 0, 0, 0.2);
-    padding-top: 0.875rem;
-    padding-bottom: 1.25rem;
+    padding-top: 0.75rem;
+    padding-bottom: 1rem;
 }
 
 .nome {
-    font-size: 1rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
     color: white;
@@ -133,11 +133,11 @@
 }
 
 .tit {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     margin-bottom: 0;
     color: white;
     font-weight: 600;
-    padding: 0.875rem 0.875rem 0.5rem;
+    padding: 0.75rem 1rem 0.5rem;
     background-color: rgba(0, 0, 0, 0.15);
 }
 
@@ -157,8 +157,8 @@
     display: block;
     color: white;
     text-decoration: none;
-    font-size: 0.875rem;
-    padding: 0.875rem 0.875rem;
+    font-size: 0.8125rem;
+    padding: 0.875rem 1rem;
     transition: background-color 0.3s ease;
     position: relative;
 }
@@ -175,7 +175,7 @@
 }
 
 .seta {
-    font-size: 1.375rem;
+    font-size: 1.25rem;
     font-style: normal;
     transition: transform 0.3s ease;
 }
@@ -207,8 +207,8 @@
     display: block;
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 0.8125rem;
-    padding: 0.8125rem 1.375rem;
+    font-size: 0.75rem;
+    padding: 0.75rem 1.5rem;
     transition: background-color 0.3s ease;
 }
 
@@ -220,7 +220,7 @@
 /* OUTRO */
 .outro {
     margin: 0;
-    padding: 0.875rem 0 0 0;
+    padding: 0.75rem 0 0 0;
     background-color: #1B1B1B;
     width: 100%;
     list-style: none;
@@ -235,8 +235,8 @@
     display: block;
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 0.8125rem;
-    padding: 0.8125rem 0.875rem;
+    font-size: 0.75rem;
+    padding: 0.75rem 1rem;
     transition: color 0.3s ease;
 }
 
@@ -252,16 +252,9 @@
     padding: 0;
 }
 
-/* OVERLAY QUANDO MENU ABERTO */
+/* OVERLAY QUANDO MENU ABERTO - REMOVIDO NO MOBILE */
 .opcoes.is-open::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: var(--menu-width);
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: -1;
+    content: none;
 }
 
 /* RESPONSIVIDADE DESKTOP */
@@ -323,5 +316,17 @@
     .outro a {
         font-size: 0.875rem;
         padding: 0.9375rem 1.25rem;
+    }
+
+    /* OVERLAY APARECE NO DESKTOP */
+    .opcoes.is-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: var(--menu-width);
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
     }
 }

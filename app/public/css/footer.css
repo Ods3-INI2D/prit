@@ -5,22 +5,22 @@ footer {
     background-color: rgb(91, 123, 225); 
     font-family: 'Inter', sans-serif;
     width: 100%;
-    padding: 1.25rem 0.875rem; 
+    padding: 1rem 0.75rem; 
     border-top-left-radius: 0; 
     border-top-right-radius: 0; 
-    margin-top: 1.75rem; 
+    margin-top: 1.5rem; 
     display: flex;
     flex-direction: column; 
     align-items: flex-start;
     text-align: left;
-    gap: 0.875rem;
+    gap: 0.75rem;
 }
 
 /* Classe genérica para itens do footer */
 .footer-item {
     color: black; 
-    font-size: 0.9375rem; 
-    margin: 0 0 0.3125rem 0; 
+    font-size: 0.875rem; 
+    margin: 0 0 0.25rem 0; 
     position: static;
     font-weight: 700;
 }
@@ -28,7 +28,7 @@ footer {
 /* Sub-textos */
 .footer-text-secondary {
     color: rgb(49, 49, 49); 
-    font-size: 0.8125rem; 
+    font-size: 0.75rem; 
     margin: 0;
     position: static;
     font-weight: 500;
@@ -39,7 +39,7 @@ footer {
     display: flex;
     flex-direction: column;
     margin-bottom: 0;
-    gap: 0.25rem;
+    gap: 0.1875rem;
 }
 
 .footer-content-group:last-child {
