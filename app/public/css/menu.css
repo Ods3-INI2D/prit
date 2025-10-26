@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 :root {
-    --menu-width: 75vw;
+    --menu-width: 280px;
     --menu-max-width: 280px;
     --menu-height: 100vh;
 }
@@ -63,7 +63,7 @@
     background-color: #2D2D2D;
     z-index: 1000;
     color: white;
-    padding: 1.5rem 0;
+    padding: 0;
     overflow-y: auto;
     transform: translateX(-100%);
     transition: transform 0.3s ease-out;
@@ -82,30 +82,34 @@
     top: 1.5rem;
     right: 1rem;
     cursor: pointer;
+    z-index: 10;
 }
 
 .opcoes .user {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     display: block;
-    margin: 0 auto 1rem;
+    margin: 4rem auto 1rem;
     border-radius: 50%;
 }
 
 /* --- USER INFO DENTRO DO MENU --- */
 .menu-content {
-    margin-top: 1rem;
+    margin-top: 0;
     padding: 0;
 }
 
 .perfil {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     text-align: center;
     padding: 0 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
 }
 
 .nome {
-    font-size: 1rem;
+    font-size: 1.125rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
     color: white;
@@ -124,15 +128,17 @@
 
 /* --- CATEGORIAS --- */
 .categorias {
-    margin-bottom: 1.5rem;
-    padding: 0 1rem;
+    margin-bottom: 0;
+    padding: 0;
 }
 
 .tit {
     font-size: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
     color: white;
     font-weight: 600;
+    padding: 1rem 1rem 0.5rem;
+    background-color: rgba(0, 0, 0, 0.15);
 }
 
 /* --- MENU PRINCIPAL --- */
@@ -151,8 +157,8 @@
     display: block;
     color: white;
     text-decoration: none;
-    font-size: 0.9rem;
-    padding: 0.875rem 1rem;
+    font-size: 0.9375rem;
+    padding: 1rem 1rem;
     transition: background-color 0.3s ease;
     position: relative;
 }
@@ -201,8 +207,8 @@
     display: block;
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 0.85rem;
-    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    padding: 0.875rem 1.5rem;
     transition: background-color 0.3s ease;
 }
 
@@ -214,10 +220,11 @@
 /* --- OUTRO --- */
 .outro {
     margin: 0;
-    padding: 1rem 0;
+    padding: 1rem 0 0 0;
     background-color: #1B1B1B;
     width: 100%;
     list-style: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .outro .menu-item {
@@ -228,8 +235,8 @@
     display: block;
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 0.85rem;
-    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    padding: 0.875rem 1rem;
     transition: color 0.3s ease;
 }
 
@@ -265,7 +272,7 @@
     }
 
     .opcoes {
-        padding: 2rem 0;
+        padding: 0;
     }
 
     .opcoes .plogo {
@@ -275,13 +282,13 @@
     }
 
     .opcoes .user {
-        width: 80px;
-        height: 80px;
+        width: 90px;
+        height: 90px;
         margin-bottom: 1.5rem;
     }
 
     .nome {
-        font-size: 1.125rem;
+        font-size: 1.25rem;
     }
 
     .conta {
@@ -295,16 +302,16 @@
     .menu-item > a,
     .linkhp {
         font-size: 1rem;
-        padding: 1rem 1.5rem;
+        padding: 1.125rem 1.5rem;
     }
 
     .submenu a {
-        font-size: 0.9rem;
-        padding: 0.875rem 2rem;
+        font-size: 0.9375rem;
+        padding: 1rem 2rem;
     }
 
     .outro a {
-        font-size: 0.9rem;
-        padding: 0.875rem 1.5rem;
+        font-size: 0.9375rem;
+        padding: 1rem 1.5rem;
     }
 }
