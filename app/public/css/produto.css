@@ -1,6 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
-/* Mobile First */
 * {
     margin: 0;
     padding: 0;
@@ -25,7 +23,7 @@ main {
     padding: 0;
 }
 
-/* NAVEGAÇÃO & TÍTULOS DE SEÇÃO */
+/* navegação & títulos de seção */
 .navegacao {
     margin: 0.9375rem 0.9375rem 1.25rem;
 }
@@ -52,7 +50,7 @@ main {
     color: white;
 }
 
-/* PRODUTO DETALHES */
+/* produto detalhes */
 .produto-detalhes {
     margin-bottom: 0;
     padding: 0 0.9375rem;
@@ -84,7 +82,7 @@ main {
     display: block;
 }
 
-/* PREÇO */
+/* preço */
 .preco-container {
     margin-bottom: 1.25rem;
 }
@@ -120,7 +118,7 @@ main {
     display: inline-block;
 }
 
-/* MENSAGENS DE STATUS */
+/* mensagens de status */
 .mensagem-aviso {
     background-color: rgba(255, 193, 7, 0.2);
     border: 0.125rem solid #ffc107;
@@ -174,7 +172,7 @@ main {
     display: block;
 }
 
-/* BOTÃO DE COMPRA */
+/* botao de compra */
 .btn-comprar {
     width: 100%;
     padding: 1.09375rem 0;
@@ -194,7 +192,7 @@ main {
     transform: translateY(-0.125rem);
 }
 
-/* FRETE */
+/* frete */
 .frete-container {
     margin-bottom: 1.5625rem;
     padding: 0 0.9375rem;
@@ -246,14 +244,14 @@ main {
     background-color: #0d1f42;
 }
 
-/* DIVISOR */
+/* divisor */
 .divisor {
     border: none;
     border-top: 0.0625rem solid rgba(255, 255, 255, 0.15);
     margin: 1.5625rem 0.9375rem;
 }
 
-/* DESCRIÇÃO */
+/* descricao */
 .descricao-container {
     margin-bottom: 1.5625rem;
     padding: 0 0.9375rem;
@@ -328,7 +326,7 @@ main {
     color: #6bb5ff;
 }
 
-/* LISTA DE AVALIAÇÕES */
+/* lista de avaliações */
 .lista-avaliacoes {
     list-style: none;
     padding: 0;
@@ -368,7 +366,7 @@ main {
     padding: 1.5625rem 0;
 }
 
-/* FORMULÁRIO DE AVALIAÇÃO */
+/* formulário de avaliação */
 .form-avaliacao-container {
     background-color: #2a2a2a;
     padding: 1.25rem;
@@ -453,7 +451,7 @@ main {
     opacity: 0.6;
 }
 
-/* OUTROS PRODUTOS */
+/* outros produtos */
 .titulo-outros {
     font-size: 1.3125rem;
     font-weight: 600;
@@ -512,7 +510,7 @@ main {
     display: block;
 }
 
-/* RESPONSIVIDADE DESKTOP */
+/* responsividae para deskotp */
 @media (min-width: 768px) {
     main {
         width: 90%;

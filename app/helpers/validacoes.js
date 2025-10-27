@@ -1,9 +1,9 @@
-// Funções de Validação para Node.js (Lado do Servidor)
+// funcoes de validacao pro node.js (lado do servidor)
 
 /**
- * Remove caracteres de formatação (ponto, hífen) do CPF/Telefone.
- * @param {string} str - A string de entrada.
- * @returns {string} - A string contendo apenas dígitos.
+ * tira os caracteres de formatacao tipo ponto e hifen do cpf/telefone
+ * @param {string} str - o texto que vai limpar
+ * @returns {string} - retorna so os numeros
  */
 function cleanDigits(str) {
     if (typeof str !== 'string') return '';
@@ -11,9 +11,9 @@ function cleanDigits(str) {
 }
 
 /**
- * Calcula o dígito verificador do CPF.
- * @param {string} cpfBase - Os 9 (para o 1º dígito) ou 10 (para o 2º dígito) primeiros números do CPF.
- * @returns {number} - O dígito verificador calculado.
+ * calcula o digito verificador do cpf aquele algoritmo chatao
+ * @param {string} cpfBase - os 9 primeiros digitos (pro 1 digito) ou 10 (pro 2 digito)
+ * @returns {number} - o digito verificador calculado
  */
 function calculateVerifierDigit(cpfBase) {
     let sum = 0;
@@ -28,25 +28,25 @@ function calculateVerifierDigit(cpfBase) {
 }
 
 /**
- * Validação de CPF com algoritmo completo
- * @param {string} cpf - CPF a ser validado
- * @returns {boolean} - true se válido, false se inválido
+ * validacao de cpf com algoritmo completo
+ * @param {string} cpf - cpf pra validar
+ * @returns {boolean} - true se ta valido, false se ta errado
  */
 function valCPF(cpf) {
     const cleanedCpf = cleanDigits(cpf);
 
     if (cleanedCpf.length !== 11) return false;
     
-    // Verifica CPFs com dígitos repetidos
+    // ve se tem cpf com digitos repetidos tipo 111.111.111-11
     if (/^(\d)\1{10}$/.test(cleanedCpf)) return false;
 
-    // 1º Dígito Verificador
+    // 1 digito verificador
     const cpfBase9 = cleanedCpf.substring(0, 9);
     const firstDigitCalculated = calculateVerifierDigit(cpfBase9);
 
     if (firstDigitCalculated !== Number(cleanedCpf[9])) return false;
 
-    // 2º Dígito Verificador
+    // 2 digito verificador
     const cpfBase10 = cleanedCpf.substring(0, 10);
     const secondDigitCalculated = calculateVerifierDigit(cpfBase10);
 
@@ -56,16 +56,16 @@ function valCPF(cpf) {
 }
 
 /**
- * Validação de Data de Nascimento (máximo 110 anos e não futura)
- * @param {string} dataNascimentoStr - Data no formato ISO 8601 (AAAA-MM-DD)
- * @returns {boolean} - true se válido, false se inválido
+ * validacao de data de nascimento (max 110 anos e nao pode ser futura)
+ * @param {string} dataNascimentoStr - data no formato iso 8601 (aaaa-mm-dd)
+ * @returns {boolean} - true se ta valida, false se ta errada
  */
 function valNasc(dataNascimentoStr) {
     if (!dataNascimentoStr) return false;
 
     const dataNascimento = new Date(dataNascimentoStr);
     
-    // Verifica se a data é inválida
+    // ve se a data eh invalida
     if (isNaN(dataNascimento.getTime())) {
         return false;
     }
@@ -74,12 +74,12 @@ function valNasc(dataNascimentoStr) {
     const dataLimite = new Date();
     dataLimite.setFullYear(hoje.getFullYear() - 110);
     
-    // Zera horas para comparação apenas de data
+    // zera as horas pra comparar so a data msm
     dataNascimento.setHours(0, 0, 0, 0);
     hoje.setHours(0, 0, 0, 0);
     dataLimite.setHours(0, 0, 0, 0);
 
-    // Não pode ser no futuro nem anterior a 110 anos
+    // nao pode ser no futuro nem antes de 110 anos
     if (dataNascimento > hoje || dataNascimento < dataLimite) {
         return false;
     }
@@ -88,20 +88,20 @@ function valNasc(dataNascimentoStr) {
 }
 
 /**
- * Validação de Telefone (9 dígitos)
- * @param {string} tel - Telefone a ser validado
- * @returns {boolean} - true se válido, false se inválido
+ * validacao de telefone (9 digitos)
+ * @param {string} tel - telefone pra validar
+ * @returns {boolean} - true se ta valido, false se ta errado
  */
 function valTel(tel) {
     const cleanedTel = cleanDigits(tel);
     const length = cleanedTel.length;
 
-    // Verifica se tem 9 dígitos (celular)
+    // ve se tem 9 digitos (celular)
     if (length !== 9) {
         return false;
     }
     
-    // Verifica se tem todos os dígitos repetidos
+    // ve se tem todos os digitos repetidos tipo 999999999
     if (new RegExp(`^(\\d)\\1{${length - 1}}$`).test(cleanedTel)) {
         return false;
     }
@@ -110,19 +110,19 @@ function valTel(tel) {
 }
 
 /**
- * Validação de Senha (6 a 20 caracteres, com maiúscula, número e caractere especial)
- * @param {string} senhan - Senha a ser validada
- * @returns {boolean} - true se válido, false se inválido
+ * validacao de senha (6 a 20 caracteres, com maiuscula, numero e caractere especial)
+ * @param {string} senhan - senha pra validar
+ * @returns {boolean} - true se ta valida, false se ta errada
  */
 function valSenha(senhan) {
     if (typeof senhan !== 'string' || senhan === '') return false;
 
-    // Tamanho: 6 a 20 caracteres
+    // tamanho: 6 a 20 caracteres
     if (senhan.length < 6 || senhan.length > 20) {
         return false;
     }
 
-    // Complexidade: Pelo menos um número, uma letra maiúscula e um caractere especial
+    // complexidade: pelo menos um numero, uma letra maiuscula e um caractere especial
     const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,20}$/; 
     
     if (!regex.test(senhan)) {
@@ -133,17 +133,17 @@ function valSenha(senhan) {
 }
 
 /**
- * Confirmação de Senha
- * @param {string} csenha - Senha de confirmação
- * @param {string} senhan - Senha original
- * @returns {boolean} - true se as senhas são iguais, false se diferentes
+ * confirmacao de senha
+ * @param {string} csenha - senha de confirmacao
+ * @param {string} senhan - senha original
+ * @returns {boolean} - true se as senhas sao iguais, false se diferentes
  */
 function valCsenha(csenha, senhan) {
     if (typeof csenha !== 'string' || typeof senhan !== 'string') return false;
     return csenha === senhan;
 }
 
-// Exportação das funções para uso no Node.js
+// exportacao das funcoes pro node.js
 module.exports = { 
     valCPF, 
     valTel, 

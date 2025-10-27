@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-/* --- Reset e Configuração Base (Mobile First) --- */
 * {
     margin: 0;
     padding: 0;
@@ -39,7 +38,7 @@ main {
     text-align: center;
 }
 
-/* --- INFORMAÇÕES DO USUÁRIO --- */
+/*informacoes do usuario*/
 .info-usuario {
     background-color: #2a2a2a;
     border-radius: 0.75rem;
@@ -81,7 +80,7 @@ main {
     color: white;
 }
 
-/* --- DADOS EDITÁVEIS --- */
+/*dados editaveis*/
 .dados-editaveis {
     background-color: #2a2a2a;
     border-radius: 0.75rem;
@@ -143,7 +142,7 @@ input[type="text"]:focus {
     transform: translateY(-2px);
 }
 
-/* --- MENU USUARIO --- */
+/*menu usuario*/
 .menu-usuario {
     background-color: #2a2a2a;
     border-radius: 0.75rem;
@@ -188,7 +187,7 @@ input[type="text"]:focus {
     background-color: rgba(255, 85, 85, 0.1);
 }
 
-/* --- SEM USUÁRIO --- */
+/*sem usuario*/
 .sem-usuario {
     text-align: center;
     padding: 3.5rem 0;
@@ -217,9 +216,7 @@ input[type="text"]:focus {
     transform: translateY(-2px);
 }
 
-/* =================================================== */
-/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
-/* =================================================== */
+/*responsividade para desktops (min-width: 768px)*/
 @media (min-width: 768px) {
     .titulo-perfil {
         font-size: 2.25rem;

@@ -1,9 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
-/* =========================
-   ESTILOS GLOBAIS E RESET
-========================= */
 * {
     margin: 0;
     padding: 0;
@@ -20,9 +16,7 @@ body {
     width: 100%;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* header*/
 header {
     display: flex;
     justify-content: center;
@@ -40,9 +34,7 @@ img.icon {
     height: auto;
 }
 
-/* =========================
-   MAIN & LOGIN MODULE
-========================= */
+/* main*/
 main {
     flex: 1;
     display: flex;
@@ -82,9 +74,7 @@ h2 {
     color: white;
 }
 
-/* =========================
-   FORMULÁRIO
-========================= */
+/* formulário*/
 form {
     max-width: 100%;
     margin: 20px auto;
@@ -114,9 +104,7 @@ input[type="password"]:focus {
     box-shadow: 0 0 6px rgba(77, 166, 255, 0.8);
 }
 
-/* =========================
-   BOTÃO LOGIN
-========================= */
+/* botão login */
 #btn-login {
     background-color: #007bff;
     color: #fff;
@@ -137,9 +125,7 @@ input[type="password"]:focus {
     transform: translateY(-2px);
 }
 
-/* =========================
-   BOTÃO GOOGLE
-========================= */
+/* botão google */
 #google {
     display: flex;
     align-items: center;
@@ -175,9 +161,7 @@ input[type="password"]:focus {
     transform: translateY(-2px);
 }
 
-/* =========================
-   MENSAGENS DE ERRO
-========================= */
+/* mensagens de erro */
 small.erro {
     color: #ff5555;
     font-size: 0.9rem;
@@ -200,9 +184,7 @@ small.erro {
     text-align: center;
 }
 
-/* =========================
-   OUTROS ELEMENTOS
-========================= */
+/* outros elementos */
 main > p.ou {
     text-align: center;
     margin: 1rem 0;
@@ -234,9 +216,7 @@ main > p.ou {
     display: block;
 }
 
-/* =========================
-   FOOTER
-========================= */
+/* footer */
 footer {
     margin-top: auto;
     width: 100%;
@@ -244,9 +224,7 @@ footer {
     height: 6vh;
 }
 
-/* =========================
-   RESPONSIVIDADE DESKTOP
-========================= */
+/* responsividade desktop */
 @media (min-width: 601px) {
 
     header {

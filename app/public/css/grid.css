@@ -10,15 +10,15 @@ body {
     align-items: center;
     justify-content: space-between;
     background-color: #163069;
-    padding: 0.625rem 0.875rem;
+    padding: 0.75rem 0.875rem;
     flex-wrap: nowrap;
     gap: 0.625rem;
     position: relative;
-    min-height: 3.5rem;
+    min-height: 3.75rem;
 }
 
 .logo {
-    width: 5.5rem;
+    width: 5.25rem;
     height: auto;
     flex-shrink: 0;
     margin: 0 auto;
@@ -37,9 +37,29 @@ body {
     margin-left: auto;
 }
 
-/* Busca - OCULTA NO MOBILE */
+/* Busca - VISÍVEL NO MOBILE */
 .busca-form {
-    display: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    max-width: 11.25rem;
+}
+
+.busca-form label {
+    display: flex;
+    flex: 1;
+}
+
+.busca-form input[type="text"] {
+    padding: 0.4375rem 0.625rem;
+    border-radius: 0.3125rem;
+    border: none;
+    font-size: 0.8125rem;
+    width: 100%;
+    min-width: 0;
+    background-color: white;
+    color: #333;
 }
 
 .lupa-btn {
@@ -67,53 +87,39 @@ body {
 /* Responsividade Desktop */
 @media (min-width: 768px) {
     .nav-principal {
-        padding: 0.875rem 5%;
-        gap: 1.25rem;
-        min-height: 4.5rem;
+        padding: 1rem 5%;
+        gap: 1.5rem;
+        min-height: 4.75rem;
     }
 
     .logo {
-        width: 7rem;
+        width: 7.5rem;
         position: static;
         transform: none;
         margin: 0;
     }
 
     .busca-container {
-        gap: 1.25rem;
+        gap: 1.5rem;
         margin-left: 0;
     }
 
-    /* BUSCA APARECE NO DESKTOP */
     .busca-form {
-        display: flex;
-        align-items: center;
-        gap: 0.625rem;
-        flex: 1;
-        max-width: 28rem;
+        max-width: 31.25rem;
     }
 
-    .busca-form label {
-        display: flex;
-        flex: 1;
-    }
-
-    input[type="text"] {
-        padding: 0.5rem 0.75rem;
-        border-radius: 0.25rem;
-        border: none;
-        font-size: 0.9375rem;
-        width: 100%;
-        min-width: 0;
+    .busca-form input[type="text"] {
+        padding: 0.625rem 0.875rem;
+        font-size: 1rem;
     }
 
     .lupa {
-        width: 1.375rem;
-        height: 1.375rem;
+        width: 1.5rem;
+        height: 1.5rem;
     }
 
     .user, .cart {
-        width: 1.5rem;
-        height: 1.5rem;
+        width: 1.625rem;
+        height: 1.625rem;
     }
 }

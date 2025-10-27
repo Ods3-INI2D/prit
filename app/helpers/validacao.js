@@ -158,6 +158,7 @@ function validarCPF(cpf) {
     
     if(cpf.length !== 11) return false;
     
+    // verifica se todos os digitos sao iguais tipo 111.111.111-11
     if(/^(\d)\1{10}$/.test(cpf)) return false;
 
     let soma = 0;
@@ -184,6 +185,7 @@ function validarTelefone(tel) {
     
     if(tel.length !== 9) return false;
     
+    // nao aceita numero com todos digitos iguais tipo 999999999
     if(/^(\d)\1{8}$/.test(tel)) return false;
     
     return true;

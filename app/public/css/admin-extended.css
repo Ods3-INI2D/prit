@@ -1,8 +1,7 @@
-/* =================================================== */
-/* --- EXTENSÃO DO CSS ADMIN - FUNCIONALIDADES COMPLETAS --- */
-/* =================================================== */
+/* extensao do css admin */
 
-/* --- TABS --- */
+
+/* tabs*/
 .tabs-container {
     width: 100%;
     margin: 1.8rem 0;
@@ -44,7 +43,7 @@
     display: block;
 }
 
-/* --- MENSAGEM INFO --- */
+/* mensagem info */
 .mensagem-info {
     background-color: rgba(77, 166, 255, 0.1);
     border: 2px solid #4da6ff;
@@ -57,7 +56,7 @@
     font-size: 0.95rem;
 }
 
-/* --- LISTA DE USUÁRIOS --- */
+/* lista de usuários */
 .usuarios-lista {
     list-style: none;
     padding: 0;
@@ -103,13 +102,13 @@
     gap: 0.7rem;
 }
 
-/* --- FORMULÁRIOS INLINE --- */
+/* formulários inline */
 .form-inline {
     display: inline;
     margin: 0;
 }
 
-/* --- MODAL OVERLAY (SOLUÇÃO DEFINITIVA) --- */
+/* modal overlay */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -144,7 +143,7 @@
     z-index: 100000;
 }
 
-/* --- ESTILOS DO MODAL DE BANNER --- */
+/* estilos do modal de banner */
 .modal-content .subtitulo {
     margin-bottom: 1.35rem;
     text-align: center;
@@ -237,7 +236,7 @@
     cursor: pointer;
 }
 
-/* --- ESTILOS PARA IMAGEM DE BANNER NA LISTA --- */
+/* estilos para imagem de banner na lista */
 .usuario-info-container figure img {
     display: block;
     max-width: 185px;
@@ -246,9 +245,8 @@
     margin-bottom: 0.45rem;
 }
 
-/* =================================================== */
-/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
-/* =================================================== */
+/* responsividade para desktops (min-width: 768px) --- */
+
 @media (min-width: 768px) {
     .tab-button {
         font-size: 1.05rem;
@@ -263,7 +261,7 @@
         font-size: 1.05rem;
     }
 
-    /* --- LAYOUT DE USUÁRIOS EM LINHA --- */
+    /* layout de usuários em linha */
     .usuario-item {
         flex-direction: row;
         align-items: center;
@@ -301,7 +299,7 @@
         justify-content: flex-end;
     }
 
-    /* --- LAYOUT DE PRODUTOS EM LINHA --- */
+    /* layout de produtos em linha */
     .produto-item {
         flex-direction: row;
         align-items: center;
@@ -343,7 +341,7 @@
         justify-content: flex-end;
     }
 
-    /* --- ESTATÍSTICAS GRID DESKTOP --- */
+    /* estatísticas grid desktop */
     .estatisticas-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 1.8rem;
@@ -353,7 +351,7 @@
         margin-bottom: 0;
     }
 
-    /* --- MODAL DESKTOP --- */
+    /* modal desktop */
     .modal-overlay {
         padding: 1.8rem;
     }

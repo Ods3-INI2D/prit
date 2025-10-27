@@ -140,7 +140,7 @@ router.get('/', function(req, res) {
     res.redirect('/home');
 });
 
-// Rota GET de cadastro
+// get para cadastro
 router.get('/cadastro', function(req, res) {
     res.render('pages/cadastro', { 
         erros: null, 
@@ -149,7 +149,7 @@ router.get('/cadastro', function(req, res) {
     });
 });
 
-// Rota de cadastro POST
+// post para cadastro
 router.post("/cadastro",
     body("nome")
         .isLength({ min: 3, max: 50 }).withMessage("Nome deve conter de 3 a 50 caracteres!"),
@@ -216,13 +216,13 @@ router.post("/cadastro",
     }
 );
 
-// Rota de login GET
+// get para login
 router.get('/login', function(req, res) {
     const erroAdmin = req.query.erro === 'admin' ? 'Acesso negado. Apenas administradores podem acessar esta área.' : null;
     res.render('pages/login', { erro: erroAdmin, redirect: req.query.redirect || '/home' });
 });
 
-// Rota de login POST
+// post para login
 router.post('/login', 
     body("email")
         .isEmail().withMessage('O e-mail deve ser válido!'),
@@ -337,7 +337,7 @@ router.post('/admin/adicionar-produto', requireAdmin, upload.single('imagem'), f
     }
 });
 
-// Editar produto - GET
+// get para editar produto
 router.get('/admin/editar-produto/:id', requireAdmin, function(req, res) {
     const produto = db.getProdutoById(req.params.id);
     if (!produto) {
@@ -346,7 +346,7 @@ router.get('/admin/editar-produto/:id', requireAdmin, function(req, res) {
     res.render('pages/editar-produto', { produto: produto, erro: null });
 });
 
-// Editar produto - POST
+// post para editar produto
 router.post('/admin/editar-produto/:id', requireAdmin, upload.single('imagem'), function(req, res) {
     try {
         const produto = db.getProdutoById(req.params.id);
@@ -432,7 +432,7 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, function(req, res) {
     }
 });
 
-// EDITAR BANNER - POST
+// post para editar banner
 router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
     uploadBanner.single('imagem')(req, res, function(err) {
         if (err instanceof multer.MulterError) {
