@@ -9,7 +9,13 @@
       "imagem": "/imagens/produtos/produto-1761494899184-686463534.png",
       "status": "em-estoque",
       "id": 1761494899200,
-      "avaliacoes": []
+      "avaliacoes": [
+        {
+          "nota": 4,
+          "texto": "pintox manox bogox",
+          "data": "2025-10-27T01:53:55.644Z"
+        }
+      ]
     }
   ],
   "avaliacoes": [
@@ -17,6 +23,11 @@
       "nota": 2,
       "texto": "pintox manox\r\n",
       "data": "2025-10-25T00:29:14.658Z"
+    },
+    {
+      "nota": 4,
+      "texto": "pintox manox bogox",
+      "data": "2025-10-27T01:53:55.644Z"
     }
   ],
   "carrinho": [

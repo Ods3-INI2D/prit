@@ -49,6 +49,7 @@ main {
     font-size: 1.25rem;
     color: #888;
     margin-bottom: 2.25rem;
+    display: block;
 }
 
 .btn-continuar {
@@ -120,6 +121,7 @@ main {
     font-size: 0.9375rem;
     color: #888;
     margin-bottom: 0.875rem;
+    display: block;
 }
 
 /* --- Preços (Mobile First) --- */
@@ -134,6 +136,7 @@ main {
     font-size: 1.125rem;
     font-weight: 600;
     color: #4da6ff;
+    display: block;
 }
 
 .preco-original {
@@ -141,6 +144,7 @@ main {
     color: #888;
     text-decoration: line-through;
     margin-bottom: 0;
+    display: block;
 }
 
 /* --- Controles de Quantidade --- */
@@ -180,6 +184,7 @@ main {
     font-weight: 600;
     min-width: 2.25rem;
     text-align: center;
+    display: inline-block;
 }
 
 .form-quantidade {
@@ -193,6 +198,7 @@ main {
     font-weight: 600;
     color: #4da6ff;
     margin-top: 0.625rem;
+    display: block;
 }
 
 /* --- Ações do Item --- */

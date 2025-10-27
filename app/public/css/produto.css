@@ -1,6 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 /* Mobile First */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    font-size: 16px;
+}
+
 body {
     background-color: #1f1f1f;
     font-family: 'Inter', sans-serif;
@@ -71,6 +81,7 @@ main {
     font-size: 0.8125rem;
     color: #888;
     margin-bottom: 0.875rem;
+    display: block;
 }
 
 /* PREÇO */
@@ -82,18 +93,21 @@ main {
     display: flex;
     align-items: center;
     gap: 0.625rem;
+    flex-wrap: wrap;
 }
 
 .preco-produto, .preco-desconto {
     font-size: 1.25rem;
     font-weight: 700;
     color: #4da6ff;
+    display: inline-block;
 }
 
 .preco-original {
     font-size: 0.9375rem;
     color: #888;
     text-decoration: line-through;
+    display: inline-block;
 }
 
 .percentual-desconto {
@@ -103,6 +117,7 @@ main {
     font-weight: 700;
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
+    display: inline-block;
 }
 
 /* MENSAGENS DE STATUS */
@@ -116,6 +131,7 @@ main {
     text-align: center;
     font-weight: 500;
     font-size: 0.8125rem;
+    display: block;
 }
 
 .mensagem-erro-avaliacao {
@@ -128,6 +144,7 @@ main {
     text-align: center;
     font-weight: 500;
     font-size: 0.8125rem;
+    display: block;
 }
 
 .mensagem-fora-estoque {
@@ -140,6 +157,7 @@ main {
     text-align: center;
     font-weight: 600;
     font-size: 0.875rem;
+    display: block;
 }
 
 .mensagem-admin-bloqueio {
@@ -153,6 +171,7 @@ main {
     font-weight: 500;
     font-size: 0.8125rem;
     line-height: 1.5;
+    display: block;
 }
 
 /* BOTÃO DE COMPRA */
@@ -186,6 +205,7 @@ main {
     color: #d9d9d9;
     margin-bottom: 0.75rem;
     line-height: 1.5;
+    display: block;
 }
 
 .form-frete {
@@ -250,6 +270,7 @@ main {
     font-size: 0.8125rem;
     color: #d9d9d9;
     line-height: 1.6;
+    display: block;
 }
 
 /* AVALIAÇÕES */
@@ -290,6 +311,7 @@ main {
     font-size: 1.125rem;
     font-weight: 700;
     color: #4da6ff;
+    display: block;
 }
 
 .ver-mais {
@@ -335,6 +357,7 @@ main {
     font-size: 0.8125rem;
     color: #d9d9d9;
     line-height: 1.5;
+    display: block;
 }
 
 .sem-avaliacoes {
@@ -486,6 +509,7 @@ main {
     font-weight: 600;
     color: #4da6ff;
     padding: 0 0.625rem 0.625rem;
+    display: block;
 }
 
 /* RESPONSIVIDADE DESKTOP */
