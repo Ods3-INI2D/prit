@@ -2,15 +2,15 @@
 
 /* Estilos do Footer - Mobile First */
 footer {
-    background-color: rgb(91, 123, 225); 
+    background-color: rgb(91, 123, 225);
     font-family: 'Inter', sans-serif;
     width: 100%;
-    padding: 0.75rem 0.5rem; 
-    border-top-left-radius: 0; 
-    border-top-right-radius: 0; 
-    margin-top: 1rem; 
+    padding: 0.75rem 0.5rem;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin-top: 1rem;
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     align-items: flex-start;
     text-align: left;
     gap: 0.5rem;
@@ -18,17 +18,17 @@ footer {
 
 /* Classe genérica para itens do footer */
 .footer-item {
-    color: black; 
-    font-size: 0.75rem; 
-    margin: 0 0 0.175rem 0; 
+    color: black;
+    font-size: 0.75rem;
+    margin: 0 0 0.175rem 0;
     position: static;
     font-weight: 700;
 }
 
 /* Sub-textos */
 .footer-text-secondary {
-    color: rgb(49, 49, 49); 
-    font-size: 0.625rem; 
+    color: rgb(49, 49, 49);
+    font-size: 0.625rem;
     margin: 0;
     position: static;
     font-weight: 500;
@@ -49,7 +49,7 @@ footer {
 /* RESPONSIVIDADE DESKTOP */
 @media (min-width: 768px) {
     footer {
-        flex-direction: row; 
+        flex-direction: row;
         justify-content: space-around;
         align-items: flex-start;
         padding: 1.375rem 5%;

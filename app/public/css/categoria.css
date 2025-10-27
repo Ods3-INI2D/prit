@@ -8,56 +8,56 @@
 }
 
 :root {
-    font-size: 16px; 
+    font-size: 16px;
 }
 
 body {
     background-color: #1f1f1f;
     font-family: 'Inter', sans-serif;
     color: white;
-    width: 100%; 
+    width: 100%;
     min-height: 100vh;
     margin: 0;
 }
 
 main {
     min-height: 60vh;
-    padding: 0.875rem 0; 
+    padding: 1rem 0;
 }
 
 /* NAVEGAÇÃO/VOLTAR */
 .navegacao {
-    width: 90%; 
+    width: 90%;
     max-width: 1200px;
-    margin: 0 auto 0.875rem; 
+    margin: 0 auto 1rem;
 }
 
 .voltar {
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem; 
+    gap: 0.375rem;
     color: white;
     text-decoration: none;
-    font-size: 0.75rem; 
+    font-size: 0.8125rem;
     font-weight: 500;
 }
 
 .seta-voltar {
-    width: 0.8125rem; 
+    width: 0.875rem;
     height: auto;
 }
 
 /* TÍTULO DA CATEGORIA */
 .categoria-container {
-    width: 90%; 
+    width: 90%;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .titulo-categoria {
-    font-size: 1.375rem; 
+    font-size: 1.5rem;
     font-weight: 700;
-    margin-bottom: 0.875rem; 
+    margin-bottom: 1rem;
     color: white;
     text-align: center;
 }
@@ -65,23 +65,23 @@ main {
 /* MENSAGEM DE VAZIO */
 .categoria-vazia {
     text-align: center;
-    padding: 2.5rem 0; 
+    padding: 3rem 0;
 }
 
 .mensagem-vazio {
-    font-size: 0.9375rem; 
+    font-size: 1rem;
     color: #888;
-    margin-bottom: 1rem; 
+    margin-bottom: 1.25rem;
 }
 
 .btn-voltar-home {
     display: inline-block;
-    padding: 0.75rem 1.5rem; 
+    padding: 0.875rem 1.75rem;
     background-color: #163069;
     color: white;
     text-decoration: none;
-    border-radius: 0.5rem; 
-    font-size: 0.9375rem;
+    border-radius: 0.625rem;
+    font-size: 1rem;
     font-weight: 600;
     transition: background-color 0.3s ease;
 }
@@ -93,22 +93,22 @@ main {
 /* GRID DE PRODUTOS - 2 colunas no mobile */
 .produtos-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 0.5rem; 
-    margin-bottom: 1.75rem; 
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.625rem;
+    margin-bottom: 2rem;
 }
 
 .produto-card {
     background-color: #2a2a2a;
-    border-radius: 0.375rem; 
+    border-radius: 0.5rem;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .produto-card:hover {
-    transform: translateY(-2px); 
-    box-shadow: 0 3px 12px rgba(77, 166, 255, 0.3); 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(77, 166, 255, 0.3);
 }
 
 .link-produto {
@@ -119,55 +119,74 @@ main {
 
 .imagem-produto {
     width: 100%;
-    height: 120px; 
+    height: 140px;
     object-fit: cover;
 }
 
 .nome-produto {
-    font-size: 0.75rem; 
+    font-size: 0.8125rem;
     font-weight: 600;
-    padding: 0.5rem 0.5rem 0.3rem; 
+    padding: 0.625rem 0.625rem 0.375rem;
     color: white;
-    line-height: 1.2;
-    min-height: 2.2rem; 
+    line-height: 1.25;
+    min-height: 2.5rem;
 }
 
 .preco-container {
-    padding: 0 0.5rem; 
+    padding: 0 0.625rem;
     display: flex;
     align-items: center;
-    gap: 0.3rem; 
-    margin-bottom: 0.3rem; 
+    gap: 0.375rem;
+    margin-bottom: 0.375rem;
 }
 
 .preco-original {
-    font-size: 0.6875rem; 
+    font-size: 0.75rem;
     color: #888;
     text-decoration: line-through;
 }
 
 .preco-desconto {
-    font-size: 0.8125rem; 
+    font-size: 0.875rem;
     font-weight: 700;
     color: #4da6ff;
 }
 
-.categoria-label {
+.preco-normal {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #4da6ff;
+    padding: 0 0.625rem;
+    display: block;
+    margin-bottom: 0.375rem;
+}
+
+.percentual {
+    background-color: #4da6ff;
+    color: #1f1f1f;
     font-size: 0.625rem;
+    font-weight: 700;
+    padding: 0.1875rem 0.375rem;
+    border-radius: 0.25rem;
+    margin-left: auto;
+}
+
+.categoria-label {
+    font-size: 0.6875rem;
     color: #ccc;
-    padding: 0 0.5rem 0.5rem;
+    padding: 0 0.625rem 0.625rem;
     display: block;
 }
 
 /* Estrelas */
 .estrelas-container {
     display: flex;
-    gap: 0.15rem;
-    padding: 0.3rem 0.5rem 0.5rem;
+    gap: 0.1875rem;
+    padding: 0.375rem 0.625rem 0.625rem;
 }
 
 .estrela {
-    width: 0.6875rem;
+    width: 0.75rem;
     height: auto;
 }
 
@@ -175,45 +194,55 @@ main {
 @media (min-width: 768px) {
     
     .titulo-categoria {
-        font-size: 2rem;
-        margin-bottom: 1.5rem;
+        font-size: 2.25rem;
+        margin-bottom: 1.75rem;
     }
 
     .produtos-grid {
-        grid-template-columns: repeat(4, 1fr); 
-        gap: 1rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.125rem;
     }
 
     .imagem-produto {
-        height: 180px; 
+        height: 200px;
     }
 
     .nome-produto {
-        font-size: 0.9375rem;
-        min-height: 3rem; 
-        padding: 0.875rem;
+        font-size: 1rem;
+        min-height: 3.25rem;
+        padding: 1rem;
     }
 
     .preco-original,
-    .preco-desconto {
-        font-size: 0.9375rem;
+    .preco-desconto,
+    .preco-normal {
+        font-size: 1.0625rem;
     }
     
     .preco-container {
-        padding: 0 0.875rem;
+        padding: 0 1rem;
+    }
+
+    .preco-normal {
+        padding: 0 1rem;
+    }
+
+    .percentual {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
     }
 
     .categoria-label {
-        font-size: 0.8125rem;
-        padding: 0 0.875rem 0.875rem;
+        font-size: 0.875rem;
+        padding: 0 1rem 1rem;
     }
 
     .estrelas-container {
-        padding: 0.5rem 0.875rem 0.875rem;
-        gap: 0.2rem;
+        padding: 0.625rem 1rem 1rem;
+        gap: 0.25rem;
     }
 
     .estrela {
-        width: 0.875rem;
+        width: 1rem;
     }
 }
