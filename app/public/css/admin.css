@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-/* --- Reset e Configuração Base (Mobile First) --- */
+/* --- reset e configuracao base (mobile first) --- */
 * {
     margin: 0;
     padding: 0;
@@ -19,7 +19,7 @@ body {
     min-height: 100vh;
 }
 
-/* --- HEADER --- */
+/* --- header --- */
 header {
     background-color: #163069;
     width: 100%;
@@ -45,7 +45,7 @@ header {
     text-align: center;
 }
 
-/* --- MAIN CONTENT & CONTAINERS --- */
+/* --- main content & containers --- */
 main {
     width: 90%; 
     max-width: 1200px; 
@@ -64,7 +64,7 @@ main {
     margin-bottom: 2.05rem; 
 }
 
-/* --- CARDS & FORM BASE --- */
+/* --- cards & form base --- */
 .card-stats, .form-produto {
     background-color: #2a2a2a;
     padding: 1.35rem 1.15rem; 
@@ -73,7 +73,7 @@ main {
     box-shadow: 0 0.225rem 0.7rem rgba(0, 0, 0, 0.25); 
 }
 
-/* --- ESTATÍSTICAS --- */
+/* --- estatisticas --- */
 .stat-titulo {
     font-size: 1.05rem; 
     font-weight: 500;
@@ -87,7 +87,7 @@ main {
     color: #4da6ff;
 }
 
-/* --- MENSAGENS DE ERRO/SUCESSO --- */
+/* --- mensagens de erro/sucesso --- */
 .mensagem-erro,
 .mensagem-sucesso {
     padding: 0.95rem;
@@ -109,7 +109,7 @@ main {
     color: #4da6ff;
 }
 
-/* --- FORMULÁRIO E INPUTS --- */
+/* --- formulario e inputs --- */
 .label-titulo {
     font-size: 0.95rem; 
     font-weight: 500;
@@ -159,7 +159,7 @@ input:focus, select:focus, textarea:focus {
     box-shadow: 0 0 0.35rem rgba(77, 166, 255, 0.75);
 }
 
-/* --- CAMPO IMAGEM --- */
+/* --- campo imagem --- */
 .campo-imagem {
     border: none;
     margin-bottom: 1.35rem;
@@ -204,7 +204,7 @@ input:focus, select:focus, textarea:focus {
     text-align: center;
 }
 
-/* --- BOTÕES GERAIS --- */
+/* --- botoes gerais --- */
 .btn-adicionar {
     width: 100%;
     padding: 1.05rem 0; 
@@ -223,7 +223,7 @@ input:focus, select:focus, textarea:focus {
     background-color: #0d1f42;
 }
 
-/* --- LISTA DE PRODUTOS --- */
+/* --- lista de produtos --- */
 .mensagem-vazia {
     text-align: center;
     color: #888;
@@ -305,7 +305,7 @@ input:focus, select:focus, textarea:focus {
     background-color: #a3241b;
 }
 
-/* --- FOOTER --- */
+/* --- footer --- */
 footer {
     margin-top: 1.8rem;
     padding: 0.95rem;
@@ -323,9 +323,7 @@ footer {
     color: #6bb5ff;
 }
 
-/* =================================================== */
-/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
-/* =================================================== */
+/* responsividade pra desktops (min-width: 768px) */
 @media (min-width: 768px) {
     header {
         min-height: 17vh;
