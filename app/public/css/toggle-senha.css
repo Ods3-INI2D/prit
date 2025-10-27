@@ -1,6 +1,4 @@
-/* =================================================== */
-/* --- ESTILOS PARA BOTÃO DE MOSTRAR/OCULTAR SENHA --- */
-/* =================================================== */
+/*estilo para botao ver senha*/
 
 .campo-senha {
     position: relative;
@@ -68,9 +66,7 @@
     filter: brightness(1.2);
 }
 
-/* =================================================== */
-/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
-/* =================================================== */
+/*responsividade para desktops (min-width: 768px)*/
 @media (min-width: 768px) {
     .campo-senha input {
         padding-right: 3.8rem;

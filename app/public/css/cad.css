@@ -1,12 +1,8 @@
-/* ============================================== */
-/* LOGIN/CADASTRO.CSS - ATUALIZADO MOBILE FIRST */
-/* ============================================== */
+/* login e cadastro css */
 @import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-/* =========================
-   ESTILOS GLOBAIS E RESET
-========================= */
+/* estilos globais*/
 * {
     margin: 0;
     padding: 0;
@@ -23,9 +19,7 @@ body {
     width: 100%;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* header*/
 header {
     display: flex;
     justify-content: center;
@@ -43,9 +37,7 @@ img.icon {
     height: auto;
 }
 
-/* =========================
-   MAIN & LOGIN MODULE
-========================= */
+/* main & login module */
 main {
     flex: 1;
     display: flex;
@@ -86,9 +78,7 @@ h2 {
     color: white;
 }
 
-/* =========================
-   FORMULÁRIO
-========================= */
+/* formulario*/
 form {
     max-width: 100%;
     margin: 1.6875rem auto;
@@ -124,9 +114,7 @@ input[type="tel"]:focus {
     box-shadow: 0 0 0.4375rem rgba(77, 166, 255, 0.65);
 }
 
-/* =========================
-   BOTÃO LOGIN/CADASTRO
-========================= */
+/* botao login/cadastro*/
 #btn,
 #btn-login {
     background-color: #007bff;
@@ -149,9 +137,7 @@ input[type="tel"]:focus {
     transform: translateY(-0.125rem);
 }
 
-/* =========================
-   MENSAGENS DE ERRO
-========================= */
+/* erro*/
 small.erro,
 output.erro {
     color: #ff5555;
@@ -175,9 +161,7 @@ output.erro {
     text-align: center;
 }
 
-/* =========================
-   OUTROS ELEMENTOS
-========================= */
+/* outros elementos */
 section.txt {
     width: 100%;
     max-width: 23.75rem;
@@ -227,9 +211,7 @@ main > p.ou {
     opacity: 1;
 }
 
-/* =========================
-   FOOTER
-========================= */
+/* footer*/
 footer {
     margin-top: auto;
     width: 100%;
@@ -237,9 +219,7 @@ footer {
     min-height: 5vh;
 }
 
-/* =========================
-   RESPONSIVIDADE DESKTOP
-========================= */
+/* responsividade desktop */
 @media (min-width: 601px) {
 
     header {

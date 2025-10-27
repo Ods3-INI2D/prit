@@ -12,7 +12,7 @@
     box-sizing: border-box;
 }
 
-/* HAMBURGER */
+/* hamburger */
 .hamburger {
     position: relative;
     width: 1.25rem;
@@ -52,7 +52,7 @@
     transform: rotate(-45deg);
 }
 
-/* MENU LATERAL - COBRE TELA INTEIRA NO MOBILE */
+/* menu lateral - cobre tela inteira no mobile */
 .opcoes {
     position: fixed;
     top: 0;
@@ -73,7 +73,7 @@
     transform: translateX(0);
 }
 
-/* LOGO E USER NO MENU */
+/* logo e user no menu */
 .opcoes .plogo {
     width: 0.875rem;
     height: auto;
@@ -93,7 +93,7 @@
     border-radius: 50%;
 }
 
-/* USER INFO DENTRO DO MENU */
+/* user info */
 .menu-content {
     margin-top: 0;
     padding: 0;
@@ -126,7 +126,7 @@
     color: #6bb5ff;
 }
 
-/* CATEGORIAS */
+/* categorias */
 .categorias {
     margin-bottom: 0;
     padding: 0;
@@ -141,7 +141,7 @@
     background-color: rgba(0, 0, 0, 0.15);
 }
 
-/* MENU PRINCIPAL */
+/* menu principal */
 .menu-principal {
     list-style: none;
     padding: 0;
@@ -184,7 +184,7 @@
     transform: rotate(90deg);
 }
 
-/* SUBMENU */
+/* submenu */
 .submenu {
     list-style: none;
     padding: 0;
@@ -217,7 +217,7 @@
     color: white;
 }
 
-/* OUTRO */
+/* outro */
 .outro {
     margin: 0;
     padding: 0.625rem 0 0 0;
@@ -244,7 +244,7 @@
     color: white;
 }
 
-/* FOOTER DO MENU */
+/* footer do menu */
 .opcoes footer {
     margin: 0;
     background-color: #1B1B1B;
@@ -252,12 +252,12 @@
     padding: 0;
 }
 
-/* OVERLAY QUANDO MENU ABERTO - REMOVIDO NO MOBILE */
+/* overlay menu */
 .opcoes.is-open::before {
     content: none;
 }
 
-/* RESPONSIVIDADE DESKTOP */
+/* responsividade desktop */
 @media (min-width: 768px) {
     :root {
         --menu-width: 20rem;
@@ -318,7 +318,7 @@
         padding: 0.875rem 1.0625rem;
     }
 
-    /* OVERLAY APARECE NO DESKTOP */
+    /* overlay aparecee no desktop */
     .opcoes.is-open::before {
         content: '';
         position: fixed;
