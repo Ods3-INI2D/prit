@@ -4,215 +4,382 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrador</title>
+    <title>Administrador - Painel de Controle</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/admin.css">
-    <style>
-        /* Estilos para o campo de imagem */
-        .campo-imagem {
-            border: none;
-            padding: 0;
-            margin-bottom: 1.125rem;
-        }
- 
-        .campo-imagem legend {
-            padding: 0;
-            margin-bottom: 0.5rem;
-        }
- 
-        .label-arquivo {
-            display: block;
-            margin-bottom: 0.75rem;
-        }
- 
-        input[type="file"] {
-            width: 100%;
-            padding: 0.9375rem 0.75rem;
-            border: 2px solid #555;
-            border-radius: 0.625rem;
-            background-color: #383838;
-            color: white;
-            font-size: 1rem;
-            font-family: inherit;
-            cursor: pointer;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
- 
-        input[type="file"]:focus {
-            border-color: #4da6ff;
-            outline: none;
-            box-shadow: 0 0 0.375rem rgba(77, 166, 255, 0.8);
-        }
- 
-        input[type="file"]::file-selector-button {
-            background-color: #163069;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            margin-right: 1rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-        }
- 
-        input[type="file"]::file-selector-button:hover {
-            background-color: #0d1f42;
-        }
- 
-        .info-arquivo {
-            display: block;
-            font-size: 0.875rem;
-            color: #888;
-            margin-top: 0.5rem;
-            transition: color 0.3s ease;
-        }
- 
-        .preview-container {
-            display: block;
-            margin-top: 1rem;
-        }
- 
-        .preview-figure {
-            margin: 0;
-            text-align: center;
-            background-color: #1f1f1f;
-            padding: 1rem;
-            border-radius: 0.5rem;
-        }
- 
-        .preview-img {
-            max-width: 100%;
-            max-height: 300px;
-            height: auto;
-            border-radius: 0.5rem;
-            object-fit: contain;
-        }
- 
-        .preview-caption {
-            margin-top: 0.75rem;
-            font-size: 0.875rem;
-            color: #d9d9d9;
-            word-break: break-word;
-        }
- 
-        @media (min-width: 768px) {
-            .preview-img {
-                max-height: 400px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/css/admin-extended.css">
 </head>
 <body>
     <header>
-        <img src="/imagens/logo.png" alt="Logo" class="logo">
+        <img src="/imagens/logo.png" alt="Logotipo da Farmácia" class="logo">
         <h1 class="titulo">Painel Administrativo</h1>
     </header>
  
     <main>
-        <section class="estatisticas">
-            <h2 class="subtitulo">Estatísticas do Site</h2>
+        <% if(typeof sucesso !== 'undefined' && sucesso === 'produto_adicionado') { %>
+            <output class="mensagem-sucesso" role="status" aria-live="polite">
+                Produto adicionado com sucesso!
+            </output>
+        <% } else if(typeof sucesso !== 'undefined' && sucesso === 'produto_editado') { %>
+            <output class="mensagem-sucesso" role="status" aria-live="polite">
+                Produto editado com sucesso!
+            </output>
+        <% } else if(typeof sucesso !== 'undefined' && sucesso === 'produto_excluido') { %>
+            <output class="mensagem-sucesso" role="status" aria-live="polite">
+                Produto excluído com sucesso!
+            </output>
+        <% } else if(typeof sucesso !== 'undefined' && sucesso === 'usuario_excluido') { %>
+            <output class="mensagem-sucesso" role="status" aria-live="polite">
+                Usuário excluído com sucesso!
+            </output>
+        <% } else if(typeof sucesso !== 'undefined' && sucesso === 'banner_editado') { %>
+            <output class="mensagem-sucesso" role="status" aria-live="polite">
+                Banner editado com sucesso!
+            </output>
+        <% } %>
+
+        <% if(typeof erro !== 'undefined' && erro === 'adicionar_produto') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Erro ao adicionar produto!
+            </output>
+        <% } else if(typeof erro !== 'undefined' && erro === 'editar_produto') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Erro ao editar produto!
+            </output>
+        <% } else if(typeof erro !== 'undefined' && erro === 'excluir_produto') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Erro ao excluir produto!
+            </output>
+        <% } else if(typeof erro !== 'undefined' && erro === 'produto_nao_encontrado') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Produto não encontrado!
+            </output>
+        <% } else if(typeof erro !== 'undefined' && erro === 'excluir_usuario') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Erro ao excluir usuário!
+            </output>
+        <% } else if(typeof erro !== 'undefined' && erro === 'editar_banner') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Erro ao editar banner! Verifique se a imagem é válida (JPG, PNG ou WEBP com máximo de 5MB).
+            </output>
+        <% } else if(typeof erro !== 'undefined' && erro === 'banner_nao_encontrado') { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                Banner não encontrado!
+            </output>
+        <% } else if(typeof erro !== 'undefined' && erro === 'funcao_restrita') { %>
+            <output class="mensagem-info" role="alert" aria-live="assertive">
+                ⚠️ Esta funcionalidade está restrita a usuários clientes. Como administrador, você não pode acessar o carrinho ou avaliar produtos.
+            </output>
+        <% } %>
+
+        <section class="estatisticas" aria-labelledby="titulo-estatisticas">
+            <h2 id="titulo-estatisticas" class="subtitulo">Estatísticas do Site</h2>
             
-            <article class="card-stats">
-                <h3 class="stat-titulo">Total de Produtos</h3>
-                <p class="stat-valor"><%= totalProdutos %></p>
-            </article>
- 
-            <article class="card-stats">
-                <h3 class="stat-titulo">Total de Avaliações</h3>
-                <p class="stat-valor"><%= totalAvaliacoes %></p>
-            </article>
+            <section class="estatisticas-grid">
+                <article class="card-stats">
+                    <h3 class="stat-titulo">Total de Produtos</h3>
+                    <output class="stat-valor" aria-label="<%= totalProdutos %> produtos cadastrados"><%= totalProdutos %></output>
+                </article>
+
+                <article class="card-stats">
+                    <h3 class="stat-titulo">Total de Usuários</h3>
+                    <output class="stat-valor" aria-label="<%= usuarios.length %> usuários cadastrados"><%= usuarios.length %></output>
+                </article>
+            </section>
         </section>
- 
-        <section class="adicionar-produto">
-            <h2 class="subtitulo">Adicionar Novo Produto</h2>
-            
-            <form method="POST" action="/admin/adicionar-produto" class="form-produto" enctype="multipart/form-data">
-                <label for="nome">
-                    <h3 class="label-titulo">Nome do Produto</h3>
-                </label>
-                <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" required>
- 
-                <label for="preco">
-                    <h3 class="label-titulo">Preço</h3>
-                </label>
-                <input type="number" id="preco" name="preco" placeholder="0.00" step="0.01" min="0" required>
- 
-                <label for="precoDesconto">
-                    <h3 class="label-titulo">Preço com Desconto (opcional)</h3>
-                </label>
-                <input type="number" id="precoDesconto" name="precoDesconto" placeholder="0.00" step="0.01" min="0">
- 
-                <label for="categoria">
-                    <h3 class="label-titulo">Categoria</h3>
-                </label>
-                <select id="categoria" name="categoria" required>
-                    <option value="">Selecione uma categoria</option>
-                    <option value="Cuidados com a Pele">Cuidados com a Pele</option>
-                    <option value="Higiene Bucal">Higiene Bucal</option>
-                    <option value="Cabelo">Cabelo</option>
-                    <option value="Vitaminas e Suplementos">Vitaminas e Suplementos</option>
-                    <option value="Bebê">Bebê</option>
-                    <option value="Terceira Idade">Terceira Idade</option>
-                    <option value="Medicamentos">Medicamentos</option>
-                </select>
- 
-                <fieldset class="campo-imagem">
-                    <legend>
-                        <h3 class="label-titulo">Imagem do Produto</h3>
-                    </legend>
-                    <label for="imagem" class="label-arquivo">
-                        <input type="file"
-                               id="imagem"
-                               name="imagem"
-                               accept="image/jpeg,image/jpg,image/png,image/webp"
-                               aria-describedby="imagem-info">
-                        <output id="imagem-info" class="info-arquivo">
-                            Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB)
-                        </output>
-                    </label>
-                    <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></output>
-                </fieldset>
- 
-                <label for="descricao">
-                    <h3 class="label-titulo">Descrição do Produto</h3>
-                </label>
-                <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto" rows="5" required></textarea>
- 
-                <button type="submit" class="btn-adicionar">Adicionar Produto</button>
-            </form>
-        </section>
- 
-        <section class="lista-produtos">
-            <h2 class="subtitulo">Produtos Cadastrados</h2>
-            
-            <% if(produtos.length === 0) { %>
-                <p class="mensagem-vazia">Nenhum produto cadastrado ainda.</p>
-            <% } else { %>
-                <ul class="produtos-lista">
-                    <% produtos.forEach(function(produto) { %>
-                        <li class="produto-item">
-                            <h3 class="produto-nome"><%= produto.nome %></h3>
-                            <p class="produto-info">Categoria: <%= produto.categoria %></p>
-                            <p class="produto-info">Preço: R$ <%= produto.preco.toFixed(2) %></p>
-                            <% if(produto.precoDesconto) { %>
-                                <p class="produto-info desconto">Com Desconto: R$ <%= produto.precoDesconto.toFixed(2) %></p>
-                            <% } %>
-                        </li>
-                    <% }); %>
-                </ul>
-            <% } %>
+
+        <section class="tabs-container">
+            <nav class="tabs-header" role="tablist">
+                <button class="tab-button active" data-tab="adicionar" role="tab" aria-selected="true" aria-controls="tab-adicionar">Adicionar Produto</button>
+                <button class="tab-button" data-tab="produtos" role="tab" aria-selected="false" aria-controls="tab-produtos">Gerenciar Produtos</button>
+                <button class="tab-button" data-tab="usuarios" role="tab" aria-selected="false" aria-controls="tab-usuarios">Gerenciar Usuários</button>
+                <button class="tab-button" data-tab="banners" role="tab" aria-selected="false" aria-controls="tab-banners">Gerenciar Banners</button>
+            </nav>
+
+            <article class="tab-content active" id="tab-adicionar" role="tabpanel" aria-labelledby="titulo-adicionar">
+                <section class="adicionar-produto">
+                    <h2 id="titulo-adicionar" class="subtitulo">Adicionar Novo Produto</h2>
+                    
+                    <form method="POST" action="/admin/adicionar-produto" class="form-produto" enctype="multipart/form-data" aria-label="Formulário de cadastro de produto">
+                        <fieldset>
+                            <legend class="label-titulo">Nome do Produto</legend>
+                            <label for="nome">
+                                <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" required aria-required="true">
+                            </label>
+                        </fieldset>
+         
+                        <fieldset>
+                            <legend class="label-titulo">Preço</legend>
+                            <label for="preco">
+                                <input type="number" id="preco" name="preco" placeholder="0.00" step="0.01" min="0" required aria-required="true">
+                            </label>
+                        </fieldset>
+         
+                        <fieldset>
+                            <legend class="label-titulo">Preço com Desconto (opcional)</legend>
+                            <label for="precoDesconto">
+                                <input type="number" id="precoDesconto" name="precoDesconto" placeholder="0.00" step="0.01" min="0" aria-required="false">
+                            </label>
+                        </fieldset>
+         
+                        <fieldset>
+                            <legend class="label-titulo">Categoria</legend>
+                            <label for="categoria">
+                                <select id="categoria" name="categoria" required aria-required="true">
+                                    <option value="">Selecione uma categoria</option>
+                                    <option value="Cuidados com a Pele">Cuidados com a Pele</option>
+                                    <option value="Higiene Bucal">Higiene Bucal</option>
+                                    <option value="Cabelo">Cabelo</option>
+                                    <option value="Vitaminas e Suplementos">Vitaminas e Suplementos</option>
+                                    <option value="Bebê">Bebê</option>
+                                    <option value="Terceira Idade">Terceira Idade</option>
+                                    <option value="Medicamentos">Medicamentos</option>
+                                </select>
+                            </label>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend class="label-titulo">Status do Produto</legend>
+                            <label for="status">
+                                <select id="status" name="status" required aria-required="true">
+                                    <option value="em-estoque">Em Estoque</option>
+                                    <option value="fora-de-estoque">Fora de Estoque</option>
+                                </select>
+                            </label>
+                        </fieldset>
+         
+                        <fieldset class="campo-imagem">
+                            <legend>
+                                <strong class="label-titulo">Imagem do Produto</strong>
+                            </legend>
+                            <label for="imagem" class="label-arquivo">
+                                <input type="file"
+                                       id="imagem"
+                                       name="imagem"
+                                       accept="image/jpeg,image/jpg,image/png,image/webp"
+                                       aria-describedby="imagem-info">
+                                <output id="imagem-info" class="info-arquivo">
+                                    Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB)
+                                </output>
+                            </label>
+                            <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></output>
+                        </fieldset>
+         
+                        <label for="descricao">
+                            <strong class="label-titulo">Descrição do Produto</strong>
+                            <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto" rows="5" required aria-required="true"></textarea>
+                        </label>
+         
+                        <button type="submit" class="btn-adicionar">Adicionar Produto</button>
+                    </form>
+                </section>
+            </article>
+
+            <article class="tab-content" id="tab-produtos" role="tabpanel" aria-labelledby="titulo-lista">
+                <section class="lista-produtos">
+                    <h2 id="titulo-lista" class="subtitulo">Produtos Cadastrados</h2>
+                    
+                    <% if(produtos.length === 0) { %>
+                        <output class="mensagem-vazia">Nenhum produto cadastrado ainda.</output>
+                    <% } else { %>
+                        <ul class="produtos-lista" role="list">
+                            <% produtos.forEach(function(produto) { %>
+                                <li class="produto-item" role="listitem">
+                                    <article class="produto-info-container">
+                                        <figure>
+                                            <h3 class="produto-nome"><%= produto.nome %></h3>
+                                            <figcaption class="produto-info">ID: <%= produto.id %></figcaption>
+                                        </figure>
+                                        <output class="produto-info">Categoria: <%= produto.categoria %></output>
+                                        <output class="produto-info produto-preco">R$ <%= produto.preco.toFixed(2) %></output>
+                                        <% if(produto.precoDesconto) { %>
+                                            <output class="produto-info desconto">Com Desconto: R$ <%= produto.precoDesconto.toFixed(2) %></output>
+                                        <% } %>
+                                        <output class="produto-info <%= produto.status === 'em-estoque' ? '' : 'desconto' %>">
+                                            Status: <%= produto.status === 'em-estoque' ? 'Em Estoque' : 'Fora de Estoque' %>
+                                        </output>
+                                    </article>
+                                    <nav class="acoes-produto" aria-label="Ações do produto <%= produto.nome %>">
+                                        <a href="/admin/editar-produto/<%= produto.id %>" class="btn-editar" aria-label="Editar produto <%= produto.nome %>">Editar</a>
+                                        <form method="POST" action="/admin/excluir-produto/<%= produto.id %>" class="form-inline">
+                                            <button class="btn-excluir" type="submit" onclick="return confirm('Tem certeza que deseja excluir este produto?')" aria-label="Excluir produto <%= produto.nome %>">Excluir</button>
+                                        </form>
+                                    </nav>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+                </section>
+            </article>
+
+            <article class="tab-content" id="tab-usuarios" role="tabpanel" aria-labelledby="titulo-usuarios">
+                <section class="lista-usuarios-section">
+                    <h2 id="titulo-usuarios" class="subtitulo">Usuários Cadastrados</h2>
+                    
+                    <% if(usuarios.length === 0) { %>
+                        <output class="mensagem-vazia">Nenhum usuário cadastrado ainda.</output>
+                    <% } else { %>
+                        <ul class="usuarios-lista" role="list">
+                            <% usuarios.forEach(function(usuario) { %>
+                                <li class="usuario-item" role="listitem">
+                                    <article class="usuario-info-container">
+                                        <figure>
+                                            <h3 class="usuario-email"><%= usuario.email %></h3>
+                                            <figcaption class="usuario-info">Nome: <%= usuario.nome %></figcaption>
+                                        </figure>
+                                        <output class="usuario-info">CPF: <%= usuario.cpf %></output>
+                                        <output class="usuario-info">Telefone: <%= usuario.tel %></output>
+                                        <time class="usuario-info" datetime="<%= usuario.nasc %>">Nascimento: <%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></time>
+                                    </article>
+                                    <nav class="acoes-usuario" aria-label="Ações do usuário <%= usuario.email %>">
+                                        <form method="POST" action="/admin/excluir-usuario/<%= encodeURIComponent(usuario.email) %>" class="form-inline">
+                                            <button class="btn-excluir" type="submit" onclick="return confirm('Tem certeza que deseja excluir este usuário?')" aria-label="Excluir usuário <%= usuario.email %>">Excluir</button>
+                                        </form>
+                                    </nav>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+                </section>
+            </article>
+
+            <article class="tab-content" id="tab-banners" role="tabpanel" aria-labelledby="titulo-banners">
+                <section class="lista-banners-section">
+                    <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners do Carrossel</h2>
+                    
+                    <output class="mensagem-info" role="status">
+                        Edite os banners que aparecem no carrossel da página inicial. São 3 banners disponíveis. 
+                        Você pode alterar a legenda (descrição), o link de destino e a imagem de cada banner.
+                    </output>
+                    
+                    <% if(typeof banners !== 'undefined' && banners && banners.length > 0) { %>
+                        <ul class="usuarios-lista" role="list">
+                            <% banners.forEach(function(banner, index) { %>
+                                <li class="usuario-item" role="listitem">
+                                    <article class="usuario-info-container">
+                                        <figure>
+                                            <img src="<%= banner.imagem %>" 
+                                                 alt="<%= banner.legenda %>" 
+                                                 style="max-width: 200px; height: auto; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                                            <figcaption class="usuario-info">Banner <%= index + 1 %></figcaption>
+                                        </figure>
+                                        <output class="usuario-info">Legenda: <%= banner.legenda %></output>
+                                        <output class="usuario-info">Link: <%= banner.link || '/home' %></output>
+                                    </article>
+                                    <nav class="acoes-usuario" aria-label="Ações do banner <%= index + 1 %>">
+                                        <button class="btn-editar" 
+                                                type="button" 
+                                                data-banner-id="<%= banner.id %>"
+                                                data-banner-legenda="<%= banner.legenda %>"
+                                                data-banner-link="<%= banner.link || '/home' %>"
+                                                aria-label="Editar banner <%= index + 1 %>">
+                                            Editar Banner
+                                        </button>
+                                    </nav>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } else { %>
+                        <output class="mensagem-vazia">Nenhum banner disponível. Verifique o banco de dados.</output>
+                    <% } %>
+                </section>
+            </article>
         </section>
     </main>
  
     <footer>
-        <nav>
+        <nav aria-label="Navegação do rodapé">
             <a href="/home" class="link-footer">Voltar ao Site</a>
         </nav>
     </footer>
+
+    <aside id="modal-banner" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+        <article class="modal-content">
+            <h2 class="subtitulo" id="modal-titulo">Editar Banner do Carrossel</h2>
+            
+            <form method="POST" id="form-editar-banner" enctype="multipart/form-data" class="form-produto" aria-label="Formulário de edição de banner">
+                
+                <fieldset>
+                    <legend class="label-titulo">Legenda do Banner</legend>
+                    <label for="legenda-banner">
+                        <input type="text" 
+                               id="legenda-banner" 
+                               name="legenda" 
+                               placeholder="Ex: Promoções Especiais" 
+                               required
+                               aria-required="true"
+                               aria-describedby="legenda-info">
+                    </label>
+                    <output id="legenda-info" class="info-arquivo">
+                        A legenda aparecerá sobreposta na imagem do banner no carrossel.
+                    </output>
+                </fieldset>
+
+                <fieldset>
+                    <legend class="label-titulo">Link de Destino do Banner</legend>
+                    <label for="link-banner">
+                        <input type="text" 
+                               id="link-banner" 
+                               name="link" 
+                               placeholder="/home ou /categoria/nome" 
+                               required
+                               aria-required="true"
+                               aria-describedby="link-info">
+                    </label>
+                    <output id="link-info" class="info-arquivo">
+                        Exemplos de links válidos: /home, /categoria/Cuidados com a Pele, /produto/123.
+                        O link deve começar com / e levar para uma página válida do site.
+                    </output>
+                </fieldset>
+
+                <fieldset class="campo-imagem">
+                    <legend>
+                        <strong class="label-titulo">Nova Imagem do Banner (opcional)</strong>
+                    </legend>
+                    <label for="imagem-banner" class="label-arquivo">
+                        <input type="file"
+                               id="imagem-banner"
+                               name="imagem"
+                               accept="image/jpeg,image/jpg,image/png,image/webp"
+                               aria-describedby="banner-info">
+                        <output id="banner-info" class="info-arquivo">
+                            Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). 
+                            Deixe em branco para manter a imagem atual.
+                            Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).
+                        </output>
+                    </label>
+                    <output id="preview-banner" class="preview-container" role="status" aria-live="polite"></output>
+                </fieldset>
+
+                <button type="submit" class="btn-adicionar">Salvar Alterações do Banner</button>
+                <button type="button" class="btn-adicionar" id="btn-fechar-modal" style="background-color: #555; margin-top: 1rem;">Cancelar Edição</button>
+            </form>
+        </article>
+    </aside>
  
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+
+                    tabButtons.forEach(function(btn) {
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-selected', 'false');
+                    });
+                    tabContents.forEach(function(content) {
+                        content.classList.remove('active');
+                    });
+
+                    this.classList.add('active');
+                    this.setAttribute('aria-selected', 'true');
+                    document.getElementById('tab-' + tabId).classList.add('active');
+                });
+            });
+
             const inputImagem = document.getElementById('imagem');
             const previewContainer = document.getElementById('preview-imagem');
             const infoArquivo = document.getElementById('imagem-info');
@@ -224,10 +391,10 @@
                     if (!arquivo) {
                         previewContainer.innerHTML = '';
                         infoArquivo.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB)';
+                        infoArquivo.style.color = '';
                         return;
                     }
  
-                    // Validação de tamanho (5MB)
                     if (arquivo.size > 5 * 1024 * 1024) {
                         infoArquivo.textContent = 'Erro: A imagem deve ter no máximo 5MB';
                         infoArquivo.style.color = '#d93025';
@@ -236,7 +403,6 @@
                         return;
                     }
  
-                    // Validação de tipo
                     const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
                     if (!tiposPermitidos.includes(arquivo.type)) {
                         infoArquivo.textContent = 'Erro: Formato não suportado. Use JPG, PNG ou WEBP';
@@ -246,7 +412,6 @@
                         return;
                     }
  
-                    // Preview da imagem
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const figure = document.createElement('figure');
@@ -272,6 +437,128 @@
                     reader.readAsDataURL(arquivo);
                 });
             }
+
+            const inputBanner = document.getElementById('imagem-banner');
+            const previewBanner = document.getElementById('preview-banner');
+            const infoBanner = document.getElementById('banner-info');
+
+            if (inputBanner) {
+                inputBanner.addEventListener('change', function(e) {
+                    const arquivo = e.target.files[0];
+                    
+                    if (!arquivo) {
+                        previewBanner.innerHTML = '';
+                        infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual. Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).';
+                        infoBanner.style.color = '';
+                        return;
+                    }
+
+                    if (arquivo.size > 5 * 1024 * 1024) {
+                        infoBanner.textContent = 'Erro: A imagem deve ter no máximo 5MB';
+                        infoBanner.style.color = '#d93025';
+                        previewBanner.innerHTML = '';
+                        inputBanner.value = '';
+                        return;
+                    }
+
+                    const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                    if (!tiposPermitidos.includes(arquivo.type)) {
+                        infoBanner.textContent = 'Erro: Formato não suportado. Use JPG, PNG ou WEBP';
+                        infoBanner.style.color = '#d93025';
+                        previewBanner.innerHTML = '';
+                        inputBanner.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const figure = document.createElement('figure');
+                        figure.className = 'preview-figure';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = 'Preview da nova imagem do banner';
+                        img.className = 'preview-img';
+                        
+                        const figcaption = document.createElement('figcaption');
+                        figcaption.textContent = arquivo.name;
+                        figcaption.className = 'preview-caption';
+                        
+                        figure.appendChild(img);
+                        figure.appendChild(figcaption);
+                        previewBanner.innerHTML = '';
+                        previewBanner.appendChild(figure);
+                        
+                        infoBanner.textContent = 'Nova imagem selecionada com sucesso!';
+                        infoBanner.style.color = '#4da6ff';
+                    };
+                    reader.readAsDataURL(arquivo);
+                });
+            }
+
+            const modal = document.getElementById('modal-banner');
+            const form = document.getElementById('form-editar-banner');
+            const btnFecharModal = document.getElementById('btn-fechar-modal');
+            const inputLegenda = document.getElementById('legenda-banner');
+            const inputLink = document.getElementById('link-banner');
+            
+            const botoesEditar = document.querySelectorAll('[data-banner-id]');
+
+            function abrirModalBanner(bannerId, legenda, link) {
+                form.action = '/admin/editar-banner/' + bannerId;
+                
+                inputLegenda.value = legenda || '';
+                inputLink.value = link || '/home';
+                
+                if (inputBanner) inputBanner.value = '';
+                if (previewBanner) previewBanner.innerHTML = '';
+                if (infoBanner) {
+                    infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual. Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).';
+                    infoBanner.style.color = '';
+                }
+                
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function fecharModalBanner() {
+                form.reset();
+                if (previewBanner) previewBanner.innerHTML = '';
+                if (infoBanner) {
+                    infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual. Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).';
+                    infoBanner.style.color = '';
+                }
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            botoesEditar.forEach(function(botao) {
+                botao.addEventListener('click', function() {
+                    const bannerId = this.getAttribute('data-banner-id');
+                    const legenda = this.getAttribute('data-banner-legenda');
+                    const link = this.getAttribute('data-banner-link');
+                    
+                    abrirModalBanner(bannerId, legenda, link);
+                });
+            });
+
+            if (btnFecharModal) {
+                btnFecharModal.addEventListener('click', fecharModalBanner);
+            }
+
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        fecharModalBanner();
+                    }
+                });
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+                    fecharModalBanner();
+                }
+            });
         });
     </script>
 </body>

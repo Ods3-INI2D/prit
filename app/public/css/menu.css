@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 :root {
-    --menu-width: 80vw;
-    --menu-max-width: 320px;
+    --menu-width: 100vw;
+    --menu-max-width: 100vw;
     --menu-height: 100vh;
 }
 
@@ -12,67 +12,30 @@
     box-sizing: border-box;
 }
 
-/* --- MENU LATERAL --- */
-.opcoes {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: var(--menu-width);
-    max-width: var(--menu-max-width);
-    height: var(--menu-height);
-    background-color: #2D2D2D;
-    z-index: 1000;
-    color: white;
-    padding: 2.5rem 1rem;
-    overflow-y: auto;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease-out;
-}
-
-.opcoes.is-open {
-    transform: translateX(0);
-}
-
-/* --- LOGO E USER NO MENU --- */
-.opcoes .plogo {
-    width: 24px;
-    max-width: 30px;
-    height: auto;
-    display: block;
-    margin-top; 0;
-    margin-left: 80vw;
-}
-
-.opcoes .user {
-    width: 50px;
-    height: 50px;
-    display: block;
-    margin: 0 auto 1.5rem;
-    border-radius: 50%;
-}
-
-/* --- HAMBURGER --- */
+/* HAMBURGER */
 .hamburger {
     position: relative;
-    width: 28px;
-    height: 28px;
+    width: 1.25rem;
+    height: 1.25rem;
     background: none;
     border: none;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 4px;
+    gap: 0.1875rem;
     z-index: 1001;
+    padding: 0;
 }
 
 .hamburger hr {
     width: 100%;
-    height: 2px;
+    height: 0.125rem;
     background-color: white;
     border: none;
     transition: all 0.3s ease-in-out;
     transform-origin: center;
+    margin: 0;
 }
 
 .hamburger[aria-expanded="true"] .linha1 {
@@ -89,26 +52,71 @@
     transform: rotate(-45deg);
 }
 
-/* --- USER INFO DENTRO DO MENU --- */
+/* MENU LATERAL - COBRE TELA INTEIRA NO MOBILE */
+.opcoes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--menu-width);
+    max-width: var(--menu-max-width);
+    height: var(--menu-height);
+    background-color: #2D2D2D;
+    z-index: 1000;
+    color: white;
+    padding: 0;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-out;
+}
+
+.opcoes.is-open {
+    transform: translateX(0);
+}
+
+/* LOGO E USER NO MENU */
+.opcoes .plogo {
+    width: 0.875rem;
+    height: auto;
+    display: block;
+    position: absolute;
+    top: 0.8125rem;
+    right: 0.8125rem;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.opcoes .user {
+    width: 3.5rem;
+    height: 3.5rem;
+    display: block;
+    margin: 2.5rem auto 0.5rem;
+    border-radius: 50%;
+}
+
+/* USER INFO DENTRO DO MENU */
 .menu-content {
-    margin-top: 1rem;
+    margin-top: 0;
     padding: 0;
 }
 
 .perfil {
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
     text-align: center;
+    padding: 0 0.8125rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding-top: 0.5rem;
+    padding-bottom: 0.8125rem;
 }
 
 .nome {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.375rem;
     color: white;
 }
 
 .conta {
-    font-size: 1rem;
+    font-size: 0.75rem;
     color: #4da6ff;
     text-decoration: none;
     transition: color 0.3s ease;
@@ -118,19 +126,22 @@
     color: #6bb5ff;
 }
 
-/* --- CATEGORIAS --- */
+/* CATEGORIAS */
 .categorias {
-    margin-bottom: 2rem;
+    margin-bottom: 0;
+    padding: 0;
 }
 
 .tit {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
+    font-size: 0.8125rem;
+    margin-bottom: 0;
     color: white;
     font-weight: 600;
+    padding: 0.625rem 0.8125rem 0.4375rem;
+    background-color: rgba(0, 0, 0, 0.15);
 }
 
-/* --- MENU PRINCIPAL --- */
+/* MENU PRINCIPAL */
 .menu-principal {
     list-style: none;
     padding: 0;
@@ -138,7 +149,7 @@
 }
 
 .menu-item {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.1);
 }
 
 .menu-item > a,
@@ -146,8 +157,8 @@
     display: block;
     color: white;
     text-decoration: none;
-    font-size: 1.125rem;
-    padding: 1rem 0;
+    font-size: 0.75rem;
+    padding: 0.78125rem 0.8125rem;
     transition: background-color 0.3s ease;
     position: relative;
 }
@@ -164,7 +175,7 @@
 }
 
 .seta {
-    font-size: 1.5rem;
+    font-size: 1.125rem;
     font-style: normal;
     transition: transform 0.3s ease;
 }
@@ -173,7 +184,7 @@
     transform: rotate(90deg);
 }
 
-/* --- SUBMENU --- */
+/* SUBMENU */
 .submenu {
     list-style: none;
     padding: 0;
@@ -185,19 +196,19 @@
 }
 
 .submenu.is-visible {
-    max-height: 500px;
+    max-height: 23.75rem;
 }
 
 .submenu li {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.05);
 }
 
 .submenu a {
     display: block;
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 1rem;
-    padding: 0.75rem 1.5rem;
+    font-size: 0.6875rem;
+    padding: 0.625rem 1.25rem;
     transition: background-color 0.3s ease;
 }
 
@@ -206,25 +217,26 @@
     color: white;
 }
 
-/* --- OUTRO --- */
+/* OUTRO */
 .outro {
-    margin: 2rem -1rem 0;
-    padding: 1.5rem 1rem;
+    margin: 0;
+    padding: 0.625rem 0 0 0;
     background-color: #1B1B1B;
-    width: calc(100% + 2rem);
+    width: 100%;
     list-style: none;
+    border-top: 0.0625rem solid rgba(255, 255, 255, 0.1);
 }
 
 .outro .menu-item {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.05);
 }
 
 .outro a {
     display: block;
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 1rem;
-    padding: 0.75rem 0;
+    font-size: 0.6875rem;
+    padding: 0.625rem 0.8125rem;
     transition: color 0.3s ease;
 }
 
@@ -232,22 +244,89 @@
     color: white;
 }
 
-/* --- FOOTER DO MENU --- */
+/* FOOTER DO MENU */
 .opcoes footer {
-    margin: 0 -1rem -2.5rem;
+    margin: 0;
     background-color: #1B1B1B;
-    width: calc(100% + 2rem);
-    padding: 1rem;
+    width: 100%;
+    padding: 0;
 }
 
-/* --- OVERLAY QUANDO MENU ABERTO --- */
+/* OVERLAY QUANDO MENU ABERTO - REMOVIDO NO MOBILE */
 .opcoes.is-open::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: -1;
+    content: none;
+}
+
+/* RESPONSIVIDADE DESKTOP */
+@media (min-width: 768px) {
+    :root {
+        --menu-width: 20rem;
+        --menu-max-width: 20rem;
+    }
+
+    .hamburger {
+        width: 1.5rem;
+        height: 1.5rem;
+        gap: 0.21875rem;
+    }
+
+    .hamburger hr {
+        height: 0.15625rem;
+    }
+
+    .opcoes {
+        padding: 0;
+    }
+
+    .opcoes .plogo {
+        width: 1.25rem;
+        top: 1.5rem;
+        right: 1.0625rem;
+    }
+
+    .opcoes .user {
+        width: 4.75rem;
+        height: 4.75rem;
+        margin-bottom: 0.9375rem;
+    }
+
+    .nome {
+        font-size: 1.125rem;
+    }
+
+    .conta {
+        font-size: 0.9375rem;
+    }
+
+    .tit {
+        font-size: 1rem;
+    }
+
+    .menu-item > a,
+    .linkhp {
+        font-size: 0.9375rem;
+        padding: 0.9375rem 1.0625rem;
+    }
+
+    .submenu a {
+        font-size: 0.875rem;
+        padding: 0.875rem 1.625rem;
+    }
+
+    .outro a {
+        font-size: 0.875rem;
+        padding: 0.875rem 1.0625rem;
+    }
+
+    /* OVERLAY APARECE NO DESKTOP */
+    .opcoes.is-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: var(--menu-width);
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+    }
 }

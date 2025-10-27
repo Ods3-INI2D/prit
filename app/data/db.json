@@ -1,25 +1,92 @@
 {
-  "produtos": [],
-  "avaliacoes": [],
-  "carrinho": [],
-  "usuarios": [
+  "produtos": [
     {
-      "nome": "swerr",
-      "nasc": "2002-02-22",
-      "cpf": "53847735888",
-      "tel": "994310266",
-      "email": "fw@gmail.com",
-      "senhan": "Senha123!",
-      "csenha": "Senha123!"
+      "nome": "3",
+      "preco": 4,
+      "precoDesconto": 5,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "bb",
+      "imagem": "/imagens/produtos/produto-1761494899184-686463534.png",
+      "status": "em-estoque",
+      "id": 1761494899200,
+      "avaliacoes": [
+        {
+          "nota": 4,
+          "texto": "pintox manox bogox",
+          "data": "2025-10-27T01:53:55.644Z"
+        }
+      ]
+    }
+  ],
+  "avaliacoes": [
+    {
+      "nota": 2,
+      "texto": "pintox manox\r\n",
+      "data": "2025-10-25T00:29:14.658Z"
     },
     {
-      "nome": "saa",
-      "nasc": "2002-02-22",
+      "nota": 4,
+      "texto": "pintox manox bogox",
+      "data": "2025-10-27T01:53:55.644Z"
+    }
+  ],
+  "carrinho": [
+    {
+      "nome": "sss",
+      "preco": 16,
+      "precoDesconto": 15,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "dedef",
+      "imagem": "/imagens/produtos/produto-1761351491795-577365296.png",
+      "id": 1761351491812,
+      "avaliacoes": []
+    },
+    {
+      "nome": "sss",
+      "preco": 16,
+      "precoDesconto": 15,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "dedef",
+      "imagem": "/imagens/produtos/produto-1761351491795-577365296.png",
+      "id": 1761351491812,
+      "avaliacoes": []
+    },
+    {
+      "produtoId": "1761494899200",
+      "usuarioEmail": "s@g.com",
+      "quantidade": 1,
+      "dataAdicionado": "2025-10-26T17:19:33.417Z"
+    }
+  ],
+  "usuarios": [
+    {
+      "nome": "ccc",
+      "nasc": "2001-02-22",
       "cpf": "53847735888",
-      "tel": "994310266",
-      "email": "sa@g.com",
+      "tel": "987534567",
+      "email": "s@g.com",
       "senhan": "Senha123!",
       "csenha": "Senha123!"
+    }
+  ],
+  "banners": [
+    {
+      "id": 1,
+      "imagem": "/imagens/banner-1761422621721-242949781.png",
+      "legenda": "maciel foi pro ceu",
+      "link": "/home"
+    },
+    {
+      "id": 2,
+      "imagem": "/imagens/2.png",
+      "legenda": "Ofertas da Semana",
+      "link": "/home"
+    },
+    {
+      "id": 3,
+      "imagem": "/imagens/3.png",
+      "legenda": "Novidades",
+      "link": "/home"
     }
   ]
 }

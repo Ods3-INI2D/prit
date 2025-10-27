@@ -10,20 +10,20 @@
 
 .campo-senha input {
     width: 100%;
-    padding-right: 3.5rem; /* Espaço para o botão */
+    padding-right: 3.3rem; /* Espaço para o botão */
 }
 
 .btn-toggle-senha {
     position: absolute;
-    right: 0.75rem;
+    right: 0.7rem;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0.5rem;
-    width: 2rem;
-    height: 2rem;
+    padding: 0.45rem;
+    width: 1.9rem;
+    height: 1.9rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -38,7 +38,7 @@
 .btn-toggle-senha:focus {
     outline: 2px solid #4da6ff;
     outline-offset: 2px;
-    border-radius: 0.25rem;
+    border-radius: 0.225rem;
     opacity: 1;
 }
 
@@ -50,8 +50,8 @@
 .btn-toggle-senha::before {
     content: '';
     display: block;
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 1.15rem;
+    height: 1.15rem;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -73,17 +73,17 @@
 /* =================================================== */
 @media (min-width: 768px) {
     .campo-senha input {
-        padding-right: 4rem;
+        padding-right: 3.8rem;
     }
     
     .btn-toggle-senha {
-        right: 1rem;
-        width: 2.5rem;
-        height: 2.5rem;
+        right: 0.95rem;
+        width: 2.35rem;
+        height: 2.35rem;
     }
     
     .btn-toggle-senha::before {
-        width: 1.5rem;
-        height: 1.5rem;
+        width: 1.4rem;
+        height: 1.4rem;
     }
 }

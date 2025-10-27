@@ -23,24 +23,26 @@ body {
 header {
     background-color: #163069;
     width: 100%;
-    height: 18vh; 
+    min-height: 14vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 0 0 0.625rem 0.625rem;
+    border-radius: 0 0 0.575rem 0.575rem;
+    padding: 1.35rem 0.9rem;
 }
 
 .logo {
-    width: 50%; 
-    max-width: 15rem;
+    width: 48%; 
+    max-width: 14rem;
     height: auto;
-    margin-bottom: 0.625rem; 
+    margin-bottom: 0.575rem; 
 }
 
 .titulo {
-    font-size: 1.5rem; 
+    font-size: 1.4rem; 
     font-weight: 600;
+    text-align: center;
 }
 
 /* --- MAIN CONTENT & CONTAINERS --- */
@@ -48,72 +50,95 @@ main {
     width: 90%; 
     max-width: 1200px; 
     margin: 0 auto;
-    padding: 1.5rem 0; 
+    padding: 1.35rem 0; 
 }
 
 .subtitulo {
-    font-size: 1.75rem; 
+    font-size: 1.65rem; 
     font-weight: 600;
-    margin-bottom: 1.5rem; 
+    margin-bottom: 1.35rem; 
     color: #4da6ff;
 }
 
 .estatisticas, .adicionar-produto, .lista-produtos {
-    margin-bottom: 2.25rem; 
+    margin-bottom: 2.05rem; 
 }
 
 /* --- CARDS & FORM BASE --- */
 .card-stats, .form-produto {
     background-color: #2a2a2a;
-    padding: 1.5rem 1.25rem; 
-    border-radius: 0.625rem; 
-    margin-bottom: 1.125rem; 
-    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3); 
+    padding: 1.35rem 1.15rem; 
+    border-radius: 0.575rem; 
+    margin-bottom: 1.05rem; 
+    box-shadow: 0 0.225rem 0.7rem rgba(0, 0, 0, 0.25); 
 }
 
 /* --- ESTATÍSTICAS --- */
 .stat-titulo {
-    font-size: 1.125rem; 
+    font-size: 1.05rem; 
     font-weight: 500;
-    margin-bottom: 0.625rem; 
+    margin-bottom: 0.575rem; 
     color: #d9d9d9;
 }
 
 .stat-valor {
-    font-size: 2rem; 
+    font-size: 1.9rem; 
     font-weight: 700;
+    color: #4da6ff;
+}
+
+/* --- MENSAGENS DE ERRO/SUCESSO --- */
+.mensagem-erro,
+.mensagem-sucesso {
+    padding: 0.95rem;
+    border-radius: 0.45rem;
+    margin-bottom: 1.35rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+.mensagem-erro {
+    background-color: rgba(217, 48, 37, 0.2);
+    border: 2px solid #d93025;
+    color: #ff6b6b;
+}
+
+.mensagem-sucesso {
+    background-color: rgba(77, 166, 255, 0.2);
+    border: 2px solid #4da6ff;
     color: #4da6ff;
 }
 
 /* --- FORMULÁRIO E INPUTS --- */
 .label-titulo {
-    font-size: 1rem; 
+    font-size: 0.95rem; 
     font-weight: 500;
-    margin-top: 1.125rem; 
-    margin-bottom: 0.5rem; 
+    margin-top: 1.05rem; 
+    margin-bottom: 0.45rem; 
     color: white;
     display: block; 
 }
 
 input[type="text"], 
-input[type="number"], 
+input[type="number"],
+input[type="file"],
 select, 
 textarea {
     width: 100%;
-    padding: 0.9375rem 0.75rem; 
-    margin-bottom: 1.125rem; 
+    padding: 0.875rem 0.7rem; 
+    margin-bottom: 1.05rem; 
     border: 2px solid #555; 
-    border-radius: 0.625rem; 
+    border-radius: 0.575rem; 
     background-color: #383838;
     color: white;
-    font-size: 1rem; 
+    font-size: 0.95rem; 
     font-family: inherit;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 textarea {
     resize: vertical;
-    min-height: 7.5rem; 
+    min-height: 7rem; 
 }
 
 select {
@@ -123,28 +148,74 @@ select {
     appearance: none;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="white" d="M7 10l5 5 5-5z"/></svg>');
     background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 1.25rem;
+    background-position: right 0.7rem center;
+    background-size: 1.15rem;
+    padding-right: 2.3rem;
 }
 
 input:focus, select:focus, textarea:focus {
     border-color: #4da6ff;
     outline: none;
-    box-shadow: 0 0 0.375rem rgba(77, 166, 255, 0.8);
+    box-shadow: 0 0 0.35rem rgba(77, 166, 255, 0.75);
+}
+
+/* --- CAMPO IMAGEM --- */
+.campo-imagem {
+    border: none;
+    margin-bottom: 1.35rem;
+    padding: 0;
+}
+
+.campo-imagem legend {
+    margin-bottom: 0.45rem;
+}
+
+.label-arquivo {
+    display: block;
+}
+
+.info-arquivo {
+    display: block;
+    font-size: 0.825rem;
+    color: #888;
+    margin-top: 0.45rem;
+}
+
+.preview-container {
+    margin-top: 0.95rem;
+    display: block;
+}
+
+.preview-figure {
+    max-width: 280px;
+    margin: 0 auto;
+}
+
+.preview-img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.45rem;
+    margin-bottom: 0.45rem;
+}
+
+.preview-caption {
+    font-size: 0.825rem;
+    color: #888;
+    text-align: center;
 }
 
 /* --- BOTÕES GERAIS --- */
 .btn-adicionar {
     width: 100%;
-    padding: 1.125rem 0; 
+    padding: 1.05rem 0; 
     background-color: #163069;
     color: white;
     border: none;
-    border-radius: 0.75rem; 
-    font-size: 1.125rem; 
+    border-radius: 0.7rem; 
+    font-size: 1.05rem; 
     font-weight: 600;
     cursor: pointer;
-    margin-top: 0.75rem; 
+    margin-top: 0.7rem; 
     transition: background-color 0.3s ease;
 }
 
@@ -156,8 +227,8 @@ input:focus, select:focus, textarea:focus {
 .mensagem-vazia {
     text-align: center;
     color: #888;
-    font-size: 1rem; 
-    padding: 1.5rem 0; 
+    font-size: 0.95rem; 
+    padding: 1.35rem 0; 
 }
 
 .produtos-lista {
@@ -168,47 +239,49 @@ input:focus, select:focus, textarea:focus {
 
 .produto-item {
     background-color: #2a2a2a;
-    padding: 1.5rem 1.25rem; 
-    border-radius: 0.625rem;
-    margin-bottom: 1.125rem; 
-    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
+    padding: 1.35rem 1.15rem; 
+    border-radius: 0.575rem;
+    margin-bottom: 1.05rem; 
+    box-shadow: 0 0.225rem 0.7rem rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.95rem;
 }
 
 .produto-nome {
-    font-size: 1.125rem; 
+    font-size: 1.05rem; 
     font-weight: 600;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.225rem;
 }
 
-.produto-id, .produto-estoque {
-    font-size: 0.875rem;
-    color: #888;
+.produto-info {
+    font-size: 0.825rem;
+    color: #d9d9d9;
+    margin-bottom: 0.225rem;
+}
+
+.produto-info.desconto {
+    color: #4da6ff;
+    font-weight: 600;
 }
 
 .produto-preco {
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: #4da6ff;
-    margin-bottom: 0.5rem;
-}
-
-.produto-estoque {
-    color: #d9d9d9;
+    margin-bottom: 0.45rem;
 }
 
 .acoes-produto {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.7rem;
 }
 
 .btn-editar, .btn-excluir {
-    padding: 0.625rem 1rem;
+    padding: 0.575rem 0.95rem;
     border: none;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
+    border-radius: 0.45rem;
+    font-size: 0.825rem;
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -232,35 +305,54 @@ input:focus, select:focus, textarea:focus {
     background-color: #a3241b;
 }
 
+/* --- FOOTER --- */
+footer {
+    margin-top: 1.8rem;
+    padding: 0.95rem;
+    text-align: center;
+}
+
+.link-footer {
+    color: #4da6ff;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+
+.link-footer:hover {
+    color: #6bb5ff;
+}
+
 /* =================================================== */
 /* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
 /* =================================================== */
 @media (min-width: 768px) {
     header {
-        height: 15vh;
+        min-height: 17vh;
+        padding: 1.8rem 0.9rem;
     }
 
     .logo {
-        max-width: 18rem;
+        max-width: 17rem;
     }
 
     .titulo {
-        font-size: 2rem;
+        font-size: 1.9rem;
     }
 
     main {
-        padding: 3rem 0;
+        padding: 2.7rem 0;
     }
 
     .estatisticas-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr); 
-        gap: 2rem;
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 1.8rem;
     }
 
     .subtitulo {
-        font-size: 2rem;
-        margin-bottom: 1.5rem;
+        font-size: 1.9rem;
+        margin-bottom: 1.35rem;
     }
 
     .card-stats {
@@ -268,30 +360,30 @@ input:focus, select:focus, textarea:focus {
     }
 
     .stat-titulo {
-        font-size: 1.25rem;
+        font-size: 1.2rem;
     }
 
     .stat-valor {
-        font-size: 3rem;
+        font-size: 2.85rem;
     }
 
     .form-produto {
-        max-width: 600px;
+        max-width: 580px;
         margin: 0 auto;
-        padding: 2rem;
+        padding: 1.8rem;
     }
 
     .produto-item {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        padding: 1rem 1.5rem;
+        padding: 0.95rem 1.35rem;
     }
 
-    .produto-info {
+    .produto-info-container {
         display: flex;
         align-items: center;
-        gap: 1.5rem;
+        gap: 1.35rem;
         flex-grow: 1;
         width: 70%;
     }
@@ -301,13 +393,13 @@ input:focus, select:focus, textarea:focus {
         margin-bottom: 0;
     }
     
-    .produto-id, .produto-preco, .produto-estoque {
-        font-size: 1rem;
+    .produto-info {
+        font-size: 0.95rem;
         margin-bottom: 0;
         width: 15%;
     }
     
-    .produto-preco, .produto-estoque {
+    .produto-preco {
         text-align: right;
     }
 
@@ -318,7 +410,7 @@ input:focus, select:focus, textarea:focus {
     }
 
     .btn-editar, .btn-excluir {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.9rem;
+        padding: 0.475rem 0.7rem;
+        font-size: 0.85rem;
     }
 }

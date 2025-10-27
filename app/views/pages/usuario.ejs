@@ -23,22 +23,22 @@
                     
                     <article class="campo-info">
                         <h3 class="label-info">Nome</h3>
-                        <p class="valor-info"><%= usuario.nome %></p>
+                        <output class="valor-info"><%= usuario.nome %></o>
                     </article>
 
                     <article class="campo-info">
                         <h3 class="label-info">Data de Nascimento</h3>
-                        <p class="valor-info"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></p>
+                        <output class="valor-info"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></o>
                     </article>
 
                     <article class="campo-info">
                         <h3 class="label-info">CPF</h3>
-                        <p class="valor-info"><%= usuario.cpf %></p>
+                        <output class="valor-info"><%= usuario.cpf %></o>
                     </article>
 
                     <article class="campo-info">
                         <h3 class="label-info">E-mail</h3>
-                        <p class="valor-info"><%= usuario.email %></p>
+                        <output class="valor-info"><%= usuario.email %></o>
                     </article>
                 </article>
 
@@ -76,13 +76,13 @@
                     <ul class="lista-opcoes">
                         <li><a href="/carrinho" class="opcao-menu">Meus Pedidos</a></li>
                         <li><a href="/home" class="opcao-menu">Continuar Comprando</a></li>
-                        <li><a href="/login" class="opcao-menu logout">Sair da Conta</a></li>
+                        <li><a href="/logout" class="opcao-menu logout">Sair da Conta</a></li>
                     </ul>
                 </nav>
 
             <% } else { %>
                 <article class="sem-usuario">
-                    <p class="mensagem-login">Você precisa estar logado para ver esta página.</p>
+                    <output class="mensagem-login">Você precisa estar logado para ver esta página.</o>
                     <a href="/login" class="btn-login">Fazer Login</a>
                 </article>
             <% } %>

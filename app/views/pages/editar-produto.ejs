@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Produto - <%= produto.nome %></title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <header>
+        <img src="/imagens/logo.png" alt="Logotipo da Farmácia" class="logo">
+        <h1 class="titulo">Editar Produto</h1>
+    </header>
+ 
+    <main>
+        <% if(erro) { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                <%= erro %>
+            </output>
+        <% } %>
+
+        <section class="adicionar-produto" aria-labelledby="titulo-editar">
+            <h2 id="titulo-editar" class="subtitulo">Editar: <%= produto.nome %></h2>
+            
+            <form method="POST" action="/admin/editar-produto/<%= produto.id %>" class="form-produto" enctype="multipart/form-data" aria-label="Formulário de edição de produto">
+                <fieldset>
+                    <legend class="label-titulo">Nome do Produto</legend>
+                    <label for="nome">
+                        <input type="text" id="nome" name="nome" value="<%= produto.nome %>" placeholder="Digite o nome do produto" required aria-required="true">
+                    </label>
+                </fieldset>
+ 
+                <fieldset>
+                    <legend class="label-titulo">Preço</legend>
+                    <label for="preco">
+                        <input type="number" id="preco" name="preco" value="<%= produto.preco %>" placeholder="0.00" step="0.01" min="0" required aria-required="true">
+                    </label>
+                </fieldset>
+ 
+                <fieldset>
+                    <legend class="label-titulo">Preço com Desconto (opcional)</legend>
+                    <label for="precoDesconto">
+                        <input type="number" id="precoDesconto" name="precoDesconto" value="<%= produto.precoDesconto || '' %>" placeholder="0.00" step="0.01" min="0" aria-required="false">
+                    </label>
+                </fieldset>
+ 
+                <fieldset>
+                    <legend class="label-titulo">Categoria</legend>
+                    <label for="categoria">
+                        <select id="categoria" name="categoria" required aria-required="true">
+                            <option value="">Selecione uma categoria</option>
+                            <option value="Cuidados com a Pele" <%= produto.categoria === 'Cuidados com a Pele' ? 'selected' : '' %>>Cuidados com a Pele</option>
+                            <option value="Higiene Bucal" <%= produto.categoria === 'Higiene Bucal' ? 'selected' : '' %>>Higiene Bucal</option>
+                            <option value="Cabelo" <%= produto.categoria === 'Cabelo' ? 'selected' : '' %>>Cabelo</option>
+                            <option value="Vitaminas e Suplementos" <%= produto.categoria === 'Vitaminas e Suplementos' ? 'selected' : '' %>>Vitaminas e Suplementos</option>
+                            <option value="Bebê" <%= produto.categoria === 'Bebê' ? 'selected' : '' %>>Bebê</option>
+                            <option value="Terceira Idade" <%= produto.categoria === 'Terceira Idade' ? 'selected' : '' %>>Terceira Idade</option>
+                            <option value="Medicamentos" <%= produto.categoria === 'Medicamentos' ? 'selected' : '' %>>Medicamentos</option>
+                        </select>
+                    </label>
+                </fieldset>
+
+                <fieldset>
+                    <legend class="label-titulo">Status do Produto</legend>
+                    <label for="status">
+                        <select id="status" name="status" required aria-required="true">
+                            <option value="em-estoque" <%= (produto.status === 'em-estoque' || !produto.status) ? 'selected' : '' %>>Em Estoque</option>
+                            <option value="fora-de-estoque" <%= produto.status === 'fora-de-estoque' ? 'selected' : '' %>>Fora de Estoque</option>
+                        </select>
+                    </label>
+                </fieldset>
+
+                <fieldset class="campo-imagem">
+                    <legend class="label-titulo">Imagem Atual</legend>
+                    <figure class="preview-container">
+                        <img src="<%= produto.imagem %>" alt="Imagem atual do produto" class="preview-img" style="display: block;">
+                        <figcaption class="preview-caption">Imagem atual</figcaption>
+                    </figure>
+                </fieldset>
+ 
+                <fieldset class="campo-imagem">
+                    <legend class="label-titulo">Nova Imagem (opcional)</legend>
+                    <label for="imagem" class="label-arquivo">
+                        <input type="file"
+                               id="imagem"
+                               name="imagem"
+                               accept="image/jpeg,image/jpg,image/png,image/webp"
+                               aria-describedby="imagem-info">
+                        <output id="imagem-info" class="info-arquivo">
+                            Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
+                        </output>
+                    </label>
+                    <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></output>
+                </fieldset>
+ 
+                <fieldset>
+                    <legend class="label-titulo">Descrição do Produto</legend>
+                    <label for="descricao">
+                        <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto" rows="5" required aria-required="true"><%= produto.descricao %></textarea>
+                    </label>
+                </fieldset>
+ 
+                <button type="submit" class="btn-adicionar">Salvar Alterações</button>
+                <a href="/admin" class="btn-adicionar" style="display: inline-block; text-align: center; text-decoration: none; background-color: #555; margin-top: 1rem;">Cancelar</a>
+            </form>
+        </section>
+    </main>
+ 
+    <footer>
+        <nav aria-label="Navegação do rodapé">
+            <a href="/admin" class="link-footer">Voltar ao Painel</a>
+        </nav>
+    </footer>
+ 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputImagem = document.getElementById('imagem');
+            const previewContainer = document.getElementById('preview-imagem');
+            const infoArquivo = document.getElementById('imagem-info');
+ 
+            if (inputImagem) {
+                inputImagem.addEventListener('change', function(e) {
+                    const arquivo = e.target.files[0];
+                    
+                    if (!arquivo) {
+                        previewContainer.innerHTML = '';
+                        infoArquivo.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.';
+                        infoArquivo.style.color = '';
+                        return;
+                    }
+ 
+                    if (arquivo.size > 5 * 1024 * 1024) {
+                        infoArquivo.textContent = 'Erro: A imagem deve ter no máximo 5MB';
+                        infoArquivo.style.color = '#d93025';
+                        previewContainer.innerHTML = '';
+                        inputImagem.value = '';
+                        return;
+                    }
+ 
+                    const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                    if (!tiposPermitidos.includes(arquivo.type)) {
+                        infoArquivo.textContent = 'Erro: Formato não suportado. Use JPG, PNG ou WEBP';
+                        infoArquivo.style.color = '#d93025';
+                        previewContainer.innerHTML = '';
+                        inputImagem.value = '';
+                        return;
+                    }
+ 
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const figure = document.createElement('figure');
+                        figure.className = 'preview-figure';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = 'Preview da nova imagem do produto';
+                        img.className = 'preview-img';
+                        
+                        const figcaption = document.createElement('figcaption');
+                        figcaption.textContent = arquivo.name;
+                        figcaption.className = 'preview-caption';
+                        
+                        figure.appendChild(img);
+                        figure.appendChild(figcaption);
+                        previewContainer.innerHTML = '';
+                        previewContainer.appendChild(figure);
+                        
+                        infoArquivo.textContent = 'Nova imagem selecionada com sucesso!';
+                        infoArquivo.style.color = '#4da6ff';
+                    };
+                    reader.readAsDataURL(arquivo);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
