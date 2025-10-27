@@ -33,13 +33,13 @@ header {
     background-color: #001863;
     height: 16vh;
     width: 100%;
-    border-bottom-left-radius: 0.575rem;
-    border-bottom-right-radius: 0.575rem;
+    border-bottom-left-radius: 0.71875rem;
+    border-bottom-right-radius: 0.71875rem;
 }
 
 img.icon {
     width: 38%;
-    max-width: 180px;
+    max-width: 11.25rem;
     height: auto;
 }
 
@@ -51,12 +51,12 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1.8rem 0.9rem;
+    padding: 2.25rem 1.125rem;
 }
 
 section.login-module {
     width: 100%;
-    max-width: 380px;
+    max-width: 23.75rem;
     text-align: left;
     background-color: transparent;
     padding: 0;
@@ -66,7 +66,7 @@ section.login-module {
 
 .title-group {
     text-align: center;
-    margin-bottom: 1.35rem;
+    margin-bottom: 1.6875rem;
     background-color: transparent;
     padding: 0;
     border-radius: 0;
@@ -74,14 +74,14 @@ section.login-module {
 }
 
 h1.tit {
-    font-size: 1.95rem;
+    font-size: 2.28125rem;
     color: white;
     font-family: 'Belanosima', sans-serif;
 }
 
 h2 {
-    font-size: 0.95rem;
-    margin-bottom: 0.45rem;
+    font-size: 1.09375rem;
+    margin-bottom: 0.5rem;
     font-weight: 500;
     color: white;
 }
@@ -91,11 +91,11 @@ h2 {
 ========================= */
 form {
     max-width: 100%;
-    margin: 1.35rem auto;
-    padding: 1.6rem 1.5rem;
+    margin: 1.6875rem auto;
+    padding: 2rem 1.875rem;
     background-color: #2a2a2a;
-    border-radius: 0.7rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 10px rgba(77, 166, 255, 0.12);
+    border-radius: 0.875rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.45), 0 0 0.625rem rgba(77, 166, 255, 0.12);
 }
 
 input[type="text"],
@@ -104,13 +104,13 @@ input[type="email"],
 input[type="date"],
 input[type="tel"] {
     width: 100%;
-    padding: 0.875rem 1.05rem;
-    border-radius: 0.575rem;
-    border: 2px solid #555;
+    padding: 1.09375rem 1.3125rem;
+    border-radius: 0.71875rem;
+    border: 0.125rem solid #555;
     background-color: #383838;
     color: #fff;
-    font-size: 0.95rem;
-    margin-bottom: 1.05rem;
+    font-size: 1.09375rem;
+    margin-bottom: 1.3125rem;
     transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -121,7 +121,7 @@ input[type="date"]:focus,
 input[type="tel"]:focus {
     border-color: #4da6ff;
     outline: none;
-    box-shadow: 0 0 7px rgba(77, 166, 255, 0.65);
+    box-shadow: 0 0 0.4375rem rgba(77, 166, 255, 0.65);
 }
 
 /* =========================
@@ -132,12 +132,12 @@ input[type="tel"]:focus {
     background-color: #007bff;
     color: #fff;
     border: none;
-    padding: 0.875rem;
-    border-radius: 0.575rem;
-    font-size: 1rem;
+    padding: 1.09375rem;
+    border-radius: 0.71875rem;
+    font-size: 1.1875rem;
     font-family: 'Belanosima', sans-serif;
     width: 100%;
-    margin: 1.05rem auto;
+    margin: 1.3125rem auto;
     display: block;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -146,7 +146,7 @@ input[type="tel"]:focus {
 #btn:hover,
 #btn-login:hover {
     background-color: #0056b3;
-    transform: translateY(-2px);
+    transform: translateY(-0.125rem);
 }
 
 /* =========================
@@ -155,23 +155,23 @@ input[type="tel"]:focus {
 small.erro,
 output.erro {
     color: #ff5555;
-    font-size: 0.875rem;
-    margin-top: -0.575rem;
-    margin-bottom: 0.8rem;
+    font-size: 1.03125rem;
+    margin-top: -0.71875rem;
+    margin-bottom: 1rem;
     display: block;
 }
 
 .erro-login {
     background-color: rgba(255, 85, 85, 0.12);
-    border: 2px solid #ff5555;
-    border-radius: 0.575rem;
-    padding: 0.95rem;
-    margin-bottom: 1.05rem;
+    border: 0.125rem solid #ff5555;
+    border-radius: 0.71875rem;
+    padding: 1.1875rem;
+    margin-bottom: 1.3125rem;
 }
 
 .mensagem-erro {
     color: #ff5555;
-    font-size: 0.875rem;
+    font-size: 1.03125rem;
     text-align: center;
 }
 
@@ -180,10 +180,10 @@ output.erro {
 ========================= */
 section.txt {
     width: 100%;
-    max-width: 380px;
-    font-size: 0.875rem;
+    max-width: 23.75rem;
+    font-size: 1.03125rem;
     text-align: center;
-    margin-bottom: 1.05rem;
+    margin-bottom: 1.3125rem;
     background-color: transparent;
     padding: 0;
     box-shadow: none;
@@ -192,17 +192,17 @@ section.txt {
 
 main > p.ou {
     text-align: center;
-    margin: 1.05rem 0;
+    margin: 1.3125rem 0;
     color: #aaa;
     width: 100%;
-    max-width: 380px;
+    max-width: 23.75rem;
 }
 
 .signup-prompt {
     width: 100%;
-    max-width: 380px;
+    max-width: 23.75rem;
     text-align: center;
-    margin-top: 1.8rem;
+    margin-top: 2.25rem;
 }
 
 .link {
@@ -216,10 +216,10 @@ main > p.ou {
 }
 
 .link2 {
-    font-size: 0.95rem;
+    font-size: 1.09375rem;
     font-weight: bold;
     display: block;
-    margin-top: 0.28rem;
+    margin-top: 0.34375rem;
 }
 
 ::placeholder {
@@ -244,40 +244,40 @@ footer {
 
     header {
         height: 18vh;
-        border-bottom-left-radius: 0.7rem;
-        border-bottom-right-radius: 0.7rem;
+        border-bottom-left-radius: 0.875rem;
+        border-bottom-right-radius: 0.875rem;
     }
 
     img.icon {
         width: 65%;
-        max-width: 290px;
+        max-width: 18.125rem;
     }
 
     main {
-        padding: 2.7rem 0.9rem;
+        padding: 3.375rem 1.125rem;
     }
 
     section.login-module,
     section.txt,
     .signup-prompt,
     main > p.ou {
-        max-width: 460px;
+        max-width: 28.75rem;
     }
 
     .title-group {
-        margin-bottom: 2.05rem;
+        margin-bottom: 2.5625rem;
     }
 
     h1.tit {
-        font-size: 2.55rem;
+        font-size: 2.96875rem;
     }
 
     h2 {
-        font-size: 1.05rem;
+        font-size: 1.23125rem;
     }
 
     form {
-        padding: 2.05rem 1.95rem;
+        padding: 2.5625rem 2.4375rem;
     }
 
     input[type="text"],
@@ -285,18 +285,18 @@ footer {
     input[type="email"],
     input[type="date"],
     input[type="tel"] {
-        padding: 1rem 1.15rem;
-        font-size: 1rem;
+        padding: 1.25rem 1.4375rem;
+        font-size: 1.1875rem;
     }
 
     #btn,
     #btn-login {
-        padding: 1rem;
-        font-size: 1.15rem;
+        padding: 1.25rem;
+        font-size: 1.35625rem;
     }
 
     section.txt {
-        font-size: 0.95rem;
+        font-size: 1.09375rem;
     }
 
     footer {

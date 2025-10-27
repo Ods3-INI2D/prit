@@ -6,34 +6,34 @@
     font-family: 'Inter', sans-serif;
     color: white;
     width: 100%;
-    max-width: 300px;
+    max-width: 18.75rem;
     display: flex;
     flex-direction: column;
-    padding-bottom: 0.575rem;
-    border-radius: 0.45rem;
+    padding-bottom: 0.71875rem;
+    border-radius: 0.5625rem;
     overflow: hidden;
     margin: 0 auto;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.25);
     transition: transform 0.3s ease;
 }
 
 .produto-card-bloco:hover {
-    transform: translateY(-3px);
+    transform: translateY(-0.1875rem);
 }
 
 /* Imagem */
 .produto-card-bloco .produto {
     width: 100%;
-    height: 9.5rem;
+    height: 11.25rem;
     object-fit: cover;
-    border-radius: 0.45rem 0.45rem 0 0;
+    border-radius: 0.5625rem 0.5625rem 0 0;
 }
 
 /* Nome do Produto */
 .produto-card-bloco .nome {
-    font-size: 1rem;
+    font-size: 1.1875rem;
     font-weight: 600;
-    margin: 0.7rem 0.7rem 0.35rem;
+    margin: 0.875rem 0.875rem 0.4375rem;
 }
 
 /* Container para preços e badge */
@@ -41,14 +41,14 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 0.45rem;
-    padding: 0 0.7rem;
-    margin-bottom: 0.45rem;
+    gap: 0.5625rem;
+    padding: 0 0.875rem;
+    margin-bottom: 0.5625rem;
 }
 
 /* Preço Original/Antigo */
 .produto-card-bloco .preco {
-    font-size: 0.825rem;
+    font-size: 0.96875rem;
     text-decoration: line-through;
     color: rgba(255, 255, 255, 0.7);
     margin: 0;
@@ -56,7 +56,7 @@
 
 /* Preço Final/Com Desconto */
 .produto-card-bloco .precof {
-    font-size: 0.9rem;
+    font-size: 1.0625rem;
     font-weight: bold;
     color: #4da6ff;
     margin: 0;
@@ -72,59 +72,59 @@
 .produto-card-bloco .branco {
     background-color: #4da6ff;
     color: #1f1f1f;
-    font-size: 0.7rem;
+    font-size: 0.8125rem;
     font-weight: bold;
-    padding: 0.175rem 0.4rem;
-    border-radius: 0.225rem;
+    padding: 0.21875rem 0.5rem;
+    border-radius: 0.28125rem;
 }
 
 .produto-card-bloco .branco > .porcentagem {
     color: #1f1f1f;
-    font-size: 0.7rem;
+    font-size: 0.8125rem;
     font-weight: 700;
 }
 
 /* Descrição ou Categoria */
 .produto-card-bloco .desc {
-    font-size: 0.825rem;
+    font-size: 0.96875rem;
     color: #ccc;
-    padding: 0 0.7rem;
-    margin-bottom: 0.7rem;
+    padding: 0 0.875rem;
+    margin-bottom: 0.875rem;
 }
 
 /* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
 @media (min-width: 768px) {
     .produto-card-bloco {
-        padding-bottom: 1.05rem;
+        padding-bottom: 1.3125rem;
     }
     
     .produto-card-bloco .produto {
-        height: 12.4rem;
+        height: 14.625rem;
     }
 
     .produto-card-bloco .nome {
-        font-size: 1.3rem;
-        margin: 1.05rem 1.05rem 0.575rem;
+        font-size: 1.53125rem;
+        margin: 1.3125rem 1.3125rem 0.71875rem;
     }
     
     .preco-container-bloco {
-        padding: 0 1.05rem;
+        padding: 0 1.3125rem;
     }
 
     .produto-card-bloco .preco, 
     .produto-card-bloco .precof {
-        font-size: 1rem;
+        font-size: 1.1875rem;
     }
     
     .produto-card-bloco .branco {
-        font-size: 0.875rem;
+        font-size: 1.03125rem;
     }
 
     .produto-card-bloco .branco > .porcentagem {
-        font-size: 0.875rem;
+        font-size: 1.03125rem;
     }
     
     .produto-card-bloco .desc {
-        padding: 0 1.05rem;
+        padding: 0 1.3125rem;
     }
 }
