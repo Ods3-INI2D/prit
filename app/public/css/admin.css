@@ -323,65 +323,84 @@ footer {
     color: #6bb5ff;
 }
 
-/* responsividade pra desktops (min-width: 768px) */
-@media (min-width: 768px) {
+/* responsividade pra desktops */
+@media (min-width: 901px) {
     header {
-        min-height: 17vh;
-        padding: 1.8rem 0.9rem;
+        min-height: 18vh;
+        padding: 2rem 1.5rem;
     }
 
     .logo {
-        max-width: 17rem;
+        max-width: 18rem;
     }
 
     .titulo {
-        font-size: 1.9rem;
+        font-size: 2.2rem;
     }
 
     main {
-        padding: 2.7rem 0;
+        padding: 3rem 0;
     }
 
     .estatisticas-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr); 
-        gap: 1.8rem;
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 2rem;
     }
 
     .subtitulo {
-        font-size: 1.9rem;
-        margin-bottom: 1.35rem;
+        font-size: 2.2rem;
+        margin-bottom: 1.8rem;
     }
 
     .card-stats {
-        margin-bottom: 0; 
+        margin-bottom: 0;
+        padding: 2rem 1.5rem;
     }
 
     .stat-titulo {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
     }
 
     .stat-valor {
-        font-size: 2.85rem;
+        font-size: 3.2rem;
     }
 
     .form-produto {
-        max-width: 580px;
+        max-width: 680px;
         margin: 0 auto;
-        padding: 1.8rem;
+        padding: 2.5rem;
+    }
+
+    .label-titulo {
+        font-size: 1.1rem;
+    }
+
+    input[type="text"], 
+    input[type="number"],
+    input[type="file"],
+    select, 
+    textarea {
+        font-size: 1.1rem;
+        padding: 1rem 0.9rem;
+    }
+
+    .btn-adicionar {
+        font-size: 1.2rem;
+        padding: 1.2rem 0;
     }
 
     .produto-item {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        padding: 0.95rem 1.35rem;
+        padding: 1.2rem 1.8rem;
     }
 
     .produto-info-container {
         display: flex;
         align-items: center;
-        gap: 1.35rem;
+        gap: 1.8rem;
         flex-grow: 1;
         width: 70%;
     }
@@ -389,26 +408,40 @@ footer {
     .produto-nome {
         width: 35%;
         margin-bottom: 0;
+        font-size: 1.2rem;
     }
     
     .produto-info {
-        font-size: 0.95rem;
+        font-size: 1.05rem;
         margin-bottom: 0;
         width: 15%;
     }
     
     .produto-preco {
         text-align: right;
+        font-size: 1.1rem;
     }
 
     .acoes-produto {
         flex-shrink: 0;
         width: 20%;
         justify-content: flex-end;
+        gap: 1rem;
     }
 
     .btn-editar, .btn-excluir {
-        padding: 0.475rem 0.7rem;
-        font-size: 0.85rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .mensagem-vazia {
+        font-size: 1.1rem;
+        padding: 2rem 0;
+    }
+
+    .mensagem-erro,
+    .mensagem-sucesso {
+        font-size: 1.1rem;
+        padding: 1.2rem;
     }
 }

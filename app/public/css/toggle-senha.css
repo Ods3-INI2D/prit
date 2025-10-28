@@ -66,20 +66,20 @@
     filter: brightness(1.2);
 }
 
-/*responsividade para desktops (min-width: 768px)*/
-@media (min-width: 768px) {
+/*responsividade para desktops (min-width: 1024px)*/
+@media (min-width: 1024px) {
     .campo-senha input {
-        padding-right: 3.8rem;
+        padding-right: 4.2rem;
     }
     
     .btn-toggle-senha {
-        right: 0.95rem;
-        width: 2.35rem;
-        height: 2.35rem;
+        right: 1.2rem;
+        width: 2.8rem;
+        height: 2.8rem;
     }
     
     .btn-toggle-senha::before {
-        width: 1.4rem;
-        height: 1.4rem;
+        width: 1.7rem;
+        height: 1.7rem;
     }
 }

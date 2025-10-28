@@ -349,9 +349,9 @@ main {
 
        
 /* =================================================== */
-/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
+/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 901px) --- */
 /* =================================================== */
-@media (min-width: 768px) {
+@media (min-width: 901px) {
     
     /* Layout de duas colunas */
     .carrinho-layout {
@@ -442,7 +442,7 @@ main {
         font-size: 1.09375rem;
     }
 }
-@media (min-width: 768px) {
+@media (min-width: 901px) {
     .controles-quantidade {
         margin-top: 0;
     }

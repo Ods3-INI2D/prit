@@ -510,40 +510,40 @@ main {
     display: block;
 }
 
-/* responsividae para deskotp */
-@media (min-width: 768px) {
+/* responsividade para desktop (min-width: 901px) */
+@media (min-width: 901px) {
     main {
-        width: 90%;
-        max-width: 75rem;
-        padding: 1.875rem 0;
+        width: 92%;
+        max-width: 85rem;
+        padding: 2.5rem 0;
     }
 
     .navegacao {
-        margin: 0 0 2.1875rem 0;
+        margin: 0 0 3rem 0;
     }
 
     .voltar {
-        font-size: 1.09375rem;
+        font-size: 1.3rem;
     }
 
     .seta-voltar {
-        width: 1.3125rem;
+        width: 1.6rem;
     }
     
     .produto-detalhes {
         display: flex;
-        gap: 3.125rem;
+        gap: 4rem;
         align-items: flex-start;
-        margin-bottom: 3.125rem;
+        margin-bottom: 4rem;
         padding: 0;
     }
     
     .imagem-produto {
         width: 50%;
-        max-width: 34.375rem;
+        max-width: 40rem;
         height: auto;
         margin-bottom: 0;
-        border-radius: 1.09375rem;
+        border-radius: 1.5rem;
     }
     
     .info-principal {
@@ -554,30 +554,30 @@ main {
     }
     
     .nome-produto {
-        font-size: 2.3125rem;
+        font-size: 2.8rem;
     }
 
     .categoria-produto {
-        font-size: 1.1875rem;
+        font-size: 1.4rem;
     }
 
     .preco-desconto, .preco-produto {
-        font-size: 2.0625rem;
+        font-size: 2.5rem;
     }
 
     .preco-original {
-        font-size: 1.3125rem;
+        font-size: 1.6rem;
     }
 
     .percentual-desconto {
-        font-size: 1.09375rem;
+        font-size: 1.3rem;
     }
 
     .btn-comprar {
         width: auto;
-        max-width: 22.5rem;
-        padding: 1.40625rem 0;
-        font-size: 1.25rem;
+        max-width: 28rem;
+        padding: 1.7rem 0;
+        font-size: 1.5rem;
     }
 
     .frete-container,
@@ -587,132 +587,132 @@ main {
     }
 
     .divisor {
-        margin: 3.125rem 0;
+        margin: 4rem 0;
     }
 
     .titulo-secao {
-        font-size: 1.625rem;
+        font-size: 2rem;
     }
 
     .titulo-outros {
-        font-size: 1.75rem;
+        font-size: 2.2rem;
         padding: 0;
     }
 
     .descricao-frete {
-        font-size: 1.09375rem;
+        font-size: 1.3rem;
     }
 
     .form-frete input {
-        font-size: 1.09375rem;
-        padding: 1.25rem;
+        font-size: 1.3rem;
+        padding: 1.5rem;
     }
 
     .btn-calcular {
-        font-size: 1.09375rem;
-        padding: 1.25rem 1.5625rem;
+        font-size: 1.3rem;
+        padding: 1.5rem 2rem;
     }
 
     .nome-descricao {
-        font-size: 1.3125rem;
+        font-size: 1.6rem;
     }
 
     .texto-descricao {
-        font-size: 1.09375rem;
+        font-size: 1.3rem;
     }
 
     .nota-media {
-        padding: 1.875rem;
+        padding: 2.5rem;
     }
 
     .label-nota {
-        font-size: 1.1875rem;
+        font-size: 1.4rem;
     }
 
     .estrela {
-        width: 1.75rem;
+        width: 2.2rem;
     }
 
     .valor-media {
-        font-size: 1.625rem;
+        font-size: 2rem;
     }
 
     .ver-mais {
-        font-size: 1.09375rem;
+        font-size: 1.3rem;
     }
 
     .item-avaliacao {
-        padding: 1.5625rem;
+        padding: 2rem;
     }
 
     .estrela-pequena {
-        width: 1.1875rem;
+        width: 1.5rem;
     }
 
     .texto-avaliacao {
-        font-size: 1.09375rem;
+        font-size: 1.3rem;
     }
 
     .sem-avaliacoes {
-        font-size: 1.09375rem;
+        font-size: 1.3rem;
     }
 
     .form-avaliacao-container {
-        padding: 1.875rem;
+        padding: 2.5rem;
     }
 
     .titulo-form-avaliacao {
-        font-size: 1.4375rem;
+        font-size: 1.7rem;
     }
 
     .label-avaliacao {
-        font-size: 1.09375rem;
+        font-size: 1.3rem;
     }
 
     .form-avaliacao select,
     .form-avaliacao textarea {
-        font-size: 1.09375rem;
-        padding: 1.25rem;
+        font-size: 1.3rem;
+        padding: 1.5rem;
     }
 
     .btn-enviar-avaliacao {
-        font-size: 1.1875rem;
-        padding: 1.40625rem 0;
+        font-size: 1.4rem;
+        padding: 1.7rem 0;
     }
 
     .mensagem-aviso,
     .mensagem-erro-avaliacao {
-        font-size: 1.09375rem;
+        font-size: 1.3rem;
     }
 
     .mensagem-admin-bloqueio {
-        font-size: 1.1875rem;
-        padding: 1.5625rem;
+        font-size: 1.4rem;
+        padding: 2rem;
     }
 
     .mensagem-fora-estoque {
-        font-size: 1.3125rem;
-        padding: 1.5625rem;
+        font-size: 1.6rem;
+        padding: 2rem;
     }
 
     .outros-produtos {
         grid-template-columns: repeat(4, 1fr);
-        gap: 1.25rem;
+        gap: 1.6rem;
         padding: 0;
     }
     
     .img-produto-bloco {
-        height: 14.375rem;
+        height: 16rem;
     }
 
     .nome-produto-bloco {
-        font-size: 1.1875rem;
-        min-height: 3.75rem;
-        padding: 1.25rem;
+        font-size: 1.4rem;
+        min-height: 4.5rem;
+        padding: 1.5rem;
     }
 
     .preco-produto-bloco {
-        font-size: 1.25rem;
-        padding: 0 1.25rem 1.25rem;
+        font-size: 1.5rem;
+        padding: 0 1.5rem 1.5rem;
     }
 }

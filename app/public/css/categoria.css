@@ -194,59 +194,94 @@ main {
     height: auto;
 }
 
-/* RESPONSIVIDADE DESKTOP */
-@media (min-width: 768px) {
-    
+/* RESPONSIVIDADE DESKTOP (min-width: 901px) */
+@media (min-width: 901px) {
+
+    main {
+        padding: 2rem 0;
+    }
+
+    .navegacao {
+        margin: 0 0 2.5rem 0;
+    }
+
+    .voltar {
+        font-size: 1.2rem;
+        gap: 0.6rem;
+    }
+
+    .seta-voltar {
+        width: 1.5rem;
+    }
+
     .titulo-categoria {
-        font-size: 2.25rem;
+        font-size: 2.8rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .categoria-vazia {
+        padding: 5rem 0;
+    }
+
+    .mensagem-vazio {
+        font-size: 1.4rem;
         margin-bottom: 2rem;
+    }
+
+    .btn-voltar-home {
+        padding: 1.3rem 2.5rem;
+        font-size: 1.3rem;
     }
 
     .produtos-grid {
         grid-template-columns: repeat(4, 1fr);
-        gap: 1.25rem;
+        gap: 1.8rem;
     }
 
     .imagem-produto {
-        height: 15rem;
+        height: 17rem;
     }
 
     .nome-produto {
-        font-size: 1.1875rem;
-        min-height: 3.875rem;
-        padding: 1.25rem 1.25rem 0.75rem;
+        font-size: 1.4rem;
+        min-height: 4.5rem;
+        padding: 1.5rem 1.5rem 0.9rem;
     }
 
-    .preco-original,
+    .preco-original {
+        font-size: 1.1rem;
+    }
+
     .preco-desconto,
     .preco-normal {
-        font-size: 1.3125rem;
+        font-size: 1.5rem;
     }
     
     .preco-container {
-        padding: 0 1.25rem;
+        padding: 0 1.5rem;
+        gap: 0.7rem;
     }
 
     .preco-normal {
-        padding: 0 1.25rem;
+        padding: 0 1.5rem;
     }
 
     .percentual {
-        font-size: 0.875rem;
-        padding: 0.3125rem 0.625rem;
+        font-size: 1rem;
+        padding: 0.4rem 0.75rem;
     }
 
     .categoria-label {
-        font-size: 1rem;
-        padding: 0 1.25rem 1.25rem;
+        font-size: 1.15rem;
+        padding: 0 1.5rem 1.5rem;
     }
 
     .estrelas-container {
-        padding: 0.75rem 1.25rem 1.25rem;
-        gap: 0.3125rem;
+        padding: 0.9rem 1.5rem 1.5rem;
+        gap: 0.4rem;
     }
 
     .estrela {
-        width: 1.1875rem;
+        width: 1.4rem;
     }
 }

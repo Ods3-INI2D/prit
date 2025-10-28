@@ -14,8 +14,24 @@
           "nota": 4,
           "texto": "pintox manox bogox",
           "data": "2025-10-27T01:53:55.644Z"
+        },
+        {
+          "nota": 4,
+          "texto": "Gostei",
+          "data": "2025-10-27T22:58:27.330Z"
         }
       ]
+    },
+    {
+      "nome": "Teste",
+      "preco": 20,
+      "precoDesconto": null,
+      "categoria": "Medicamentos",
+      "descricao": "Testando",
+      "imagem": "/imagens/foto.jpg",
+      "status": "em-estoque",
+      "id": 1761611423476,
+      "avaliacoes": []
     }
   ],
   "avaliacoes": [
@@ -28,6 +44,11 @@
       "nota": 4,
       "texto": "pintox manox bogox",
       "data": "2025-10-27T01:53:55.644Z"
+    },
+    {
+      "nota": 4,
+      "texto": "Gostei",
+      "data": "2025-10-27T22:58:27.330Z"
     }
   ],
   "carrinho": [
@@ -67,13 +88,32 @@
       "email": "s@g.com",
       "senhan": "Senha123!",
       "csenha": "Senha123!"
+    },
+    {
+      "nome": "João Pedro Rocha de Souza",
+      "nasc": "2009-01-21",
+      "cpf": "59142386845",
+      "tel": "972394962",
+      "email": "pedrinhorocha507@gmail.com",
+      "senhan": "Joaozinho007@",
+      "csenha": "Joaozinho007@",
+      "cep": "06417-00"
+    },
+    {
+      "nome": "Joao pedro",
+      "nasc": "2009-01-21",
+      "cpf": "59142386845",
+      "tel": "972394962",
+      "email": "rm95030@estudante.fieb.edu.br",
+      "senhan": "Joaozinho123@",
+      "csenha": "Joaozinho123@"
     }
   ],
   "banners": [
     {
       "id": 1,
-      "imagem": "/imagens/banner-1761422621721-242949781.png",
-      "legenda": "maciel foi pro ceu",
+      "imagem": "/imagens/banner-1761610413300-364118250.jpg",
+      "legenda": "Banner 1",
       "link": "/home"
     },
     {

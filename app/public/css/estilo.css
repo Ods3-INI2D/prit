@@ -41,9 +41,29 @@ select:focus
   text-align: center;
 }
 
-/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 768px) --- */
-@media (min-width: 768px) {
+/* --- RESPONSIVIDADE PARA DESKTOPS --- */
+@media (min-width: 901px) {
+    /* aumenta tamanho da fonte base para melhor legibilidade */
+    :root {
+        font-size: 18px;
+    }
+
+    /* ajusta mensagens de erro */
     .erro {
-        font-size: 0.875rem;
+        font-size: 1rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* melhora espaçamento dos inputs em foco */
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    input[type="password"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    textarea:focus,
+    select:focus {
+        box-shadow: 0 0 0.6rem rgba(77, 166, 255, 0.6);
     }
 }
