@@ -258,7 +258,7 @@
 }
 
 /* responsividade desktop */
-@media (min-width: 768px) {
+@media (min-width: 901px) {
     :root {
         --menu-width: 20rem;
         --menu-max-width: 20rem;

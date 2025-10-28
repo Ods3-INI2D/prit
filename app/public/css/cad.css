@@ -76,6 +76,8 @@ h2 {
     margin-bottom: 0.5rem;
     font-weight: 500;
     color: white;
+    /* Alinha o texto do label (assumido ser o h2) à esquerda para casar com o input full-width */
+    text-align: left;
 }
 
 /* formulario*/
@@ -86,6 +88,8 @@ form {
     background-color: #2a2a2a;
     border-radius: 0.875rem;
     box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.45), 0 0 0.625rem rgba(77, 166, 255, 0.12);
+    /* Correção: Garante que os filhos (h2 e inputs) alinhem-se à esquerda do contêiner */
+    text-align: left;
 }
 
 input[type="text"],
@@ -93,14 +97,15 @@ input[type="password"],
 input[type="email"],
 input[type="date"],
 input[type="tel"] {
-    width: 100%;
-    padding: 1.09375rem 1.3125rem;
-    border-radius: 0.71875rem;
-    border: 0.125rem solid #555;
+    /* Manter 100% de largura para garantir o mesmo tamanho */
+    width: 100%; 
+    padding: 16px 12px;
+    border-radius: 8px;
+    border: 2px solid #555;
     background-color: #383838;
     color: #fff;
-    font-size: 1.09375rem;
-    margin-bottom: 1.3125rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
     transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -166,6 +171,7 @@ section.txt {
     width: 100%;
     max-width: 23.75rem;
     font-size: 1.03125rem;
+    /* Conteúdo centralizado */
     text-align: center;
     margin-bottom: 1.3125rem;
     background-color: transparent;
@@ -185,6 +191,7 @@ main > p.ou {
 .signup-prompt {
     width: 100%;
     max-width: 23.75rem;
+    /* Garante que o texto fique centralizado */
     text-align: center;
     margin-top: 2.25rem;
 }
@@ -219,8 +226,8 @@ footer {
     min-height: 5vh;
 }
 
-/* responsividade desktop */
-@media (min-width: 601px) {
+/* responsividade para desktops */
+@media (min-width: 901px) {
 
     header {
         height: 18vh;
@@ -229,7 +236,7 @@ footer {
     }
 
     img.icon {
-        width: 65%;
+        width: 100%;
         max-width: 18.125rem;
     }
 
@@ -254,10 +261,12 @@ footer {
 
     h2 {
         font-size: 1.23125rem;
+        text-align: left;
     }
 
     form {
         padding: 2.5625rem 2.4375rem;
+        text-align: left;
     }
 
     input[type="text"],
