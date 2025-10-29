@@ -1,39 +1,5 @@
 {
-  "produtos": [
-    {
-      "nome": "3",
-      "preco": 4,
-      "precoDesconto": 5,
-      "categoria": "Cuidados com a Pele",
-      "descricao": "bb",
-      "imagem": "/imagens/produtos/produto-1761494899184-686463534.png",
-      "status": "em-estoque",
-      "id": 1761494899200,
-      "avaliacoes": [
-        {
-          "nota": 4,
-          "texto": "pintox manox bogox",
-          "data": "2025-10-27T01:53:55.644Z"
-        },
-        {
-          "nota": 4,
-          "texto": "Gostei",
-          "data": "2025-10-27T22:58:27.330Z"
-        }
-      ]
-    },
-    {
-      "nome": "Teste",
-      "preco": 20,
-      "precoDesconto": null,
-      "categoria": "Medicamentos",
-      "descricao": "Testando",
-      "imagem": "/imagens/foto.jpg",
-      "status": "em-estoque",
-      "id": 1761611423476,
-      "avaliacoes": []
-    }
-  ],
+  "produtos": [],
   "avaliacoes": [
     {
       "nota": 2,
@@ -71,24 +37,6 @@
       "imagem": "/imagens/produtos/produto-1761351491795-577365296.png",
       "id": 1761351491812,
       "avaliacoes": []
-    },
-    {
-      "produtoId": "1761494899200",
-      "usuarioEmail": "s@g.com",
-      "quantidade": 1,
-      "dataAdicionado": "2025-10-26T17:19:33.417Z"
-    },
-    {
-      "produtoId": "1761611423476",
-      "usuarioEmail": "pedrinhorocha507@gmail.com",
-      "quantidade": 30,
-      "dataAdicionado": "2025-10-28T23:51:25.528Z"
-    },
-    {
-      "produtoId": "1761494899200",
-      "usuarioEmail": "pedrinhorocha507@gmail.com",
-      "quantidade": 1,
-      "dataAdicionado": "2025-10-28T23:55:07.333Z"
     }
   ],
   "usuarios": [

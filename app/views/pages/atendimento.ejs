@@ -1,0 +1,120 @@
+<!-- app/views/pages/atendimento.ejs -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Atendimento - +Saúde</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/atendimento.css">
+</head>
+<body>
+    <header>
+        <%- include('../partial/grid.ejs') %>
+    </header>
+
+    <main>
+        <section class="atendimento-container">
+            <nav class="navegacao" aria-label="Navegação de retorno">
+                <a href="/home" class="voltar">
+                    <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
+                    <output>Voltar</output>
+                </a>
+            </nav>
+
+            <h1 class="titulo-atendimento">Central de Atendimento</h1>
+
+            <% if(typeof sucesso !== 'undefined' && sucesso) { %>
+                <output class="mensagem-sucesso" role="status" aria-live="polite">
+                    ✓ Mensagem enviada com sucesso! Entraremos em contato em breve através do e-mail fornecido.
+                </output>
+            <% } %>
+
+            <% if(typeof erro !== 'undefined' && erro) { %>
+                <output class="mensagem-erro" role="alert" aria-live="assertive">
+                    ⚠ <%= erro %>
+                </output>
+            <% } %>
+
+            <article class="intro-atendimento">
+                <h2 class="subtitulo-intro">Como Podemos Ajudar?</h2>
+                <output class="texto-intro">
+                    Nossa Central de Atendimento está disponível para auxiliá-lo com dúvidas, 
+                    reclamações, sugestões ou qualquer informação sobre nossos produtos e serviços.
+                    <br><br>
+                    Preencha o formulário abaixo e nossa equipe entrará em contato o mais breve possível 
+                    através do e-mail fornecido.
+                </output>
+
+                <aside class="info-contato" role="complementary">
+                    <output class="contato-item">
+                        <output class="icone-contato">📧</output>
+                        <output>E-mail SAC: </output>
+                        <a href="mailto:maisaudeods3SAC@gmail.com" class="link-contato">
+                            maisaudeods3SAC@gmail.com
+                        </a>
+                    </output>
+                    <output class="contato-item">
+                        <output class="icone-contato">💬</output>
+                        <output>Tempo médio de resposta: 24 a 48 horas</output>
+                    </output>
+                </aside>
+            </article>
+
+            <form method="POST" action="/atendimento" class="form-atendimento" novalidate aria-label="Formulário de contato">
+                <h2 class="subtitulo-form">Formulário de Contato</h2>
+
+                <fieldset class="campo-form">
+                    <legend class="label-form">
+                        Seu E-mail <output class="obrigatorio">*</output>
+                    </legend>
+                    <label for="email">
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="input-form"
+                            placeholder="seuemail@exemplo.com"
+                            required
+                            aria-required="true"
+                            aria-describedby="email-info"
+                            value="<%= typeof valores !== 'undefined' ? valores.email : '' %>">
+                    </label>
+                    <output id="email-info" class="info-campo">
+                        Utilizaremos este e-mail para responder sua solicitação
+                    </output>
+                </fieldset>
+
+                <fieldset class="campo-form">
+                    <legend class="label-form">
+                        Sua Mensagem <output class="obrigatorio">*</output>
+                    </legend>
+                    <label for="mensagem">
+                        <textarea 
+                            id="mensagem" 
+                            name="mensagem" 
+                            class="textarea-form"
+                            placeholder="Descreva sua dúvida, reclamação ou sugestão..."
+                            required
+                            aria-required="true"
+                            aria-describedby="mensagem-info"
+                            rows="6"><%= typeof valores !== 'undefined' ? valores.mensagem : '' %></textarea>
+                    </label>
+                    <output id="mensagem-info" class="info-campo">
+                        Mínimo de 20 caracteres, máximo de 1000 caracteres
+                    </output>
+                </fieldset>
+
+                <button type="submit" class="btn-enviar" aria-label="Enviar mensagem para atendimento">
+                    Enviar Mensagem
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <%- include('../partial/footer.ejs') %>
+    </footer>
+</body>
+</html>

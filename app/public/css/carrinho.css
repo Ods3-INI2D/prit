@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-/* --- Reset e Configuração Base (Mobile First) --- */
 * {
     margin: 0;
     padding: 0;
@@ -39,7 +38,7 @@ main {
     text-align: center;
 }
 
-/* --- Carrinho Vazio (Mobile First) --- */
+/*Carrinho Vazio */
 .carrinho-vazio {
     text-align: center;
     padding: 5rem 0;
@@ -69,7 +68,7 @@ main {
     transform: translateY(-0.125rem);
 }
 
-/* --- Layout do Carrinho --- */
+/*Layout do Carrinho*/
 .carrinho-layout {
     display: flex;
     flex-direction: column;
@@ -80,7 +79,7 @@ main {
     width: 100%;
 }
 
-/* --- Lista de Itens (Mobile First) --- */
+/*Lista de Itens */
 .lista-carrinho {
     list-style: none;
     padding: 0;
@@ -124,7 +123,7 @@ main {
     display: block;
 }
 
-/* --- Preços (Mobile First) --- */
+/*Preços */
 .preco-container {
     display: flex;
     flex-direction: row;
@@ -150,7 +149,7 @@ main {
     display: block;
 }
 
-/* --- Controles de Quantidade --- */
+/*Controles de Quantidade*/
 .controles-quantidade {
     display: flex;
     align-items: center;
@@ -203,7 +202,7 @@ main {
     display: block;
 }
 
-/* --- Ações do Item --- */
+/*Ações do Item*/
 .acoes-item {
     display: flex;
     flex-direction: column;
@@ -243,7 +242,6 @@ main {
     background-color: #a3241b;
 }
 
-/* --- Resumo do Carrinho (Mobile First) --- */
 .resumo-carrinho {
     background-color: #2a2a2a;
     padding: 2.1875rem;
@@ -302,9 +300,9 @@ main {
     transform: translateY(-0.125rem);
 }
 
-/* =================================================== */
-/* --- RESPONSIVIDADE PARA DESKTOPS (min-width: 901px) --- */
-/* =================================================== */
+
+/*  RESPONSIVIDADE PARA DESKTOPS (min-width: 901px) */
+
 @media (min-width: 901px) {
     .carrinho-layout {
         flex-direction: row;

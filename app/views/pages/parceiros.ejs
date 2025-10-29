@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parceiros - +Saúde</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/parceiros.css">
+</head>
+<body>
+    <header>
+        <%- include('../partial/grid.ejs') %>
+    </header>
+
+    <main>
+        <section class="parceiros-container">
+            <nav class="navegacao">
+                <a href="/home" class="voltar">
+                    <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
+                    <output>Voltar</output>
+                </a>
+            </nav>
+
+            <h1 class="titulo-parceiros">Seja Nosso Parceiro</h1>
+
+            <% if(typeof sucesso !== 'undefined' && sucesso) { %>
+                <output class="mensagem-sucesso" role="status" aria-live="polite">
+                    Solicitação enviada com sucesso! Entraremos em contato em breve.
+                </output>
+            <% } %>
+
+            <% if(typeof erro !== 'undefined' && erro) { %>
+                <output class="mensagem-erro" role="alert" aria-live="assertive">
+                    <%= erro %>
+                </output>
+            <% } %>
+
+            <article class="intro-parceiros">
+                <h2 class="subtitulo-intro">O que são as nossas parcerias?</h2>
+                <output class="texto-intro">
+                    Nosso objetivo é estabelecer parcerias com marcas de menor visibilidade, 
+                    oferecendo uma plataforma digital para ampliar o alcance de seus produtos.
+                    <br><br>
+                    Dessa forma, as marcas ganham exposição e aumento nas vendas, enquanto 
+                    nossa empresa recebe comissão por cada transação realizada.
+                </output>
+            </article>
+
+            <form method="POST" action="/parceiros" class="form-parceiros" novalidate>
+                <h2 class="subtitulo-form">Formulário de Parceria</h2>
+
+                <fieldset class="campo-form">
+                    <legend class="label-form">
+                        Nome da Empresa <output class="obrigatorio">*</output>
+                    </legend>
+                    <label for="empresa">
+                        <input 
+                            type="text" 
+                            id="empresa" 
+                            name="empresa" 
+                            class="input-form"
+                            placeholder="Digite o nome da sua empresa"
+                            required
+                            aria-required="true"
+                            value="<%= typeof valores !== 'undefined' ? valores.empresa : '' %>">
+                    </label>
+                </fieldset>
+
+                <fieldset class="campo-form">
+                    <legend class="label-form">
+                        E-mail da Empresa <output class="obrigatorio">*</output>
+                    </legend>
+                    <label for="email">
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="input-form"
+                            placeholder="exemplo@empresa.com"
+                            required
+                            aria-required="true"
+                            value="<%= typeof valores !== 'undefined' ? valores.email : '' %>">
+                    </label>
+                </fieldset>
+
+                <fieldset class="campo-form">
+                    <legend class="label-form">
+                        Categorias de Produtos <output class="obrigatorio">*</output>
+                    </legend>
+                    <output style="display: block; font-size: 0.875rem; color: #888; margin-bottom: 0.75rem;">
+                        Selecione uma ou mais categorias que representam seus produtos
+                    </output>
+                    <section class="categorias-grupo">
+                        <label class="checkbox-item">
+                            <input 
+                                type="checkbox" 
+                                name="categorias" 
+                                value="Cuidados com a Pele"
+                                class="checkbox-input"
+                                <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Cuidados com a Pele') ? 'checked' : '' %>>
+                            <output class="checkbox-label">Cuidados com a Pele</output>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input 
+                                type="checkbox" 
+                                name="categorias" 
+                                value="Higiene Bucal"
+                                class="checkbox-input"
+                                <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Higiene Bucal') ? 'checked' : '' %>>
+                            <output class="checkbox-label">Higiene Bucal</output>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input 
+                                type="checkbox" 
+                                name="categorias" 
+                                value="Cabelo"
+                                class="checkbox-input"
+                                <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Cabelo') ? 'checked' : '' %>>
+                            <output class="checkbox-label">Cabelo</output>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input 
+                                type="checkbox" 
+                                name="categorias" 
+                                value="Vitaminas e Suplementos"
+                                class="checkbox-input"
+                                <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Vitaminas e Suplementos') ? 'checked' : '' %>>
+                            <output class="checkbox-label">Vitaminas e Suplementos</output>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input 
+                                type="checkbox" 
+                                name="categorias" 
+                                value="Bebê"
+                                class="checkbox-input"
+                                <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Bebê') ? 'checked' : '' %>>
+                            <output class="checkbox-label">Bebê</output>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input 
+                                type="checkbox" 
+                                name="categorias" 
+                                value="Terceira Idade"
+                                class="checkbox-input"
+                                <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Terceira Idade') ? 'checked' : '' %>>
+                            <output class="checkbox-label">Terceira Idade</output>
+                        </label>
+                    </section>
+                </fieldset>
+
+                <fieldset class="campo-form">
+                    <legend class="label-form">
+                        Descrição dos Produtos e Propostas <output class="obrigatorio">*</output>
+                    </legend>
+                    <label for="descricao">
+                        <textarea 
+                            id="descricao" 
+                            name="descricao" 
+                            class="textarea-form"
+                            placeholder="Descreva seus produtos, diferenciais e propostas de parceria..."
+                            required
+                            aria-required="true"
+                            rows="6"><%= typeof valores !== 'undefined' ? valores.descricao : '' %></textarea>
+                    </label>
+                </fieldset>
+
+                <button type="submit" class="btn-enviar">Enviar Solicitação de Parceria</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <%- include('../partial/footer.ejs') %>
+    </footer>
+</body>
+</html>
