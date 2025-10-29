@@ -1,6 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
-/* reset e configuracao base (mobile first) */
 * {
     margin: 0;
     padding: 0;
@@ -58,6 +56,7 @@ main {
     font-weight: 600;
     margin-bottom: 1.35rem; 
     color: #4da6ff;
+    text-align: center;
 }
 
 .estatisticas, .adicionar-produto, .lista-produtos {
@@ -326,54 +325,54 @@ footer {
 /* responsividade pra desktops */
 @media (min-width: 901px) {
     header {
-        min-height: 18vh;
-        padding: 2rem 1.5rem;
+        min-height: 17vh;
+        padding: 1.7rem 1.2rem;
     }
 
     .logo {
-        max-width: 18rem;
+        max-width: 15rem;
     }
 
     .titulo {
-        font-size: 2.2rem;
+        font-size: 1.9rem;
     }
 
     main {
-        padding: 3rem 0;
+        padding: 2.2rem 0;
     }
 
     .estatisticas-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr); 
-        gap: 2rem;
+        gap: 1.6rem;
     }
 
     .subtitulo {
-        font-size: 2.2rem;
-        margin-bottom: 1.8rem;
+        font-size: 1.85rem;
+        margin-bottom: 1.6rem;
     }
 
     .card-stats {
         margin-bottom: 0;
-        padding: 2rem 1.5rem;
+        padding: 1.7rem 1.3rem;
     }
 
     .stat-titulo {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
 
     .stat-valor {
-        font-size: 3.2rem;
+        font-size: 2.5rem;
     }
 
     .form-produto {
-        max-width: 680px;
+        max-width: 640px;
         margin: 0 auto;
-        padding: 2.5rem;
+        padding: 2rem;
     }
 
     .label-titulo {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     input[type="text"], 
@@ -381,26 +380,26 @@ footer {
     input[type="file"],
     select, 
     textarea {
-        font-size: 1.1rem;
-        padding: 1rem 0.9rem;
+        font-size: 1rem;
+        padding: 0.9rem 0.8rem;
     }
 
     .btn-adicionar {
-        font-size: 1.2rem;
-        padding: 1.2rem 0;
+        font-size: 1.1rem;
+        padding: 1rem 0;
     }
 
     .produto-item {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        padding: 1.2rem 1.8rem;
+        padding: 1rem 1.6rem;
     }
 
     .produto-info-container {
         display: flex;
         align-items: center;
-        gap: 1.8rem;
+        gap: 1.5rem;
         flex-grow: 1;
         width: 70%;
     }
@@ -408,40 +407,40 @@ footer {
     .produto-nome {
         width: 35%;
         margin-bottom: 0;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
     
     .produto-info {
-        font-size: 1.05rem;
+        font-size: 0.95rem;
         margin-bottom: 0;
         width: 15%;
     }
     
     .produto-preco {
         text-align: right;
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     .acoes-produto {
         flex-shrink: 0;
         width: 20%;
         justify-content: flex-end;
-        gap: 1rem;
+        gap: 0.8rem;
     }
 
     .btn-editar, .btn-excluir {
-        padding: 0.6rem 1rem;
-        font-size: 0.95rem;
+        padding: 0.55rem 0.9rem;
+        font-size: 0.9rem;
     }
 
     .mensagem-vazia {
-        font-size: 1.1rem;
-        padding: 2rem 0;
+        font-size: 1rem;
+        padding: 1.8rem 0;
     }
 
     .mensagem-erro,
     .mensagem-sucesso {
-        font-size: 1.1rem;
-        padding: 1.2rem;
+        font-size: 1rem;
+        padding: 1rem;
     }
 }

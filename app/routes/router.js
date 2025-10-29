@@ -8,6 +8,10 @@ var path = require('path');
 var fs = require('fs');
 var session = require('express-session');
 
+// Configurar dotenv para variáveis de ambiente
+require('dotenv').config();
+const nodemailer = require('nodemailer');
+
 router.use(session({
     secret: 'chave-secreta-farmacia-super-segura-2024',
     resave: false,
@@ -612,6 +616,101 @@ router.get('/categoria/:nome', function(req, res) {
     const produtosCategoria = db.getProdutosByCategoria(req.params.nome);
     res.render('pages/categoria', { categoria: req.params.nome, produtos: produtosCategoria });
 });
+
+// GET página de parceiros
+router.get('/parceiros', function(req, res) {
+    res.render('pages/parceiros', { 
+        sucesso: null, 
+        erro: null,
+        valores: { empresa: '', email: '', categorias: [], descricao: '' }
+    });
+});
+
+// POST formulário de parceiros
+router.post('/parceiros',
+    body("empresa")
+        .notEmpty().withMessage('Nome da empresa é obrigatório!')
+        .isLength({ min: 3, max: 100 }).withMessage('Nome da empresa deve ter entre 3 e 100 caracteres!'),
+    body("email")
+        .notEmpty().withMessage('E-mail é obrigatório!')
+        .isEmail().withMessage('E-mail inválido!'),
+    body("categorias")
+        .custom((value) => {
+            if (!value || (Array.isArray(value) && value.length === 0)) {
+                throw new Error('Selecione pelo menos uma categoria!');
+            }
+            return true;
+        }),
+    body("descricao")
+        .notEmpty().withMessage('Descrição é obrigatória!')
+        .isLength({ min: 50, max: 1000 }).withMessage('Descrição deve ter entre 50 e 1000 caracteres!'),
+    async (req, res) => {
+        const errors = validationResult(req);
+        
+        if (!errors.isEmpty()) {
+            const primeiroErro = errors.array()[0].msg;
+            return res.render('pages/parceiros', { 
+                sucesso: null, 
+                erro: primeiroErro,
+                valores: req.body
+            });
+        }
+
+        try {
+            // Configurar o transportador de e-mail
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
+            });
+
+            // Formatar as categorias selecionadas
+            const categoriasSelecionadas = Array.isArray(req.body.categorias) 
+                ? req.body.categorias.join(', ') 
+                : req.body.categorias;
+
+            // Configurar o conteúdo do e-mail
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: process.env.EMAIL_USER, // Envia para o próprio e-mail da empresa
+                subject: `Nova Solicitação de Parceria - ${req.body.empresa}`,
+                html: `
+                    <h2>Nova Solicitação de Parceria</h2>
+                    <p><strong>Nome da Empresa:</strong> ${req.body.empresa}</p>
+                    <p><strong>E-mail:</strong> ${req.body.email}</p>
+                    <p><strong>Categorias de Interesse:</strong> ${categoriasSelecionadas}</p>
+                    <p><strong>Descrição dos Produtos e Propostas:</strong></p>
+                    <p>${req.body.descricao.replace(/\n/g, '<br>')}</p>
+                    <hr>
+                    <p><em>E-mail enviado automaticamente pelo sistema de parcerias +Saúde</em></p>
+                `
+            };
+
+            // Enviar o e-mail
+            await transporter.sendMail(mailOptions);
+
+            // Renderizar a página com mensagem de sucesso
+            res.render('pages/parceiros', { 
+                sucesso: true, 
+                erro: null,
+                valores: { empresa: '', email: '', categorias: [], descricao: '' }
+            });
+
+        } catch (error) {
+            console.error('Erro ao enviar e-mail de parceria:', error);
+            res.render('pages/parceiros', { 
+                sucesso: null, 
+                erro: 'Erro ao enviar solicitação. Tente novamente mais tarde.',
+                valores: req.body
+            });
+        }
+    }
+);
 
 // Logout
 router.get('/logout', function(req, res) {
