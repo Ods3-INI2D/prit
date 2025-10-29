@@ -45,70 +45,198 @@
             </nav>
         </section>
 
-        <section class="produtos-container">
-            <% if(produtos && produtos.length > 0) { %>
-                <% produtos.forEach(function(produto) { 
-                    var precoAtual = produto.preco || 0;
-                    var precoComDesconto = produto.precoDesconto || null;
-                    
-                    var temDesconto = precoComDesconto !== null && precoComDesconto > 0;
-                    var percentualDesconto = 0;
-                    
-                    if(temDesconto && precoAtual > 0) {
-                        percentualDesconto = Math.round(((precoAtual - precoComDesconto) / precoAtual) * 100);
-                    }
-                    
-                    var temAvaliacoes = produto.avaliacoes && produto.avaliacoes.length > 0;
-                    var notaArredondada = 0;
-                    
-                    if(temAvaliacoes) {
-                        var somaNotas = 0;
-                        produto.avaliacoes.forEach(function(avaliacao) {
-                            somaNotas += avaliacao.nota;
-                        });
-                        var media = somaNotas / produto.avaliacoes.length;
-                        notaArredondada = Math.round(media);
-                    }
-                %>
-                    <article class="bloco-produto-home">
-                        <a href="/produto/<%= produto.id %>" class="link-produto-home">
-                            <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto-home">
+        <% if(produtos && produtos.length > 0) { %>
+            <%
+            // Organizar produtos por categoria
+            var produtosPorCategoria = {
+                'Descontos': [],
+                'Cuidados com a Pele': [],
+                'Higiene Bucal': [],
+                'Cabelo': [],
+                'Vitaminas e Suplementos': [],
+                'Bebê': [],
+                'Terceira Idade': []
+            };
 
-                            <h2 class="nome-produto-home"><%= produto.nome %></h2>
+            // Separar produtos com desconto
+            produtos.forEach(function(produto) {
+                if(produto.precoDesconto) {
+                    produtosPorCategoria['Descontos'].push(produto);
+                }
+                if(produtosPorCategoria[produto.categoria]) {
+                    produtosPorCategoria[produto.categoria].push(produto);
+                }
+            });
 
-                            <% if(temDesconto) { %>
-                                <section class="preco-container-home">
-                                    <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></o>
-                                    <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></o>
-                                    <aside class="badge-desconto">
-                                        <output class="percentual-home">-<%= percentualDesconto %>%</o>
-                                    </aside>
-                                </section>
-                            <% } else { %>
-                                <output class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></o>
-                            <% } %>
+            // Garantir pelo menos 1 produto de cada categoria em Descontos
+            var descontosBalanceados = [];
+            var categoriasPrincipais = ['Cuidados com a Pele', 'Higiene Bucal', 'Cabelo', 'Vitaminas e Suplementos', 'Bebê', 'Terceira Idade'];
+            
+            categoriasPrincipais.forEach(function(cat) {
+                var produtoCategoria = produtosPorCategoria['Descontos'].find(function(p) {
+                    return p.categoria === cat;
+                });
+                if(produtoCategoria && descontosBalanceados.length < 8) {
+                    descontosBalanceados.push(produtoCategoria);
+                }
+            });
 
-                            <output class="categoria-home"><%= produto.categoria %></o>
+            // Completar até 8 produtos em Descontos
+            produtosPorCategoria['Descontos'].forEach(function(p) {
+                if(descontosBalanceados.length < 8 && !descontosBalanceados.includes(p)) {
+                    descontosBalanceados.push(p);
+                }
+            });
 
-                            <% if(temAvaliacoes) { %>
-                                <section class="estrelas-home">
-                                    <% for(var i = 1; i <= 5; i++) { %>
-                                        <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.png" alt="Estrela" class="estrela-home">
-                                    <% } %>
-                                </section>
-                            <% } %>
+            produtosPorCategoria['Descontos'] = descontosBalanceados;
+            %>
+
+            <!-- SEÇÃO DESCONTOS - 8 PRODUTOS -->
+            <% if(produtosPorCategoria['Descontos'].length > 0) { %>
+                <section class="secao-categoria" aria-labelledby="titulo-descontos">
+                    <header class="header-categoria">
+                        <h2 id="titulo-descontos" class="titulo-categoria">Descontos</h2>
+                        <a href="/home" class="link-ver-mais">
+                            <output>Ver mais</output>
+                            <img src="/imagens/setal.png" alt="" class="seta-ver-mais">
                         </a>
-                    </article>
-                <% }); %>
-            <% } else { %>
-                <article class="sem-produtos">
-                    <output class="mensagem-vazio">Nenhum produto disponível no momento.</o>
-                    <% if(isAdmin) { %>
-                        <a href="/admin" class="btn-admin">Gerenciar o Site</a>
-                    <% } %>
-                </article>
+                    </header>
+
+                    <section class="produtos-container produtos-descontos">
+                        <% produtosPorCategoria['Descontos'].slice(0, 8).forEach(function(produto) { 
+                            var precoAtual = produto.preco || 0;
+                            var precoComDesconto = produto.precoDesconto || null;
+                            var temDesconto = precoComDesconto !== null && precoComDesconto > 0;
+                            var percentualDesconto = 0;
+                            
+                            if(temDesconto && precoAtual > 0) {
+                                percentualDesconto = Math.round(((precoAtual - precoComDesconto) / precoAtual) * 100);
+                            }
+                            
+                            var temAvaliacoes = produto.avaliacoes && produto.avaliacoes.length > 0;
+                            var notaArredondada = 0;
+                            
+                            if(temAvaliacoes) {
+                                var somaNotas = 0;
+                                produto.avaliacoes.forEach(function(avaliacao) {
+                                    somaNotas += avaliacao.nota;
+                                });
+                                var media = somaNotas / produto.avaliacoes.length;
+                                notaArredondada = Math.round(media);
+                            }
+                        %>
+                            <article class="bloco-produto-home">
+                                <a href="/produto/<%= produto.id %>" class="link-produto-home">
+                                    <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto-home">
+                                    <h3 class="nome-produto-home"><%= produto.nome %></h3>
+
+                                    <% if(temDesconto) { %>
+                                        <section class="preco-container-home">
+                                            <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                            <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></output>
+                                            <aside class="badge-desconto">
+                                                <output class="percentual-home">-<%= percentualDesconto %>%</output>
+                                            </aside>
+                                        </section>
+                                    <% } else { %>
+                                        <output class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                    <% } %>
+
+                                    <output class="categoria-home"><%= produto.categoria %></output>
+
+                                    <% if(temAvaliacoes) { %>
+                                        <section class="estrelas-home">
+                                            <% for(var i = 1; i <= 5; i++) { %>
+                                                <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.png" alt="Estrela" class="estrela-home">
+                                            <% } %>
+                                        </section>
+                                    <% } %>
+                                </a>
+                            </article>
+                        <% }); %>
+                    </section>
+                </section>
             <% } %>
-        </section>
+
+            <!-- OUTRAS CATEGORIAS - 4 PRODUTOS CADA -->
+            <% categoriasPrincipais.forEach(function(nomeCategoria) { 
+                if(produtosPorCategoria[nomeCategoria].length > 0) { 
+                    var idCategoria = nomeCategoria.toLowerCase().replace(/\s+/g, '-');
+            %>
+                <section class="secao-categoria" aria-labelledby="titulo-<%= idCategoria %>">
+                    <header class="header-categoria">
+                        <h2 id="titulo-<%= idCategoria %>" class="titulo-categoria"><%= nomeCategoria %></h2>
+                        <a href="/categoria/<%= encodeURIComponent(nomeCategoria) %>" class="link-ver-mais">
+                            <output>Ver mais</output>
+                            <img src="/imagens/setal.png" alt="" class="seta-ver-mais">
+                        </a>
+                    </header>
+
+                    <section class="produtos-container">
+                        <% produtosPorCategoria[nomeCategoria].slice(0, 4).forEach(function(produto) { 
+                            var precoAtual = produto.preco || 0;
+                            var precoComDesconto = produto.precoDesconto || null;
+                            var temDesconto = precoComDesconto !== null && precoComDesconto > 0;
+                            var percentualDesconto = 0;
+                            
+                            if(temDesconto && precoAtual > 0) {
+                                percentualDesconto = Math.round(((precoAtual - precoComDesconto) / precoAtual) * 100);
+                            }
+                            
+                            var temAvaliacoes = produto.avaliacoes && produto.avaliacoes.length > 0;
+                            var notaArredondada = 0;
+                            
+                            if(temAvaliacoes) {
+                                var somaNotas = 0;
+                                produto.avaliacoes.forEach(function(avaliacao) {
+                                    somaNotas += avaliacao.nota;
+                                });
+                                var media = somaNotas / produto.avaliacoes.length;
+                                notaArredondada = Math.round(media);
+                            }
+                        %>
+                            <article class="bloco-produto-home">
+                                <a href="/produto/<%= produto.id %>" class="link-produto-home">
+                                    <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto-home">
+                                    <h3 class="nome-produto-home"><%= produto.nome %></h3>
+
+                                    <% if(temDesconto) { %>
+                                        <section class="preco-container-home">
+                                            <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                            <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></output>
+                                            <aside class="badge-desconto">
+                                                <output class="percentual-home">-<%= percentualDesconto %>%</output>
+                                            </aside>
+                                        </section>
+                                    <% } else { %>
+                                        <output class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                    <% } %>
+
+                                    <output class="categoria-home"><%= produto.categoria %></output>
+
+                                    <% if(temAvaliacoes) { %>
+                                        <section class="estrelas-home">
+                                            <% for(var i = 1; i <= 5; i++) { %>
+                                                <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.png" alt="Estrela" class="estrela-home">
+                                            <% } %>
+                                        </section>
+                                    <% } %>
+                                </a>
+                            </article>
+                        <% }); %>
+                    </section>
+                </section>
+            <% } 
+            }); %>
+
+        <% } else { %>
+            <article class="sem-produtos">
+                <output class="mensagem-vazio">Nenhum produto disponível no momento.</output>
+                <% if(isAdmin) { %>
+                    <a href="/admin" class="btn-admin">Gerenciar o Site</a>
+                <% } %>
+            </article>
+        <% } %>
     </main>
 
     <footer>
