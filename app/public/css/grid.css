@@ -17,6 +17,13 @@ body {
     min-height: 3.75rem;
 }
 
+/* hamburger deve ficar à esquerda */
+.hamburger {
+    order: -1;
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+}
+
 .logo {
     width: 5.25rem;
     height: auto;
@@ -90,6 +97,10 @@ body {
         padding: 1rem 5%;
         gap: 1.5rem;
         min-height: 4.75rem;
+    }
+
+    .hamburger {
+        margin-right: 1rem;
     }
 
     .logo {

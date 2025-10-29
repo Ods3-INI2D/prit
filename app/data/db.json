@@ -1,14 +1,58 @@
 {
   "produtos": [
     {
-      "nome": "TEste",
-      "preco": 109,
+      "nome": "Teste",
+      "preco": 10,
       "precoDesconto": null,
-      "categoria": "Cuidados com a Pele",
+      "categoria": "Higiene Bucal",
       "descricao": "Teste",
       "imagem": "/imagens/foto.jpg",
       "status": "em-estoque",
       "id": 1761739217023,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Joao pedro",
+      "preco": 1,
+      "precoDesconto": null,
+      "categoria": "Cabelo",
+      "descricao": "dqw",
+      "imagem": "/imagens/foto.jpg",
+      "status": "em-estoque",
+      "id": 1761773784432,
+      "avaliacoes": []
+    },
+    {
+      "nome": "qdw",
+      "preco": 23,
+      "precoDesconto": null,
+      "categoria": "Vitaminas e Suplementos",
+      "descricao": "ewq",
+      "imagem": "/imagens/foto.jpg",
+      "status": "em-estoque",
+      "id": 1761773792281,
+      "avaliacoes": []
+    },
+    {
+      "nome": "cwecwe",
+      "preco": 32,
+      "precoDesconto": null,
+      "categoria": "Terceira Idade",
+      "descricao": "32",
+      "imagem": "/imagens/foto.jpg",
+      "status": "em-estoque",
+      "id": 1761773802053,
+      "avaliacoes": []
+    },
+    {
+      "nome": "grfaaaaaaaaaaaaaa",
+      "preco": 31,
+      "precoDesconto": null,
+      "categoria": "Bebê",
+      "descricao": "32",
+      "imagem": "/imagens/foto.jpg",
+      "status": "em-estoque",
+      "id": 1761773810964,
       "avaliacoes": []
     }
   ],
@@ -49,12 +93,6 @@
       "imagem": "/imagens/produtos/produto-1761351491795-577365296.png",
       "id": 1761351491812,
       "avaliacoes": []
-    },
-    {
-      "produtoId": "1761739217023",
-      "usuarioEmail": "pedrinhorocha507@gmail.com",
-      "quantidade": 1,
-      "dataAdicionado": "2025-10-29T12:40:46.050Z"
     }
   ],
   "usuarios": [
