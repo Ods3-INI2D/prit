@@ -658,9 +658,9 @@ router.post('/parceiros',
 
         try {
             console.log('=== INICIANDO ENVIO DE E-MAIL ===');
-            console.log('EMAIL_USER:', process.env.EMAIL_USER);
+            console.log('EMAIL_USER:', process.env.EMAIL_PARCEIROS);
             console.log('EMAIL_PARCEIROS:', process.env.EMAIL_PARCEIROS);
-            console.log('Senha configurada:', process.env.EMAIL_PASS ? 'SIM' : 'NÃO');
+            console.log('Senha configurada:', process.env.EMAIL_PARCEIROS_PASS ? 'SIM' : 'NÃO');
 
             // Configurar o transportador de e-mail com configurações mais robustas
             const transporter = nodemailer.createTransport({
@@ -668,8 +668,8 @@ router.post('/parceiros',
                 port: 587,
                 secure: false, // true para 465, false para outras portas
                 auth: {
-                    user: process.env.EMAIL_USER,
-                    pass: process.env.EMAIL_PASS
+                    user: process.env.EMAIL_PARCEIROS,
+                    pass: process.env.EMAIL_PARCEIROS_PASS
                 },
                 tls: {
                     rejectUnauthorized: false
@@ -692,7 +692,7 @@ router.post('/parceiros',
 
             // Configurar o conteúdo do e-mail na ordem CORRETA
             const mailOptions = {
-                from: `"Sistema +Saúde" <${process.env.EMAIL_USER}>`,
+                from: `"Sistema +Saúde" <${process.env.EMAIL_PARCEIROS}>`,
                 to: process.env.EMAIL_PARCEIROS || 'maisaudeods3parceiros@gmail.com',
                 subject: `Nova Solicitação de Parceria - ${req.body.empresa}`,
                 html: `
