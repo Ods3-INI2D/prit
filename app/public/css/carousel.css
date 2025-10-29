@@ -158,6 +158,7 @@
 
 /* Responsividade Desktop */
 @media (min-width: 901px) {
+<<<<<<< HEAD
     .carousel-container {
         height: 14rem;
         margin: 1.25rem auto;
@@ -299,39 +300,41 @@
 
 /* Responsividade Desktop */
 @media (min-width: 768px) {
+=======
+>>>>>>> a9cbbbe02d3e43cbb7a3db50f58b8ffc5fd3dff6
     .carousel-container {
-        height: 16rem;
-        margin: 1.5rem auto;
-        width: 90%;
-        max-width: 75rem;
-        border-radius: 0.75rem;
-        box-shadow: 0 0.1875rem 0.875rem rgba(0, 0, 0, 0.3);
+        height: 14rem;
+        margin: 1.25rem auto;
+        width: 88%;
+        max-width: 70rem;
+        border-radius: 0.65rem;
+        box-shadow: 0 0.1875rem 0.75rem rgba(0, 0, 0, 0.3);
     }
 
     .carousel-caption {
-        font-size: 1.125rem;
-        padding: 0.625rem 1.375rem;
-        bottom: 1.25rem;
+        font-size: 1rem;
+        padding: 0.5rem 1.125rem;
+        bottom: 1rem;
         border-radius: 0.5rem;
     }
 
     .carousel-btn {
-        width: 2.75rem;
-        height: 2.75rem;
-        font-size: 1.75rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.5rem;
     }
 
     .carousel-controls {
-        padding: 0 1.25rem;
+        padding: 0 1rem;
     }
 
     .indicator {
-        width: 0.75rem;
-        height: 0.75rem;
+        width: 0.65rem;
+        height: 0.65rem;
     }
 
     .carousel-indicators {
-        bottom: 1rem;
-        gap: 0.625rem;
+        bottom: 0.875rem;
+        gap: 0.5rem;
     }
 }
