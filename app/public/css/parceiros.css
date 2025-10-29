@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-/* Reset e Configuração Base (Mobile First) */
 * {
     margin: 0;
     padding: 0;
@@ -25,14 +24,12 @@ main {
     padding: 1.875rem 0;
 }
 
-/* Container Principal */
 .parceiros-container {
     width: 90%;
     max-width: 50rem;
     margin: 0 auto;
 }
 
-/* Navegação */
 .navegacao {
     margin-bottom: 1.875rem;
 }
@@ -57,7 +54,7 @@ main {
     height: auto;
 }
 
-/* Título */
+/* titulo */
 .titulo-parceiros {
     font-size: 2rem;
     font-weight: 700;
@@ -66,7 +63,6 @@ main {
     text-align: center;
 }
 
-/* Seção de Introdução */
 .intro-parceiros {
     background-color: #2a2a2a;
     border-radius: 0.75rem;
@@ -88,7 +84,7 @@ main {
     color: #d9d9d9;
 }
 
-/* Formulário */
+/* formulario */
 .form-parceiros {
     background-color: #2a2a2a;
     border-radius: 0.75rem;
@@ -145,7 +141,7 @@ main {
     min-height: 6.25rem;
 }
 
-/* Checkbox de Categorias */
+/* categorias */
 .categorias-grupo {
     display: flex;
     flex-direction: column;
@@ -171,7 +167,7 @@ main {
     cursor: pointer;
 }
 
-/* Botão de Envio */
+/* botao*/
 .btn-enviar {
     width: 100%;
     padding: 1rem 0;
@@ -195,7 +191,7 @@ main {
     transform: translateY(0);
 }
 
-/* Mensagens de Sucesso/Erro */
+/* mensagens*/
 .mensagem-sucesso,
 .mensagem-erro {
     padding: 1rem;
