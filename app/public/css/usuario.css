@@ -216,57 +216,57 @@ input[type="text"]:focus {
     transform: translateY(-2px);
 }
 
-/*responsividade para desktops (min-width: 768px)*/
-@media (min-width: 768px) {
+/*responsividade para desktops*/
+@media (min-width: 901px) {
     .titulo-perfil {
-        font-size: 2.25rem;
-        margin-bottom: 2rem;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
     }
 
     .info-usuario,
     .dados-editaveis,
     .menu-usuario {
-        padding: 2rem;
+        padding: 1.5rem;
     }
 
     .subtitulo {
-        font-size: 1.625rem;
+        font-size: 1.375rem;
     }
 
     .label-info {
-        font-size: 0.9375rem;
+        font-size: 0.875rem;
     }
 
     .valor-info {
-        font-size: 1.1875rem;
+        font-size: 1.0625rem;
     }
 
     .label-form {
-        font-size: 1.0625rem;
+        font-size: 0.9375rem;
     }
 
     input[type="tel"],
     input[type="text"] {
-        padding: 1rem 1.125rem;
-        font-size: 1.0625rem;
+        padding: 0.875rem 1rem;
+        font-size: 0.9375rem;
     }
 
     .btn-salvar {
-        padding: 1.125rem 0;
-        font-size: 1.125rem;
+        padding: 1rem 0;
+        font-size: 1rem;
     }
 
     .opcao-menu {
-        padding: 1.4375rem 2rem;
-        font-size: 1.125rem;
+        padding: 1.2rem 1.5rem;
+        font-size: 1rem;
     }
 
     .mensagem-login {
-        font-size: 1.375rem;
+        font-size: 1.2rem;
     }
 
     .btn-login {
-        padding: 1.125rem 2.5rem;
-        font-size: 1.125rem;
+        padding: 1rem 2rem;
+        font-size: 1rem;
     }
 }

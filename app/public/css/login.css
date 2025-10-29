@@ -104,8 +104,7 @@ input[type="password"] {
 }
 
 /* Se houver um container envolvendo o input de senha por causa do ícone, o ajuste de altura deve ser feito no container ou no próprio input, garantindo que o input de senha (o campo de texto real) não seja afetado pelo ícone. 
-    Se o seu HTML não tem um container para o ícone de senha e o campo, esta correção é suficiente. 
-
+    Se o seu HTML não tem um container para o ícone de senha e o campo, esta correção é suficiente. */
 
 input[type="text"]:focus,
 input[type="email"]:focus,
@@ -246,23 +245,23 @@ footer {
 @media (min-width: 901px) {
 
     header {
-        height: 20vh;
-        border-bottom-left-radius: 12px;
-        border-bottom-right-radius: 12px;
+        height: 18vh;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
     }
 
     img.icon {
-        width: 75%;
-        max-width: 340px;
+        width: 70%;
+        max-width: 280px;
     }
 
     main {
-        padding: 3rem 1.5rem;
+        padding: 2.5rem 1.25rem;
     }
 
     section.login-module {
         /* Ajuste para desktop */
-        max-width: 550px; 
+        max-width: 500px; 
         background-color: transparent;
         padding: 0;
         box-shadow: none;
@@ -274,20 +273,20 @@ footer {
         padding: 0;
         border-radius: 0;
         box-shadow: none;
-        margin-bottom: 2rem;
+        margin-bottom: 1.75rem;
     }
 
     h1.tit {
-        font-size: 3rem;
+        font-size: 2.4rem;
     }
 
     h2 {
-        font-size: 1.3rem;
+        font-size: 1.15rem;
     }
 
     form {
         /* Ajuste para desktop */
-        padding: 35px 30px; 
+        padding: 28px 24px; 
     }
 
     /* GARANTE QUE TODOS OS INPUTS (TEXT, EMAIL, PASSWORD) TENHAM O MESMO ESTILO E LARGURA (100%) */
@@ -296,53 +295,53 @@ footer {
     input[type="password"] {
         /* Mantido 100% de largura */
         width: 100%; 
-        padding: 16px 20px;
-        font-size: 1.2rem;
+        padding: 14px 16px;
+        font-size: 1.05rem;
     }
 
     #btn-login {
-        padding: 16px;
-        font-size: 1.3rem;
+        padding: 14px;
+        font-size: 1.15rem;
     }
 
     #google {
-        padding: 16px;
-        font-size: 1.2rem;
+        padding: 14px;
+        font-size: 1.05rem;
         /* Ajustado para acompanhar o novo max-width da section */
-        max-width: 550px;
+        max-width: 500px;
     }
 
     main > p.ou {
         /* Ajustado para acompanhar o novo max-width da section */
-        max-width: 550px;
+        max-width: 500px;
     }
 
     .signup-prompt {
         /* Ajustado para acompanhar o novo max-width da section */
-        max-width: 550px;
+        max-width: 500px;
     }
 
     .link2 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     small.erro {
-        font-size: 1.05rem;
+        font-size: 0.95rem;
     }
 
     .erro-login {
         /* Ajuste para desktop, mantendo unidades fixas/relativas */
-        padding: 1.2rem 1.5rem; 
-        border-radius: 10px;
+        padding: 1rem 1.25rem; 
+        border-radius: 9px;
         border: 2px solid #ff5555;
     }
 
     .mensagem-erro {
         /* Ajuste para desktop */
-        font-size: 1.1rem; 
+        font-size: 1.05rem; 
     }
 
     footer {
-        height: 6vh;
+        height: 5.5vh;
     }
 }

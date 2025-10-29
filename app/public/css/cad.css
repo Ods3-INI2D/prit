@@ -163,7 +163,7 @@ output.erro {
 .mensagem-erro {
     color: #ff5555;
     font-size: 1.03125rem;
-    text-align: center;
+    text-align: left;
 }
 
 /* outros elementos */
@@ -230,42 +230,42 @@ footer {
 @media (min-width: 901px) {
 
     header {
-        height: 18vh;
-        border-bottom-left-radius: 0.875rem;
-        border-bottom-right-radius: 0.875rem;
+        height: 15vh;
+        border-bottom-left-radius: 0.625rem;
+        border-bottom-right-radius: 0.625rem;
     }
 
     img.icon {
-        width: 100%;
-        max-width: 18.125rem;
+        width: 80%;
+        max-width: 12.5rem;
     }
 
     main {
-        padding: 3.375rem 1.125rem;
+        padding: 2rem 1rem;
     }
 
     section.login-module,
     section.txt,
     .signup-prompt,
     main > p.ou {
-        max-width: 28.75rem;
+        max-width: 25rem;
     }
 
     .title-group {
-        margin-bottom: 2.5625rem;
+        margin-bottom: 1.75rem;
     }
 
     h1.tit {
-        font-size: 2.96875rem;
+        font-size: 2.25rem;
     }
 
     h2 {
-        font-size: 1.23125rem;
+        font-size: 1.0625rem;
         text-align: left;
     }
 
     form {
-        padding: 2.5625rem 2.4375rem;
+        padding: 1.875rem 1.75rem;
         text-align: left;
     }
 
@@ -274,21 +274,21 @@ footer {
     input[type="email"],
     input[type="date"],
     input[type="tel"] {
-        padding: 1.25rem 1.4375rem;
-        font-size: 1.1875rem;
+        padding: 1rem 1rem;
+        font-size: 1rem;
     }
 
     #btn,
     #btn-login {
-        padding: 1.25rem;
-        font-size: 1.35625rem;
+        padding: 1rem;
+        font-size: 1.125rem;
     }
 
     section.txt {
-        font-size: 1.09375rem;
+        font-size: 1rem;
     }
 
     footer {
-        min-height: 5vh;
+        min-height: 4.5vh;
     }
 }
