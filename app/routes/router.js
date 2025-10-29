@@ -657,59 +657,74 @@ router.post('/parceiros',
         }
 
         try {
-            // Configurar o transportador de e-mail
+            console.log('=== INICIANDO ENVIO DE E-MAIL ===');
+            console.log('EMAIL_USER:', process.env.EMAIL_USER);
+            console.log('EMAIL_PARCEIROS:', process.env.EMAIL_PARCEIROS);
+            console.log('Senha configurada:', process.env.EMAIL_PASS ? 'SIM' : 'NÃO');
+
+            // Configurar o transportador de e-mail com configurações mais robustas
             const transporter = nodemailer.createTransport({
-                service: 'gmail',
+                host: 'smtp.gmail.com',
+                port: 587,
+                secure: false, // true para 465, false para outras portas
                 auth: {
                     user: process.env.EMAIL_USER,
                     pass: process.env.EMAIL_PASS
                 },
                 tls: {
                     rejectUnauthorized: false
-                }
+                },
+                debug: true, // Ativa logs de debug
+                logger: true // Ativa logs detalhados
             });
+
+            // Verificar conexão antes de enviar
+            console.log('Verificando conexão SMTP...');
+            await transporter.verify();
+            console.log('✓ Conexão SMTP verificada com sucesso!');
 
             // Formatar as categorias selecionadas
             const categoriasSelecionadas = Array.isArray(req.body.categorias) 
                 ? req.body.categorias.join(', ') 
                 : req.body.categorias;
 
+            console.log('Preparando e-mail...');
+
             // Configurar o conteúdo do e-mail na ordem CORRETA
             const mailOptions = {
-                from: process.env.EMAIL_USER,
+                from: `"Sistema +Saúde" <${process.env.EMAIL_USER}>`,
                 to: process.env.EMAIL_PARCEIROS || 'maisaudeods3parceiros@gmail.com',
                 subject: `Nova Solicitação de Parceria - ${req.body.empresa}`,
                 html: `
-                    <section>
-                        <h2>Nova Solicitação de Parceria</h2>
+                    <section style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+                        <h2 style="color: #163069; border-bottom: 3px solid #4da6ff; padding-bottom: 10px;">Nova Solicitação de Parceria</h2>
                         
-                        <article>
-                            <h3>Nome da Empresa</h3>
-                            <output>${req.body.empresa}</output>
+                        <article style="background-color: white; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                            <h3 style="color: #333; margin-top: 0;">Nome da Empresa</h3>
+                            <output style="color: #555; display: block;">${req.body.empresa}</output>
                         </article>
                         
-                        <article>
-                            <h3>Categoria dos Produtos</h3>
-                            <output>${categoriasSelecionadas}</output>
+                        <article style="background-color: white; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                            <h3 style="color: #333; margin-top: 0;">Categoria dos Produtos</h3>
+                            <output style="color: #555; display: block;">${categoriasSelecionadas}</output>
                         </article>
 
-                        <article>
-                            <h3>E-mail de Contato</h3>
-                            <output>${req.body.email}</output>
+                        <article style="background-color: white; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                            <h3 style="color: #333; margin-top: 0;">E-mail de Contato</h3>
+                            <output style="color: #555; display: block;"><a href="mailto:${req.body.email}" style="color: #4da6ff; text-decoration: none;">${req.body.email}</a></output>
                         </article>
                         
-                        <article>
-                            <h3>Proposta</h3>
-                            <output>${req.body.descricao.replace(/\n/g, '<br>')}</output>
+                        <article style="background-color: white; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                            <h3 style="color: #333; margin-top: 0;">Proposta</h3>
+                            <output style="color: #555; display: block; white-space: pre-wrap;">${req.body.descricao.replace(/\n/g, '<br>')}</output>
                         </article>
                         
-                        <hr>
-                        <footer>
-                            <output><em>E-mail enviado automaticamente pelo sistema de parcerias +Saúde</em></output>
+                        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+                        <footer style="text-align: center; padding: 10px;">
+                            <output style="color: #888; font-size: 12px; display: block;"><em>E-mail enviado automaticamente pelo sistema de parcerias +Saúde</em></output>
                         </footer>
                     </section>
                 `,
-                // Versão texto simples
                 text: `
 Nova Solicitação de Parceria
 
@@ -730,10 +745,15 @@ E-mail enviado automaticamente pelo sistema de parcerias +Saúde
                 `.trim()
             };
 
-            // Enviar o e-mail
-            await transporter.sendMail(mailOptions);
+            console.log('Enviando e-mail...');
 
-            console.log('E-mail de parceria enviado com sucesso para:', process.env.EMAIL_PARCEIROS || 'maisaudeods3parceiros@gmail.com');
+            // Enviar o e-mail
+            const info = await transporter.sendMail(mailOptions);
+
+            console.log('✓ E-mail enviado com sucesso!');
+            console.log('ID da mensagem:', info.messageId);
+            console.log('Resposta:', info.response);
+            console.log('=== FIM DO ENVIO ===');
 
             // Renderizar a página com mensagem de sucesso
             res.render('pages/parceiros', { 
@@ -743,10 +763,27 @@ E-mail enviado automaticamente pelo sistema de parcerias +Saúde
             });
 
         } catch (error) {
-            console.error('Erro ao enviar e-mail de parceria:', error);
+            console.error('=== ERRO AO ENVIAR E-MAIL ===');
+            console.error('Tipo de erro:', error.name);
+            console.error('Mensagem:', error.message);
+            console.error('Código:', error.code);
+            console.error('Stack completo:', error.stack);
+            console.error('=== FIM DO ERRO ===');
+            
+            let mensagemErro = 'Erro ao enviar solicitação. Tente novamente mais tarde.';
+            
+            // Mensagens de erro específicas
+            if (error.code === 'EAUTH') {
+                mensagemErro = 'Erro de autenticação. Verifique as credenciais de e-mail.';
+            } else if (error.code === 'ESOCKET') {
+                mensagemErro = 'Erro de conexão. Verifique sua conexão com a internet.';
+            } else if (error.responseCode === 535) {
+                mensagemErro = 'Senha incorreta ou Senha de App não configurada.';
+            }
+            
             res.render('pages/parceiros', { 
                 sucesso: null, 
-                erro: 'Erro ao enviar solicitação. Tente novamente mais tarde.',
+                erro: mensagemErro,
                 valores: req.body
             });
         }
