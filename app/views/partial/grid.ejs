@@ -11,29 +11,126 @@
     <link rel="stylesheet" href="/css/menu.css">
 </head>
 <body>
-    <nav>
-        <%- include('../partial/menu.ejs') %>
-        
-        <section class="nav-principal">
-            <a href="/home"><img src="/imagens/logo.png" alt="logo" class="logo"></a>
+    <nav class="nav-principal">
+        <!-- hamburger -->
+        <button class="hamburger"
+                aria-controls="menuhamburger"
+                aria-expanded="false" 
+                aria-label="abrir menu hamburger">
+            <hr class="linha1">
+            <hr class="linha2">
+            <hr class="linha3">
+        </button>
 
-            <section class="busca-container">
-                <a href="<%= isAdmin ? '/admin' : '/usuario' %>"><img src="/imagens/user.png" alt="user" class="user"></a>
+        <a href="/home"><img src="/imagens/logo.png" alt="logo" class="logo"></a>
 
-                <form class="busca-form">
-                    <label for="busca">
-                        <input type="text" placeholder="Buscar..." name="barra" id="busca">
-                    </label>
-                    <button type="submit" class="lupa-btn">
-                        <img src="/imagens/lupa.png" alt="buscar" class="lupa">
-                    </button>
-                </form>
+        <section class="busca-container">
+            <a href="<%= isAdmin ? '/admin' : '/usuario' %>"><img src="/imagens/user.png" alt="user" class="user"></a>
 
-                <% if(!isAdmin) { %>
-                    <a href="/carrinho"><img src="/imagens/cart.png" alt="carrinho" class="cart"></a>
-                <% } %>
-            </section>
+            <form class="busca-form">
+                <label for="busca">
+                    <input type="text" placeholder="Buscar..." name="barra" id="busca">
+                </label>
+                <button type="submit" class="lupa-btn">
+                    <img src="/imagens/lupa.png" alt="buscar" class="lupa">
+                </button>
+            </form>
+
+            <% if(!isAdmin) { %>
+                <a href="/carrinho"><img src="/imagens/cart.png" alt="carrinho" class="cart"></a>
+            <% } %>
         </section>
     </nav>
+
+    <!-- menu lateral -->
+    <nav class="opcoes" id="menuhamburger">
+        <img src="/imagens/plogo.png" class="plogo" alt="Logo da Farmácia">
+        <img src="/imagens/userb.png" class="user" alt="Ícone do usuário">
+
+        <section class="menu-content">
+            <section class="perfil">
+                <% if(usuario) { %>
+                    <h2 class="nome">Olá, <%= usuario.nome %>!</h2>
+                    <% if(isAdmin) { %>
+                        <a href="/admin" class="conta">Gerenciar o Site</a>
+                    <% } else { %>
+                        <a href="/usuario" class="conta">Gerenciar sua Conta</a>
+                    <% } %>
+                <% } else { %>
+                    <h2 class="nome">Olá, Visitante!</h2>
+                    <a href="/login" class="conta">Fazer Login</a>
+                <% } %>
+            </section>
+
+            <section class="categorias">
+                <h2 class="tit">Categorias</h2>
+                <ul class="menu-principal" role="menu">
+                    <li class="menu-item hp">
+                        <a href="#" 
+                           class="linkhp"
+                           aria-controls="submenuhp"
+                           aria-expanded="false">
+                            <output>Higiene Pessoal</output>
+                            <output class="seta">›</output>
+                        </a>
+                        <ul class="submenu" id="submenuhp" role="menu">
+                            <li><a href="/categoria/Geral">Geral</a></li>
+                            <li><a href="/categoria/Cuidados com a Pele">Cuidados com a Pele</a></li>
+                            <li><a href="/categoria/Higiene Bucal">Higiene Bucal</a></li>
+                            <li><a href="/categoria/Cabelo">Cabelo</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item"><a href="/categoria/Vitaminas e Suplementos">Vitaminas e Suplementos</a></li>
+                    <li class="menu-item"><a href="/categoria/Bebê">Bebê</a></li>
+                    <li class="menu-item"><a href="/categoria/Terceira Idade">Terceira Idade</a></li>
+                    <li class="menu-item"><a href="/home">Descontos</a></li>
+                    <li class="menu-item"><a href="/home">Mais Buscados</a></li>
+                    <li class="menu-item"><a href="/home">Todas as Categorias</a></li>
+                </ul>
+            </section>
+
+            <footer>
+                <nav>
+                    <ul class="outro" role="menu">
+                        <li class="menu-item"><a href="/parceiros">Parceiros</a></li>
+                        <li class="menu-item"><a href="/atendimento">Central de Atendimento</a></li>
+                    </ul>
+                </nav>
+            </footer>
+        </section>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuToggle = document.querySelector('.hamburger');
+            const navMenu = document.getElementById('menuhamburger');
+
+            if (menuToggle && navMenu) {
+                menuToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+                    menuToggle.setAttribute('aria-expanded', !isExpanded);
+                    navMenu.classList.toggle('is-open');
+                    
+                    const newLabel = isExpanded ? 'abrir menu hamburger' : 'fechar menu hamburger';
+                    menuToggle.setAttribute('aria-label', newLabel);
+                });
+            }
+
+            const submenuToggleLink = document.querySelector('.linkhp');
+            const submenu = document.getElementById('submenuhp');
+
+            if (submenuToggleLink && submenu) {
+                submenuToggleLink.addEventListener('click', (e) => {
+                    e.preventDefault(); 
+                    e.stopPropagation(); 
+                    
+                    const isExpanded = submenuToggleLink.getAttribute('aria-expanded') === 'true';
+                    submenuToggleLink.setAttribute('aria-expanded', !isExpanded);
+                    submenu.classList.toggle('is-visible');
+                });
+            }
+        });
+    </script>
 </body>
 </html>
