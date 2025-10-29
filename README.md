@@ -1,9 +1,13 @@
 Para instalar as dependencias use:
 npm i --save
 
-npm install express-session
+npm install dotenv --save
+
+npm install nodemailer
 
 npm install multer
+
+npm install express-session
 
 adm:
 

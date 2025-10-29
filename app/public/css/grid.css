@@ -85,7 +85,7 @@ body {
 }
 
 /* Responsividade Desktop */
-@media (min-width: 768px) {
+@media (min-width: 901px) {
     .nav-principal {
         padding: 1rem 5%;
         gap: 1.5rem;

@@ -77,6 +77,18 @@
       "usuarioEmail": "s@g.com",
       "quantidade": 1,
       "dataAdicionado": "2025-10-26T17:19:33.417Z"
+    },
+    {
+      "produtoId": "1761611423476",
+      "usuarioEmail": "pedrinhorocha507@gmail.com",
+      "quantidade": 30,
+      "dataAdicionado": "2025-10-28T23:51:25.528Z"
+    },
+    {
+      "produtoId": "1761494899200",
+      "usuarioEmail": "pedrinhorocha507@gmail.com",
+      "quantidade": 1,
+      "dataAdicionado": "2025-10-28T23:55:07.333Z"
     }
   ],
   "usuarios": [
@@ -98,22 +110,13 @@
       "senhan": "Joaozinho007@",
       "csenha": "Joaozinho007@",
       "cep": "06417-00"
-    },
-    {
-      "nome": "Joao pedro",
-      "nasc": "2009-01-21",
-      "cpf": "59142386845",
-      "tel": "972394962",
-      "email": "rm95030@estudante.fieb.edu.br",
-      "senhan": "Joaozinho123@",
-      "csenha": "Joaozinho123@"
     }
   ],
   "banners": [
     {
       "id": 1,
       "imagem": "/imagens/banner-1761610413300-364118250.jpg",
-      "legenda": "Banner 1",
+      "legenda": "Whey",
       "link": "/home"
     },
     {

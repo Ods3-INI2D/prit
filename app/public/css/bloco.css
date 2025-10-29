@@ -97,8 +97,8 @@
     margin-bottom: 0.875rem;
 }
 
-/* responsividade para desktops (min-width: 1024px) */
-@media (min-width: 1024px) {
+/* responsividade para desktops */
+@media (min-width: 901px) {
     .produto-card-bloco {
         padding-bottom: 1.6rem;
         max-width: 21rem;
