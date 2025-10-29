@@ -790,6 +790,155 @@ E-mail enviado automaticamente pelo sistema de parcerias +Saúde
     }
 );
 
+// GET página de atendimento
+router.get('/atendimento', function(req, res) {
+    res.render('pages/atendimento', { 
+        sucesso: null, 
+        erro: null,
+        valores: { email: '', mensagem: '' }
+    });
+});
+
+// POST formulário de atendimento
+router.post('/atendimento',
+    body("email")
+        .notEmpty().withMessage('E-mail é obrigatório!')
+        .isEmail().withMessage('E-mail inválido!'),
+    body("mensagem")
+        .notEmpty().withMessage('Mensagem é obrigatória!')
+        .isLength({ min: 20, max: 1000 }).withMessage('A mensagem deve ter entre 20 e 1000 caracteres!'),
+    async (req, res) => {
+        const errors = validationResult(req);
+        
+        if (!errors.isEmpty()) {
+            const primeiroErro = errors.array()[0].msg;
+            return res.render('pages/atendimento', { 
+                sucesso: null, 
+                erro: primeiroErro,
+                valores: req.body
+            });
+        }
+
+        try {
+            console.log('=== INICIANDO ENVIO DE E-MAIL DE ATENDIMENTO ===');
+            console.log('EMAIL_USER:', process.env.EMAIL_USER);
+            console.log('Senha configurada:', process.env.EMAIL_PASS ? 'SIM' : 'NÃO');
+
+            // Configurar o transportador de e-mail
+            const transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 587,
+                secure: false,
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS
+                },
+                tls: {
+                    rejectUnauthorized: false
+                },
+                debug: true,
+                logger: true
+            });
+
+            // Verificar conexão
+            console.log('Verificando conexão SMTP...');
+            await transporter.verify();
+            console.log('✓ Conexão SMTP verificada com sucesso!');
+
+            console.log('Preparando e-mail...');
+
+            // Configurar o conteúdo do e-mail
+            const mailOptions = {
+                from: `"Sistema +Saúde - SAC" <${process.env.EMAIL_USER}>`,
+                to: 'maisaudeods3SAC@gmail.com',
+                replyTo: req.body.email,
+                subject: `Nova Mensagem do SAC - ${req.body.email}`,
+                html: `
+                    <section style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+                        <h2 style="color: #163069; border-bottom: 3px solid #4da6ff; padding-bottom: 10px;">Nova Mensagem da Central de Atendimento</h2>
+                        
+                        <article style="background-color: white; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                            <h3 style="color: #333; margin-top: 0;">E-mail do Cliente</h3>
+                            <output style="color: #555; display: block;">
+                                <a href="mailto:${req.body.email}" style="color: #4da6ff; text-decoration: none;">${req.body.email}</a>
+                            </output>
+                        </article>
+                        
+                        <article style="background-color: white; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                            <h3 style="color: #333; margin-top: 0;">Mensagem</h3>
+                            <output style="color: #555; display: block; white-space: pre-wrap;">${req.body.mensagem.replace(/\n/g, '<br>')}</output>
+                        </article>
+                        
+                        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+                        <footer style="text-align: center; padding: 10px;">
+                            <output style="color: #888; font-size: 12px; display: block;">
+                                <em>E-mail enviado automaticamente pelo sistema de atendimento +Saúde</em>
+                            </output>
+                            <output style="color: #888; font-size: 12px; display: block; margin-top: 5px;">
+                                <em>Para responder, utilize o e-mail: ${req.body.email}</em>
+                            </output>
+                        </footer>
+                    </section>
+                `,
+                text: `
+Nova Mensagem da Central de Atendimento
+
+E-mail do Cliente:
+${req.body.email}
+
+Mensagem:
+${req.body.mensagem}
+
+---
+E-mail enviado automaticamente pelo sistema de atendimento +Saúde
+Para responder, utilize o e-mail: ${req.body.email}
+                `.trim()
+            };
+
+            console.log('Enviando e-mail...');
+
+            // Enviar o e-mail
+            const info = await transporter.sendMail(mailOptions);
+
+            console.log('✓ E-mail enviado com sucesso!');
+            console.log('ID da mensagem:', info.messageId);
+            console.log('Resposta:', info.response);
+            console.log('=== FIM DO ENVIO ===');
+
+            // Renderizar a página com mensagem de sucesso
+            res.render('pages/atendimento', { 
+                sucesso: true, 
+                erro: null,
+                valores: { email: '', mensagem: '' }
+            });
+
+        } catch (error) {
+            console.error('=== ERRO AO ENVIAR E-MAIL ===');
+            console.error('Tipo de erro:', error.name);
+            console.error('Mensagem:', error.message);
+            console.error('Código:', error.code);
+            console.error('Stack completo:', error.stack);
+            console.error('=== FIM DO ERRO ===');
+            
+            let mensagemErro = 'Erro ao enviar mensagem. Tente novamente mais tarde.';
+            
+            if (error.code === 'EAUTH') {
+                mensagemErro = 'Erro de autenticação. Verifique as credenciais de e-mail.';
+            } else if (error.code === 'ESOCKET') {
+                mensagemErro = 'Erro de conexão. Verifique sua conexão com a internet.';
+            } else if (error.responseCode === 535) {
+                mensagemErro = 'Senha incorreta ou Senha de App não configurada.';
+            }
+            
+            res.render('pages/atendimento', { 
+                sucesso: null, 
+                erro: mensagemErro,
+                valores: req.body
+            });
+        }
+    }
+);
+
 // Logout
 router.get('/logout', function(req, res) {
     req.session.destroy(function(err) {
