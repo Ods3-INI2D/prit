@@ -1,5 +1,17 @@
 {
-  "produtos": [],
+  "produtos": [
+    {
+      "nome": "TEste",
+      "preco": 109,
+      "precoDesconto": null,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "Teste",
+      "imagem": "/imagens/foto.jpg",
+      "status": "em-estoque",
+      "id": 1761739217023,
+      "avaliacoes": []
+    }
+  ],
   "avaliacoes": [
     {
       "nota": 2,
@@ -37,6 +49,12 @@
       "imagem": "/imagens/produtos/produto-1761351491795-577365296.png",
       "id": 1761351491812,
       "avaliacoes": []
+    },
+    {
+      "produtoId": "1761739217023",
+      "usuarioEmail": "pedrinhorocha507@gmail.com",
+      "quantidade": 1,
+      "dataAdicionado": "2025-10-29T12:40:46.050Z"
     }
   ],
   "usuarios": [
