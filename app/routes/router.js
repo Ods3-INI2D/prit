@@ -674,7 +674,7 @@ router.post('/parceiros',
                 ? req.body.categorias.join(', ') 
                 : req.body.categorias;
 
-            // Configurar o conteúdo do e-mail na ordem correta
+            // Configurar o conteúdo do e-mail na ordem CORRETA
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: process.env.EMAIL_PARCEIROS || 'maisaudeods3parceiros@gmail.com',
@@ -687,15 +687,15 @@ router.post('/parceiros',
                             <h3>Nome da Empresa</h3>
                             <output>${req.body.empresa}</output>
                         </article>
-
-                        <article>
-                            <h3>E-mail de Contato</h3>
-                            <output>${req.body.email}</output>
-                        </article>
                         
                         <article>
                             <h3>Categoria dos Produtos</h3>
                             <output>${categoriasSelecionadas}</output>
+                        </article>
+
+                        <article>
+                            <h3>E-mail de Contato</h3>
+                            <output>${req.body.email}</output>
                         </article>
                         
                         <article>
@@ -716,11 +716,11 @@ Nova Solicitação de Parceria
 Nome da Empresa:
 ${req.body.empresa}
 
-E-mail de Contato:
-${req.body.email}
-
 Categoria dos Produtos:
 ${categoriasSelecionadas}
+
+E-mail de Contato:
+${req.body.email}
 
 Proposta:
 ${req.body.descricao}
