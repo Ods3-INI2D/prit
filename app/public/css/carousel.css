@@ -158,7 +158,6 @@
 
 /* Responsividade Desktop */
 @media (min-width: 901px) {
-<<<<<<< HEAD
     .carousel-container {
         height: 14rem;
         margin: 1.25rem auto;
@@ -300,8 +299,6 @@
 
 /* Responsividade Desktop */
 @media (min-width: 768px) {
-=======
->>>>>>> a9cbbbe02d3e43cbb7a3db50f58b8ffc5fd3dff6
     .carousel-container {
         height: 14rem;
         margin: 1.25rem auto;

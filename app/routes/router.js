@@ -674,25 +674,66 @@ router.post('/parceiros',
                 ? req.body.categorias.join(', ') 
                 : req.body.categorias;
 
-            // Configurar o conteúdo do e-mail
+            // Configurar o conteúdo do e-mail na ordem correta
             const mailOptions = {
                 from: process.env.EMAIL_USER,
-                to: process.env.EMAIL_USER, // Envia para o próprio e-mail da empresa
+                to: process.env.EMAIL_PARCEIROS || 'maisaudeods3parceiros@gmail.com',
                 subject: `Nova Solicitação de Parceria - ${req.body.empresa}`,
                 html: `
-                    <h2>Nova Solicitação de Parceria</h2>
-                    <p><strong>Nome da Empresa:</strong> ${req.body.empresa}</p>
-                    <p><strong>E-mail:</strong> ${req.body.email}</p>
-                    <p><strong>Categorias de Interesse:</strong> ${categoriasSelecionadas}</p>
-                    <p><strong>Descrição dos Produtos e Propostas:</strong></p>
-                    <p>${req.body.descricao.replace(/\n/g, '<br>')}</p>
-                    <hr>
-                    <p><em>E-mail enviado automaticamente pelo sistema de parcerias +Saúde</em></p>
-                `
+                    <section>
+                        <h2>Nova Solicitação de Parceria</h2>
+                        
+                        <article>
+                            <h3>Nome da Empresa</h3>
+                            <output>${req.body.empresa}</output>
+                        </article>
+
+                        <article>
+                            <h3>E-mail de Contato</h3>
+                            <output>${req.body.email}</output>
+                        </article>
+                        
+                        <article>
+                            <h3>Categoria dos Produtos</h3>
+                            <output>${categoriasSelecionadas}</output>
+                        </article>
+                        
+                        <article>
+                            <h3>Proposta</h3>
+                            <output>${req.body.descricao.replace(/\n/g, '<br>')}</output>
+                        </article>
+                        
+                        <hr>
+                        <footer>
+                            <output><em>E-mail enviado automaticamente pelo sistema de parcerias +Saúde</em></output>
+                        </footer>
+                    </section>
+                `,
+                // Versão texto simples
+                text: `
+Nova Solicitação de Parceria
+
+Nome da Empresa:
+${req.body.empresa}
+
+E-mail de Contato:
+${req.body.email}
+
+Categoria dos Produtos:
+${categoriasSelecionadas}
+
+Proposta:
+${req.body.descricao}
+
+---
+E-mail enviado automaticamente pelo sistema de parcerias +Saúde
+                `.trim()
             };
 
             // Enviar o e-mail
             await transporter.sendMail(mailOptions);
+
+            console.log('E-mail de parceria enviado com sucesso para:', process.env.EMAIL_PARCEIROS || 'maisaudeods3parceiros@gmail.com');
 
             // Renderizar a página com mensagem de sucesso
             res.render('pages/parceiros', { 
