@@ -1,4 +1,3 @@
-<!-- app/views/pages/atendimento.ejs -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -21,7 +20,7 @@
             <nav class="navegacao" aria-label="Navegação de retorno">
                 <a href="/home" class="voltar">
                     <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
-                    <output>Voltar</output>
+                    Voltar
                 </a>
             </nav>
 
@@ -30,37 +29,38 @@
             <% if(typeof sucesso !== 'undefined' && sucesso) { %>
                 <output class="mensagem-sucesso" role="status" aria-live="polite">
                     ✓ Mensagem enviada com sucesso! Entraremos em contato em breve através do e-mail fornecido.
-                </output>
+                </o>
             <% } %>
 
             <% if(typeof erro !== 'undefined' && erro) { %>
                 <output class="mensagem-erro" role="alert" aria-live="assertive">
                     ⚠ <%= erro %>
-                </output>
+                </o>
             <% } %>
 
             <article class="intro-atendimento">
                 <h2 class="subtitulo-intro">Como Podemos Ajudar?</h2>
-                <output class="texto-intro">
+                <p class="texto-intro">
                     Nossa Central de Atendimento está disponível para auxiliá-lo com dúvidas, 
                     reclamações, sugestões ou qualquer informação sobre nossos produtos e serviços.
-                    <br><br>
+                </p>
+                <p class="texto-intro">
                     Preencha o formulário abaixo e nossa equipe entrará em contato o mais breve possível 
                     através do e-mail fornecido.
-                </output>
+                </p>
 
                 <aside class="info-contato" role="complementary">
-                    <output class="contato-item">
-                        <output class="icone-contato">📧</output>
-                        <output>E-mail SAC: </output>
+                    <p class="contato-item">
+                        <o class="icone-contato">📧</o>
+                        <o>E-mail SAC: </o>
                         <a href="mailto:maisaudeods3SAC@gmail.com" class="link-contato">
                             maisaudeods3SAC@gmail.com
                         </a>
-                    </output>
-                    <output class="contato-item">
-                        <output class="icone-contato">💬</output>
-                        <output>Tempo médio de resposta: 24 a 48 horas</output>
-                    </output>
+                    </p>
+                    <p class="contato-item">
+                        <o class="icone-contato">💬</o>
+                        <o>Tempo médio de resposta: 24 a 48 horas</o>
+                    </p>
                 </aside>
             </article>
 
@@ -69,7 +69,7 @@
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Seu E-mail <output class="obrigatorio">*</output>
+                        Seu E-mail <o class="obrigatorio">*</o>
                     </legend>
                     <label for="email">
                         <input 
@@ -83,14 +83,14 @@
                             aria-describedby="email-info"
                             value="<%= typeof valores !== 'undefined' ? valores.email : '' %>">
                     </label>
-                    <output id="email-info" class="info-campo">
+                    <p id="email-info" class="info-campo">
                         Utilizaremos este e-mail para responder sua solicitação
-                    </output>
+                    </p>
                 </fieldset>
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Sua Mensagem <output class="obrigatorio">*</output>
+                        Sua Mensagem <o class="obrigatorio">*</o>
                     </legend>
                     <label for="mensagem">
                         <textarea 
@@ -103,9 +103,9 @@
                             aria-describedby="mensagem-info"
                             rows="6"><%= typeof valores !== 'undefined' ? valores.mensagem : '' %></textarea>
                     </label>
-                    <output id="mensagem-info" class="info-campo">
+                    <p id="mensagem-info" class="info-campo">
                         Mínimo de 20 caracteres, máximo de 1000 caracteres
-                    </output>
+                    </p>
                 </fieldset>
 
                 <button type="submit" class="btn-enviar" aria-label="Enviar mensagem para atendimento">

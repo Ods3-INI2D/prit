@@ -20,7 +20,7 @@
         <nav class="navegacao">
             <a href="/home" class="voltar">
                 <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
-                <output>Voltar</o>
+                Voltar
             </a>
         </nav>
 
@@ -30,29 +30,29 @@
             <article class="info-principal">
                 <h1 class="nome-produto"><%= produto.nome %></h1>
                 
-                <output class="categoria-produto"><%= produto.categoria %></o>
+                <p class="categoria-produto"><%= produto.categoria %></p>
                 
                 <% if(produto.precoDesconto) { %>
                     <section class="preco-container com-desconto">
-                        <output class="preco-original">R$ <%= produto.preco.toFixed(2) %></o>
-                        <output class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></o>
-                        <output class="percentual-desconto">
+                        <p class="preco-original">R$ <%= produto.preco.toFixed(2) %></p>
+                        <p class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></p>
+                        <p class="percentual-desconto">
                             -<%= Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100) %>%
-                        </o>
+                        </p>
                     </section>
                 <% } else { %>
-                    <output class="preco-produto">R$ <%= produto.preco.toFixed(2) %></o>
+                    <p class="preco-produto">R$ <%= produto.preco.toFixed(2) %></p>
                 <% } %>
 
                 <% if(produto.status === 'fora-de-estoque') { %>
                     <output class="mensagem-fora-estoque" role="alert" aria-live="assertive">
                         ⚠️ Este produto está temporariamente fora de estoque
-                    </o>
+                    </output>
                 <% } else { %>
                     <% if(isAdmin) { %>
                         <output class="mensagem-admin-bloqueio" role="status">
                             ℹ️ Administradores não podem adicionar produtos ao carrinho. Esta é uma funcionalidade exclusiva para clientes.
-                        </o>
+                        </output>
                     <% } else if(usuarioLogado) { %>
                         <form method="POST" action="/produto/<%= produto.id %>/adicionar-carrinho">
                             <button type="submit" class="btn-comprar">
@@ -69,7 +69,7 @@
                 <% if(typeof erro !== 'undefined' && erro === 'fora_de_estoque') { %>
                     <output class="mensagem-erro-avaliacao" role="alert" aria-live="assertive">
                         Não é possível adicionar este produto ao carrinho pois está fora de estoque!
-                    </o>
+                    </output>
                 <% } %>
             </article>
         </section>
@@ -77,7 +77,7 @@
         <section class="frete-container">
             <h2 class="titulo-secao">Cálculo de Frete e Prazo</h2>
             
-            <output class="descricao-frete">Insira seu CEP para calcular o frete e o prazo para entrega do produto</o>
+            <p class="descricao-frete">Insira seu CEP para calcular o frete e o prazo para entrega do produto</p>
             
             <form class="form-frete">
                 <label for="cep">
@@ -92,7 +92,7 @@
         <section class="descricao-container">
             <h2 class="titulo-secao">Descrição do Produto</h2>
             <h3 class="nome-descricao"><%= produto.nome %></h3>
-            <output class="texto-descricao"><%= produto.descricao %></o>
+            <p class="texto-descricao"><%= produto.descricao %></p>
         </section>
 
         <hr class="divisor">
@@ -118,7 +118,7 @@
                                  alt="Estrela <%= i <= notaArredondada ? 'preenchida' : 'vazia' %>">
                         <% } %>
                     </section>
-                    <output class="valor-media"><%= media %></o>
+                    <p class="valor-media"><%= media %></p>
                 </article>
 
                 <a href="#form-avaliacao" class="ver-mais">Ver todas as avaliações</a>
@@ -133,12 +133,12 @@
                                          alt="Estrela">
                                 <% } %>
                             </section>
-                            <output class="texto-avaliacao"><%= avaliacao.texto %></o>
+                            <p class="texto-avaliacao"><%= avaliacao.texto %></p>
                         </li>
                     <% }); %>
                 </ul>
             <% } else { %>
-                <output class="sem-avaliacoes">Ainda não há avaliações para este produto.</o>
+                <p class="sem-avaliacoes">Ainda não há avaliações para este produto.</p>
             <% } %>
 
             <article class="form-avaliacao-container" id="form-avaliacao">
@@ -147,31 +147,29 @@
                 <% if(isAdmin) { %>
                     <output class="mensagem-admin-bloqueio" role="alert">
                         ℹ️ Administradores não podem avaliar produtos. Esta é uma funcionalidade exclusiva para clientes que adquiriram o produto.
-                    </o>
+                    </output>
                 <% } else if(!usuarioLogado) { %>
                     <output class="mensagem-aviso" role="alert">
                         Você precisa estar logado para avaliar este produto.
                         <a href="/login?redirect=/produto/<%= produto.id %>" style="color: #ffc107; text-decoration: underline;">Fazer login</a>
-                    </o>
+                    </output>
                 <% } else if(!temProdutoNoCarrinho) { %>
                     <output class="mensagem-aviso" role="alert">
                         Você precisa adicionar este produto ao carrinho antes de avaliá-lo.
-                    </o>
+                    </output>
                 <% } %>
 
                 <% if(typeof erro !== 'undefined' && erro === 'carrinho') { %>
                     <output class="mensagem-erro-avaliacao" role="alert">
                         Erro: Você precisa ter este produto no carrinho para avaliá-lo!
-                    </o>
+                    </output>
                 <% } %>
                 
                 <form method="POST" 
                       action="/produto/<%= produto.id %>/avaliar" 
                       class="form-avaliacao <%= (isAdmin || !usuarioLogado || !temProdutoNoCarrinho) ? 'form-avaliacao-desabilitado' : '' %>">
                     <fieldset>
-                        <legend>
-                            <h4 class="label-avaliacao">Nota (0 a 5 estrelas)</h4>
-                        </legend>
+                        <legend class="label-avaliacao">Nota (0 a 5 estrelas)</legend>
                         <label for="nota">
                             <select name="nota" id="nota" required <%= (isAdmin || !usuarioLogado || !temProdutoNoCarrinho) ? 'disabled' : '' %>>
                                 <option value="">Selecione</option>
@@ -186,9 +184,7 @@
                     </fieldset>
 
                     <fieldset>
-                        <legend>
-                            <h4 class="label-avaliacao">Seu comentário</h4>
-                        </legend>
+                        <legend class="label-avaliacao">Seu comentário</legend>
                         <label for="texto">
                             <textarea name="texto" 
                                       id="texto" 
@@ -219,7 +215,7 @@
                         <a href="/produto/<%= outroProduto.id %>" class="link-produto">
                             <img src="<%= outroProduto.imagem %>" class="img-produto-bloco" alt="<%= outroProduto.nome %>">
                             <h3 class="nome-produto-bloco"><%= outroProduto.nome %></h3>
-                            <output class="preco-produto-bloco">R$ <%= (outroProduto.precoDesconto || outroProduto.preco).toFixed(2) %></o>
+                            <p class="preco-produto-bloco">R$ <%= (outroProduto.precoDesconto || outroProduto.preco).toFixed(2) %></p>
                         </a>
                     </article>
             <% }

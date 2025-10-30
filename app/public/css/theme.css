@@ -1,49 +1,30 @@
-/* app/public/css/theme.css - VERSÃO COMPLETA E EXPANDIDA */
-/* Sistema de Temas - Claro e Escuro para TODAS as páginas */
+/* Sistema de Temas - Claro e Escuro */
 
 :root {
-    /* ==================== TEMA ESCURO (PADRÃO) ==================== */
-    
-    /* Backgrounds */
     --bg-primary: #1f1f1f;
     --bg-secondary: #2a2a2a;
     --bg-tertiary: #383838;
     --bg-menu: #2D2D2D;
     --bg-submenu: #1B1B1B;
     --bg-header: #163069;
-    --bg-header-login: #001863;
     --bg-footer: rgb(91, 123, 225);
-    --bg-card: #2a2a2a;
     --bg-input: #383838;
     --bg-modal: rgba(0, 0, 0, 0.85);
-    
-    /* Textos */
     --text-primary: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.8);
     --text-tertiary: #d9d9d9;
     --text-muted: #888888;
     --text-footer: #000000;
-    --text-footer-secondary: rgb(49, 49, 49);
     --text-placeholder: rgba(255, 255, 255, 0.6);
-    
-    /* Bordas */
     --border-color: #555555;
     --border-light: rgba(255, 255, 255, 0.1);
     --border-focus: #4da6ff;
-    
-    /* Cores de destaque */
     --accent-primary: #4da6ff;
     --accent-hover: #6bb5ff;
-    --accent-dark: #163069;
-    --accent-darker: #0d1f42;
-    
-    /* Botões */
     --btn-primary-bg: #007bff;
     --btn-primary-hover: #0056b3;
     --btn-secondary-bg: #163069;
     --btn-secondary-hover: #0d1f42;
-    
-    /* Mensagens e alertas */
     --success-bg: rgba(77, 166, 255, 0.2);
     --success-border: #4da6ff;
     --success-text: #4da6ff;
@@ -56,57 +37,33 @@
     --info-bg: rgba(77, 166, 255, 0.1);
     --info-border: #4da6ff;
     --info-text: #4da6ff;
-    
-    /* Sombras */
-    --shadow-sm: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.2);
-    --shadow-md: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 0.25rem 1rem rgba(0, 0, 0, 0.4);
-    --shadow-xl: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.45);
 }
 
 [data-theme="light"] {
-    /* ==================== TEMA CLARO ==================== */
-    
-    /* Backgrounds */
     --bg-primary: #f5f5f5;
     --bg-secondary: #ffffff;
     --bg-tertiary: #e8e8e8;
     --bg-menu: #f0f0f0;
     --bg-submenu: #ffffff;
     --bg-header: #2563a8;
-    --bg-header-login: #2563a8;
     --bg-footer: rgb(91, 123, 225);
-    --bg-card: #ffffff;
     --bg-input: #ffffff;
     --bg-modal: rgba(255, 255, 255, 0.95);
-    
-    /* Textos */
     --text-primary: #1f1f1f;
     --text-secondary: #333333;
     --text-tertiary: #4a4a4a;
     --text-muted: #666666;
     --text-footer: #000000;
-    --text-footer-secondary: rgb(49, 49, 49);
     --text-placeholder: rgba(0, 0, 0, 0.5);
-    
-    /* Bordas */
     --border-color: #cccccc;
     --border-light: rgba(0, 0, 0, 0.1);
     --border-focus: #1a73e8;
-    
-    /* Cores de destaque */
     --accent-primary: #1a73e8;
     --accent-hover: #1557b0;
-    --accent-dark: #0d3d7a;
-    --accent-darker: #082952;
-    
-    /* Botões */
     --btn-primary-bg: #1a73e8;
     --btn-primary-hover: #1557b0;
     --btn-secondary-bg: #2563a8;
     --btn-secondary-hover: #1a4d87;
-    
-    /* Mensagens e alertas */
     --success-bg: rgba(26, 115, 232, 0.1);
     --success-border: #1a73e8;
     --success-text: #1557b0;
@@ -119,35 +76,26 @@
     --info-bg: rgba(26, 115, 232, 0.1);
     --info-border: #1a73e8;
     --info-text: #1557b0;
-    
-    /* Sombras */
-    --shadow-sm: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 0.25rem 1rem rgba(0, 0, 0, 0.2);
-    --shadow-xl: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.25);
 }
 
-/* ==================== APLICAÇÃO GLOBAL DOS ESTILOS ==================== */
+html {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
 
-/* Body e HTML */
-html,
 body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
 }
 
-/* Headers */
-header,
+header {
+    background-color: var(--bg-header);
+}
+
 .nav-principal {
     background-color: var(--bg-header);
 }
 
-/* Headers de Login/Cadastro */
-[data-theme] header {
-    background-color: var(--bg-header-login);
-}
-
-/* Menu Lateral */
 .opcoes {
     background-color: var(--bg-menu);
     color: var(--text-primary);
@@ -166,16 +114,22 @@ header,
     background-color: var(--border-light);
 }
 
-.menu-item > a,
+.menu-item > a {
+    color: var(--text-primary);
+}
+
 .linkhp {
     color: var(--text-primary);
 }
 
 .menu-item {
-    border-bottom: 0.0625rem solid var(--border-light);
+    border-bottom-color: var(--border-light);
 }
 
-.menu-item > a:hover,
+.menu-item > a:hover {
+    background-color: var(--border-light);
+}
+
 .linkhp:hover {
     background-color: var(--border-light);
 }
@@ -190,16 +144,16 @@ header,
 }
 
 .submenu li {
-    border-bottom: 0.0625rem solid var(--border-light);
+    border-bottom-color: var(--border-light);
 }
 
 .outro {
     background-color: var(--bg-submenu);
-    border-top: 0.0625rem solid var(--border-light);
+    border-top-color: var(--border-light);
 }
 
 .outro .menu-item {
-    border-bottom: 0.0625rem solid var(--border-light);
+    border-bottom-color: var(--border-light);
 }
 
 .outro a {
@@ -210,21 +164,8 @@ header,
     color: var(--text-primary);
 }
 
-/* Botão de Tema */
 .theme-toggle {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    width: 100%;
-    padding: 0.625rem 0.8125rem;
-    background: transparent;
-    border: none;
-    cursor: pointer;
     color: var(--text-secondary);
-    font-size: 0.6875rem;
-    font-family: 'Inter', sans-serif;
-    transition: color 0.3s ease, background-color 0.3s ease;
-    text-align: left;
 }
 
 .theme-toggle:hover {
@@ -232,232 +173,595 @@ header,
     background-color: var(--border-light);
 }
 
-.theme-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    flex-shrink: 0;
+.card-stats {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
 }
 
-.theme-text {
-    flex: 1;
-    font-size: inherit;
-    color: inherit;
+.form-produto {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
 }
 
-/* Cards e Containers */
-.card-stats,
-.form-produto,
-.produto-item,
-.usuario-item,
-.item-carrinho,
-.bloco-produto-home,
-.produto-card-bloco,
-.info-usuario,
-.dados-editaveis,
-.menu-usuario,
-.intro-atendimento,
-.form-atendimento,
-.intro-parceiros,
-.form-parceiros,
-.nota-media,
-.item-avaliacao,
-.form-avaliacao-container,
-.modal-content,
-.login-module form,
-.title-group,
-.produto-detalhes,
-.info-principal,
-.frete-container,
-.descricao-container,
+.produto-item {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.usuario-item {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.item-carrinho {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.bloco-produto-home {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.produto-card-bloco {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.info-usuario {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.dados-editaveis {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.menu-usuario {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.intro-atendimento {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.form-atendimento {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.intro-parceiros {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.form-parceiros {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.nota-media {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.item-avaliacao {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.form-avaliacao-container {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.modal-content {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.login-module form {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.title-group {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.produto-detalhes {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.info-principal {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.frete-container {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.descricao-container {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
 .avaliacoes-container {
     background-color: var(--bg-secondary);
     color: var(--text-primary);
 }
 
-/* Inputs e Formulários */
-input[type="text"],
-input[type="number"],
-input[type="date"],
-input[type="password"],
-input[type="email"],
-input[type="tel"],
-input[type="file"],
-textarea,
+.resumo-carrinho {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+input[type="text"] {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+input[type="number"] {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+input[type="date"] {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+input[type="password"] {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+input[type="email"] {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+input[type="tel"] {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+input[type="file"] {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+textarea {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
 select {
     background-color: var(--bg-input);
     border-color: var(--border-color);
     color: var(--text-primary);
 }
 
-input[type="text"]::placeholder,
-input[type="number"]::placeholder,
-input[type="password"]::placeholder,
-input[type="email"]::placeholder,
-input[type="tel"]::placeholder,
+input[type="text"]::placeholder {
+    color: var(--text-placeholder);
+}
+
+input[type="number"]::placeholder {
+    color: var(--text-placeholder);
+}
+
+input[type="password"]::placeholder {
+    color: var(--text-placeholder);
+}
+
+input[type="email"]::placeholder {
+    color: var(--text-placeholder);
+}
+
+input[type="tel"]::placeholder {
+    color: var(--text-placeholder);
+}
+
 textarea::placeholder {
     color: var(--text-placeholder);
 }
 
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="date"]:focus,
-input[type="password"]:focus,
-input[type="email"]:focus,
-input[type="tel"]:focus,
-textarea:focus,
+input[type="text"]:focus {
+    border-color: var(--border-focus);
+}
+
+input[type="number"]:focus {
+    border-color: var(--border-focus);
+}
+
+input[type="date"]:focus {
+    border-color: var(--border-focus);
+}
+
+input[type="password"]:focus {
+    border-color: var(--border-focus);
+}
+
+input[type="email"]:focus {
+    border-color: var(--border-focus);
+}
+
+input[type="tel"]:focus {
+    border-color: var(--border-focus);
+}
+
+textarea:focus {
+    border-color: var(--border-focus);
+}
+
 select:focus {
     border-color: var(--border-focus);
 }
 
-/* ==================== PÁGINA DE PRODUTO - TEXTOS ==================== */
-
-/* Título do Produto */
-.nome-produto {
-    color: var(--text-primary) !important;
-}
-
-/* Categoria do Produto */
-.categoria-produto {
-    color: var(--text-muted) !important;
-}
-
-/* Descrição do Frete */
-.descricao-frete {
-    color: var(--text-tertiary) !important;
-}
-
-/* Nome da Descrição */
-.nome-descricao {
-    color: var(--accent-primary) !important;
-}
-
-/* Texto da Descrição */
-.texto-descricao {
-    color: var(--text-tertiary) !important;
-}
-
-/* Label de Nota Média */
-.label-nota {
-    color: var(--text-tertiary) !important;
-}
-
-/* Texto de Avaliação */
-.texto-avaliacao {
-    color: var(--text-tertiary) !important;
-}
-
-/* Sem Avaliações */
-.sem-avaliacoes {
-    color: var(--text-muted) !important;
-}
-
-/* Título do Formulário de Avaliação */
-.titulo-form-avaliacao {
-    color: var(--text-primary) !important;
-}
-
-/* Label de Avaliação */
-.label-avaliacao {
-    color: var(--text-tertiary) !important;
-}
-
-/* Título de Outros Produtos */
-.titulo-outros {
-    color: var(--text-primary) !important;
-}
-
-/* Nome do Produto no Bloco */
-.nome-produto-bloco {
-    color: var(--text-primary) !important;
-}
-
-/* Título de Seção */
-.titulo-secao {
-    color: var(--text-primary) !important;
-}
-
-/* ==================== FIM PÁGINA DE PRODUTO ==================== */
-
-/* Textos Secundários Gerais */
-.texto-intro,
-.info-campo,
-.info-arquivo,
-.usuario-info,
-.produto-info,
-.mensagem-vazio,
-.sem-produtos,
-.categoria-home,
-.stat-titulo,
-.label-titulo,
-.label-form,
-.label-info {
-    color: var(--text-tertiary) !important;
-}
-
-/* Links */
-a {
+.label-form {
     color: var(--text-primary);
 }
 
-.link,
-.link-ver-mais,
-.conta,
-.link-contato,
+.label-info {
+    color: var(--text-primary);
+}
+
+.label-avaliacao {
+    color: var(--text-primary);
+}
+
+.label-nota {
+    color: var(--text-primary);
+}
+
+.label-titulo {
+    color: var(--text-primary);
+}
+
+legend {
+    color: var(--text-primary);
+}
+
+.info-campo {
+    color: var(--text-tertiary);
+}
+
+.info-arquivo {
+    color: var(--text-tertiary);
+}
+
+.descricao-frete {
+    color: var(--text-tertiary);
+}
+
+.texto-intro {
+    color: var(--text-tertiary);
+}
+
+.usuario-info {
+    color: var(--text-tertiary);
+}
+
+.produto-info {
+    color: var(--text-tertiary);
+}
+
+.categoria-produto {
+    color: var(--text-tertiary);
+}
+
+.texto-descricao {
+    color: var(--text-tertiary);
+}
+
+.texto-avaliacao {
+    color: var(--text-tertiary);
+}
+
+.categoria-home {
+    color: var(--text-tertiary);
+}
+
+.stat-titulo {
+    color: var(--text-tertiary);
+}
+
+.sem-avaliacoes {
+    color: var(--text-muted);
+}
+
+.mensagem-vazio {
+    color: var(--text-muted);
+}
+
+.sem-produtos {
+    color: var(--text-muted);
+}
+
+.obrigatorio {
+    color: var(--error-text);
+}
+
+h1 {
+    color: var(--text-primary);
+}
+
+h2 {
+    color: var(--text-primary);
+}
+
+h3 {
+    color: var(--text-primary);
+}
+
+h4 {
+    color: var(--text-primary);
+}
+
+h5 {
+    color: var(--text-primary);
+}
+
+h6 {
+    color: var(--text-primary);
+}
+
+.titulo {
+    color: var(--text-primary);
+}
+
+.subtitulo {
+    color: var(--text-primary);
+}
+
+.titulo-carrinho {
+    color: var(--text-primary);
+}
+
+.titulo-perfil {
+    color: var(--text-primary);
+}
+
+.titulo-categoria {
+    color: var(--text-primary);
+}
+
+.titulo-secao {
+    color: var(--text-primary);
+}
+
+.nome-produto {
+    color: var(--text-primary);
+}
+
+.titulo-form-avaliacao {
+    color: var(--text-primary);
+}
+
+.titulo-outros {
+    color: var(--text-primary);
+}
+
+.titulo-atendimento {
+    color: var(--text-primary);
+}
+
+.titulo-parceiros {
+    color: var(--text-primary);
+}
+
+.titulo-resumo {
+    color: var(--text-primary);
+}
+
+.nome-produto-bloco {
+    color: var(--text-primary);
+}
+
+.subtitulo-form {
+    color: var(--text-primary);
+}
+
+.subtitulo-intro {
+    color: var(--accent-primary);
+}
+
+.usuario-email {
+    color: var(--accent-primary);
+}
+
+.nome-descricao {
+    color: var(--accent-primary);
+}
+
+.link {
+    color: var(--accent-primary);
+}
+
+.link-ver-mais {
+    color: var(--accent-primary);
+}
+
+.conta {
+    color: var(--accent-primary);
+}
+
+.link-contato {
+    color: var(--accent-primary);
+}
+
 .voltar {
     color: var(--accent-primary);
 }
 
-.link:hover,
-.link-ver-mais:hover,
-.conta:hover,
-.link-contato:hover,
+.ver-mais {
+    color: var(--accent-primary);
+}
+
+.link-footer {
+    color: var(--accent-primary);
+}
+
+.link:hover {
+    color: var(--accent-hover);
+}
+
+.link-ver-mais:hover {
+    color: var(--accent-hover);
+}
+
+.conta:hover {
+    color: var(--accent-hover);
+}
+
+.link-contato:hover {
+    color: var(--accent-hover);
+}
+
 .voltar:hover {
     color: var(--accent-hover);
 }
 
-/* Botões Primários */
-#btn,
-#btn-login,
+.ver-mais:hover {
+    color: var(--accent-hover);
+}
+
+.link-footer:hover {
+    color: var(--accent-hover);
+}
+
+#btn {
+    background-color: var(--btn-primary-bg);
+    color: var(--text-primary);
+}
+
+#btn-login {
+    background-color: var(--btn-primary-bg);
+    color: var(--text-primary);
+}
+
 .btn-finalizar {
     background-color: var(--btn-primary-bg);
     color: var(--text-primary);
 }
 
-#btn:hover,
-#btn-login:hover,
+#btn:hover {
+    background-color: var(--btn-primary-hover);
+}
+
+#btn-login:hover {
+    background-color: var(--btn-primary-hover);
+}
+
 .btn-finalizar:hover {
     background-color: var(--btn-primary-hover);
 }
 
-/* Botões Secundários */
-.btn-adicionar,
-.btn-comprar,
-.btn-enviar,
-.btn-salvar,
-.btn-calcular,
-.btn-enviar-avaliacao,
-.btn-continuar,
-.btn-voltar-home,
-.btn-login,
+.btn-adicionar {
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
+}
+
+.btn-comprar {
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
+}
+
+.btn-enviar {
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
+}
+
+.btn-salvar {
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
+}
+
+.btn-calcular {
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
+}
+
+.btn-enviar-avaliacao {
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
+}
+
+.btn-continuar {
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
+}
+
+.btn-voltar-home {
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
+}
+
+.btn-login {
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
+}
+
 .btn-avaliar {
     background-color: var(--btn-secondary-bg);
     color: var(--text-primary);
 }
 
-.btn-adicionar:hover,
-.btn-comprar:hover,
-.btn-enviar:hover,
-.btn-salvar:hover,
-.btn-calcular:hover,
-.btn-enviar-avaliacao:hover:not(:disabled),
-.btn-continuar:hover,
-.btn-voltar-home:hover,
-.btn-login:hover,
+.btn-adicionar:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
+.btn-comprar:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
+.btn-enviar:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
+.btn-salvar:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
+.btn-calcular:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
+.btn-continuar:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
+.btn-voltar-home:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
+.btn-login:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
 .btn-avaliar:hover {
     background-color: var(--btn-secondary-hover);
 }
 
-/* Botões de Edição */
+.btn-enviar-avaliacao:hover:not(:disabled) {
+    background-color: var(--btn-secondary-hover);
+}
+
 .btn-editar {
     background-color: var(--accent-primary);
     color: var(--bg-primary);
@@ -467,19 +771,24 @@ a {
     background-color: var(--accent-hover);
 }
 
-/* Botões de Exclusão */
-.btn-excluir,
+.btn-excluir {
+    background-color: #d93025;
+    color: var(--text-primary);
+}
+
 .btn-remover {
     background-color: #d93025;
     color: var(--text-primary);
 }
 
-.btn-excluir:hover,
+.btn-excluir:hover {
+    background-color: #a3241b;
+}
+
 .btn-remover:hover {
     background-color: #a3241b;
 }
 
-/* Botões de Quantidade */
 .btn-quantidade {
     background-color: var(--btn-secondary-bg);
     color: var(--text-primary);
@@ -489,16 +798,24 @@ a {
     background-color: var(--btn-secondary-hover);
 }
 
-/* Mensagens de Sucesso */
 .mensagem-sucesso {
     background-color: var(--success-bg);
     border-color: var(--success-border);
     color: var(--success-text);
 }
 
-/* Mensagens de Erro */
-.mensagem-erro,
-.erro-login,
+.mensagem-erro {
+    background-color: var(--error-bg);
+    border-color: var(--error-border);
+    color: var(--error-text);
+}
+
+.erro-login {
+    background-color: var(--error-bg);
+    border-color: var(--error-border);
+    color: var(--error-text);
+}
+
 .mensagem-erro-avaliacao {
     background-color: var(--error-bg);
     border-color: var(--error-border);
@@ -509,29 +826,125 @@ a {
     color: var(--error-text);
 }
 
-/* Mensagens de Aviso */
-.mensagem-aviso,
+.mensagem-aviso {
+    background-color: var(--warning-bg);
+    border-color: var(--warning-border);
+    color: var(--warning-text);
+}
+
 .mensagem-fora-estoque {
     background-color: var(--warning-bg);
     border-color: var(--warning-border);
     color: var(--warning-text);
 }
 
-/* Mensagens de Info */
-.mensagem-info,
+.mensagem-info {
+    background-color: var(--info-bg);
+    border-color: var(--info-border);
+    color: var(--info-text);
+}
+
 .mensagem-admin-bloqueio {
     background-color: var(--info-bg);
     border-color: var(--info-border);
     color: var(--info-text);
 }
 
-/* Divisores */
-.divisor,
+.preco-produto {
+    color: var(--accent-primary);
+}
+
+.preco-desconto {
+    color: var(--accent-primary);
+}
+
+.precof {
+    color: var(--accent-primary);
+}
+
+.preco-desconto-home {
+    color: var(--accent-primary);
+}
+
+.stat-valor {
+    color: var(--accent-primary);
+}
+
+.valor-media {
+    color: var(--accent-primary);
+}
+
+.preco-produto-bloco {
+    color: var(--accent-primary);
+}
+
+.subtotal-item {
+    color: var(--accent-primary);
+}
+
+.preco-original {
+    color: var(--text-muted);
+}
+
+.preco-original-home {
+    color: var(--text-muted);
+}
+
+.quantidade-atual {
+    color: var(--text-primary);
+}
+
+.linha-resumo {
+    color: var(--text-tertiary);
+}
+
+.linha-resumo strong {
+    color: var(--text-primary);
+}
+
+.total-resumo {
+    color: var(--text-primary);
+}
+
+.checkbox-label {
+    color: var(--text-tertiary);
+}
+
+.checkbox-input {
+    accent-color: var(--accent-primary);
+}
+
+.contato-item {
+    color: var(--text-primary);
+}
+
+.icone-contato {
+    color: var(--accent-primary);
+}
+
+.percentual-desconto {
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+}
+
+.percentual-home {
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+}
+
+.branco {
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+}
+
+.divisor {
+    border-color: var(--border-light);
+}
+
 hr {
     border-color: var(--border-light);
 }
 
-/* Footer */
 footer {
     background-color: var(--bg-footer);
 }
@@ -541,110 +954,35 @@ footer {
 }
 
 .footer-text-secondary {
-    color: var(--text-footer-secondary);
+    color: var(--text-footer);
 }
 
-/* Títulos */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.titulo,
-.subtitulo,
-.titulo-carrinho,
-.titulo-perfil,
-.titulo-categoria,
-.tit {
-    color: var(--text-primary);
-}
-
-.subtitulo-intro,
-.subtitulo-form,
-.usuario-email {
-    color: var(--accent-primary);
-}
-
-/* Preços */
-.preco-produto,
-.preco-desconto,
-.precof,
-.preco-desconto-home,
-.stat-valor,
-.valor-media,
-.subtotal-item,
-.preco-produto-bloco {
-    color: var(--accent-primary);
-}
-
-.preco-original,
-.preco-original-home {
-    color: var(--text-muted);
-}
-
-/* Badges */
-.percentual-desconto,
-.percentual-home,
-.branco {
-    background-color: var(--accent-primary);
-    color: var(--bg-primary);
-}
-
-/* Modal */
 .modal-overlay {
     background-color: var(--bg-modal);
 }
 
-/* Checkboxes */
-.checkbox-input {
-    accent-color: var(--accent-primary);
+.carousel-caption {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
 }
 
-.checkbox-label {
-    color: var(--text-tertiary);
+.carousel-btn {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
 }
 
-/* Quantidade Atual no Carrinho */
-.quantidade-atual {
-    color: var(--text-primary);
+.carousel-btn:hover {
+    background-color: rgba(0, 0, 0, 0.75);
 }
 
-/* Ver Mais Link */
-.ver-mais {
-    color: var(--accent-primary);
+.indicator {
+    border-color: white;
 }
 
-.ver-mais:hover {
-    color: var(--accent-hover);
+.indicator.active {
+    background-color: white;
 }
 
-/* Link Footer */
-.link-footer {
-    color: var(--accent-primary);
-}
-
-.link-footer:hover {
-    color: var(--accent-hover);
-}
-
-/* Sombras */
-.card-stats,
-.produto-item,
-.usuario-item,
-.item-carrinho,
-.form-produto,
-.modal-content,
-.login-module form {
-    box-shadow: var(--shadow-md);
-}
-
-.bloco-produto-home:hover,
-.produto-card-bloco:hover {
-    box-shadow: var(--shadow-lg);
-}
-
-/* ==================== RESPONSIVIDADE ==================== */
 @media (min-width: 901px) {
     .theme-toggle {
         font-size: 0.875rem;
@@ -655,89 +993,4 @@ h6,
         width: 1.5rem;
         height: 1.5rem;
     }
-}
-
-/* ==================== TRANSIÇÕES SUAVES ==================== */
-* {
-    transition: background-color 0.3s ease, 
-                color 0.3s ease, 
-                border-color 0.3s ease;
-}
-
-/* Exceções para elementos interativos */
-input,
-textarea,
-select,
-button,
-a,
-.bloco-produto-home,
-.produto-card-bloco,
-.btn-quantidade {
-    transition: background-color 0.3s ease, 
-                color 0.3s ease, 
-                border-color 0.3s ease,
-                transform 0.2s ease,
-                box-shadow 0.3s ease;
-}
-
-/* Desabilitar transições em imagens */
-img {
-    transition: none;
-}
-
-/* ==================== AJUSTES ESPECÍFICOS POR PÁGINA ==================== */
-
-/* Páginas de Login e Cadastro */
-[data-theme="light"] .login-module form,
-[data-theme="light"] .title-group {
-    box-shadow: var(--shadow-xl);
-}
-
-/* Admin */
-[data-theme="light"] .estatisticas-grid .card-stats {
-    border: 1px solid var(--border-light);
-}
-
-/* Carrossel */
-.carousel-caption {
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-}
-
-[data-theme="light"] .carousel-caption {
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-}
-
-/* Botões do Carrossel */
-.carousel-btn {
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-}
-
-[data-theme="light"] .carousel-btn {
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-}
-
-.carousel-btn:hover {
-    background-color: rgba(0, 0, 0, 0.75);
-}
-
-[data-theme="light"] .carousel-btn:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* Indicadores do Carrossel */
-.indicator {
-    border-color: white;
-}
-
-.indicator.active {
-    background-color: white;
-}
-
-/* Output tags genéricas */
-output {
-    color: inherit;
 }
