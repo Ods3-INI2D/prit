@@ -1,17 +1,5 @@
 {
-  "produtos": [
-    {
-      "nome": "Teste",
-      "preco": 10,
-      "precoDesconto": null,
-      "categoria": "Higiene Bucal",
-      "descricao": "Teste",
-      "imagem": "/imagens/foto.jpg",
-      "status": "em-estoque",
-      "id": 1761739217023,
-      "avaliacoes": []
-    }
-  ],
+  "produtos": [],
   "avaliacoes": [
     {
       "nota": 2,
@@ -51,38 +39,18 @@
       "avaliacoes": []
     }
   ],
-  "usuarios": [
-    {
-      "nome": "ccc",
-      "nasc": "2001-02-22",
-      "cpf": "53847735888",
-      "tel": "987534567",
-      "email": "s@g.com",
-      "senhan": "Senha123!",
-      "csenha": "Senha123!"
-    },
-    {
-      "nome": "João Pedro Rocha de Souza",
-      "nasc": "2009-01-21",
-      "cpf": "59142386845",
-      "tel": "972394962",
-      "email": "pedrinhorocha507@gmail.com",
-      "senhan": "Joaozinho007@",
-      "csenha": "Joaozinho007@",
-      "cep": "06417-00"
-    }
-  ],
+  "usuarios": [],
   "banners": [
     {
       "id": 1,
-      "imagem": "/imagens/banner-1761791844121-568677065.png",
-      "legenda": "Marvis 70% OFF",
-      "link": "/home"
+      "imagem": "/imagens/banner-1761796418672-581390867.png",
+      "legenda": "Seja parceiro",
+      "link": "/admin"
     },
     {
       "id": 2,
-      "imagem": "/imagens/banner-1761793343114-115380307.png",
-      "legenda": "Seja Parceiro",
+      "imagem": "/imagens/banner-1761796514589-522960725.png",
+      "legenda": "Promoções",
       "link": "/home"
     },
     {
