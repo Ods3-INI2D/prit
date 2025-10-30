@@ -119,8 +119,8 @@
   "banners": [
     {
       "id": 1,
-      "imagem": "/imagens/banner-1761610413300-364118250.jpg",
-      "legenda": "Whey",
+      "imagem": "/imagens/banner-1761791844121-568677065.png",
+      "legenda": "Marvis 70% OFF",
       "link": "/home"
     },
     {
@@ -131,8 +131,8 @@
     },
     {
       "id": 3,
-      "imagem": "/imagens/3.png",
-      "legenda": "Novidades",
+      "imagem": "/imagens/banner-1761791948864-940954015.png",
+      "legenda": "Seja Parceiro",
       "link": "/home"
     }
   ]
