@@ -277,6 +277,20 @@ header {
     color: var(--text-primary);
 }
 
+/* CORREÇÃO: Fieldsets e Legends em Formulários */
+fieldset {
+    border-color: transparent;
+}
+
+fieldset legend {
+    color: var(--text-primary);
+}
+
+fieldset legend h2,
+fieldset legend h3 {
+    color: var(--text-primary);
+}
+
 /* CORREÇÃO: Página de Produto */
 .produto-detalhes {
     color: var(--text-primary);
@@ -351,11 +365,6 @@ legend {
     color: var(--text-primary);
 }
 
-fieldset legend h2,
-fieldset legend h3 {
-    color: var(--text-primary);
-}
-
 /* CORREÇÃO: Informações e Descrições */
 .info-campo,
 .info-arquivo,
@@ -400,12 +409,12 @@ h1, h2, h3, h4, h5, h6 {
 .titulo-parceiros,
 .titulo-resumo,
 .nome-produto-bloco,
-.subtitulo-form {
+.subtitulo-form,
+.subtitulo-intro {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Elementos com cor de destaque */
-.subtitulo-intro,
+/* CORREÇÃO: Elementos com cor de destaque que devem manter a cor original */
 .usuario-email,
 .nome-descricao {
     color: var(--accent-primary);
@@ -650,6 +659,14 @@ footer {
     color: var(--text-primary);
 }
 
+.txt article {
+    color: var(--text-primary);
+}
+
+.txt section {
+    color: var(--text-primary);
+}
+
 /* CORREÇÃO: Texto de navegação */
 .signup-prompt,
 .signup-prompt p {
@@ -689,6 +706,58 @@ textarea:disabled,
 select:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* CORREÇÃO ESPECÍFICA: Outputs no tema claro */
+output {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Links dentro de outputs */
+output a {
+    color: var(--accent-primary);
+}
+
+output a:hover {
+    color: var(--accent-hover);
+}
+
+/* CORREÇÃO: Mensagens de login/navegação */
+.mensagem-login {
+    color: var(--text-muted);
+}
+
+/* CORREÇÃO: Sem usuário */
+.sem-usuario {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Opcao menu */
+.opcao-menu {
+    color: var(--text-primary);
+}
+
+.opcao-menu.logout {
+    color: #ff5555;
+}
+
+.opcao-menu:hover {
+    background-color: var(--border-light);
+}
+
+/* CORREÇÃO: Valor info */
+.valor-info {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Categorias grupo */
+.categorias-grupo {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Lista opcoes */
+.lista-opcoes {
+    color: var(--text-primary);
 }
 
 @media (min-width: 901px) {

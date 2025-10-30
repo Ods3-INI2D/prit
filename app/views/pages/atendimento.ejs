@@ -20,7 +20,7 @@
             <nav class="navegacao" aria-label="Navegação de retorno">
                 <a href="/home" class="voltar">
                     <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
-                    Voltar
+                    <output>Voltar</o>
                 </a>
             </nav>
 
@@ -51,15 +51,15 @@
 
                 <aside class="info-contato" role="complementary">
                     <p class="contato-item">
-                        <o class="icone-contato">📧</o>
-                        <o>E-mail SAC: </o>
+                        <output class="icone-contato">📧</o>
+                        <output>E-mail SAC: </o>
                         <a href="mailto:maisaudeods3SAC@gmail.com" class="link-contato">
                             maisaudeods3SAC@gmail.com
                         </a>
                     </p>
                     <p class="contato-item">
-                        <o class="icone-contato">💬</o>
-                        <o>Tempo médio de resposta: 24 a 48 horas</o>
+                        <output class="icone-contato">💬</o>
+                        <output>Tempo médio de resposta: 24 a 48 horas</o>
                     </p>
                 </aside>
             </article>
@@ -69,7 +69,7 @@
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Seu E-mail <o class="obrigatorio">*</o>
+                        Seu E-mail <output class="obrigatorio">*</o>
                     </legend>
                     <label for="email">
                         <input 
@@ -83,14 +83,14 @@
                             aria-describedby="email-info"
                             value="<%= typeof valores !== 'undefined' ? valores.email : '' %>">
                     </label>
-                    <p id="email-info" class="info-campo">
+                    <output id="email-info" class="info-campo">
                         Utilizaremos este e-mail para responder sua solicitação
-                    </p>
+                    </o>
                 </fieldset>
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Sua Mensagem <o class="obrigatorio">*</o>
+                        Sua Mensagem <output class="obrigatorio">*</o>
                     </legend>
                     <label for="mensagem">
                         <textarea 
@@ -103,9 +103,9 @@
                             aria-describedby="mensagem-info"
                             rows="6"><%= typeof valores !== 'undefined' ? valores.mensagem : '' %></textarea>
                     </label>
-                    <p id="mensagem-info" class="info-campo">
+                    <output id="mensagem-info" class="info-campo">
                         Mínimo de 20 caracteres, máximo de 1000 caracteres
-                    </p>
+                    </o>
                 </fieldset>
 
                 <button type="submit" class="btn-enviar" aria-label="Enviar mensagem para atendimento">

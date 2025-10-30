@@ -20,7 +20,7 @@
             <nav class="navegacao">
                 <a href="/home" class="voltar">
                     <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
-                    Voltar
+                    <o>Voltar</o>
                 </a>
             </nav>
 
@@ -29,13 +29,13 @@
             <% if(typeof sucesso !== 'undefined' && sucesso) { %>
                 <output class="mensagem-sucesso" role="status" aria-live="polite">
                     Solicitação enviada com sucesso! Entraremos em contato em breve.
-                </output>
+                </o>
             <% } %>
 
             <% if(typeof erro !== 'undefined' && erro) { %>
                 <output class="mensagem-erro" role="alert" aria-live="assertive">
                     <%= erro %>
-                </output>
+                </o>
             <% } %>
 
             <article class="intro-parceiros">
@@ -55,7 +55,7 @@
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Nome da Empresa <o class="obrigatorio">*</o>
+                        Nome da Empresa <output class="obrigatorio">*</o>
                     </legend>
                     <label for="empresa">
                         <input 
@@ -72,7 +72,7 @@
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        E-mail da Empresa <o class="obrigatorio">*</o>
+                        E-mail da Empresa <output class="obrigatorio">*</o>
                     </legend>
                     <label for="email">
                         <input 
@@ -89,11 +89,11 @@
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Categorias de Produtos <o class="obrigatorio">*</o>
+                        Categorias de Produtos <output class="obrigatorio">*</o>
                     </legend>
-                    <p class="info-campo">
+                    <output class="info-campo">
                         Selecione uma ou mais categorias que representam seus produtos
-                    </p>
+                    </o>
                     <section class="categorias-grupo">
                         <label class="checkbox-item">
                             <input 
@@ -102,7 +102,7 @@
                                 value="Cuidados com a Pele"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Cuidados com a Pele') ? 'checked' : '' %>>
-                            <o class="checkbox-label">Cuidados com a Pele</o>
+                            <output class="checkbox-label">Cuidados com a Pele</o>
                         </label>
 
                         <label class="checkbox-item">
@@ -112,7 +112,7 @@
                                 value="Higiene Bucal"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Higiene Bucal') ? 'checked' : '' %>>
-                            <o class="checkbox-label">Higiene Bucal</o>
+                            <output class="checkbox-label">Higiene Bucal</o>
                         </label>
 
                         <label class="checkbox-item">
@@ -122,7 +122,7 @@
                                 value="Cabelo"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Cabelo') ? 'checked' : '' %>>
-                            <o class="checkbox-label">Cabelo</o>
+                            <output class="checkbox-label">Cabelo</o>
                         </label>
 
                         <label class="checkbox-item">
@@ -132,7 +132,7 @@
                                 value="Vitaminas e Suplementos"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Vitaminas e Suplementos') ? 'checked' : '' %>>
-                            <o class="checkbox-label">Vitaminas e Suplementos</o>
+                            <output class="checkbox-label">Vitaminas e Suplementos</o>
                         </label>
 
                         <label class="checkbox-item">
@@ -142,7 +142,7 @@
                                 value="Bebê"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Bebê') ? 'checked' : '' %>>
-                            <o class="checkbox-label">Bebê</o>
+                            <output class="checkbox-label">Bebê</o>
                         </label>
 
                         <label class="checkbox-item">
@@ -152,14 +152,14 @@
                                 value="Terceira Idade"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Terceira Idade') ? 'checked' : '' %>>
-                            <o class="checkbox-label">Terceira Idade</o>
+                            <output class="checkbox-label">Terceira Idade</o>
                         </label>
                     </section>
                 </fieldset>
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Descrição dos Produtos e Propostas <o class="obrigatorio">*</o>
+                        Descrição dos Produtos e Propostas <output class="obrigatorio">*</o>
                     </legend>
                     <label for="descricao">
                         <textarea 
