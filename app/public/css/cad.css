@@ -76,7 +76,6 @@ h2 {
     margin-bottom: 0.5rem;
     font-weight: 500;
     color: white;
-    /* Alinha o texto do label (assumido ser o h2) à esquerda para casar com o input full-width */
     text-align: left;
 }
 
@@ -88,7 +87,6 @@ form {
     background-color: #2a2a2a;
     border-radius: 0.875rem;
     box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.45), 0 0 0.625rem rgba(77, 166, 255, 0.12);
-    /* Correção: Garante que os filhos (h2 e inputs) alinhem-se à esquerda do contêiner */
     text-align: left;
 }
 
@@ -97,7 +95,6 @@ input[type="password"],
 input[type="email"],
 input[type="date"],
 input[type="tel"] {
-    /* Manter 100% de largura para garantir o mesmo tamanho */
     width: 100%; 
     padding: 16px 12px;
     border-radius: 8px;
@@ -120,10 +117,10 @@ input[type="tel"]:focus {
 }
 
 /* botao login/cadastro*/
-#btn,
-#btn-login {
-    background-color: #007bff;
-    color: #fff;
+button#btn,
+button#btn-login {
+    background-color: #007bff !important;
+    color: #fff !important;
     border: none;
     padding: 1.09375rem;
     border-radius: 0.71875rem;
@@ -136,9 +133,9 @@ input[type="tel"]:focus {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-#btn:hover,
-#btn-login:hover {
-    background-color: #0056b3;
+button#btn:hover,
+button#btn-login:hover {
+    background-color: #0056b3 !important;
     transform: translateY(-0.125rem);
 }
 
@@ -171,7 +168,6 @@ section.txt {
     width: 100%;
     max-width: 23.75rem;
     font-size: 1.03125rem;
-    /* Conteúdo centralizado */
     text-align: center;
     margin-bottom: 1.3125rem;
     background-color: transparent;
@@ -191,7 +187,6 @@ main > p.ou {
 .signup-prompt {
     width: 100%;
     max-width: 23.75rem;
-    /* Garante que o texto fique centralizado */
     text-align: center;
     margin-top: 2.25rem;
 }
@@ -278,8 +273,8 @@ footer {
         font-size: 1rem;
     }
 
-    #btn,
-    #btn-login {
+    button#btn,
+    button#btn-login {
         padding: 1rem;
         font-size: 1.125rem;
     }
