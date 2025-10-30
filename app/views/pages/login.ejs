@@ -1,4 +1,3 @@
-<!-- app/views/pages/login.ejs - VERSÃO ATUALIZADA -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -26,7 +25,9 @@
             </article>
 
             <% if(erro) { %>
-                <output class="erro" role="alert" aria-live="polite"><%= erro %></output>
+                <article class="erro-login">
+                    <output class="mensagem-erro" role="alert" aria-live="polite"><%= erro %></o>
+                </article>
             <% } %>
 
             <form method="POST" action="/login" novalidate>
@@ -51,7 +52,7 @@
                     </label>
                 </fieldset>
 
-                <button id="btn" type="submit">Entrar</button>
+                <button id="btn-login" type="submit">Entrar</button>
 
                 <nav class="signup-prompt">
                     <p>

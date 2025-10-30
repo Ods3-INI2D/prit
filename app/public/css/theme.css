@@ -263,38 +263,38 @@ header {
     color: var(--text-primary);
 }
 
+/* CORREÇÃO: Formulários de Login e Cadastro */
 .login-module form {
     background-color: var(--bg-secondary);
     color: var(--text-primary);
 }
 
 .title-group {
-    background-color: var(--bg-secondary);
     color: var(--text-primary);
 }
 
+.title-group h1 {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Página de Produto */
 .produto-detalhes {
-    background-color: var(--bg-secondary);
     color: var(--text-primary);
 }
 
 .info-principal {
-    background-color: var(--bg-secondary);
     color: var(--text-primary);
 }
 
 .frete-container {
-    background-color: var(--bg-secondary);
     color: var(--text-primary);
 }
 
 .descricao-container {
-    background-color: var(--bg-secondary);
     color: var(--text-primary);
 }
 
 .avaliacoes-container {
-    background-color: var(--bg-secondary);
     color: var(--text-primary);
 }
 
@@ -303,132 +303,46 @@ header {
     color: var(--text-primary);
 }
 
-input[type="text"] {
-    background-color: var(--bg-input);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
-
-input[type="number"] {
-    background-color: var(--bg-input);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
-
-input[type="date"] {
-    background-color: var(--bg-input);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
-
-input[type="password"] {
-    background-color: var(--bg-input);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
-
-input[type="email"] {
-    background-color: var(--bg-input);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
-
-input[type="tel"] {
-    background-color: var(--bg-input);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
-
-input[type="file"] {
-    background-color: var(--bg-input);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
-
-textarea {
-    background-color: var(--bg-input);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
-
+/* CORREÇÃO: Inputs de Formulários */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+input[type="file"],
+textarea,
 select {
     background-color: var(--bg-input);
     border-color: var(--border-color);
     color: var(--text-primary);
 }
 
-input[type="text"]::placeholder {
-    color: var(--text-placeholder);
-}
-
-input[type="number"]::placeholder {
-    color: var(--text-placeholder);
-}
-
-input[type="password"]::placeholder {
-    color: var(--text-placeholder);
-}
-
-input[type="email"]::placeholder {
-    color: var(--text-placeholder);
-}
-
-input[type="tel"]::placeholder {
-    color: var(--text-placeholder);
-}
-
+input[type="text"]::placeholder,
+input[type="number"]::placeholder,
+input[type="password"]::placeholder,
+input[type="email"]::placeholder,
+input[type="tel"]::placeholder,
 textarea::placeholder {
     color: var(--text-placeholder);
 }
 
-input[type="text"]:focus {
-    border-color: var(--border-focus);
-}
-
-input[type="number"]:focus {
-    border-color: var(--border-focus);
-}
-
-input[type="date"]:focus {
-    border-color: var(--border-focus);
-}
-
-input[type="password"]:focus {
-    border-color: var(--border-focus);
-}
-
-input[type="email"]:focus {
-    border-color: var(--border-focus);
-}
-
-input[type="tel"]:focus {
-    border-color: var(--border-focus);
-}
-
-textarea:focus {
-    border-color: var(--border-focus);
-}
-
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+textarea:focus,
 select:focus {
     border-color: var(--border-focus);
 }
 
-.label-form {
-    color: var(--text-primary);
-}
-
-.label-info {
-    color: var(--text-primary);
-}
-
-.label-avaliacao {
-    color: var(--text-primary);
-}
-
-.label-nota {
-    color: var(--text-primary);
-}
-
+/* CORREÇÃO: Labels e Legends */
+.label-form,
+.label-info,
+.label-avaliacao,
+.label-nota,
 .label-titulo {
     color: var(--text-primary);
 }
@@ -437,58 +351,29 @@ legend {
     color: var(--text-primary);
 }
 
-.info-campo {
-    color: var(--text-tertiary);
+fieldset legend h2,
+fieldset legend h3 {
+    color: var(--text-primary);
 }
 
-.info-arquivo {
-    color: var(--text-tertiary);
-}
-
-.descricao-frete {
-    color: var(--text-tertiary);
-}
-
-.texto-intro {
-    color: var(--text-tertiary);
-}
-
-.usuario-info {
-    color: var(--text-tertiary);
-}
-
-.produto-info {
-    color: var(--text-tertiary);
-}
-
-.categoria-produto {
-    color: var(--text-tertiary);
-}
-
-.texto-descricao {
-    color: var(--text-tertiary);
-}
-
-.texto-avaliacao {
-    color: var(--text-tertiary);
-}
-
-.categoria-home {
-    color: var(--text-tertiary);
-}
-
+/* CORREÇÃO: Informações e Descrições */
+.info-campo,
+.info-arquivo,
+.descricao-frete,
+.texto-intro,
+.usuario-info,
+.produto-info,
+.categoria-produto,
+.texto-descricao,
+.texto-avaliacao,
+.categoria-home,
 .stat-titulo {
     color: var(--text-tertiary);
 }
 
-.sem-avaliacoes {
-    color: var(--text-muted);
-}
-
-.mensagem-vazio {
-    color: var(--text-muted);
-}
-
+/* CORREÇÃO: Elementos sem cor */
+.sem-avaliacoes,
+.mensagem-vazio,
 .sem-produtos {
     color: var(--text-muted);
 }
@@ -497,263 +382,93 @@ legend {
     color: var(--error-text);
 }
 
-h1 {
+/* CORREÇÃO: Títulos */
+h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
 }
 
-h2 {
-    color: var(--text-primary);
-}
-
-h3 {
-    color: var(--text-primary);
-}
-
-h4 {
-    color: var(--text-primary);
-}
-
-h5 {
-    color: var(--text-primary);
-}
-
-h6 {
-    color: var(--text-primary);
-}
-
-.titulo {
-    color: var(--text-primary);
-}
-
-.subtitulo {
-    color: var(--text-primary);
-}
-
-.titulo-carrinho {
-    color: var(--text-primary);
-}
-
-.titulo-perfil {
-    color: var(--text-primary);
-}
-
-.titulo-categoria {
-    color: var(--text-primary);
-}
-
-.titulo-secao {
-    color: var(--text-primary);
-}
-
-.nome-produto {
-    color: var(--text-primary);
-}
-
-.titulo-form-avaliacao {
-    color: var(--text-primary);
-}
-
-.titulo-outros {
-    color: var(--text-primary);
-}
-
-.titulo-atendimento {
-    color: var(--text-primary);
-}
-
-.titulo-parceiros {
-    color: var(--text-primary);
-}
-
-.titulo-resumo {
-    color: var(--text-primary);
-}
-
-.nome-produto-bloco {
-    color: var(--text-primary);
-}
-
+.titulo,
+.subtitulo,
+.titulo-carrinho,
+.titulo-perfil,
+.titulo-categoria,
+.titulo-secao,
+.nome-produto,
+.titulo-form-avaliacao,
+.titulo-outros,
+.titulo-atendimento,
+.titulo-parceiros,
+.titulo-resumo,
+.nome-produto-bloco,
 .subtitulo-form {
     color: var(--text-primary);
 }
 
-.subtitulo-intro {
-    color: var(--accent-primary);
-}
-
-.usuario-email {
-    color: var(--accent-primary);
-}
-
+/* CORREÇÃO: Elementos com cor de destaque */
+.subtitulo-intro,
+.usuario-email,
 .nome-descricao {
     color: var(--accent-primary);
 }
 
-.link {
-    color: var(--accent-primary);
-}
-
-.link-ver-mais {
-    color: var(--accent-primary);
-}
-
-.conta {
-    color: var(--accent-primary);
-}
-
-.link-contato {
-    color: var(--accent-primary);
-}
-
-.voltar {
-    color: var(--accent-primary);
-}
-
-.ver-mais {
-    color: var(--accent-primary);
-}
-
+/* CORREÇÃO: Links */
+.link,
+.link-ver-mais,
+.conta,
+.link-contato,
+.voltar,
+.ver-mais,
 .link-footer {
     color: var(--accent-primary);
 }
 
-.link:hover {
-    color: var(--accent-hover);
-}
-
-.link-ver-mais:hover {
-    color: var(--accent-hover);
-}
-
-.conta:hover {
-    color: var(--accent-hover);
-}
-
-.link-contato:hover {
-    color: var(--accent-hover);
-}
-
-.voltar:hover {
-    color: var(--accent-hover);
-}
-
-.ver-mais:hover {
-    color: var(--accent-hover);
-}
-
+.link:hover,
+.link-ver-mais:hover,
+.conta:hover,
+.link-contato:hover,
+.voltar:hover,
+.ver-mais:hover,
 .link-footer:hover {
     color: var(--accent-hover);
 }
 
-#btn {
-    background-color: var(--btn-primary-bg);
-    color: var(--text-primary);
-}
-
-#btn-login {
-    background-color: var(--btn-primary-bg);
-    color: var(--text-primary);
-}
-
+/* CORREÇÃO: Botões Primários */
+#btn,
+#btn-login,
 .btn-finalizar {
     background-color: var(--btn-primary-bg);
     color: var(--text-primary);
 }
 
-#btn:hover {
-    background-color: var(--btn-primary-hover);
-}
-
-#btn-login:hover {
-    background-color: var(--btn-primary-hover);
-}
-
+#btn:hover,
+#btn-login:hover,
 .btn-finalizar:hover {
     background-color: var(--btn-primary-hover);
 }
 
-.btn-adicionar {
-    background-color: var(--btn-secondary-bg);
-    color: var(--text-primary);
-}
-
-.btn-comprar {
-    background-color: var(--btn-secondary-bg);
-    color: var(--text-primary);
-}
-
-.btn-enviar {
-    background-color: var(--btn-secondary-bg);
-    color: var(--text-primary);
-}
-
-.btn-salvar {
-    background-color: var(--btn-secondary-bg);
-    color: var(--text-primary);
-}
-
-.btn-calcular {
-    background-color: var(--btn-secondary-bg);
-    color: var(--text-primary);
-}
-
-.btn-enviar-avaliacao {
-    background-color: var(--btn-secondary-bg);
-    color: var(--text-primary);
-}
-
-.btn-continuar {
-    background-color: var(--btn-secondary-bg);
-    color: var(--text-primary);
-}
-
-.btn-voltar-home {
-    background-color: var(--btn-secondary-bg);
-    color: var(--text-primary);
-}
-
-.btn-login {
-    background-color: var(--btn-secondary-bg);
-    color: var(--text-primary);
-}
-
+/* CORREÇÃO: Botões Secundários */
+.btn-adicionar,
+.btn-comprar,
+.btn-enviar,
+.btn-salvar,
+.btn-calcular,
+.btn-enviar-avaliacao,
+.btn-continuar,
+.btn-voltar-home,
+.btn-login,
 .btn-avaliar {
     background-color: var(--btn-secondary-bg);
     color: var(--text-primary);
 }
 
-.btn-adicionar:hover {
-    background-color: var(--btn-secondary-hover);
-}
-
-.btn-comprar:hover {
-    background-color: var(--btn-secondary-hover);
-}
-
-.btn-enviar:hover {
-    background-color: var(--btn-secondary-hover);
-}
-
-.btn-salvar:hover {
-    background-color: var(--btn-secondary-hover);
-}
-
-.btn-calcular:hover {
-    background-color: var(--btn-secondary-hover);
-}
-
-.btn-continuar:hover {
-    background-color: var(--btn-secondary-hover);
-}
-
-.btn-voltar-home:hover {
-    background-color: var(--btn-secondary-hover);
-}
-
-.btn-login:hover {
-    background-color: var(--btn-secondary-hover);
-}
-
+.btn-adicionar:hover,
+.btn-comprar:hover,
+.btn-enviar:hover,
+.btn-salvar:hover,
+.btn-calcular:hover,
+.btn-continuar:hover,
+.btn-voltar-home:hover,
+.btn-login:hover,
 .btn-avaliar:hover {
     background-color: var(--btn-secondary-hover);
 }
@@ -762,6 +477,7 @@ h6 {
     background-color: var(--btn-secondary-hover);
 }
 
+/* CORREÇÃO: Botões de Ação */
 .btn-editar {
     background-color: var(--accent-primary);
     color: var(--bg-primary);
@@ -771,20 +487,13 @@ h6 {
     background-color: var(--accent-hover);
 }
 
-.btn-excluir {
-    background-color: #d93025;
-    color: var(--text-primary);
-}
-
+.btn-excluir,
 .btn-remover {
     background-color: #d93025;
     color: var(--text-primary);
 }
 
-.btn-excluir:hover {
-    background-color: #a3241b;
-}
-
+.btn-excluir:hover,
 .btn-remover:hover {
     background-color: #a3241b;
 }
@@ -798,24 +507,15 @@ h6 {
     background-color: var(--btn-secondary-hover);
 }
 
+/* CORREÇÃO: Mensagens */
 .mensagem-sucesso {
     background-color: var(--success-bg);
     border-color: var(--success-border);
     color: var(--success-text);
 }
 
-.mensagem-erro {
-    background-color: var(--error-bg);
-    border-color: var(--error-border);
-    color: var(--error-text);
-}
-
-.erro-login {
-    background-color: var(--error-bg);
-    border-color: var(--error-border);
-    color: var(--error-text);
-}
-
+.mensagem-erro,
+.erro-login,
 .mensagem-erro-avaliacao {
     background-color: var(--error-bg);
     border-color: var(--error-border);
@@ -826,70 +526,38 @@ h6 {
     color: var(--error-text);
 }
 
-.mensagem-aviso {
-    background-color: var(--warning-bg);
-    border-color: var(--warning-border);
-    color: var(--warning-text);
-}
-
+.mensagem-aviso,
 .mensagem-fora-estoque {
     background-color: var(--warning-bg);
     border-color: var(--warning-border);
     color: var(--warning-text);
 }
 
-.mensagem-info {
-    background-color: var(--info-bg);
-    border-color: var(--info-border);
-    color: var(--info-text);
-}
-
+.mensagem-info,
 .mensagem-admin-bloqueio {
     background-color: var(--info-bg);
     border-color: var(--info-border);
     color: var(--info-text);
 }
 
-.preco-produto {
-    color: var(--accent-primary);
-}
-
-.preco-desconto {
-    color: var(--accent-primary);
-}
-
-.precof {
-    color: var(--accent-primary);
-}
-
-.preco-desconto-home {
-    color: var(--accent-primary);
-}
-
-.stat-valor {
-    color: var(--accent-primary);
-}
-
-.valor-media {
-    color: var(--accent-primary);
-}
-
-.preco-produto-bloco {
-    color: var(--accent-primary);
-}
-
+/* CORREÇÃO: Preços */
+.preco-produto,
+.preco-desconto,
+.precof,
+.preco-desconto-home,
+.stat-valor,
+.valor-media,
+.preco-produto-bloco,
 .subtotal-item {
     color: var(--accent-primary);
 }
 
-.preco-original {
-    color: var(--text-muted);
-}
-
+.preco-original,
 .preco-original-home {
     color: var(--text-muted);
 }
 
+/* CORREÇÃO: Outros elementos */
 .quantidade-atual {
     color: var(--text-primary);
 }
@@ -922,16 +590,8 @@ h6 {
     color: var(--accent-primary);
 }
 
-.percentual-desconto {
-    background-color: var(--accent-primary);
-    color: var(--bg-primary);
-}
-
-.percentual-home {
-    background-color: var(--accent-primary);
-    color: var(--bg-primary);
-}
-
+.percentual-desconto,
+.percentual-home,
 .branco {
     background-color: var(--accent-primary);
     color: var(--bg-primary);
@@ -949,10 +609,7 @@ footer {
     background-color: var(--bg-footer);
 }
 
-.footer-item {
-    color: var(--text-footer);
-}
-
+.footer-item,
 .footer-text-secondary {
     color: var(--text-footer);
 }
@@ -981,6 +638,57 @@ footer {
 
 .indicator.active {
     background-color: white;
+}
+
+/* CORREÇÃO ESPECÍFICA: Formulários de Login/Cadastro */
+.txt {
+    color: var(--text-primary);
+}
+
+.txt h1,
+.txt h2 {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Texto de navegação */
+.signup-prompt,
+.signup-prompt p {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Info contato */
+.info-contato {
+    background-color: var(--info-bg);
+    border-color: var(--info-border);
+}
+
+/* CORREÇÃO: Campo senha com botão */
+.campo-senha {
+    position: relative;
+}
+
+.campo-senha input {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+}
+
+.btn-toggle-senha {
+    background-color: transparent;
+    border: none;
+}
+
+/* CORREÇÃO: Select options no tema claro */
+[data-theme="light"] select option {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Campos de formulário desabilitados */
+input:disabled,
+textarea:disabled,
+select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 @media (min-width: 901px) {
