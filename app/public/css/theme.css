@@ -803,6 +803,33 @@ output a:hover {
     color: var(--text-primary);
 }
 
+/* CORREÇÃO FINAL: Título das páginas de Login/Cadastro - SEM FUNDO */
+.title-group {
+    background-color: transparent !important;
+}
+
+.title-group h1,
+.title-group h1.tit {
+    background-color: transparent !important;
+}
+
+/* CORREÇÃO: Garantir que nenhum elemento dentro de .txt tenha fundo */
+.txt,
+.txt * {
+    background-color: transparent !important;
+}
+
+/* EXCEÇÃO: Manter o fundo do formulário */
+.txt form,
+form {
+    background-color: var(--bg-secondary) !important;
+}
+
+/* EXCEÇÃO: Manter o fundo da mensagem de erro */
+.erro-login {
+    background-color: var(--error-bg) !important;
+}
+
 @media (min-width: 901px) {
     .theme-toggle {
         font-size: 0.875rem;

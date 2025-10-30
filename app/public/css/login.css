@@ -45,7 +45,6 @@ main {
 
 section.login-module {
     width: 100%;
-    /* Ajuste para que o módulo de login (card cinza) fique um pouco mais largo, como nas primeiras imagens */
     max-width: 450px; 
     text-align: left;
     background-color: transparent;
@@ -79,18 +78,15 @@ h2 {
 form {
     max-width: 100%;
     margin: 20px auto;
-    /* Ajuste no padding lateral para esticar os inputs e o botão */
     padding: 25px 20px; 
     background-color: #2a2a2a;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 10px rgba(77, 166, 255, 0.2);
 }
 
-/* GARANTE QUE TODOS OS INPUTS (TEXT, EMAIL, PASSWORD) TENHAM O MESMO ESTILO E LARGURA (100%) */
 input[type="text"],
 input[type="email"],
 input[type="password"] {
-    /* Mantido 100% de largura */
     width: 100%; 
     padding: 16px 12px;
     border-radius: 8px;
@@ -98,13 +94,9 @@ input[type="password"] {
     background-color: #383838;
     color: #fff;
     font-size: 1rem;
-    /* Remove margem inferior aqui, vamos controlar o espaçamento fora para não afetar o alinhamento de outros elementos internos */
     margin-bottom: 1rem; 
     transition: border 0.3s ease, box-shadow 0.3s ease;
 }
-
-/* Se houver um container envolvendo o input de senha por causa do ícone, o ajuste de altura deve ser feito no container ou no próprio input, garantindo que o input de senha (o campo de texto real) não seja afetado pelo ícone. 
-    Se o seu HTML não tem um container para o ícone de senha e o campo, esta correção é suficiente. */
 
 input[type="text"]:focus,
 input[type="email"]:focus,
@@ -182,19 +174,14 @@ small.erro {
 
 .erro-login {
     background-color: rgba(255, 85, 85, 0.1);
-    /* Corrigida unidade: 1px para ser previsível em vez de vw */
     border: 1px solid #ff5555; 
-    /* Corrigida unidade: rem/px para ser previsível em vez de vw */
     border-radius: 8px; 
-    /* Corrigida unidade: rem/px para ser previsível em vez de vh/vw */
     padding: 10px 15px; 
-    /* Corrigida unidade: rem/px para ser previsível em vez de vh */
     margin-bottom: 1rem; 
 }
 
 .mensagem-erro {
     color: #ff5555;
-    /* Corrigida unidade: rem para ser responsiva ao texto, não à viewport */
     font-size: 1rem; 
     text-align: center;
 }
@@ -205,13 +192,11 @@ main > p.ou {
     margin: 1rem 0;
     color: #aaa;
     width: 100%;
-    /* Ajustado para acompanhar o novo max-width da section */
     max-width: 450px;
 }
 
 .signup-prompt {
     width: 100%;
-    /* Ajustado para acompanhar o novo max-width da section */
     max-width: 450px;
     text-align: center;
     margin-top: 3.5rem;
@@ -260,7 +245,6 @@ footer {
     }
 
     section.login-module {
-        /* Ajuste para desktop */
         max-width: 500px; 
         background-color: transparent;
         padding: 0;
@@ -285,15 +269,12 @@ footer {
     }
 
     form {
-        /* Ajuste para desktop */
         padding: 28px 24px; 
     }
 
-    /* GARANTE QUE TODOS OS INPUTS (TEXT, EMAIL, PASSWORD) TENHAM O MESMO ESTILO E LARGURA (100%) */
     input[type="text"],
     input[type="email"],
     input[type="password"] {
-        /* Mantido 100% de largura */
         width: 100%; 
         padding: 14px 16px;
         font-size: 1.05rem;
@@ -307,17 +288,14 @@ footer {
     #google {
         padding: 14px;
         font-size: 1.05rem;
-        /* Ajustado para acompanhar o novo max-width da section */
         max-width: 500px;
     }
 
     main > p.ou {
-        /* Ajustado para acompanhar o novo max-width da section */
         max-width: 500px;
     }
 
     .signup-prompt {
-        /* Ajustado para acompanhar o novo max-width da section */
         max-width: 500px;
     }
 
@@ -330,14 +308,12 @@ footer {
     }
 
     .erro-login {
-        /* Ajuste para desktop, mantendo unidades fixas/relativas */
         padding: 1rem 1.25rem; 
         border-radius: 9px;
         border: 2px solid #ff5555;
     }
 
     .mensagem-erro {
-        /* Ajuste para desktop */
         font-size: 1.05rem; 
     }
 
