@@ -9,7 +9,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #163069;
+    background-color: var(--bg-header);
     padding: 0.75rem 0.875rem;
     flex-wrap: nowrap;
     gap: 0.625rem;

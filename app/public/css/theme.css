@@ -96,6 +96,11 @@ header {
     background-color: var(--bg-header);
 }
 
+/* HAMBURGER - Linhas mudam de cor com o tema */
+.hamburger hr {
+    background-color: var(--text-primary);
+}
+
 .opcoes {
     background-color: var(--bg-menu);
     color: var(--text-primary);
