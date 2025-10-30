@@ -10,50 +10,6 @@
       "status": "em-estoque",
       "id": 1761739217023,
       "avaliacoes": []
-    },
-    {
-      "nome": "Joao pedro",
-      "preco": 1,
-      "precoDesconto": null,
-      "categoria": "Cabelo",
-      "descricao": "dqw",
-      "imagem": "/imagens/foto.jpg",
-      "status": "em-estoque",
-      "id": 1761773784432,
-      "avaliacoes": []
-    },
-    {
-      "nome": "qdw",
-      "preco": 23,
-      "precoDesconto": null,
-      "categoria": "Vitaminas e Suplementos",
-      "descricao": "ewq",
-      "imagem": "/imagens/foto.jpg",
-      "status": "em-estoque",
-      "id": 1761773792281,
-      "avaliacoes": []
-    },
-    {
-      "nome": "cwecwe",
-      "preco": 32,
-      "precoDesconto": null,
-      "categoria": "Terceira Idade",
-      "descricao": "32",
-      "imagem": "/imagens/foto.jpg",
-      "status": "em-estoque",
-      "id": 1761773802053,
-      "avaliacoes": []
-    },
-    {
-      "nome": "grfaaaaaaaaaaaaaa",
-      "preco": 31,
-      "precoDesconto": null,
-      "categoria": "Bebê",
-      "descricao": "32",
-      "imagem": "/imagens/foto.jpg",
-      "status": "em-estoque",
-      "id": 1761773810964,
-      "avaliacoes": []
     }
   ],
   "avaliacoes": [
@@ -125,14 +81,14 @@
     },
     {
       "id": 2,
-      "imagem": "/imagens/2.png",
-      "legenda": "Ofertas da Semana",
+      "imagem": "/imagens/banner-1761793343114-115380307.png",
+      "legenda": "Seja Parceiro",
       "link": "/home"
     },
     {
       "id": 3,
-      "imagem": "/imagens/banner-1761791948864-940954015.png",
-      "legenda": "Seja Parceiro",
+      "imagem": "/imagens/banner-1761793329287-981161281.png",
+      "legenda": "La-Roche-Posay 15% OFF",
       "link": "/home"
     }
   ]
