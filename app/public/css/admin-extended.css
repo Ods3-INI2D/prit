@@ -43,7 +43,7 @@
     display: block;
 }
 
-/* mensagem info */
+/* mensagem info - CORRIGIDO: adicionado position relative e z-index */
 .mensagem-info {
     background-color: rgba(77, 166, 255, 0.1);
     border: 2px solid #4da6ff;
@@ -54,6 +54,9 @@
     text-align: center;
     font-weight: 500;
     font-size: 0.95rem;
+    position: relative;
+    z-index: 1;
+    display: block;
 }
 
 /* lista de usuários */
@@ -61,6 +64,8 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    position: relative;
+    z-index: 0;
 }
 
 .usuario-item {
@@ -72,6 +77,8 @@
     display: flex;
     flex-direction: column;
     gap: 0.95rem;
+    position: relative;
+    z-index: 0;
 }
 
 .usuario-info-container {
@@ -243,6 +250,12 @@
     height: auto;
     border-radius: 0.45rem;
     margin-bottom: 0.45rem;
+}
+
+/* CORRIGIDO: section para banners com z-index */
+.lista-banners-section {
+    position: relative;
+    z-index: 0;
 }
 
 /* --- Responsividade para desktops --- */
