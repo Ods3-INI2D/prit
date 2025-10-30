@@ -37,6 +37,13 @@
     --info-bg: rgba(77, 166, 255, 0.1);
     --info-border: #4da6ff;
     --info-text: #4da6ff;
+    
+    /* Imagens por tema - TEMA ESCURO */
+    --img-carrinho: url('/imagens/carrinho-branco.png');
+    --img-lupa: url('/imagens/lupa-branca.png');
+    --img-user: url('/imagens/user-branco.png');
+    --img-estrela: url('/imagens/estrela-branca.png');
+    --img-estrela-vazia: url('/imagens/estrela-branca-vazia.png');
 }
 
 [data-theme="light"] {
@@ -76,6 +83,39 @@
     --info-bg: rgba(26, 115, 232, 0.1);
     --info-border: #1a73e8;
     --info-text: #1557b0;
+    
+    /* Imagens por tema - TEMA CLARO */
+    --img-carrinho: url('/imagens/carrinho-preto.png');
+    --img-lupa: url('/imagens/lupa-preta.png');
+    --img-user: url('/imagens/user-preto.png');
+    --img-estrela: url('/imagens/estrela-preta.png');
+    --img-estrela-vazia: url('/imagens/estrela-preta-vazia.png');
+}
+
+/* Aplicar imagens dinâmicas aos ícones */
+.cart {
+    content: var(--img-carrinho);
+}
+
+.lupa {
+    content: var(--img-lupa);
+}
+
+.user {
+    content: var(--img-user);
+}
+
+/* Estrelas nas avaliações e cards de produtos */
+.estrela-home[src*="estr.png"],
+.estrela[src*="estr.png"],
+.estrela-pequena[src*="estr.png"] {
+    content: var(--img-estrela);
+}
+
+.estrela-home[src*="estrv.png"],
+.estrela[src*="estrv.png"],
+.estrela-pequena[src*="estrv.png"] {
+    content: var(--img-estrela-vazia);
 }
 
 html {
@@ -410,8 +450,6 @@ h1, h2, h3, h4, h5, h6 {
 .nome-produto,
 .titulo-form-avaliacao,
 .titulo-outros,
-.titulo-atendimento,
-.titulo-parceiros,
 .titulo-resumo,
 .nome-produto-bloco,
 .subtitulo-form,

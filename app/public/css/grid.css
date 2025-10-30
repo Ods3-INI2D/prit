@@ -69,6 +69,16 @@ body {
     color: #333;
 }
 
+.busca-form input[type="text"]::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+    opacity: 1;
+}
+
+.busca-form input[type="text"]:focus {
+    outline: 0.125rem solid #4da6ff;
+    outline-offset: 0.0625rem;
+}
+
 .lupa-btn {
     background: none;
     border: none;
@@ -122,6 +132,10 @@ body {
     .busca-form input[type="text"] {
         padding: 0.625rem 0.875rem;
         font-size: 1rem;
+    }
+
+    .busca-form input[type="text"]::placeholder {
+        color: rgba(0, 0, 0, 0.5);
     }
 
     .lupa {
