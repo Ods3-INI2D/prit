@@ -1,14 +1,223 @@
 {
   "produtos": [
     {
-      "nome": "Teste",
-      "preco": 10,
+      "nome": "Parodontax Complete Protection Whitening",
+      "preco": 18,
       "precoDesconto": null,
       "categoria": "Higiene Bucal",
-      "descricao": "Teste",
-      "imagem": "/imagens/foto.jpg",
+      "descricao": "Pasta de dente recomendada por dentistas, com foco na saúde das gengivas e na prevenção de cáries. \r\n\r\nEla oferece 8 benefícios principais: reduz o sangramento e a inflamação das gengivas, remove a placa bacteriana, fortalece o esmalte, promove limpeza profunda, branqueia os dentes, melhora o hálito e ajuda a manter um selo gengival saudável. Indicada especialmente para quem sofre com gengivite, o uso diário ajuda a manter dentes fortes e gengivas firmes. ",
+      "imagem": "/imagens/produtos/produto-1761814535649-937721880.jpeg",
       "status": "em-estoque",
-      "id": 1761739217023,
+      "id": 1761811574356,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Blue®m Enxaguatório Bucal (Flúor Free)",
+      "preco": 78.3,
+      "precoDesconto": 54.81,
+      "categoria": "Higiene Bucal",
+      "descricao": "Enxaguante bucal sem flúor, indicado para uso diário. \r\n\r\nO Blue®m é formulado com oxigênio ativo e ingredientes que estimulam a cicatrização natural e a regeneração dos tecidos bucais. É ideal para quem tem implantes, feridas orais, gengivas sensíveis ou deseja evitar produtos com álcool e flúor. Deixa a boca fresca e auxilia no controle de bactérias sem agredir a mucosa. ",
+      "imagem": "/imagens/produtos/produto-1761814551374-326169703.jpeg",
+      "status": "em-estoque",
+      "id": 1761811690597,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Biotène Dry Mouth Oral Rinse",
+      "preco": 150,
+      "precoDesconto": null,
+      "categoria": "Higiene Bucal",
+      "descricao": "Enxaguante bucal desenvolvido especialmente para boca seca. \r\n\r\nO Biotène hidrata e alivia o desconforto causado pela falta de saliva, proporcionando sensação de frescor e proteção contra bactérias. Sua fórmula é livre de álcool, o que evita irritações e ressecamentos adicionais. É muito utilizado por pessoas que fazem uso de medicamentos que reduzem a salivação ou sofrem de xerostomia. ",
+      "imagem": "/imagens/produtos/produto-1761814569093-486671910.png",
+      "status": "em-estoque",
+      "id": 1761811744253,
+      "avaliacoes": []
+    },
+    {
+      "nome": "La RochePosay Effaclar Concentrado",
+      "preco": 70.43,
+      "precoDesconto": 59.87,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "Uma fórmula de gel de limpeza criada para peles oleosas e com tendência à acne. Ela remove impurezas, excesso de oleosidade e ajuda a preparar a pele para os passos seguintes da rotina. É especialmente útil para quem sente a pele com brilho, poros dilatados ou que “acumulam” sujeira ou maquillaje ao longo do dia.",
+      "imagem": "/imagens/produtos/produto-1761814697732-633645484.webp",
+      "status": "em-estoque",
+      "id": 1761812429966,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Shampoo Anticaspa Clear Men Ice Cool Menthol  ",
+      "preco": 26.99,
+      "precoDesconto": null,
+      "categoria": "Cabelo",
+      "descricao": "Este shampoo foi desenvolvido especialmente para o couro cabeludo masculino, combatendo a caspa desde a primeira lavagem. Sua fórmula contém mentol, que proporciona uma sensação refrescante e revitalizante, além de ajudar a controlar a oleosidade. Indicado para quem busca um couro cabeludo limpo, fresco e livre de descamações. ",
+      "imagem": "/imagens/produtos/produto-1761814722941-93329069.jpeg",
+      "status": "em-estoque",
+      "id": 1761813327694,
+      "avaliacoes": []
+    },
+    {
+      "nome": "L'Oréal Professionnel Serie Expert Absolut Repair",
+      "preco": 140,
+      "precoDesconto": 70,
+      "categoria": "Cabelo",
+      "descricao": "O óleo Moroccanoil é formulado com óleo de argan, conhecido por suas propriedades nutritivas e reparadoras. Ele suaviza o frizz, acelera o tempo de secagem e melhora a maleabilidade dos fios. Pode ser usado em todos os tipos de cabelo, especialmente os ressecados ou danificados por calor e química. ",
+      "imagem": "/imagens/produtos/produto-1761814741419-928335589.jpeg",
+      "status": "em-estoque",
+      "id": 1761813371936,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Escova Interdental Oral-B Mini",
+      "preco": 25,
+      "precoDesconto": null,
+      "categoria": "Higiene Bucal",
+      "descricao": "Escova interdental em tamanho mini, projetada para limpeza eficaz entre dentes ou ao redor de aparelhos. \r\n\r\nIdeal para os espaços entre dentes — locais onde a escova tradicional muitas vezes não alcança. Segundo estudos, escovas interdentais removem placa de até cerca de 2 mm abaixo da margem gengival.  \r\n\r\nFacilita a limpeza em pacientes com aparelho ortodôntico, prótese ou alargamentos entre dentes.  ",
+      "imagem": "/imagens/produtos/produto-1761814584709-297914790.jpeg",
+      "status": "em-estoque",
+      "id": 1761813437850,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Sol de janeiro",
+      "preco": 199,
+      "precoDesconto": null,
+      "categoria": "Cabelo",
+      "descricao": "Esse shampoo é um dos mais conhecidos da marca Sol de Janeiro, feito para quem quer fios mais fortes, saudáveis e com brilho natural. Ele limpa sem agredir e repõe proteínas essenciais que fortalecem a estrutura capilar. Além disso, tem um cheiro tropical marcante e deixa o cabelo leve e macio. Ideal para uso frequente especialmente útil após químicas, tinturas ou alisamentos.",
+      "imagem": "/imagens/produtos/produto-1761814777094-353414968.jpeg",
+      "status": "em-estoque",
+      "id": 1761813510404,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Condicionador Pantene Hidratação - 400ml",
+      "preco": 30,
+      "precoDesconto": null,
+      "categoria": "Cabelo",
+      "descricao": "o sistema exclusivo de pantene pro-v hidratação  \r\n\r\nnutre e hidrata profundamente cada fio \r\n\r\nHidratação intensa deSDe o 1º uso \r\n\r\nCabelo longo e mais forte até as pontas força contra o dano mecânico vs; shampoo sem ingredientes condicionantes",
+      "imagem": "/imagens/produtos/produto-1761814794431-168745233.jpeg",
+      "status": "em-estoque",
+      "id": 1761813547605,
+      "avaliacoes": []
+    },
+    {
+      "nome": "The Ordinary Glycolic Acid 7%",
+      "preco": 129,
+      "precoDesconto": null,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "O Tônico Esfoliante The Ordinary com Ácido Glicólico 7% é um tônico à base de água formulado com 7% de ácido glicólico — um alfa-hidroxiácido (AHA) conhecido por sua capacidade de esfoliar quimicamente a pele de forma eficaz. Ele ajuda a remover células mortas da superfície da pele, deixando-a mais lisa, uniforme e renovada. O uso contínuo reduz a aparência de linhas finas e rugas, promovendo uma pele mais radiante. ",
+      "imagem": "/imagens/produtos/produto-1761814874548-916801048.jpeg",
+      "status": "em-estoque",
+      "id": 1761813586815,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Glow Recipe Watermelon Glow PHA + BHA Pore‑Tight Toner",
+      "preco": 245.65,
+      "precoDesconto": null,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "Adequado para todos os tipos de pele, o Tônico Hidratante de Glow Recipe conta com uma textura viscosa e sem álcool, é ideal para hidratar e refinar os poros, dando a umidade que sua pele precisa. \r\n\r\nA fórmula exclusiva do Tônico Glow Recipe \r\n\r\nFormulado com PHA e casca de salgueiro (uma forma natural de BHA) este tônico facial é a opção ideal para desobstruir os poros e hidratar a pele. \r\n\r\nA combinação de melancia, ácido hialurônico e água de cacto suavizam e hidratam intensamente, ao mesmo tempo em que reduzem os poros. A água de cacto e o pepino adicionam um toque herbal à fragrância frutada. ",
+      "imagem": "/imagens/produtos/produto-1761814893280-809388406.png",
+      "status": "em-estoque",
+      "id": 1761813617550,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Simple Organic Solução Niacinamida 30 ml",
+      "preco": 79,
+      "precoDesconto": null,
+      "categoria": "Cuidados com a Pele",
+      "descricao": "A Solução Niacinamida é a preferida da Comunidade Simple!  ",
+      "imagem": "/imagens/produtos/produto-1761814950402-312929208.webp",
+      "status": "em-estoque",
+      "id": 1761813642883,
+      "avaliacoes": []
+    },
+    {
+      "nome": "BEAUTY+ 60 CáPSULAS BELEZA DE DENTRO PARA FORA",
+      "preco": 149.9,
+      "precoDesconto": null,
+      "categoria": "Vitaminas e Suplementos",
+      "descricao": "beauty + (60 cap) A COMBINAÇÃO PODEROSA PARA A BELEZA DA MULHER - Beauty+ traz uma combinação exclusiva com tudo o que seus cabelos, unhas e pele precisam para retomar resistência e beleza. O poder de Nutricolin, o enriquecimento com vitaminas e minerais e a qualidade Equaliv com garantia de origem. Para você viver sua melhor versão. EQUALIV BEAUTY+ com a tecnologia NUTRICOLIN promove a elasticidade e firmeza da pele, proporcionando cabelos e unhas fortes e saudáveis. Estimula as proteínas da beleza: colágeno, elastina e queratina. O envelhecimento causa mudanças estruturais na derme, sendo as rugas e a flacidez, as marcas mais evidentes. ",
+      "imagem": "/imagens/produtos/produto-1761814965834-39864729.jpeg",
+      "status": "em-estoque",
+      "id": 1761813679779,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Colágeno Hidrolisado Equaliv Type One 30 sachês de 4g",
+      "preco": 102.9,
+      "precoDesconto": 51.45,
+      "categoria": "Vitaminas e Suplementos",
+      "descricao": "O Equaliv Type One é um suplemento alimentar em pó, formulado à base de Colágeno Hidrolisado combinado com minerais Quelatos, Biotina e Ácido Pantotênico. \r\n\r\nIndicado para adultos, seu consumo deve estar associado a uma alimentação equilibrada e hábitos de vida saudáveis. \r\n\r\nComo tomar o Colágeno Hidrolisado em Pó Equaliv Type One? \r\n\r\nRecomenda-se o consumo de1 sachê ao dia, ou conforme orientação do médico e/ou nutricionista. ",
+      "imagem": "/imagens/produtos/produto-1761815215500-135921332.jpeg",
+      "status": "em-estoque",
+      "id": 1761813726032,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Colágeno Hidrolisado Equaliv 4G 30 Sachês",
+      "preco": 117.65,
+      "precoDesconto": null,
+      "categoria": "Vitaminas e Suplementos",
+      "descricao": "Colágeno Hidrolisado Type One conta com a revolucionária Tecnologia Verisol, uma combinação exclusiva de peptídeos de colágeno específicos para a pele, além de minerais quelatos, biotina e ácido pantotênico. \r\n\r\n- Sachês sabor neutro: rápidos e práticos; \r\n\r\n- Tecnologia Alemã; \r\n\r\n- Produto Clean Label: livre de aditivos artificiais, gorduras, carboidratos e colesterol. \r\n\r\nSugestão de uso: Ingerir 1 sachê ao dia. ",
+      "imagem": "/imagens/produtos/produto-1761815308214-189974311.webp",
+      "status": "em-estoque",
+      "id": 1761813753121,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Nutrify - Multivitamínico Multi All",
+      "preco": 58.6,
+      "precoDesconto": null,
+      "categoria": "Vitaminas e Suplementos",
+      "descricao": "multivitamínicos são formulados para fornecer vitaminas e minerais essenciais, micronutrientes indispensáveis para a saúde e vitalidade. \r\nEles desempenham papéis fundamentais no sistema imunológico, metabolismo energético, formação das células vermelhas do sangue e manutenção da pele, entre outras funções. \r\n\r\nAlém dos benefícios individuais de cada nutriente, a interação entre diferentes vitaminas e minerais potencializa sua absorção e eficácia no organismo. Como nem sempre é possível obter todos esses nutrientes apenas pela alimentação, o Multi All Nutrify oferece uma solução prática e segura para complementar a dieta e garantir um suporte nutricional completo. ",
+      "imagem": "/imagens/produtos/produto-1761815035678-555423114.jpg",
+      "status": "em-estoque",
+      "id": 1761813799239,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Plenitud Protect Plus G/Xg - 32 Uni, Plenitud ",
+      "preco": 89.2,
+      "precoDesconto": null,
+      "categoria": "Terceira Idade",
+      "descricao": "Fralda geriátrica Plenitud Protect Plus para incontinência urinária \r\n\r\nTamanho G/XG, pacote com 32 unidades ",
+      "imagem": "/imagens/produtos/produto-1761815056221-53503491.jpeg",
+      "status": "em-estoque",
+      "id": 1761814143552,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Almofada Giro Fácil para Mover Idosos e Acamados Supermedy",
+      "preco": 112.49,
+      "precoDesconto": null,
+      "categoria": "Terceira Idade",
+      "descricao": "Almofada Giro Fácil Para Mover Idosos e Acamados Supermedy \r\n\r\nIndicada para a laterização do corpo em casos de pessoas com dificuldade de mobilidade. \r\n\r\n \r\n\r\n Facilita e evita o esforço excessivo em momentos de higienização. Oferece o apoio ideal para realizar posicionamento e movimentação lateral, auxiliando profissionais da saúde, cuidadores e familiares de pacientes com deficiência física, seja temporária ou permanente. \r\n\r\n \r\n\r\nQuem cuida de pessoas acamadas ou que possuem restrições de movimento, sabe o quão difícil é quando chega a hora de movimentá-la ou retirá-la da cama. Seja para colocá-la na cadeira, trocar de roupa, dar banho ou mudar a fralda, a dificuldade sempre aparece. \r\n\r\nPor isso, a almofada giratória é indispensável ",
+      "imagem": "/imagens/produtos/produto-1761815098742-945989304.jpeg",
+      "status": "em-estoque",
+      "id": 1761814203964,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Hidratante Corporal de Ureia 10% Needs Beauty Pele Seca 500g",
+      "preco": 57.9,
+      "precoDesconto": null,
+      "categoria": "Terceira Idade",
+      "descricao": "O que é a loção de Ureia 10% Needs? \r\n\r\nA loção de Ureia 10% Needs é um hidratante para o corpo que oferece ação eficiente sobre pele ressecada, auxiliando em questões como a sensação de repuxamento, coceira e \"pinicação\", geralmente relacionadas à falta de hidratação da pele. \r\n\r\nPara que serve a loção de Ureia 10% Needs? \r\n\r\nBastante indicado para idosos por conta da pele mais fina, seca e áspera, a loção de Ureia 10% Needs ajuda a melhorar a textura da pele, deixando-a macia, suave e flexível, além de oferecer uma ação desodorante suave. O resultado é muito mais cuidado e proteção para as peles ressecadas diariamente. ",
+      "imagem": "/imagens/produtos/produto-1761815113571-950700647.jpeg",
+      "status": "em-estoque",
+      "id": 1761814235777,
+      "avaliacoes": []
+    },
+    {
+      "nome": "Nutren, Complemento Alimentar Senior, Baunilha, 740G ",
+      "preco": 139.84,
+      "precoDesconto": null,
+      "categoria": "Terceira Idade",
+      "descricao": "NUTREN SÊNIOR: Desenvolvido pensado nas necessidades nutricionais de quem já passou dos 50 anos e ainda tem muito o que aproveitar, como parte de dieta com restrição de lactose ou para complementação da nutrição diária. \r\n\r\n \r\n\r\nÉ um composto lácteo com vitaminas e minerais em pó, com cálcio, proteínas, vitamina D e outros nutrientes essenciais. Rico em Zinco, Selênio, Cobre, Ácido fólico, Biotina, Tiamina, Riboflavina, Ácido Pantotênico, Vitaminas D, C, A, E, K, B6 e B12. Fonte de Proteínas, Cálcio, Ferro, Fósforo, Magnésio, Manganês, Niacina. CONTÉM LACTOSE. NÃO CONTÉM GLÚTEN. \r\n\r\n \r\n\r\nBENEFÍCIOS: Proteínas, que auxiliam na formação de músculos e ossos; Cálcio + Vitamina D, que auxiliam no funcionamento muscular; Vitamina C + Zinco, que auxiliam no funcionamento do sistema imune; Vitaminas do complexo B, que auxiliam na disposição e vitalidade e 21 Vitaminas e Minerais, complementando suas necessidades nutricionais. ",
+      "imagem": "/imagens/produtos/produto-1761815126377-92299114.png",
+      "status": "em-estoque",
+      "id": 1761814271579,
       "avaliacoes": []
     }
   ],
@@ -27,6 +236,11 @@
       "nota": 4,
       "texto": "Gostei",
       "data": "2025-10-27T22:58:27.330Z"
+    },
+    {
+      "nota": 2,
+      "texto": "hihihhihhhih",
+      "data": "2025-10-30T04:55:35.564Z"
     }
   ],
   "carrinho": [
@@ -51,45 +265,25 @@
       "avaliacoes": []
     }
   ],
-  "usuarios": [
-    {
-      "nome": "ccc",
-      "nasc": "2001-02-22",
-      "cpf": "53847735888",
-      "tel": "987534567",
-      "email": "s@g.com",
-      "senhan": "Senha123!",
-      "csenha": "Senha123!"
-    },
-    {
-      "nome": "João Pedro Rocha de Souza",
-      "nasc": "2009-01-21",
-      "cpf": "59142386845",
-      "tel": "972394962",
-      "email": "pedrinhorocha507@gmail.com",
-      "senhan": "Joaozinho007@",
-      "csenha": "Joaozinho007@",
-      "cep": "06417-00"
-    }
-  ],
+  "usuarios": [],
   "banners": [
     {
       "id": 1,
-      "imagem": "/imagens/banner-1761791844121-568677065.png",
-      "legenda": "Marvis 70% OFF",
-      "link": "/home"
+      "imagem": "/imagens/banner-1761796418672-581390867.png",
+      "legenda": "Seja parceiro",
+      "link": "/parceiros"
     },
     {
       "id": 2,
-      "imagem": "/imagens/banner-1761793343114-115380307.png",
-      "legenda": "Seja Parceiro",
-      "link": "/home"
+      "imagem": "/imagens/banner-1761812100461-988822767.png",
+      "legenda": "Blue®m Enxaguatório Bucal 30% OFF",
+      "link": "/produto/1761811690597"
     },
     {
       "id": 3,
       "imagem": "/imagens/banner-1761793329287-981161281.png",
       "legenda": "La-Roche-Posay 15% OFF",
-      "link": "/home"
+      "link": "/produto/1761812429966"
     }
   ]
 }

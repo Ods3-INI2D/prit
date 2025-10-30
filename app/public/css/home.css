@@ -31,6 +31,7 @@ body {
   align-items: center;
   margin-bottom: 1.25rem;
   padding: 0 0.3125rem;
+  background: transparent;
 }
 
 .titulo-categoria {
@@ -223,6 +224,7 @@ body {
     .header-categoria {
         margin-bottom: 1.75rem;
         padding: 0;
+        background: transparent;
     }
 
     .titulo-categoria {

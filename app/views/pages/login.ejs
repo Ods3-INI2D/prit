@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="/css/cad.css">
     <link rel="stylesheet" href="/css/login.css">
     <link rel="stylesheet" href="/css/toggle-senha.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
 </head>
 <body>
     <header>
@@ -23,7 +25,9 @@
             </article>
 
             <% if(erro) { %>
-                <output class="erro" role="alert" aria-live="polite"><%= erro %></output>
+                <article class="erro-login">
+                    <output class="mensagem-erro" role="alert" aria-live="polite"><%= erro %></o>
+                </article>
             <% } %>
 
             <form method="POST" action="/login" novalidate>
@@ -48,7 +52,7 @@
                     </label>
                 </fieldset>
 
-                <button id="btn" type="submit">Entrar</button>
+                <button id="btn-login" type="submit">Entrar</button>
 
                 <nav class="signup-prompt">
                     <p>

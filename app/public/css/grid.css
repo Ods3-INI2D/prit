@@ -9,7 +9,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #163069;
+    background-color: var(--bg-header);
     padding: 0.75rem 0.875rem;
     flex-wrap: nowrap;
     gap: 0.625rem;
@@ -22,6 +22,10 @@ body {
     order: -1;
     flex-shrink: 0;
     margin-right: 0.5rem;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
 }
 
 .logo {
@@ -67,6 +71,16 @@ body {
     min-width: 0;
     background-color: white;
     color: #333;
+}
+
+.busca-form input[type="text"]::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+    opacity: 1;
+}
+
+.busca-form input[type="text"]:focus {
+    outline: 0.125rem solid #4da6ff;
+    outline-offset: 0.0625rem;
 }
 
 .lupa-btn {
@@ -122,6 +136,10 @@ body {
     .busca-form input[type="text"] {
         padding: 0.625rem 0.875rem;
         font-size: 1rem;
+    }
+
+    .busca-form input[type="text"]::placeholder {
+        color: rgba(0, 0, 0, 0.5);
     }
 
     .lupa {

@@ -7,6 +7,8 @@
     <title>Parceiros - +Saúde</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/parceiros.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
 </head>
 <body>
     <header>
@@ -18,7 +20,7 @@
             <nav class="navegacao">
                 <a href="/home" class="voltar">
                     <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
-                    <output>Voltar</output>
+                    <o>Voltar</o>
                 </a>
             </nav>
 
@@ -27,24 +29,25 @@
             <% if(typeof sucesso !== 'undefined' && sucesso) { %>
                 <output class="mensagem-sucesso" role="status" aria-live="polite">
                     Solicitação enviada com sucesso! Entraremos em contato em breve.
-                </output>
+                </o>
             <% } %>
 
             <% if(typeof erro !== 'undefined' && erro) { %>
                 <output class="mensagem-erro" role="alert" aria-live="assertive">
                     <%= erro %>
-                </output>
+                </o>
             <% } %>
 
             <article class="intro-parceiros">
                 <h2 class="subtitulo-intro">O que são as nossas parcerias?</h2>
-                <output class="texto-intro">
+                <p class="texto-intro">
                     Nosso objetivo é estabelecer parcerias com marcas de menor visibilidade, 
                     oferecendo uma plataforma digital para ampliar o alcance de seus produtos.
-                    <br><br>
+                </p>
+                <p class="texto-intro">
                     Dessa forma, as marcas ganham exposição e aumento nas vendas, enquanto 
                     nossa empresa recebe comissão por cada transação realizada.
-                </output>
+                </p>
             </article>
 
             <form method="POST" action="/parceiros" class="form-parceiros" novalidate>
@@ -52,7 +55,7 @@
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Nome da Empresa <output class="obrigatorio">*</output>
+                        Nome da Empresa <output class="obrigatorio">*</o>
                     </legend>
                     <label for="empresa">
                         <input 
@@ -69,7 +72,7 @@
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        E-mail da Empresa <output class="obrigatorio">*</output>
+                        E-mail da Empresa <output class="obrigatorio">*</o>
                     </legend>
                     <label for="email">
                         <input 
@@ -86,11 +89,11 @@
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Categorias de Produtos <output class="obrigatorio">*</output>
+                        Categorias de Produtos <output class="obrigatorio">*</o>
                     </legend>
-                    <output style="display: block; font-size: 0.875rem; color: #888; margin-bottom: 0.75rem;">
+                    <output class="info-campo">
                         Selecione uma ou mais categorias que representam seus produtos
-                    </output>
+                    </o>
                     <section class="categorias-grupo">
                         <label class="checkbox-item">
                             <input 
@@ -99,7 +102,7 @@
                                 value="Cuidados com a Pele"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Cuidados com a Pele') ? 'checked' : '' %>>
-                            <output class="checkbox-label">Cuidados com a Pele</output>
+                            <output class="checkbox-label">Cuidados com a Pele</o>
                         </label>
 
                         <label class="checkbox-item">
@@ -109,7 +112,7 @@
                                 value="Higiene Bucal"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Higiene Bucal') ? 'checked' : '' %>>
-                            <output class="checkbox-label">Higiene Bucal</output>
+                            <output class="checkbox-label">Higiene Bucal</o>
                         </label>
 
                         <label class="checkbox-item">
@@ -119,7 +122,7 @@
                                 value="Cabelo"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Cabelo') ? 'checked' : '' %>>
-                            <output class="checkbox-label">Cabelo</output>
+                            <output class="checkbox-label">Cabelo</o>
                         </label>
 
                         <label class="checkbox-item">
@@ -129,7 +132,7 @@
                                 value="Vitaminas e Suplementos"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Vitaminas e Suplementos') ? 'checked' : '' %>>
-                            <output class="checkbox-label">Vitaminas e Suplementos</output>
+                            <output class="checkbox-label">Vitaminas e Suplementos</o>
                         </label>
 
                         <label class="checkbox-item">
@@ -139,7 +142,7 @@
                                 value="Bebê"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Bebê') ? 'checked' : '' %>>
-                            <output class="checkbox-label">Bebê</output>
+                            <output class="checkbox-label">Bebê</o>
                         </label>
 
                         <label class="checkbox-item">
@@ -149,14 +152,14 @@
                                 value="Terceira Idade"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Terceira Idade') ? 'checked' : '' %>>
-                            <output class="checkbox-label">Terceira Idade</output>
+                            <output class="checkbox-label">Terceira Idade</o>
                         </label>
                     </section>
                 </fieldset>
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Descrição dos Produtos e Propostas <output class="obrigatorio">*</output>
+                        Descrição dos Produtos e Propostas <output class="obrigatorio">*</o>
                     </legend>
                     <label for="descricao">
                         <textarea 

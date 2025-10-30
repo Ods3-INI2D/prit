@@ -1,0 +1,816 @@
+/* Sistema de Temas - Claro e Escuro */
+
+:root {
+    --bg-primary: #1f1f1f;
+    --bg-secondary: #2a2a2a;
+    --bg-tertiary: #383838;
+    --bg-menu: #2D2D2D;
+    --bg-submenu: #1B1B1B;
+    --bg-header: #163069;
+    --bg-footer: rgb(91, 123, 225);
+    --bg-input: #383838;
+    --bg-modal: rgba(0, 0, 0, 0.85);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --text-tertiary: #d9d9d9;
+    --text-muted: #888888;
+    --text-footer: #000000;
+    --text-placeholder: rgba(255, 255, 255, 0.6);
+    --border-color: #555555;
+    --border-light: rgba(255, 255, 255, 0.1);
+    --border-focus: #4da6ff;
+    --accent-primary: #4da6ff;
+    --accent-hover: #6bb5ff;
+    --btn-primary-bg: #007bff;
+    --btn-primary-hover: #0056b3;
+    --btn-secondary-bg: #163069;
+    --btn-secondary-hover: #0d1f42;
+    --success-bg: rgba(77, 166, 255, 0.2);
+    --success-border: #4da6ff;
+    --success-text: #4da6ff;
+    --error-bg: rgba(217, 48, 37, 0.2);
+    --error-border: #d93025;
+    --error-text: #ff6b6b;
+    --warning-bg: rgba(255, 193, 7, 0.2);
+    --warning-border: #ffc107;
+    --warning-text: #ffc107;
+    --info-bg: rgba(77, 166, 255, 0.1);
+    --info-border: #4da6ff;
+    --info-text: #4da6ff;
+    
+    /* Imagens por tema - TEMA ESCURO */
+    --img-carrinho: url('/imagens/carrinho-branco.png');
+    --img-lupa: url('/imagens/lupa-branca.png');
+    --img-user: url('/imagens/user-branco.png');
+    --img-estrela: url('/imagens/estrela-branca.png');
+    --img-estrela-vazia: url('/imagens/estrela-branca-vazia.png');
+}
+
+[data-theme="light"] {
+    --bg-primary: #f5f5f5;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #e8e8e8;
+    --bg-menu: #f0f0f0;
+    --bg-submenu: #ffffff;
+    --bg-header: #2563a8;
+    --bg-footer: rgb(91, 123, 225);
+    --bg-input: #ffffff;
+    --bg-modal: rgba(255, 255, 255, 0.95);
+    --text-primary: #1f1f1f;
+    --text-secondary: #333333;
+    --text-tertiary: #4a4a4a;
+    --text-muted: #666666;
+    --text-footer: #000000;
+    --text-placeholder: rgba(0, 0, 0, 0.5);
+    --border-color: #cccccc;
+    --border-light: rgba(0, 0, 0, 0.1);
+    --border-focus: #1a73e8;
+    --accent-primary: #1a73e8;
+    --accent-hover: #1557b0;
+    --btn-primary-bg: #1a73e8;
+    --btn-primary-hover: #1557b0;
+    --btn-secondary-bg: #2563a8;
+    --btn-secondary-hover: #1a4d87;
+    --success-bg: rgba(26, 115, 232, 0.1);
+    --success-border: #1a73e8;
+    --success-text: #1557b0;
+    --error-bg: rgba(217, 48, 37, 0.1);
+    --error-border: #d93025;
+    --error-text: #c5221f;
+    --warning-bg: rgba(255, 193, 7, 0.1);
+    --warning-border: #f9ab00;
+    --warning-text: #ea8600;
+    --info-bg: rgba(26, 115, 232, 0.1);
+    --info-border: #1a73e8;
+    --info-text: #1557b0;
+    
+    /* Imagens por tema - TEMA CLARO */
+    --img-carrinho: url('/imagens/carrinho-preto.png');
+    --img-lupa: url('/imagens/lupa-preta.png');
+    --img-user: url('/imagens/user-preto.png');
+    --img-estrela: url('/imagens/estrela-preta.png');
+    --img-estrela-vazia: url('/imagens/estrela-preta-vazia.png');
+}
+
+/* Aplicar imagens dinâmicas aos ícones */
+.cart {
+    content: var(--img-carrinho);
+}
+
+.lupa {
+    content: var(--img-lupa);
+}
+
+.user {
+    content: var(--img-user);
+}
+
+/* Estrelas nas avaliações e cards de produtos */
+.estrela-home[src*="estr.png"],
+.estrela[src*="estr.png"],
+.estrela-pequena[src*="estr.png"] {
+    content: var(--img-estrela);
+}
+
+.estrela-home[src*="estrv.png"],
+.estrela[src*="estrv.png"],
+.estrela-pequena[src*="estrv.png"] {
+    content: var(--img-estrela-vazia);
+}
+
+html {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+header {
+    background-color: var(--bg-header);
+}
+
+.nav-principal {
+    background-color: var(--bg-header);
+}
+
+/* HAMBURGER - Linhas mudam de cor com o tema */
+.hamburger hr {
+    background-color: var(--text-primary);
+}
+
+.opcoes {
+    background-color: var(--bg-menu);
+    color: var(--text-primary);
+}
+
+.submenu {
+    background-color: var(--bg-submenu);
+}
+
+.perfil {
+    background-color: var(--border-light);
+}
+
+.tit {
+    color: var(--text-primary);
+    background-color: var(--border-light);
+}
+
+.menu-item > a {
+    color: var(--text-primary);
+}
+
+.linkhp {
+    color: var(--text-primary);
+}
+
+.menu-item {
+    border-bottom-color: var(--border-light);
+}
+
+.menu-item > a:hover {
+    background-color: var(--border-light);
+}
+
+.linkhp:hover {
+    background-color: var(--border-light);
+}
+
+.submenu a {
+    color: var(--text-secondary);
+}
+
+.submenu a:hover {
+    color: var(--text-primary);
+    background-color: var(--border-light);
+}
+
+.submenu li {
+    border-bottom-color: var(--border-light);
+}
+
+.outro {
+    background-color: var(--bg-submenu);
+    border-top-color: var(--border-light);
+}
+
+.outro .menu-item {
+    border-bottom-color: var(--border-light);
+}
+
+.outro a {
+    color: var(--text-secondary);
+}
+
+.outro a:hover {
+    color: var(--text-primary);
+}
+
+.theme-toggle {
+    color: var(--text-secondary);
+}
+
+.theme-toggle:hover {
+    color: var(--text-primary);
+    background-color: var(--border-light);
+}
+
+.card-stats {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.form-produto {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.produto-item {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.usuario-item {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.item-carrinho {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.bloco-produto-home {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.produto-card-bloco {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.info-usuario {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.dados-editaveis {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.menu-usuario {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.intro-atendimento {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.form-atendimento {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.intro-parceiros {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.form-parceiros {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.nota-media {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.item-avaliacao {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.form-avaliacao-container {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.modal-content {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Formulários de Login e Cadastro */
+.login-module form {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.title-group {
+    color: var(--text-primary);
+}
+
+.title-group h1 {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Fieldsets e Legends em Formulários */
+fieldset {
+    border-color: transparent;
+}
+
+fieldset legend {
+    color: var(--text-primary);
+}
+
+fieldset legend h2,
+fieldset legend h3 {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Página de Produto */
+.produto-detalhes {
+    color: var(--text-primary);
+}
+
+.info-principal {
+    color: var(--text-primary);
+}
+
+.frete-container {
+    color: var(--text-primary);
+}
+
+.descricao-container {
+    color: var(--text-primary);
+}
+
+.avaliacoes-container {
+    color: var(--text-primary);
+}
+
+.resumo-carrinho {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Inputs de Formulários */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+input[type="file"],
+textarea,
+select {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+input[type="text"]::placeholder,
+input[type="number"]::placeholder,
+input[type="password"]::placeholder,
+input[type="email"]::placeholder,
+input[type="tel"]::placeholder,
+textarea::placeholder {
+    color: var(--text-placeholder);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--border-focus);
+}
+
+/* CORREÇÃO: Labels e Legends */
+.label-form,
+.label-info,
+.label-avaliacao,
+.label-nota,
+.label-titulo {
+    color: var(--text-primary);
+}
+
+legend {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Informações e Descrições */
+.info-campo,
+.info-arquivo,
+.descricao-frete,
+.texto-intro,
+.usuario-info,
+.produto-info,
+.categoria-produto,
+.texto-descricao,
+.texto-avaliacao,
+.categoria-home,
+.stat-titulo {
+    color: var(--text-tertiary);
+}
+
+/* CORREÇÃO: Elementos sem cor */
+.sem-avaliacoes,
+.mensagem-vazio,
+.sem-produtos {
+    color: var(--text-muted);
+}
+
+.obrigatorio {
+    color: var(--error-text);
+}
+
+/* CORREÇÃO: Títulos */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+}
+
+.titulo,
+.subtitulo,
+.titulo-carrinho,
+.titulo-perfil,
+.titulo-categoria,
+.titulo-secao,
+.nome-produto,
+.titulo-form-avaliacao,
+.titulo-outros,
+.titulo-resumo,
+.nome-produto-bloco,
+.subtitulo-form,
+.subtitulo-intro {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Elementos com cor de destaque que devem manter a cor original */
+.usuario-email,
+.nome-descricao {
+    color: var(--accent-primary);
+}
+
+/* CORREÇÃO: Links */
+.link,
+.link-ver-mais,
+.conta,
+.link-contato,
+.voltar,
+.ver-mais,
+.link-footer {
+    color: var(--accent-primary);
+}
+
+.link:hover,
+.link-ver-mais:hover,
+.conta:hover,
+.link-contato:hover,
+.voltar:hover,
+.ver-mais:hover,
+.link-footer:hover {
+    color: var(--accent-hover);
+}
+
+/* CORREÇÃO: Botões Primários */
+#btn,
+#btn-login,
+.btn-finalizar {
+    background-color: var(--btn-primary-bg);
+    color: var(--text-primary);
+}
+
+#btn:hover,
+#btn-login:hover,
+.btn-finalizar:hover {
+    background-color: var(--btn-primary-hover);
+}
+
+/* CORREÇÃO: Botões Secundários */
+.btn-adicionar,
+.btn-comprar,
+.btn-enviar,
+.btn-salvar,
+.btn-calcular,
+.btn-enviar-avaliacao,
+.btn-continuar,
+.btn-voltar-home,
+.btn-login,
+.btn-avaliar {
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
+}
+
+.btn-adicionar:hover,
+.btn-comprar:hover,
+.btn-enviar:hover,
+.btn-salvar:hover,
+.btn-calcular:hover,
+.btn-continuar:hover,
+.btn-voltar-home:hover,
+.btn-login:hover,
+.btn-avaliar:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
+.btn-enviar-avaliacao:hover:not(:disabled) {
+    background-color: var(--btn-secondary-hover);
+}
+
+/* CORREÇÃO: Botões de Ação */
+.btn-editar {
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+}
+
+.btn-editar:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn-excluir,
+.btn-remover {
+    background-color: #d93025;
+    color: var(--text-primary);
+}
+
+.btn-excluir:hover,
+.btn-remover:hover {
+    background-color: #a3241b;
+}
+
+.btn-quantidade {
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
+}
+
+.btn-quantidade:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
+/* CORREÇÃO: Mensagens */
+.mensagem-sucesso {
+    background-color: var(--success-bg);
+    border-color: var(--success-border);
+    color: var(--success-text);
+}
+
+.mensagem-erro,
+.erro-login,
+.mensagem-erro-avaliacao {
+    background-color: var(--error-bg);
+    border-color: var(--error-border);
+    color: var(--error-text);
+}
+
+.erro {
+    color: var(--error-text);
+}
+
+.mensagem-aviso,
+.mensagem-fora-estoque {
+    background-color: var(--warning-bg);
+    border-color: var(--warning-border);
+    color: var(--warning-text);
+}
+
+.mensagem-info,
+.mensagem-admin-bloqueio {
+    background-color: var(--info-bg);
+    border-color: var(--info-border);
+    color: var(--info-text);
+}
+
+/* CORREÇÃO: Preços */
+.preco-produto,
+.preco-desconto,
+.precof,
+.preco-desconto-home,
+.stat-valor,
+.valor-media,
+.preco-produto-bloco,
+.subtotal-item {
+    color: var(--accent-primary);
+}
+
+.preco-original,
+.preco-original-home {
+    color: var(--text-muted);
+}
+
+/* CORREÇÃO: Outros elementos */
+.quantidade-atual {
+    color: var(--text-primary);
+}
+
+.linha-resumo {
+    color: var(--text-tertiary);
+}
+
+.linha-resumo strong {
+    color: var(--text-primary);
+}
+
+.total-resumo {
+    color: var(--text-primary);
+}
+
+.checkbox-label {
+    color: var(--text-tertiary);
+}
+
+.checkbox-input {
+    accent-color: var(--accent-primary);
+}
+
+.contato-item {
+    color: var(--text-primary);
+}
+
+.icone-contato {
+    color: var(--accent-primary);
+}
+
+.percentual-desconto,
+.percentual-home,
+.branco {
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+}
+
+.divisor {
+    border-color: var(--border-light);
+}
+
+hr {
+    border-color: var(--border-light);
+}
+
+footer {
+    background-color: var(--bg-footer);
+}
+
+.footer-item,
+.footer-text-secondary {
+    color: var(--text-footer);
+}
+
+.modal-overlay {
+    background-color: var(--bg-modal);
+}
+
+.carousel-caption {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+}
+
+.carousel-btn {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.carousel-btn:hover {
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.indicator {
+    border-color: white;
+}
+
+.indicator.active {
+    background-color: white;
+}
+
+/* CORREÇÃO ESPECÍFICA: Formulários de Login/Cadastro */
+.txt {
+    color: var(--text-primary);
+}
+
+.txt h1,
+.txt h2 {
+    color: var(--text-primary);
+}
+
+.txt article {
+    color: var(--text-primary);
+}
+
+.txt section {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Texto de navegação */
+.signup-prompt,
+.signup-prompt p {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Info contato */
+.info-contato {
+    background-color: var(--info-bg);
+    border-color: var(--info-border);
+}
+
+/* CORREÇÃO: Campo senha com botão */
+.campo-senha {
+    position: relative;
+}
+
+.campo-senha input {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+}
+
+.btn-toggle-senha {
+    background-color: transparent;
+    border: none;
+}
+
+/* CORREÇÃO: Select options no tema claro */
+[data-theme="light"] select option {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Campos de formulário desabilitados */
+input:disabled,
+textarea:disabled,
+select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* CORREÇÃO ESPECÍFICA: Outputs no tema claro */
+output {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Links dentro de outputs */
+output a {
+    color: var(--accent-primary);
+}
+
+output a:hover {
+    color: var(--accent-hover);
+}
+
+/* CORREÇÃO: Mensagens de login/navegação */
+.mensagem-login {
+    color: var(--text-muted);
+}
+
+/* CORREÇÃO: Sem usuário */
+.sem-usuario {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Opcao menu */
+.opcao-menu {
+    color: var(--text-primary);
+}
+
+.opcao-menu.logout {
+    color: #ff5555;
+}
+
+.opcao-menu:hover {
+    background-color: var(--border-light);
+}
+
+/* CORREÇÃO: Valor info */
+.valor-info {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Categorias grupo */
+.categorias-grupo {
+    color: var(--text-primary);
+}
+
+/* CORREÇÃO: Lista opcoes */
+.lista-opcoes {
+    color: var(--text-primary);
+}
+
+@media (min-width: 901px) {
+    .theme-toggle {
+        font-size: 0.875rem;
+        padding: 0.875rem 1.0625rem;
+    }
+    
+    .theme-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}

@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="/css/estilo.css">
     <link rel="stylesheet" href="/css/cad.css">
     <link rel="stylesheet" href="/css/toggle-senha.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
 </head>
 <body>
     <%
@@ -53,7 +55,9 @@
     
     <main>
         <section class="txt">
-            <h1 class="tit">Cadastro</h1>
+            <article class="title-group">
+                <h1 class="tit">Cadastro</h1>
+            </article>
 
             <form method="POST" action="/cadastro" novalidate>
                 <fieldset>
@@ -144,7 +148,7 @@
 
                 <button id="btn" type="submit">Cadastro</button>
 
-                <nav>
+                <nav class="signup-prompt">
                     <p>
                         <a href="/login" class="link">Já tem uma conta?
                             <strong class="link2">Entre aqui</strong>

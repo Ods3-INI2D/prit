@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/bloco.css">
     <link rel="stylesheet" href="/css/carousel.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
 </head>
 <body>
     <header>
@@ -21,7 +23,7 @@
             <% if(banners && banners.length > 0) { %>
                 <% banners.forEach(function(banner, index) { %>
                     <figure class="carousel-slide <%= index === 0 ? 'active' : '' %>" aria-hidden="<%= index === 0 ? 'false' : 'true' %>">
-                        <a href="<%= banner.link || '/home' %>" aria-label="<%= banner.legenda %>">
+                        <a href="<%= banner.link || '/home' %>" class="carousel-link" aria-label="<%= banner.legenda %>">
                             <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>">
                             <figcaption class="carousel-caption"><%= banner.legenda %></figcaption>
                         </a>
@@ -47,18 +49,15 @@
 
         <% if(produtos && produtos.length > 0) { %>
             <%
-            // Organizar produtos por categoria
             var produtosPorCategoria = {
                 'Descontos': [],
                 'Cuidados com a Pele': [],
                 'Higiene Bucal': [],
                 'Cabelo': [],
                 'Vitaminas e Suplementos': [],
-                'Bebê': [],
                 'Terceira Idade': []
             };
 
-            // Separar produtos com desconto
             produtos.forEach(function(produto) {
                 if(produto.precoDesconto) {
                     produtosPorCategoria['Descontos'].push(produto);
@@ -68,9 +67,8 @@
                 }
             });
 
-            // Garantir pelo menos 1 produto de cada categoria em Descontos
             var descontosBalanceados = [];
-            var categoriasPrincipais = ['Cuidados com a Pele', 'Higiene Bucal', 'Cabelo', 'Vitaminas e Suplementos', 'Bebê', 'Terceira Idade'];
+            var categoriasPrincipais = ['Cuidados com a Pele', 'Higiene Bucal', 'Cabelo', 'Vitaminas e Suplementos', 'Terceira Idade'];
             
             categoriasPrincipais.forEach(function(cat) {
                 var produtoCategoria = produtosPorCategoria['Descontos'].find(function(p) {
@@ -81,7 +79,6 @@
                 }
             });
 
-            // Completar até 8 produtos em Descontos
             produtosPorCategoria['Descontos'].forEach(function(p) {
                 if(descontosBalanceados.length < 8 && !descontosBalanceados.includes(p)) {
                     descontosBalanceados.push(p);
@@ -91,7 +88,6 @@
             produtosPorCategoria['Descontos'] = descontosBalanceados;
             %>
 
-            <!-- SEÇÃO DESCONTOS - 8 PRODUTOS -->
             <% if(produtosPorCategoria['Descontos'].length > 0) { %>
                 <section class="secao-categoria" aria-labelledby="titulo-descontos">
                     <header class="header-categoria">
@@ -158,7 +154,6 @@
                 </section>
             <% } %>
 
-            <!-- OUTRAS CATEGORIAS - 4 PRODUTOS CADA -->
             <% categoriasPrincipais.forEach(function(nomeCategoria) { 
                 if(produtosPorCategoria[nomeCategoria].length > 0) { 
                     var idCategoria = nomeCategoria.toLowerCase().replace(/\s+/g, '-');

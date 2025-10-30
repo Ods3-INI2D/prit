@@ -7,6 +7,8 @@
     <title>Minha Conta</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/usuario.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
 </head>
 <body>
     <header>
@@ -23,22 +25,22 @@
                     
                     <article class="campo-info">
                         <h3 class="label-info">Nome</h3>
-                        <output class="valor-info"><%= usuario.nome %></o>
+                        <output class="valor-info"><%= usuario.nome %></output>
                     </article>
 
                     <article class="campo-info">
                         <h3 class="label-info">Data de Nascimento</h3>
-                        <output class="valor-info"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></o>
+                        <output class="valor-info"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></output>
                     </article>
 
                     <article class="campo-info">
                         <h3 class="label-info">CPF</h3>
-                        <output class="valor-info"><%= usuario.cpf %></o>
+                        <output class="valor-info"><%= usuario.cpf %></output>
                     </article>
 
                     <article class="campo-info">
                         <h3 class="label-info">E-mail</h3>
-                        <output class="valor-info"><%= usuario.email %></o>
+                        <output class="valor-info"><%= usuario.email %></output>
                     </article>
                 </article>
 
@@ -46,27 +48,35 @@
                     <h2 class="subtitulo">Dados Editáveis</h2>
                     
                     <form method="POST" action="/usuario/atualizar" class="form-edicao">
-                        <label for="tel">
-                            <h3 class="label-form">Telefone</h3>
-                        </label>
-                        <input type="tel" 
-                               id="tel" 
-                               name="tel" 
-                               value="<%= usuario.tel || '' %>" 
-                               placeholder="Digite seu telefone"
-                               maxlength="9"
-                               required>
+                        <fieldset>
+                            <legend>
+                                <h3 class="label-form">Telefone</h3>
+                            </legend>
+                            <label for="tel">
+                                <input type="tel" 
+                                       id="tel" 
+                                       name="tel" 
+                                       value="<%= usuario.tel || '' %>" 
+                                       placeholder="Digite seu telefone"
+                                       maxlength="9"
+                                       required>
+                            </label>
+                        </fieldset>
 
-                        <label for="cep">
-                            <h3 class="label-form">CEP</h3>
-                        </label>
-                        <input type="text" 
-                               id="cep" 
-                               name="cep" 
-                               value="<%= usuario.cep || '' %>" 
-                               placeholder="Digite seu CEP"
-                               maxlength="8"
-                               required>
+                        <fieldset>
+                            <legend>
+                                <h3 class="label-form">CEP</h3>
+                            </legend>
+                            <label for="cep">
+                                <input type="text" 
+                                       id="cep" 
+                                       name="cep" 
+                                       value="<%= usuario.cep || '' %>" 
+                                       placeholder="Digite seu CEP"
+                                       maxlength="8"
+                                       required>
+                            </label>
+                        </fieldset>
 
                         <button type="submit" class="btn-salvar">Salvar Alterações</button>
                     </form>
@@ -82,7 +92,7 @@
 
             <% } else { %>
                 <article class="sem-usuario">
-                    <output class="mensagem-login">Você precisa estar logado para ver esta página.</o>
+                    <output class="mensagem-login">Você precisa estar logado para ver esta página.</output>
                     <a href="/login" class="btn-login">Fazer Login</a>
                 </article>
             <% } %>
