@@ -7,6 +7,8 @@
     <title><%= produto.nome %></title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/produto.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
     <script src="/js/validacao.js" defer></script>
 </head>
 <body>
@@ -18,7 +20,7 @@
         <nav class="navegacao">
             <a href="/home" class="voltar">
                 <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
-                <output>Voltar</output>
+                <output>Voltar</o>
             </a>
         </nav>
 
@@ -28,29 +30,29 @@
             <article class="info-principal">
                 <h1 class="nome-produto"><%= produto.nome %></h1>
                 
-                <output class="categoria-produto"><%= produto.categoria %></output>
+                <output class="categoria-produto"><%= produto.categoria %></o>
                 
                 <% if(produto.precoDesconto) { %>
                     <section class="preco-container com-desconto">
-                        <output class="preco-original">R$ <%= produto.preco.toFixed(2) %></output>
-                        <output class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></output>
+                        <output class="preco-original">R$ <%= produto.preco.toFixed(2) %></o>
+                        <output class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></o>
                         <output class="percentual-desconto">
                             -<%= Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100) %>%
-                        </output>
+                        </o>
                     </section>
                 <% } else { %>
-                    <output class="preco-produto">R$ <%= produto.preco.toFixed(2) %></output>
+                    <output class="preco-produto">R$ <%= produto.preco.toFixed(2) %></o>
                 <% } %>
 
                 <% if(produto.status === 'fora-de-estoque') { %>
                     <output class="mensagem-fora-estoque" role="alert" aria-live="assertive">
                         ⚠️ Este produto está temporariamente fora de estoque
-                    </output>
+                    </o>
                 <% } else { %>
                     <% if(isAdmin) { %>
                         <output class="mensagem-admin-bloqueio" role="status">
                             ℹ️ Administradores não podem adicionar produtos ao carrinho. Esta é uma funcionalidade exclusiva para clientes.
-                        </output>
+                        </o>
                     <% } else if(usuarioLogado) { %>
                         <form method="POST" action="/produto/<%= produto.id %>/adicionar-carrinho">
                             <button type="submit" class="btn-comprar">
@@ -67,7 +69,7 @@
                 <% if(typeof erro !== 'undefined' && erro === 'fora_de_estoque') { %>
                     <output class="mensagem-erro-avaliacao" role="alert" aria-live="assertive">
                         Não é possível adicionar este produto ao carrinho pois está fora de estoque!
-                    </output>
+                    </o>
                 <% } %>
             </article>
         </section>
@@ -75,7 +77,7 @@
         <section class="frete-container">
             <h2 class="titulo-secao">Cálculo de Frete e Prazo</h2>
             
-            <output class="descricao-frete">Insira seu CEP para calcular o frete e o prazo para entrega do produto</output>
+            <output class="descricao-frete">Insira seu CEP para calcular o frete e o prazo para entrega do produto</o>
             
             <form class="form-frete">
                 <label for="cep">
@@ -90,7 +92,7 @@
         <section class="descricao-container">
             <h2 class="titulo-secao">Descrição do Produto</h2>
             <h3 class="nome-descricao"><%= produto.nome %></h3>
-            <output class="texto-descricao"><%= produto.descricao %></output>
+            <output class="texto-descricao"><%= produto.descricao %></o>
         </section>
 
         <hr class="divisor">
@@ -116,7 +118,7 @@
                                  alt="Estrela <%= i <= notaArredondada ? 'preenchida' : 'vazia' %>">
                         <% } %>
                     </section>
-                    <output class="valor-media"><%= media %></output>
+                    <output class="valor-media"><%= media %></o>
                 </article>
 
                 <a href="#form-avaliacao" class="ver-mais">Ver todas as avaliações</a>
@@ -131,12 +133,12 @@
                                          alt="Estrela">
                                 <% } %>
                             </section>
-                            <output class="texto-avaliacao"><%= avaliacao.texto %></output>
+                            <output class="texto-avaliacao"><%= avaliacao.texto %></o>
                         </li>
                     <% }); %>
                 </ul>
             <% } else { %>
-                <output class="sem-avaliacoes">Ainda não há avaliações para este produto.</output>
+                <output class="sem-avaliacoes">Ainda não há avaliações para este produto.</o>
             <% } %>
 
             <article class="form-avaliacao-container" id="form-avaliacao">
@@ -145,49 +147,57 @@
                 <% if(isAdmin) { %>
                     <output class="mensagem-admin-bloqueio" role="alert">
                         ℹ️ Administradores não podem avaliar produtos. Esta é uma funcionalidade exclusiva para clientes que adquiriram o produto.
-                    </output>
+                    </o>
                 <% } else if(!usuarioLogado) { %>
                     <output class="mensagem-aviso" role="alert">
                         Você precisa estar logado para avaliar este produto.
                         <a href="/login?redirect=/produto/<%= produto.id %>" style="color: #ffc107; text-decoration: underline;">Fazer login</a>
-                    </output>
+                    </o>
                 <% } else if(!temProdutoNoCarrinho) { %>
                     <output class="mensagem-aviso" role="alert">
                         Você precisa adicionar este produto ao carrinho antes de avaliá-lo.
-                    </output>
+                    </o>
                 <% } %>
 
                 <% if(typeof erro !== 'undefined' && erro === 'carrinho') { %>
                     <output class="mensagem-erro-avaliacao" role="alert">
                         Erro: Você precisa ter este produto no carrinho para avaliá-lo!
-                    </output>
+                    </o>
                 <% } %>
                 
                 <form method="POST" 
                       action="/produto/<%= produto.id %>/avaliar" 
                       class="form-avaliacao <%= (isAdmin || !usuarioLogado || !temProdutoNoCarrinho) ? 'form-avaliacao-desabilitado' : '' %>">
-                    <label for="nota">
-                        <h4 class="label-avaliacao">Nota (0 a 5 estrelas)</h4>
-                        <select name="nota" id="nota" required <%= (isAdmin || !usuarioLogado || !temProdutoNoCarrinho) ? 'disabled' : '' %>>
-                            <option value="">Selecione</option>
-                            <option value="0">0 estrelas</option>
-                            <option value="1">1 estrela</option>
-                            <option value="2">2 estrelas</option>
-                            <option value="3">3 estrelas</option>
-                            <option value="4">4 estrelas</option>
-                            <option value="5">5 estrelas</option>
-                        </select>
-                    </label>
+                    <fieldset>
+                        <legend>
+                            <h4 class="label-avaliacao">Nota (0 a 5 estrelas)</h4>
+                        </legend>
+                        <label for="nota">
+                            <select name="nota" id="nota" required <%= (isAdmin || !usuarioLogado || !temProdutoNoCarrinho) ? 'disabled' : '' %>>
+                                <option value="">Selecione</option>
+                                <option value="0">0 estrelas</option>
+                                <option value="1">1 estrela</option>
+                                <option value="2">2 estrelas</option>
+                                <option value="3">3 estrelas</option>
+                                <option value="4">4 estrelas</option>
+                                <option value="5">5 estrelas</option>
+                            </select>
+                        </label>
+                    </fieldset>
 
-                    <label for="texto">
-                        <h4 class="label-avaliacao">Seu comentário</h4>
-                        <textarea name="texto" 
-                                  id="texto" 
-                                  placeholder="Escreva sua avaliação" 
-                                  rows="4" 
-                                  required
-                                  <%= (isAdmin || !usuarioLogado || !temProdutoNoCarrinho) ? 'disabled' : '' %>></textarea>
-                    </label>
+                    <fieldset>
+                        <legend>
+                            <h4 class="label-avaliacao">Seu comentário</h4>
+                        </legend>
+                        <label for="texto">
+                            <textarea name="texto" 
+                                      id="texto" 
+                                      placeholder="Escreva sua avaliação" 
+                                      rows="4" 
+                                      required
+                                      <%= (isAdmin || !usuarioLogado || !temProdutoNoCarrinho) ? 'disabled' : '' %>></textarea>
+                        </label>
+                    </fieldset>
 
                     <button type="submit" 
                             class="btn-enviar-avaliacao"
@@ -209,7 +219,7 @@
                         <a href="/produto/<%= outroProduto.id %>" class="link-produto">
                             <img src="<%= outroProduto.imagem %>" class="img-produto-bloco" alt="<%= outroProduto.nome %>">
                             <h3 class="nome-produto-bloco"><%= outroProduto.nome %></h3>
-                            <output class="preco-produto-bloco">R$ <%= (outroProduto.precoDesconto || outroProduto.preco).toFixed(2) %></output>
+                            <output class="preco-produto-bloco">R$ <%= (outroProduto.precoDesconto || outroProduto.preco).toFixed(2) %></o>
                         </a>
                     </article>
             <% }

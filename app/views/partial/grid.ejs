@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="/css/estilo.css">
     <link rel="stylesheet" href="/css/grid.css">
     <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
 </head>
 <body>
     <nav class="nav-principal">
@@ -92,6 +94,17 @@
             <footer>
                 <nav>
                     <ul class="outro" role="menu">
+                        <li class="menu-item">
+                            <button class="theme-toggle" 
+                                    aria-label="Alternar tema"
+                                    type="button">
+                                <img src="/imagens/lua-branca.png" 
+                                     alt="Ícone de tema" 
+                                     class="theme-icon"
+                                     id="theme-icon">
+                                <output class="theme-text">Tema Claro</output>
+                            </button>
+                        </li>
                         <li class="menu-item"><a href="/parceiros">Parceiros</a></li>
                         <li class="menu-item"><a href="/atendimento">Central de Atendimento</a></li>
                     </ul>
@@ -101,12 +114,12 @@
     </nav>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
             const menuToggle = document.querySelector('.hamburger');
             const navMenu = document.getElementById('menuhamburger');
 
             if (menuToggle && navMenu) {
-                menuToggle.addEventListener('click', (e) => {
+                menuToggle.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
                     menuToggle.setAttribute('aria-expanded', !isExpanded);
@@ -121,7 +134,7 @@
             const submenu = document.getElementById('submenuhp');
 
             if (submenuToggleLink && submenu) {
-                submenuToggleLink.addEventListener('click', (e) => {
+                submenuToggleLink.addEventListener('click', function(e) {
                     e.preventDefault(); 
                     e.stopPropagation(); 
                     
