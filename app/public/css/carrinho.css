@@ -30,12 +30,14 @@ main {
     margin: 0 auto;
 }
 
+
 .titulo-carrinho {
-    font-size: 2.1875rem;
+    font-size: 1.875rem;
     font-weight: 700;
-    margin-bottom: 2.1875rem;
+    margin-bottom: 1.5rem;
     color: white;
     text-align: center;
+    word-wrap: break-word;
 }
 
 /*Carrinho Vazio */

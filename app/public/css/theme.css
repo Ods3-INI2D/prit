@@ -441,6 +441,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
 }
 
+
 .titulo,
 .subtitulo,
 .titulo-carrinho,
@@ -453,7 +454,9 @@ h1, h2, h3, h4, h5, h6 {
 .titulo-resumo,
 .nome-produto-bloco,
 .subtitulo-form,
-.subtitulo-intro {
+.subtitulo-intro,
+.titulo-atendimento,
+.titulo-parceiros {
     color: var(--text-primary);
 }
 
@@ -802,6 +805,20 @@ output a:hover {
 .lista-opcoes {
     color: var(--text-primary);
 }
+/* Correção inputs e textarea no tema claro */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+    background-color: #ffffff !important;
+    color: #1f1f1f !important;
+    border-color: #ccc !important;
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+    color: #888 !important;
+}
+
 
 @media (min-width: 901px) {
     .theme-toggle {

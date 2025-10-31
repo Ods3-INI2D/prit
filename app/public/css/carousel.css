@@ -5,7 +5,7 @@
     position: relative;
     width: calc(100% - 1.25rem);
     margin: 0.75rem auto;
-    aspect-ratio: 1200 / 675;
+    aspect-ratio: 16 / 9;
     max-height: 12rem;
     overflow: hidden;
     border-radius: 0.5rem;
@@ -157,7 +157,7 @@
 /* Responsividade Desktop */
 @media (min-width: 901px) {
     .carousel-container {
-        aspect-ratio: 1200 / 675;
+        aspect-ratio: 16 / 9;
         margin: 1.5rem auto;
         width: 90%;
         max-width: 60rem;

@@ -6,22 +6,20 @@ body {
 
 /* Nav principal */
 .nav-principal {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto;
     align-items: center;
-    justify-content: space-between;
     background-color: var(--bg-header);
     padding: 0.75rem 0.875rem;
-    flex-wrap: nowrap;
     gap: 0.625rem;
-    position: relative;
     min-height: 3.75rem;
 }
 
 /* hamburger deve ficar à esquerda */
 .hamburger {
-    order: -1;
+    grid-column: 1;
     flex-shrink: 0;
-    margin-right: 0.5rem;
     background-color: transparent;
     border: none;
     cursor: pointer;
@@ -29,13 +27,11 @@ body {
 }
 
 .logo {
+    grid-column: 2;
     width: 5.25rem;
     height: auto;
+    justify-self: center;
     flex-shrink: 0;
-    margin: 0 auto;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
 }
 
 .busca-container {
