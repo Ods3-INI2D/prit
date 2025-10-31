@@ -17,8 +17,8 @@
             carrinho: '/imagens/carrinho-branco.png',
             lupa: '/imagens/lupa-branca.png',
             user: '/imagens/user-branco.png',
-            userb: '/imagens/userb.png', // user do menu (já é branco)
-            logo: '/imagens/logo-branco.png', // logo principal
+            userMenu: '/imagens/userb.png', // user do menu (branco para tema escuro)
+            logo: '/imagens/logo-branco.png', // logo principal (branca para tema escuro)
             estrela: '/imagens/estrela-branca.png',
             estrelaVazia: '/imagens/estrela-branca-vazia.png',
             lua: '/imagens/lua-branca.png'
@@ -28,8 +28,8 @@
             carrinho: '/imagens/carrinho-branco.png',
             lupa: '/imagens/lupa-branca.png',
             user: '/imagens/user-branco.png',
-            userb: '/imagens/userb-preto.png', // user do menu (preto para tema claro)
-            logo: '/imagens/logo-preto.png', // logo principal
+            userMenu: '/imagens/userb-preto.png', // user do menu (preto para tema claro)
+            logo: '/imagens/logo-branco.png', // logo principal (branca para tema claro)
             estrela: '/imagens/estrela-preta.png',
             estrelaVazia: '/imagens/estrela-preta-vazia.png',
             lua: '/imagens/lua-preta.png'
@@ -47,7 +47,7 @@
     function updateImages(theme) {
         const imgs = imagens[theme];
         
-        // Atualizar logos principais
+        // Atualizar logos principais (header e páginas)
         const logos = document.querySelectorAll('.logo');
         logos.forEach(function(logo) {
             logo.src = imgs.logo;
@@ -75,17 +75,17 @@
             lupaImg.alt = 'Ícone de busca';
         }
 
-        // Atualizar ícones de usuário do header - SEMPRE BRANCOS
-        const userImgs = document.querySelectorAll('.user:not(.opcoes .user)');
-        userImgs.forEach(function(img) {
+        // Atualizar ícones de usuário do header (nav-principal) - SEMPRE BRANCOS
+        const userImgsHeader = document.querySelectorAll('.nav-principal .user');
+        userImgsHeader.forEach(function(img) {
             img.src = imagens.dark.user; // Sempre branco
             img.alt = 'Ícone do usuário';
         });
 
-        // Atualizar ícone de usuário do menu lateral - MUDA COM O TEMA
+        // Atualizar ícone de usuário do menu lateral (.opcoes) - MUDA COM O TEMA
         const userMenuImg = document.querySelector('.opcoes .user');
         if (userMenuImg) {
-            userMenuImg.src = imgs.userb;
+            userMenuImg.src = imgs.userMenu;
             userMenuImg.alt = 'Ícone do usuário';
         }
 
