@@ -22,7 +22,8 @@
         <section class="carousel-container" aria-label="Carrossel de destaques">
             <% if(banners && banners.length > 0) { %>
                 <% banners.forEach(function(banner, index) { %>
-                    <figure class="carousel-slide <%= index === 0 ? 'active' : '' %>" aria-hidden="<%= index === 0 ? 'false' : 'true' %>">
+                    <figure class="carousel-slide <%= index === 0 ? 'active' : '' %>" 
+                            aria-hidden="<%= index === 0 ? 'false' : 'true' %>">
                         <a href="<%= banner.link || '/home' %>" class="carousel-link" aria-label="<%= banner.legenda %>">
                             <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>">
                             <figcaption class="carousel-caption"><%= banner.legenda %></figcaption>
@@ -32,8 +33,8 @@
             <% } %>
 
             <nav class="carousel-controls" aria-label="Controles do carrossel">
-                <button class="carousel-btn prev" aria-label="Slide anterior">❮</button>
-                <button class="carousel-btn next" aria-label="Próximo slide">❯</button>
+                <button class="carousel-btn prev" aria-label="Slide anterior">◀</button>
+                <button class="carousel-btn next" aria-label="Próximo slide">▶</button>
             </nav>
 
             <nav class="carousel-indicators" aria-label="Indicadores do carrossel">
@@ -284,7 +285,8 @@
             }
 
             if(prevBtn) {
-                prevBtn.addEventListener('click', function() {
+                prevBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
                     prevSlide();
                     stopAutoPlay();
                     startAutoPlay();
@@ -292,7 +294,8 @@
             }
 
             if(nextBtn) {
-                nextBtn.addEventListener('click', function() {
+                nextBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
                     nextSlide();
                     stopAutoPlay();
                     startAutoPlay();
@@ -300,7 +303,8 @@
             }
 
             for(var i = 0; i < indicators.length; i++) {
-                indicators[i].addEventListener('click', function() {
+                indicators[i].addEventListener('click', function(e) {
+                    e.stopPropagation();
                     var index = parseInt(this.getAttribute('data-slide'));
                     showSlide(index);
                     stopAutoPlay();
