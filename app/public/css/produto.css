@@ -69,10 +69,13 @@ main {
     padding: 0;
 }
 
+
 .nome-produto {
-    font-size: 1.4375rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    margin-bottom: 0.46875rem;
+    margin-bottom: 0.5rem;
+    word-wrap: break-word;
+    line-height: 1.3;
 }
 
 .categoria-produto {

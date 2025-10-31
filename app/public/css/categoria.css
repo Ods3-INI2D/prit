@@ -59,11 +59,13 @@ main {
 }
 
 .titulo-categoria {
-    font-size: 1.5rem;
+    font-size: 1.375rem;
     font-weight: 700;
-    margin-bottom: 1.125rem;
+    margin-bottom: 1rem;
     color: white;
     text-align: center;
+    word-wrap: break-word;
+    line-height: 1.3;
 }
 
 /* MENSAGEM DE VAZIO */
