@@ -24,9 +24,10 @@
             lua: '/imagens/lua-branca.png'
         },
         light: {
-            carrinho: '/imagens/carrinho-preto.png',
-            lupa: '/imagens/lupa-preta.png',
-            user: '/imagens/user-preto.png',
+            // ÍCONES DO GRID PERMANECEM BRANCOS NO TEMA CLARO
+            carrinho: '/imagens/carrinho-branco.png',
+            lupa: '/imagens/lupa-branca.png',
+            user: '/imagens/user-branco.png',
             userb: '/imagens/userb-preto.png', // user do menu (preto para tema claro)
             logo: '/imagens/logo-preto.png', // logo principal
             estrela: '/imagens/estrela-preta.png',
@@ -60,28 +61,28 @@
             icon.alt = 'Logo da Farmácia';
         });
 
-        // Atualizar carrinho
+        // Atualizar carrinho - SEMPRE BRANCO
         const carrinhoImg = document.querySelector('.cart');
         if (carrinhoImg) {
-            carrinhoImg.src = imgs.carrinho;
+            carrinhoImg.src = imagens.dark.carrinho; // Sempre branco
             carrinhoImg.alt = 'Ícone do carrinho';
         }
 
-        // Atualizar lupa
+        // Atualizar lupa - SEMPRE BRANCA
         const lupaImg = document.querySelector('.lupa');
         if (lupaImg) {
-            lupaImg.src = imgs.lupa;
+            lupaImg.src = imagens.dark.lupa; // Sempre branca
             lupaImg.alt = 'Ícone de busca';
         }
 
-        // Atualizar ícones de usuário (header)
+        // Atualizar ícones de usuário do header - SEMPRE BRANCOS
         const userImgs = document.querySelectorAll('.user:not(.opcoes .user)');
         userImgs.forEach(function(img) {
-            img.src = imgs.user;
+            img.src = imagens.dark.user; // Sempre branco
             img.alt = 'Ícone do usuário';
         });
 
-        // Atualizar ícone de usuário do menu lateral
+        // Atualizar ícone de usuário do menu lateral - MUDA COM O TEMA
         const userMenuImg = document.querySelector('.opcoes .user');
         if (userMenuImg) {
             userMenuImg.src = imgs.userb;
