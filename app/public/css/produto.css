@@ -1,4 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+/* Correções para tema claro */
+[data-theme="light"] .titulo-outros {
+    color: #000000;
+}
+
+[data-theme="light"] .bloco-produto {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+}
+
+[data-theme="light"] .nome-produto-bloco {
+    color: #000000;
+}
+
+[data-theme="light"] .preco-produto-bloco {
+    color: #0044cc;
+}
+
+[data-theme="light"] .link-produto {
+    color: #000000;
+}
+
+
 * {
     margin: 0;
     padding: 0;
