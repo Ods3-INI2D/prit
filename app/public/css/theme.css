@@ -84,10 +84,10 @@
     --info-border: #1a73e8;
     --info-text: #1557b0;
     
-    /* Imagens por tema - TEMA CLARO */
-    --img-carrinho: url('/imagens/carrinho-preto.png');
-    --img-lupa: url('/imagens/lupa-preta.png');
-    --img-user: url('/imagens/user-preto.png');
+    /* Imagens por tema - TEMA CLARO - ÍCONES DO GRID PERMANECEM BRANCOS */
+    --img-carrinho: url('/imagens/carrinho-branco.png');
+    --img-lupa: url('/imagens/lupa-branca.png');
+    --img-user: url('/imagens/user-branco.png');
     --img-estrela: url('/imagens/estrela-preta.png');
     --img-estrela-vazia: url('/imagens/estrela-preta-vazia.png');
 }
