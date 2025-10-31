@@ -42,6 +42,8 @@
     --img-carrinho: url('/imagens/carrinho-branco.png');
     --img-lupa: url('/imagens/lupa-branca.png');
     --img-user: url('/imagens/user-branco.png');
+    --img-user-menu: url('/imagens/userb.png');
+    --img-logo: url('/imagens/logo-branco.png');
     --img-estrela: url('/imagens/estrela-branca.png');
     --img-estrela-vazia: url('/imagens/estrela-branca-vazia.png');
 }
@@ -84,10 +86,12 @@
     --info-border: #1a73e8;
     --info-text: #1557b0;
     
-    /* Imagens por tema - TEMA CLARO - ÍCONES DO GRID PERMANECEM BRANCOS */
+    /* Imagens por tema - TEMA CLARO */
     --img-carrinho: url('/imagens/carrinho-branco.png');
     --img-lupa: url('/imagens/lupa-branca.png');
     --img-user: url('/imagens/user-branco.png');
+    --img-user-menu: url('/imagens/userb-preto.png');
+    --img-logo: url('/imagens/logo-branco.png');
     --img-estrela: url('/imagens/estrela-preta.png');
     --img-estrela-vazia: url('/imagens/estrela-preta-vazia.png');
 }
@@ -103,6 +107,17 @@
 
 .user {
     content: var(--img-user);
+}
+
+/* Ícone de usuário específico do menu hambúrguer */
+.opcoes .user {
+    content: var(--img-user-menu);
+}
+
+/* Logo principal */
+.logo,
+.icon {
+    content: var(--img-logo);
 }
 
 /* Estrelas nas avaliações e cards de produtos */
