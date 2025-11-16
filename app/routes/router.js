@@ -8,14 +8,13 @@ var path = require('path');
 var fs = require('fs');
 var session = require('express-session');
 
-// Configurar dotenv para variáveis de ambiente
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 
 router.use(session({
     secret: 'chave-secreta-farmacia-super-segura-2024',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true, // MUDANÇA: true para criar sessão mesmo sem login
     cookie: { 
         secure: false,
         maxAge: 24 * 60 * 60 * 1000
@@ -39,7 +38,6 @@ const storage = multer.diskStorage({
     }
 });
 
-// Storage para banners
 const storageBanner = multer.diskStorage({
     destination: function (req, file, cb) {
         const uploadDir = path.join(__dirname, '../public/imagens');
@@ -92,11 +90,17 @@ const uploadBanner = multer({
     }
 });
 
-// Credenciais do administrador
 const ADMIN_EMAIL = 'maisaudeods3@gmail.com';
 const ADMIN_PASSWORD = '+SaudeINI2D';
 
-// Middleware para disponibilizar o usuário em todas as views
+// MUDANÇA: Gerar ID único de sessão se não existir
+router.use(function(req, res, next) {
+    if (!req.session.sessionId) {
+        req.session.sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+    next();
+});
+
 router.use(function(req, res, next) {
     res.locals.usuario = null;
     res.locals.isAdmin = false;
@@ -115,7 +119,6 @@ router.use(function(req, res, next) {
     next();
 });
 
-// Middleware para verificar autenticação
 function requireLogin(req, res, next) {
     if (!req.session.usuarioEmail) {
         return res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
@@ -123,7 +126,6 @@ function requireLogin(req, res, next) {
     next();
 }
 
-// Middleware para verificar se é administrador
 function requireAdmin(req, res, next) {
     if (!req.session.isAdmin || req.session.usuarioEmail !== ADMIN_EMAIL) {
         return res.redirect('/login?erro=admin');
@@ -131,7 +133,6 @@ function requireAdmin(req, res, next) {
     next();
 }
 
-// Middleware para bloquear administrador de acessar funcionalidades de usuário
 function blockAdmin(req, res, next) {
     if (req.session.isAdmin && req.session.usuarioEmail === ADMIN_EMAIL) {
         return res.redirect('/admin?erro=funcao_restrita');
@@ -139,12 +140,10 @@ function blockAdmin(req, res, next) {
     next();
 }
 
-// Rota raiz redireciona para home
 router.get('/', function(req, res) {
     res.redirect('/home');
 });
 
-// get para cadastro
 router.get('/cadastro', function(req, res) {
     res.render('pages/cadastro', { 
         erros: null, 
@@ -153,7 +152,6 @@ router.get('/cadastro', function(req, res) {
     });
 });
 
-// post para cadastro
 router.post("/cadastro",
     body("nome")
         .isLength({ min: 3, max: 50 }).withMessage("Nome deve conter de 3 a 50 caracteres!"),
@@ -220,13 +218,11 @@ router.post("/cadastro",
     }
 );
 
-// get para login
 router.get('/login', function(req, res) {
     const erroAdmin = req.query.erro === 'admin' ? 'Acesso negado. Apenas administradores podem acessar esta área.' : null;
     res.render('pages/login', { erro: erroAdmin, redirect: req.query.redirect || '/home' });
 });
 
-// post para login
 router.post('/login', 
     body("email")
         .isEmail().withMessage('O e-mail deve ser válido!'),
@@ -238,17 +234,24 @@ router.post('/login',
             return res.render('pages/login', { erro: 'E-mail ou senha inválidos!', redirect: '/home' });
         }
 
-        // Verifica se é o administrador
         if (req.body.email === ADMIN_EMAIL && req.body.senha === ADMIN_PASSWORD) {
             req.session.usuarioEmail = ADMIN_EMAIL;
             req.session.isAdmin = true;
             return res.redirect('/admin');
         }
 
-        // Login de usuário normal
         const usuario = db.findUsuario(req.body.email);
         
         if (usuario && req.body.senha === usuario.senhan) {
+            // MUDANÇA: Transferir carrinho da sessão anônima para o usuário
+            const carrinhoAnonimo = db.getCarrinho(req.session.sessionId);
+            if (carrinhoAnonimo && carrinhoAnonimo.length > 0) {
+                carrinhoAnonimo.forEach(function(item) {
+                    db.addToCarrinho(item.id, usuario.email, item.quantidade);
+                });
+                db.clearCarrinhoBySession(req.session.sessionId);
+            }
+            
             req.session.usuarioEmail = usuario.email;
             req.session.isAdmin = false;
             const redirectUrl = req.body.redirect || '/home';
@@ -259,14 +262,12 @@ router.post('/login',
     }
 );
 
-// Rota home
 router.get('/home', function(req, res) {
     const produtos = db.getProdutos();
     const banners = db.getBanners();
     res.render('pages/home', { produtos: produtos, banners: banners });
 });
 
-// Rota usuário
 router.get('/usuario', function(req, res) {
     if (!req.session.usuarioEmail) {
         return res.render('pages/usuario', { usuario: null });
@@ -276,7 +277,6 @@ router.get('/usuario', function(req, res) {
     res.render('pages/usuario', { usuario: usuario });
 });
 
-// Atualizar dados do usuário
 router.post('/usuario/atualizar', requireLogin, function(req, res) {
     db.updateUsuario(req.session.usuarioEmail, {
         tel: req.body.tel,
@@ -285,7 +285,6 @@ router.post('/usuario/atualizar', requireLogin, function(req, res) {
     res.redirect('/usuario');
 });
 
-// Rota admin
 router.get('/admin', requireAdmin, function(req, res) {
     const produtos = db.getProdutos();
     const usuarios = db.getAllUsuarios();
@@ -301,7 +300,6 @@ router.get('/admin', requireAdmin, function(req, res) {
     });
 });
 
-// Adicionar produto
 router.post('/admin/adicionar-produto', requireAdmin, upload.single('imagem'), function(req, res) {
     try {
         let imagemPath = '/imagens/foto.jpg';
@@ -341,7 +339,6 @@ router.post('/admin/adicionar-produto', requireAdmin, upload.single('imagem'), f
     }
 });
 
-// get para editar produto
 router.get('/admin/editar-produto/:id', requireAdmin, function(req, res) {
     const produto = db.getProdutoById(req.params.id);
     if (!produto) {
@@ -350,7 +347,6 @@ router.get('/admin/editar-produto/:id', requireAdmin, function(req, res) {
     res.render('pages/editar-produto', { produto: produto, erro: null });
 });
 
-// post para editar produto
 router.post('/admin/editar-produto/:id', requireAdmin, upload.single('imagem'), function(req, res) {
     try {
         const produto = db.getProdutoById(req.params.id);
@@ -402,7 +398,6 @@ router.post('/admin/editar-produto/:id', requireAdmin, upload.single('imagem'), 
     }
 });
 
-// Excluir produto
 router.post('/admin/excluir-produto/:id', requireAdmin, function(req, res) {
     try {
         const produto = db.getProdutoById(req.params.id);
@@ -425,7 +420,6 @@ router.post('/admin/excluir-produto/:id', requireAdmin, function(req, res) {
     }
 });
 
-// Excluir usuário
 router.post('/admin/excluir-usuario/:email', requireAdmin, function(req, res) {
     try {
         db.deleteUsuario(req.params.email);
@@ -436,7 +430,6 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, function(req, res) {
     }
 });
 
-// post para editar banner
 router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
     uploadBanner.single('imagem')(req, res, function(err) {
         if (err instanceof multer.MulterError) {
@@ -542,7 +535,6 @@ router.post('/admin/editar-banner/:id', requireAdmin, function(req, res) {
     });
 });
 
-// Ver produto específico
 router.get('/produto/:id', function(req, res) {
     const produto = db.getProdutoById(req.params.id);
     if (!produto) {
@@ -552,8 +544,10 @@ router.get('/produto/:id', function(req, res) {
     const produtos = db.getProdutos();
     const usuarioLogado = req.session.usuarioEmail ? true : false;
     const isAdmin = req.session.isAdmin || false;
-    const temProdutoNoCarrinho = (usuarioLogado && !isAdmin) ? 
-        db.usuarioTemProdutoNoCarrinho(req.params.id, req.session.usuarioEmail) : false;
+    
+    // MUDANÇA: Verificar carrinho por email OU sessionId
+    const identificador = usuarioLogado && !isAdmin ? req.session.usuarioEmail : req.session.sessionId;
+    const temProdutoNoCarrinho = db.usuarioTemProdutoNoCarrinho(req.params.id, identificador);
     
     res.render('pages/produto', { 
         produto: produto, 
@@ -564,38 +558,44 @@ router.get('/produto/:id', function(req, res) {
     });
 });
 
-// Adicionar ao carrinho (requer login E bloqueia admin)
-router.post('/produto/:id/adicionar-carrinho', requireLogin, blockAdmin, function(req, res) {
+// MUDANÇA: Adicionar ao carrinho SEM exigir login (mas bloqueia admin)
+router.post('/produto/:id/adicionar-carrinho', blockAdmin, function(req, res) {
     const produto = db.getProdutoById(req.params.id);
     
     if (!produto || produto.status === 'fora-de-estoque') {
         return res.redirect('/produto/' + req.params.id + '?erro=fora_de_estoque');
     }
     
-    db.addToCarrinho(req.params.id, req.session.usuarioEmail);
+    // MUDANÇA: Usar email se logado, sessionId se não logado
+    const identificador = req.session.usuarioEmail || req.session.sessionId;
+    db.addToCarrinho(req.params.id, identificador);
     res.redirect('/carrinho');
 });
 
-// Ver carrinho (requer login E bloqueia admin)
-router.get('/carrinho', requireLogin, blockAdmin, function(req, res) {
-    const carrinho = db.getCarrinho(req.session.usuarioEmail);
-    res.render('pages/carrinho', { carrinho: carrinho });
+// MUDANÇA: Ver carrinho NÃO exige login (mas bloqueia admin)
+router.get('/carrinho', blockAdmin, function(req, res) {
+    // MUDANÇA: Usar email se logado, sessionId se não logado
+    const identificador = req.session.usuarioEmail || req.session.sessionId;
+    const carrinho = db.getCarrinho(identificador);
+    const usuarioLogado = req.session.usuarioEmail ? true : false;
+    res.render('pages/carrinho', { carrinho: carrinho, usuarioLogado: usuarioLogado });
 });
 
-// Atualizar quantidade no carrinho (bloqueia admin)
-router.post('/carrinho/atualizar/:id', requireLogin, blockAdmin, function(req, res) {
+// MUDANÇA: Atualizar quantidade NÃO exige login (mas bloqueia admin)
+router.post('/carrinho/atualizar/:id', blockAdmin, function(req, res) {
     const novaQuantidade = parseInt(req.body.quantidade);
-    db.updateQuantidadeCarrinho(req.params.id, req.session.usuarioEmail, novaQuantidade);
+    const identificador = req.session.usuarioEmail || req.session.sessionId;
+    db.updateQuantidadeCarrinho(req.params.id, identificador, novaQuantidade);
     res.redirect('/carrinho');
 });
 
-// Remover do carrinho (bloqueia admin)
-router.post('/carrinho/remover/:id', requireLogin, blockAdmin, function(req, res) {
-    db.removeFromCarrinho(req.params.id, req.session.usuarioEmail);
+// MUDANÇA: Remover do carrinho NÃO exige login (mas bloqueia admin)
+router.post('/carrinho/remover/:id', blockAdmin, function(req, res) {
+    const identificador = req.session.usuarioEmail || req.session.sessionId;
+    db.removeFromCarrinho(req.params.id, identificador);
     res.redirect('/carrinho');
 });
 
-// Avaliar produto (requer produto no carrinho E bloqueia admin)
 router.post('/produto/:id/avaliar', requireLogin, blockAdmin, function(req, res) {
     const novaAvaliacao = {
         nota: parseInt(req.body.nota),
@@ -611,13 +611,11 @@ router.post('/produto/:id/avaliar', requireLogin, blockAdmin, function(req, res)
     res.redirect('/produto/' + req.params.id);
 });
 
-// Ver categoria
 router.get('/categoria/:nome', function(req, res) {
     const produtosCategoria = db.getProdutosByCategoria(req.params.nome);
     res.render('pages/categoria', { categoria: req.params.nome, produtos: produtosCategoria });
 });
 
-// GET página de parceiros
 router.get('/parceiros', function(req, res) {
     res.render('pages/parceiros', { 
         sucesso: null, 
@@ -626,7 +624,6 @@ router.get('/parceiros', function(req, res) {
     });
 });
 
-// POST formulário de parceiros
 router.post('/parceiros',
     body("empresa")
         .notEmpty().withMessage('Nome da empresa é obrigatório!')
@@ -657,16 +654,10 @@ router.post('/parceiros',
         }
 
         try {
-            console.log('=== INICIANDO ENVIO DE E-MAIL ===');
-            console.log('EMAIL_USER:', process.env.EMAIL_PARCEIROS);
-            console.log('EMAIL_PARCEIROS:', process.env.EMAIL_PARCEIROS);
-            console.log('Senha configurada:', process.env.EMAIL_PARCEIROS_PASS ? 'SIM' : 'NÃO');
-
-            // Configurar o transportador de e-mail com configurações mais robustas
             const transporter = nodemailer.createTransport({
                 host: 'smtp.gmail.com',
                 port: 587,
-                secure: false, // true para 465, false para outras portas
+                secure: false,
                 auth: {
                     user: process.env.EMAIL_PARCEIROS,
                     pass: process.env.EMAIL_PARCEIROS_PASS
@@ -674,23 +665,16 @@ router.post('/parceiros',
                 tls: {
                     rejectUnauthorized: false
                 },
-                debug: true, // Ativa logs de debug
-                logger: true // Ativa logs detalhados
+                debug: true,
+                logger: true
             });
 
-            // Verificar conexão antes de enviar
-            console.log('Verificando conexão SMTP...');
             await transporter.verify();
-            console.log('✓ Conexão SMTP verificada com sucesso!');
 
-            // Formatar as categorias selecionadas
             const categoriasSelecionadas = Array.isArray(req.body.categorias) 
                 ? req.body.categorias.join(', ') 
                 : req.body.categorias;
 
-            console.log('Preparando e-mail...');
-
-            // Configurar o conteúdo do e-mail na ordem CORRETA
             const mailOptions = {
                 from: `"Sistema +Saúde" <${process.env.EMAIL_PARCEIROS}>`,
                 to: process.env.EMAIL_PARCEIROS || 'maisaudeods3parceiros@gmail.com',
@@ -745,17 +729,8 @@ E-mail enviado automaticamente pelo sistema de parcerias +Saúde
                 `.trim()
             };
 
-            console.log('Enviando e-mail...');
+            await transporter.sendMail(mailOptions);
 
-            // Enviar o e-mail
-            const info = await transporter.sendMail(mailOptions);
-
-            console.log('✓ E-mail enviado com sucesso!');
-            console.log('ID da mensagem:', info.messageId);
-            console.log('Resposta:', info.response);
-            console.log('=== FIM DO ENVIO ===');
-
-            // Renderizar a página com mensagem de sucesso
             res.render('pages/parceiros', { 
                 sucesso: true, 
                 erro: null,
@@ -772,7 +747,6 @@ E-mail enviado automaticamente pelo sistema de parcerias +Saúde
             
             let mensagemErro = 'Erro ao enviar solicitação. Tente novamente mais tarde.';
             
-            // Mensagens de erro específicas
             if (error.code === 'EAUTH') {
                 mensagemErro = 'Erro de autenticação. Verifique as credenciais de e-mail.';
             } else if (error.code === 'ESOCKET') {
@@ -790,7 +764,6 @@ E-mail enviado automaticamente pelo sistema de parcerias +Saúde
     }
 );
 
-// GET página de atendimento
 router.get('/atendimento', function(req, res) {
     res.render('pages/atendimento', { 
         sucesso: null, 
@@ -799,7 +772,6 @@ router.get('/atendimento', function(req, res) {
     });
 });
 
-// POST formulário de atendimento
 router.post('/atendimento',
     body("email")
         .notEmpty().withMessage('E-mail é obrigatório!')
@@ -820,11 +792,6 @@ router.post('/atendimento',
         }
 
         try {
-            console.log('=== INICIANDO ENVIO DE E-MAIL DE ATENDIMENTO ===');
-            console.log('EMAIL_USER:', process.env.EMAIL_USER);
-            console.log('Senha configurada:', process.env.EMAIL_PASS ? 'SIM' : 'NÃO');
-
-            // Configurar o transportador de e-mail
             const transporter = nodemailer.createTransport({
                 host: 'smtp.gmail.com',
                 port: 587,
@@ -840,14 +807,8 @@ router.post('/atendimento',
                 logger: true
             });
 
-            // Verificar conexão
-            console.log('Verificando conexão SMTP...');
             await transporter.verify();
-            console.log('✓ Conexão SMTP verificada com sucesso!');
 
-            console.log('Preparando e-mail...');
-
-            // Configurar o conteúdo do e-mail
             const mailOptions = {
                 from: `"Sistema +Saúde - SAC" <${process.env.EMAIL_USER}>`,
                 to: 'maisaudeods3SAC@gmail.com',
@@ -861,22 +822,22 @@ router.post('/atendimento',
                             <h3 style="color: #333; margin-top: 0;">E-mail do Cliente</h3>
                             <output style="color: #555; display: block;">
                                 <a href="mailto:${req.body.email}" style="color: #4da6ff; text-decoration: none;">${req.body.email}</a>
-                            </output>
+                            </o>
                         </article>
                         
                         <article style="background-color: white; padding: 15px; margin: 15px 0; border-radius: 5px;">
                             <h3 style="color: #333; margin-top: 0;">Mensagem</h3>
-                            <output style="color: #555; display: block; white-space: pre-wrap;">${req.body.mensagem.replace(/\n/g, '<br>')}</output>
+                            <output style="color: #555; display: block; white-space: pre-wrap;">${req.body.mensagem.replace(/\n/g, '<br>')}</o>
                         </article>
                         
                         <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
                         <footer style="text-align: center; padding: 10px;">
                             <output style="color: #888; font-size: 12px; display: block;">
                                 <em>E-mail enviado automaticamente pelo sistema de atendimento +Saúde</em>
-                            </output>
+                            </o>
                             <output style="color: #888; font-size: 12px; display: block; margin-top: 5px;">
                                 <em>Para responder, utilize o e-mail: ${req.body.email}</em>
-                            </output>
+                            </o>
                         </footer>
                     </section>
                 `,
@@ -895,17 +856,8 @@ Para responder, utilize o e-mail: ${req.body.email}
                 `.trim()
             };
 
-            console.log('Enviando e-mail...');
+            await transporter.sendMail(mailOptions);
 
-            // Enviar o e-mail
-            const info = await transporter.sendMail(mailOptions);
-
-            console.log('✓ E-mail enviado com sucesso!');
-            console.log('ID da mensagem:', info.messageId);
-            console.log('Resposta:', info.response);
-            console.log('=== FIM DO ENVIO ===');
-
-            // Renderizar a página com mensagem de sucesso
             res.render('pages/atendimento', { 
                 sucesso: true, 
                 erro: null,
@@ -939,7 +891,6 @@ Para responder, utilize o e-mail: ${req.body.email}
     }
 );
 
-// Logout
 router.get('/logout', function(req, res) {
     req.session.destroy(function(err) {
         if (err) {

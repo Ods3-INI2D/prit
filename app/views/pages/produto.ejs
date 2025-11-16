@@ -20,7 +20,7 @@
         <nav class="navegacao">
             <a href="/home" class="voltar">
                 <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
-                <o>Voltar</o>
+                <output>Voltar</o>
             </a>
         </nav>
 
@@ -53,16 +53,12 @@
                         <output class="mensagem-admin-bloqueio" role="status">
                             ℹ️ Administradores não podem adicionar produtos ao carrinho. Esta é uma funcionalidade exclusiva para clientes.
                         </o>
-                    <% } else if(usuarioLogado) { %>
+                    <% } else { %>
                         <form method="POST" action="/produto/<%= produto.id %>/adicionar-carrinho">
                             <button type="submit" class="btn-comprar">
                                 <%= temProdutoNoCarrinho ? 'Adicionar Mais ao Carrinho' : 'Adicionar ao Carrinho' %>
                             </button>
                         </form>
-                    <% } else { %>
-                        <a href="/login?redirect=/produto/<%= produto.id %>" class="btn-comprar" style="display: block; text-align: center; text-decoration: none;">
-                            Fazer Login para Comprar
-                        </a>
                     <% } %>
                 <% } %>
 

@@ -46,7 +46,6 @@ function writeDatabase(data) {
     }
 }
 
-// Funções de Banners
 function getBanners() {
     const db = readDatabase();
     return db.banners || [];
@@ -67,9 +66,6 @@ function updateBanner(id, dadosAtualizados) {
         return false;
     }
     
-    console.log('Banner encontrado no índice:', index);
-    console.log('Dados antigos:', db.banners[index]);
-    
     db.banners[index] = {
         id: db.banners[index].id,
         imagem: dadosAtualizados.imagem || db.banners[index].imagem,
@@ -77,16 +73,7 @@ function updateBanner(id, dadosAtualizados) {
         link: dadosAtualizados.link || db.banners[index].link || '/home'
     };
     
-    console.log('Dados novos:', db.banners[index]);
-    
     const sucesso = writeDatabase(db);
-    
-    if (sucesso) {
-        console.log('Banner atualizado com sucesso no banco de dados!');
-    } else {
-        console.error('Falha ao salvar banner no banco de dados');
-    }
-    
     return sucesso;
 }
 
@@ -96,7 +83,6 @@ function getBannerById(id) {
     return db.banners ? db.banners.find(b => parseInt(b.id) === bannerId) : null;
 }
 
-// Funções de produtos
 function addProduto(produto) {
     const db = readDatabase();
     produto.id = Date.now();
@@ -230,7 +216,8 @@ function deleteAvaliacao(produtoId, avaliacaoIndex) {
     return true;
 }
 
-function addToCarrinho(produtoId, usuarioEmail) {
+// MUDANÇA: addToCarrinho agora aceita quantidade opcional
+function addToCarrinho(produtoId, identificador, quantidadeAdicional = 1) {
     const db = readDatabase();
     const produto = db.produtos.find(p => p.id == produtoId);
     
@@ -242,17 +229,18 @@ function addToCarrinho(produtoId, usuarioEmail) {
         return false;
     }
     
+    // MUDANÇA: identificador pode ser email OU sessionId
     const itemExistente = db.carrinho.find(item => 
-        item.produtoId == produtoId && item.usuarioEmail === usuarioEmail
+        item.produtoId == produtoId && item.usuarioEmail === identificador
     );
     
     if (itemExistente) {
-        itemExistente.quantidade += 1;
+        itemExistente.quantidade += quantidadeAdicional;
     } else {
         db.carrinho.push({
             produtoId: produtoId.toString(),
-            usuarioEmail: usuarioEmail,
-            quantidade: 1,
+            usuarioEmail: identificador, // agora pode ser email ou sessionId
+            quantidade: quantidadeAdicional,
             dataAdicionado: new Date()
         });
     }
@@ -261,10 +249,11 @@ function addToCarrinho(produtoId, usuarioEmail) {
     return true;
 }
 
-function getCarrinho(usuarioEmail) {
+// MUDANÇA: getCarrinho agora aceita email OU sessionId
+function getCarrinho(identificador) {
     const db = readDatabase();
     
-    const itensUsuario = db.carrinho.filter(item => item.usuarioEmail === usuarioEmail);
+    const itensUsuario = db.carrinho.filter(item => item.usuarioEmail === identificador);
     
     return itensUsuario.map(item => {
         const produto = db.produtos.find(p => p.id == item.produtoId);
@@ -286,17 +275,18 @@ function getCarrinho(usuarioEmail) {
     }).filter(item => item !== null);
 }
 
-function updateQuantidadeCarrinho(produtoId, usuarioEmail, novaQuantidade) {
+// MUDANÇA: updateQuantidadeCarrinho agora aceita email OU sessionId
+function updateQuantidadeCarrinho(produtoId, identificador, novaQuantidade) {
     const db = readDatabase();
     
     const item = db.carrinho.find(item => 
-        item.produtoId == produtoId && item.usuarioEmail === usuarioEmail
+        item.produtoId == produtoId && item.usuarioEmail === identificador
     );
     
     if (item) {
         if (novaQuantidade <= 0) {
             db.carrinho = db.carrinho.filter(i => 
-                !(i.produtoId == produtoId && i.usuarioEmail === usuarioEmail)
+                !(i.produtoId == produtoId && i.usuarioEmail === identificador)
             );
         } else {
             item.quantidade = novaQuantidade;
@@ -307,21 +297,23 @@ function updateQuantidadeCarrinho(produtoId, usuarioEmail, novaQuantidade) {
     return false;
 }
 
-function removeFromCarrinho(produtoId, usuarioEmail) {
+// MUDANÇA: removeFromCarrinho agora aceita email OU sessionId
+function removeFromCarrinho(produtoId, identificador) {
     const db = readDatabase();
     
     db.carrinho = db.carrinho.filter(item => 
-        !(item.produtoId == produtoId && item.usuarioEmail === usuarioEmail)
+        !(item.produtoId == produtoId && item.usuarioEmail === identificador)
     );
     
     writeDatabase(db);
     return true;
 }
 
-function usuarioTemProdutoNoCarrinho(produtoId, usuarioEmail) {
+// MUDANÇA: usuarioTemProdutoNoCarrinho agora aceita email OU sessionId
+function usuarioTemProdutoNoCarrinho(produtoId, identificador) {
     const db = readDatabase();
     return db.carrinho.some(item => 
-        item.produtoId == produtoId && item.usuarioEmail === usuarioEmail
+        item.produtoId == produtoId && item.usuarioEmail === identificador
     );
 }
 
@@ -329,6 +321,14 @@ function clearCarrinho() {
     const db = readDatabase();
     db.carrinho = [];
     writeDatabase(db);
+}
+
+// NOVA FUNÇÃO: Limpar carrinho por sessionId específico
+function clearCarrinhoBySession(sessionId) {
+    const db = readDatabase();
+    db.carrinho = db.carrinho.filter(item => item.usuarioEmail !== sessionId);
+    writeDatabase(db);
+    return true;
 }
 
 function addUsuario(usuario) {
@@ -425,6 +425,7 @@ module.exports = {
     addToCarrinho,
     getCarrinho,
     clearCarrinho,
+    clearCarrinhoBySession,
     addUsuario,
     findUsuario,
     getAllUsuarios,
