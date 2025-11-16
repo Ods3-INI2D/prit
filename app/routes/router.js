@@ -270,20 +270,89 @@ router.get('/home', function(req, res) {
 
 router.get('/usuario', function(req, res) {
     if (!req.session.usuarioEmail) {
-        return res.render('pages/usuario', { usuario: null });
+        return res.render('pages/usuario', { 
+            usuario: null,
+            mensagemSucesso: null,
+            mensagemErro: null
+        });
     }
     
     const usuario = db.findUsuario(req.session.usuarioEmail);
-    res.render('pages/usuario', { usuario: usuario });
+    res.render('pages/usuario', { 
+        usuario: usuario,
+        mensagemSucesso: req.query.sucesso ? decodeURIComponent(req.query.sucesso) : null,
+        mensagemErro: req.query.erro ? decodeURIComponent(req.query.erro) : null
+    });
 });
 
-router.post('/usuario/atualizar', requireLogin, function(req, res) {
-    db.updateUsuario(req.session.usuarioEmail, {
-        tel: req.body.tel,
-        cep: req.body.cep
-    });
-    res.redirect('/usuario');
-});
+router.post('/usuario/atualizar-campo', requireLogin, 
+    body("campo")
+        .notEmpty().withMessage('Campo é obrigatório!')
+        .isIn(['nome', 'nasc', 'cpf', 'tel']).withMessage('Campo inválido!'),
+    body("valor")
+        .notEmpty().withMessage('Valor é obrigatório!'),
+    function(req, res) {
+        const errors = validationResult(req);
+        
+        if (!errors.isEmpty()) {
+            const mensagemErro = errors.array()[0].msg;
+            return res.redirect('/usuario?erro=' + encodeURIComponent(mensagemErro));
+        }
+
+        const campo = req.body.campo;
+        const valor = req.body.valor;
+        
+        // Validações específicas por campo
+        if (campo === 'nome') {
+            if (valor.length < 3 || valor.length > 50) {
+                return res.redirect('/usuario?erro=' + encodeURIComponent('Nome deve ter entre 3 e 50 caracteres!'));
+            }
+        }
+        
+        if (campo === 'cpf') {
+            if (!valCPF(valor)) {
+                return res.redirect('/usuario?erro=' + encodeURIComponent('CPF inválido!'));
+            }
+            
+            // Verifica se o CPF já está em uso por outro usuário
+            const usuarioExistente = db.getAllUsuarios().find(function(u) {
+                return u.cpf === valor && u.email !== req.session.usuarioEmail;
+            });
+            
+            if (usuarioExistente) {
+                return res.redirect('/usuario?erro=' + encodeURIComponent('CPF já cadastrado por outro usuário!'));
+            }
+        }
+        
+        if (campo === 'nasc') {
+            if (!valNasc(valor)) {
+                return res.redirect('/usuario?erro=' + encodeURIComponent('Data de nascimento inválida!'));
+            }
+        }
+        
+        if (campo === 'tel') {
+            if (!valTel(valor)) {
+                return res.redirect('/usuario?erro=' + encodeURIComponent('Telefone inválido! Deve conter 9 dígitos.'));
+            }
+        }
+        
+        // Atualiza o campo
+        const updateData = {};
+        updateData[campo] = valor;
+        
+        db.updateUsuario(req.session.usuarioEmail, updateData);
+        
+        const mensagensCampo = {
+            'nome': 'Nome',
+            'nasc': 'Data de nascimento',
+            'cpf': 'CPF',
+            'tel': 'Telefone'
+        };
+        
+        const mensagemSucesso = mensagensCampo[campo] + ' atualizado com sucesso!';
+        res.redirect('/usuario?sucesso=' + encodeURIComponent(mensagemSucesso));
+    }
+);
 
 router.get('/admin', requireAdmin, function(req, res) {
     const produtos = db.getProdutos();

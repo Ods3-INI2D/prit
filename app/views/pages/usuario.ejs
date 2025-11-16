@@ -19,67 +19,183 @@
         <section class="perfil-container">
             <h1 class="titulo-perfil">Minha Conta</h1>
 
+            <% if(typeof mensagemSucesso !== 'undefined' && mensagemSucesso) { %>
+                <output class="mensagem-sucesso" role="status" aria-live="polite">
+                    <%= mensagemSucesso %>
+                </output>
+            <% } %>
+
+            <% if(typeof mensagemErro !== 'undefined' && mensagemErro) { %>
+                <output class="mensagem-erro" role="alert" aria-live="assertive">
+                    <%= mensagemErro %>
+                </output>
+            <% } %>
+
             <% if(usuario) { %>
                 <article class="info-usuario">
                     <h2 class="subtitulo">Informações Pessoais</h2>
                     
                     <article class="campo-info">
-                        <h3 class="label-info">Nome</h3>
-                        <output class="valor-info"><%= usuario.nome %></output>
+                        <header class="campo-header" 
+                                role="button" 
+                                tabindex="0" 
+                                aria-expanded="false"
+                                aria-controls="editar-nome"
+                                data-campo="nome">
+                            <section class="campo-info-principal">
+                                <h3 class="label-info">Nome</h3>
+                                <output class="valor-info" id="valor-nome"><%= usuario.nome %></output>
+                            </section>
+                            <output class="seta-expansao" aria-hidden="true">›</output>
+                        </header>
+                        <form method="POST" 
+                              action="/usuario/atualizar-campo" 
+                              class="form-edicao-campo" 
+                              id="editar-nome"
+                              aria-hidden="true">
+                            <input type="hidden" name="campo" value="nome">
+                            <fieldset>
+                                <legend>Editar Nome</legend>
+                                <label for="input-nome" class="label-form">
+                                    Novo Nome
+                                    <input type="text" 
+                                           id="input-nome" 
+                                           name="valor" 
+                                           value="<%= usuario.nome %>" 
+                                           placeholder="Digite seu nome"
+                                           minlength="3"
+                                           maxlength="50"
+                                           required>
+                                </label>
+                            </fieldset>
+                            <nav class="acoes-campo">
+                                <button type="submit" class="btn-salvar-campo">Salvar</button>
+                                <button type="button" class="btn-cancelar-campo" data-campo="nome">Cancelar</button>
+                            </nav>
+                        </form>
                     </article>
 
                     <article class="campo-info">
-                        <h3 class="label-info">Data de Nascimento</h3>
-                        <output class="valor-info"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></output>
+                        <header class="campo-header" 
+                                role="button" 
+                                tabindex="0" 
+                                aria-expanded="false"
+                                aria-controls="editar-nasc"
+                                data-campo="nasc">
+                            <section class="campo-info-principal">
+                                <h3 class="label-info">Data de Nascimento</h3>
+                                <output class="valor-info" id="valor-nasc"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></output>
+                            </section>
+                            <output class="seta-expansao" aria-hidden="true">›</output>
+                        </header>
+                        <form method="POST" 
+                              action="/usuario/atualizar-campo" 
+                              class="form-edicao-campo" 
+                              id="editar-nasc"
+                              aria-hidden="true">
+                            <input type="hidden" name="campo" value="nasc">
+                            <fieldset>
+                                <legend>Editar Data de Nascimento</legend>
+                                <label for="input-nasc" class="label-form">
+                                    Nova Data de Nascimento
+                                    <input type="date" 
+                                           id="input-nasc" 
+                                           name="valor" 
+                                           value="<%= usuario.nasc %>" 
+                                           required>
+                                </label>
+                            </fieldset>
+                            <nav class="acoes-campo">
+                                <button type="submit" class="btn-salvar-campo">Salvar</button>
+                                <button type="button" class="btn-cancelar-campo" data-campo="nasc">Cancelar</button>
+                            </nav>
+                        </form>
                     </article>
 
                     <article class="campo-info">
-                        <h3 class="label-info">CPF</h3>
-                        <output class="valor-info"><%= usuario.cpf %></output>
+                        <header class="campo-header" 
+                                role="button" 
+                                tabindex="0" 
+                                aria-expanded="false"
+                                aria-controls="editar-cpf"
+                                data-campo="cpf">
+                            <section class="campo-info-principal">
+                                <h3 class="label-info">CPF</h3>
+                                <output class="valor-info" id="valor-cpf"><%= usuario.cpf %></output>
+                            </section>
+                            <output class="seta-expansao" aria-hidden="true">›</output>
+                        </header>
+                        <form method="POST" 
+                              action="/usuario/atualizar-campo" 
+                              class="form-edicao-campo" 
+                              id="editar-cpf"
+                              aria-hidden="true">
+                            <input type="hidden" name="campo" value="cpf">
+                            <fieldset>
+                                <legend>Editar CPF</legend>
+                                <label for="input-cpf" class="label-form">
+                                    Novo CPF
+                                    <input type="text" 
+                                           id="input-cpf" 
+                                           name="valor" 
+                                           value="<%= usuario.cpf %>" 
+                                           placeholder="Digite seu CPF"
+                                           maxlength="11"
+                                           required>
+                                </label>
+                            </fieldset>
+                            <nav class="acoes-campo">
+                                <button type="submit" class="btn-salvar-campo">Salvar</button>
+                                <button type="button" class="btn-cancelar-campo" data-campo="cpf">Cancelar</button>
+                            </nav>
+                        </form>
                     </article>
 
                     <article class="campo-info">
-                        <h3 class="label-info">E-mail</h3>
-                        <output class="valor-info"><%= usuario.email %></output>
+                        <header class="campo-header" 
+                                role="button" 
+                                tabindex="0" 
+                                aria-expanded="false"
+                                aria-controls="editar-tel"
+                                data-campo="tel">
+                            <section class="campo-info-principal">
+                                <h3 class="label-info">Telefone</h3>
+                                <output class="valor-info" id="valor-tel"><%= usuario.tel || 'Não cadastrado' %></output>
+                            </section>
+                            <output class="seta-expansao" aria-hidden="true">›</output>
+                        </header>
+                        <form method="POST" 
+                              action="/usuario/atualizar-campo" 
+                              class="form-edicao-campo" 
+                              id="editar-tel"
+                              aria-hidden="true">
+                            <input type="hidden" name="campo" value="tel">
+                            <fieldset>
+                                <legend>Editar Telefone</legend>
+                                <label for="input-tel" class="label-form">
+                                    Novo Telefone
+                                    <input type="tel" 
+                                           id="input-tel" 
+                                           name="valor" 
+                                           value="<%= usuario.tel || '' %>" 
+                                           placeholder="Digite seu telefone"
+                                           maxlength="9"
+                                           required>
+                                </label>
+                            </fieldset>
+                            <nav class="acoes-campo">
+                                <button type="submit" class="btn-salvar-campo">Salvar</button>
+                                <button type="button" class="btn-cancelar-campo" data-campo="tel">Cancelar</button>
+                            </nav>
+                        </form>
                     </article>
-                </article>
 
-                <article class="dados-editaveis">
-                    <h2 class="subtitulo">Dados Editáveis</h2>
-                    
-                    <form method="POST" action="/usuario/atualizar" class="form-edicao">
-                        <fieldset>
-                            <legend>
-                                <h3 class="label-form">Telefone</h3>
-                            </legend>
-                            <label for="tel">
-                                <input type="tel" 
-                                       id="tel" 
-                                       name="tel" 
-                                       value="<%= usuario.tel || '' %>" 
-                                       placeholder="Digite seu telefone"
-                                       maxlength="9"
-                                       required>
-                            </label>
-                        </fieldset>
-
-                        <fieldset>
-                            <legend>
-                                <h3 class="label-form">CEP</h3>
-                            </legend>
-                            <label for="cep">
-                                <input type="text" 
-                                       id="cep" 
-                                       name="cep" 
-                                       value="<%= usuario.cep || '' %>" 
-                                       placeholder="Digite seu CEP"
-                                       maxlength="8"
-                                       required>
-                            </label>
-                        </fieldset>
-
-                        <button type="submit" class="btn-salvar">Salvar Alterações</button>
-                    </form>
+                    <article class="campo-info">
+                        <section class="campo-info-principal" style="padding: 1rem 0;">
+                            <h3 class="label-info">E-mail</h3>
+                            <output class="valor-info"><%= usuario.email %></output>
+                        </section>
+                    </article>
                 </article>
 
                 <nav class="menu-usuario">
@@ -102,5 +218,79 @@
     <footer>
         <%- include('../partial/footer.ejs') %>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const camposHeaders = document.querySelectorAll('.campo-header');
+            
+            camposHeaders.forEach(function(header) {
+                header.addEventListener('click', function() {
+                    toggleCampo(this);
+                });
+                
+                header.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleCampo(this);
+                    }
+                });
+            });
+            
+            function toggleCampo(header) {
+                const campoNome = header.getAttribute('data-campo');
+                const formulario = document.getElementById('editar-' + campoNome);
+                const isExpanded = header.getAttribute('aria-expanded') === 'true';
+                
+                // Fecha todos os outros campos
+                camposHeaders.forEach(function(otherHeader) {
+                    if (otherHeader !== header) {
+                        const outroCampo = otherHeader.getAttribute('data-campo');
+                        const outroForm = document.getElementById('editar-' + outroCampo);
+                        
+                        otherHeader.setAttribute('aria-expanded', 'false');
+                        outroForm.classList.remove('expandido');
+                        outroForm.setAttribute('aria-hidden', 'true');
+                    }
+                });
+                
+                // Toggle do campo atual
+                if (isExpanded) {
+                    header.setAttribute('aria-expanded', 'false');
+                    formulario.classList.remove('expandido');
+                    formulario.setAttribute('aria-hidden', 'true');
+                } else {
+                    header.setAttribute('aria-expanded', 'true');
+                    formulario.classList.add('expandido');
+                    formulario.setAttribute('aria-hidden', 'false');
+                    
+                    // Foca no input
+                    const input = formulario.querySelector('input[type="text"], input[type="tel"], input[type="date"]');
+                    if (input) {
+                        setTimeout(function() {
+                            input.focus();
+                        }, 100);
+                    }
+                }
+            }
+            
+            // Botões de cancelar
+            const btnsCancelar = document.querySelectorAll('.btn-cancelar-campo');
+            
+            btnsCancelar.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const campoNome = this.getAttribute('data-campo');
+                    const header = document.querySelector('[data-campo="' + campoNome + '"].campo-header');
+                    const formulario = document.getElementById('editar-' + campoNome);
+                    
+                    header.setAttribute('aria-expanded', 'false');
+                    formulario.classList.remove('expandido');
+                    formulario.setAttribute('aria-hidden', 'true');
+                    
+                    // Reseta o formulário
+                    formulario.reset();
+                });
+            });
+        });
+    </script>
 </body>
 </html>

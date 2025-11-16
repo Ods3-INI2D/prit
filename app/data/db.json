@@ -263,25 +263,9 @@
       "imagem": "/imagens/produtos/produto-1761351491795-577365296.png",
       "id": 1761351491812,
       "avaliacoes": []
-    },
-    {
-      "produtoId": "1761812429966",
-      "usuarioEmail": "pedrinhorocha507@gmail.com",
-      "quantidade": 3,
-      "dataAdicionado": "2025-10-31T02:46:53.310Z"
     }
   ],
-  "usuarios": [
-    {
-      "nome": "João Pedro",
-      "nasc": "2009-01-21",
-      "cpf": "59142386845",
-      "tel": "972394962",
-      "email": "pedrinhorocha507@gmail.com",
-      "senhan": "Joaozinho007@",
-      "csenha": "Joaozinho007@"
-    }
-  ],
+  "usuarios": [],
   "banners": [
     {
       "id": 1,

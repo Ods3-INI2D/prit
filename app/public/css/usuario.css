@@ -39,7 +39,7 @@ main {
     word-wrap: break-word;
 }
 
-/*informacoes do usuario*/
+/* informacoes do usuario */
 .info-usuario {
     background-color: #2a2a2a;
     border-radius: 0.625rem;
@@ -56,15 +56,37 @@ main {
 }
 
 .campo-info {
-    margin-bottom: 1.25rem;
-    padding-bottom: 1.25rem;
+    margin-bottom: 0;
+    padding-bottom: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .campo-info:last-child {
     border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+}
+
+.campo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    cursor: pointer;
+    transition: none;
+    background-color: transparent;
+}
+
+.campo-header:hover {
+    background-color: transparent;
+}
+
+.campo-header:focus {
+    background-color: transparent;
+    outline: 2px solid #4da6ff;
+    outline-offset: -2px;
+}
+
+.campo-info-principal {
+    flex: 1;
 }
 
 .label-info {
@@ -81,33 +103,55 @@ main {
     color: white;
 }
 
-/*dados editaveis*/
-.dados-editaveis {
-    background-color: #2a2a2a;
-    border-radius: 0.75rem;
-    padding: 1.5rem 1.25rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+.seta-expansao {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: #4da6ff;
+    transition: transform 0.3s ease;
+    user-select: none;
 }
 
-.form-edicao {
-    width: 100%;
+.campo-header[aria-expanded="true"] .seta-expansao {
+    transform: rotate(90deg);
 }
 
-.label-form {
-    font-size: 0.9375rem;
+/* formulario de edicao dentro do campo */
+.form-edicao-campo {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0 1rem;
+}
+
+.form-edicao-campo.expandido {
+    max-height: 500px;
+    padding: 1rem;
+}
+
+.form-edicao-campo fieldset {
+    border: none;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+
+.form-edicao-campo legend {
+    display: none;
+}
+
+.form-edicao-campo .label-form {
+    font-size: 0.875rem;
     font-weight: 500;
-    margin-top: 0.75rem;
     margin-bottom: 0.5rem;
-    color: white;
+    color: #888;
     display: block;
 }
 
-input[type="tel"],
-input[type="text"] {
+.form-edicao-campo input[type="tel"],
+.form-edicao-campo input[type="text"],
+.form-edicao-campo input[type="date"] {
     width: 100%;
     padding: 0.875rem 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     border: 2px solid #555;
     border-radius: 0.5rem;
     background-color: #383838;
@@ -117,33 +161,78 @@ input[type="text"] {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-input[type="tel"]:focus,
-input[type="text"]:focus {
+.form-edicao-campo input[type="tel"]:focus,
+.form-edicao-campo input[type="text"]:focus,
+.form-edicao-campo input[type="date"]:focus {
     border-color: #4da6ff;
     outline: none;
     box-shadow: 0 0 0.5rem rgba(77, 166, 255, 0.4);
 }
 
-.btn-salvar {
-    width: 100%;
-    padding: 1rem 0;
+.acoes-campo {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.btn-salvar-campo {
+    flex: 1;
+    padding: 0.75rem 0;
     background-color: #163069;
     color: white;
     border: none;
-    border-radius: 0.625rem;
-    font-size: 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 0.75rem;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease;
 }
 
-.btn-salvar:hover {
+.btn-salvar-campo:hover {
     background-color: #0d1f42;
-    transform: translateY(-2px);
 }
 
-/*menu usuario*/
+.btn-cancelar-campo {
+    flex: 1;
+    padding: 0.75rem 0;
+    background-color: #555;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-cancelar-campo:hover {
+    background-color: #666;
+}
+
+/* mensagens */
+.mensagem-sucesso,
+.mensagem-erro {
+    padding: 1rem;
+    border-radius: 0.625rem;
+    margin-bottom: 1.25rem;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.9375rem;
+}
+
+.mensagem-sucesso {
+    background-color: rgba(77, 166, 255, 0.2);
+    border: 2px solid #4da6ff;
+    color: #4da6ff;
+}
+
+.mensagem-erro {
+    background-color: rgba(217, 48, 37, 0.2);
+    border: 2px solid #d93025;
+    color: #ff6b6b;
+}
+
+/* menu usuario */
 .menu-usuario {
     background-color: #2a2a2a;
     border-radius: 0.75rem;
@@ -188,7 +277,7 @@ input[type="text"]:focus {
     background-color: rgba(255, 85, 85, 0.1);
 }
 
-/*sem usuario*/
+/* sem usuario */
 .sem-usuario {
     text-align: center;
     padding: 3.5rem 0;
@@ -217,7 +306,7 @@ input[type="text"]:focus {
     transform: translateY(-2px);
 }
 
-/*responsividade para desktops*/
+/* responsividade para desktops */
 @media (min-width: 901px) {
     .titulo-perfil {
         font-size: 1.8rem;
@@ -225,7 +314,6 @@ input[type="text"]:focus {
     }
 
     .info-usuario,
-    .dados-editaveis,
     .menu-usuario {
         padding: 1.5rem;
     }
@@ -242,18 +330,20 @@ input[type="text"]:focus {
         font-size: 1.0625rem;
     }
 
-    .label-form {
+    .form-edicao-campo .label-form {
         font-size: 0.9375rem;
     }
 
-    input[type="tel"],
-    input[type="text"] {
+    .form-edicao-campo input[type="tel"],
+    .form-edicao-campo input[type="text"],
+    .form-edicao-campo input[type="date"] {
         padding: 0.875rem 1rem;
         font-size: 0.9375rem;
     }
 
-    .btn-salvar {
-        padding: 1rem 0;
+    .btn-salvar-campo,
+    .btn-cancelar-campo {
+        padding: 0.875rem 0;
         font-size: 1rem;
     }
 
@@ -268,6 +358,11 @@ input[type="text"]:focus {
 
     .btn-login {
         padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+
+    .mensagem-sucesso,
+    .mensagem-erro {
         font-size: 1rem;
     }
 }
