@@ -22,13 +22,13 @@
             <% if(typeof mensagemSucesso !== 'undefined' && mensagemSucesso) { %>
                 <output class="mensagem-sucesso" role="status" aria-live="polite">
                     <%= mensagemSucesso %>
-                </output>
+                </o>
             <% } %>
 
             <% if(typeof mensagemErro !== 'undefined' && mensagemErro) { %>
                 <output class="mensagem-erro" role="alert" aria-live="assertive">
                     <%= mensagemErro %>
-                </output>
+                </o>
             <% } %>
 
             <% if(usuario) { %>
@@ -44,9 +44,9 @@
                                 data-campo="nome">
                             <section class="campo-info-principal">
                                 <h3 class="label-info">Nome</h3>
-                                <output class="valor-info" id="valor-nome"><%= usuario.nome %></output>
+                                <output class="valor-info" id="valor-nome"><%= usuario.nome %></o>
                             </section>
-                            <output class="seta-expansao" aria-hidden="true">›</output>
+                            <output class="seta-expansao" aria-hidden="true">›</o>
                         </header>
                         <form method="POST" 
                               action="/usuario/atualizar-campo" 
@@ -84,9 +84,9 @@
                                 data-campo="nasc">
                             <section class="campo-info-principal">
                                 <h3 class="label-info">Data de Nascimento</h3>
-                                <output class="valor-info" id="valor-nasc"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></output>
+                                <output class="valor-info" id="valor-nasc"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></o>
                             </section>
-                            <output class="seta-expansao" aria-hidden="true">›</output>
+                            <output class="seta-expansao" aria-hidden="true">›</o>
                         </header>
                         <form method="POST" 
                               action="/usuario/atualizar-campo" 
@@ -121,9 +121,9 @@
                                 data-campo="cpf">
                             <section class="campo-info-principal">
                                 <h3 class="label-info">CPF</h3>
-                                <output class="valor-info" id="valor-cpf"><%= usuario.cpf %></output>
+                                <output class="valor-info" id="valor-cpf"><%= usuario.cpf %></o>
                             </section>
-                            <output class="seta-expansao" aria-hidden="true">›</output>
+                            <output class="seta-expansao" aria-hidden="true">›</o>
                         </header>
                         <form method="POST" 
                               action="/usuario/atualizar-campo" 
@@ -156,13 +156,52 @@
                                 role="button" 
                                 tabindex="0" 
                                 aria-expanded="false"
+                                aria-controls="editar-ddd"
+                                data-campo="ddd">
+                            <section class="campo-info-principal">
+                                <h3 class="label-info">DDD</h3>
+                                <output class="valor-info" id="valor-ddd"><%= usuario.ddd || 'Não cadastrado' %></o>
+                            </section>
+                            <output class="seta-expansao" aria-hidden="true">›</o>
+                        </header>
+                        <form method="POST" 
+                              action="/usuario/atualizar-campo" 
+                              class="form-edicao-campo" 
+                              id="editar-ddd"
+                              aria-hidden="true">
+                            <input type="hidden" name="campo" value="ddd">
+                            <fieldset>
+                                <legend>Editar DDD</legend>
+                                <label for="input-ddd" class="label-form">
+                                    Novo DDD
+                                    <input type="text" 
+                                           id="input-ddd" 
+                                           name="valor" 
+                                           value="<%= usuario.ddd || '' %>" 
+                                           placeholder="Digite seu DDD"
+                                           maxlength="2"
+                                           required>
+                                </label>
+                            </fieldset>
+                            <nav class="acoes-campo">
+                                <button type="submit" class="btn-salvar-campo">Salvar</button>
+                                <button type="button" class="btn-cancelar-campo" data-campo="ddd">Cancelar</button>
+                            </nav>
+                        </form>
+                    </article>
+
+                    <article class="campo-info">
+                        <header class="campo-header" 
+                                role="button" 
+                                tabindex="0" 
+                                aria-expanded="false"
                                 aria-controls="editar-tel"
                                 data-campo="tel">
                             <section class="campo-info-principal">
                                 <h3 class="label-info">Telefone</h3>
-                                <output class="valor-info" id="valor-tel"><%= usuario.tel || 'Não cadastrado' %></output>
+                                <output class="valor-info" id="valor-tel"><%= usuario.tel || 'Não cadastrado' %></o>
                             </section>
-                            <output class="seta-expansao" aria-hidden="true">›</output>
+                            <output class="seta-expansao" aria-hidden="true">›</o>
                         </header>
                         <form method="POST" 
                               action="/usuario/atualizar-campo" 
@@ -193,7 +232,7 @@
                     <article class="campo-info">
                         <section class="campo-info-principal" style="padding: 1rem 0;">
                             <h3 class="label-info">E-mail</h3>
-                            <output class="valor-info"><%= usuario.email %></output>
+                            <output class="valor-info"><%= usuario.email %></o>
                         </section>
                     </article>
                 </article>
@@ -208,7 +247,7 @@
 
             <% } else { %>
                 <article class="sem-usuario">
-                    <output class="mensagem-login">Você precisa estar logado para ver esta página.</output>
+                    <output class="mensagem-login">Você precisa estar logado para ver esta página.</o>
                     <a href="/login" class="btn-login">Fazer Login</a>
                 </article>
             <% } %>
@@ -241,7 +280,6 @@
                 const formulario = document.getElementById('editar-' + campoNome);
                 const isExpanded = header.getAttribute('aria-expanded') === 'true';
                 
-                // Fecha todos os outros campos
                 camposHeaders.forEach(function(otherHeader) {
                     if (otherHeader !== header) {
                         const outroCampo = otherHeader.getAttribute('data-campo');
@@ -253,7 +291,6 @@
                     }
                 });
                 
-                // Toggle do campo atual
                 if (isExpanded) {
                     header.setAttribute('aria-expanded', 'false');
                     formulario.classList.remove('expandido');
@@ -263,7 +300,6 @@
                     formulario.classList.add('expandido');
                     formulario.setAttribute('aria-hidden', 'false');
                     
-                    // Foca no input
                     const input = formulario.querySelector('input[type="text"], input[type="tel"], input[type="date"]');
                     if (input) {
                         setTimeout(function() {
@@ -273,7 +309,6 @@
                 }
             }
             
-            // Botões de cancelar
             const btnsCancelar = document.querySelectorAll('.btn-cancelar-campo');
             
             btnsCancelar.forEach(function(btn) {
@@ -286,7 +321,6 @@
                     formulario.classList.remove('expandido');
                     formulario.setAttribute('aria-hidden', 'true');
                     
-                    // Reseta o formulário
                     formulario.reset();
                 });
             });

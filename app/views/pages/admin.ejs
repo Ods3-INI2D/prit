@@ -228,7 +228,7 @@
                                             <figcaption class="usuario-info">Nome: <%= usuario.nome %></figcaption>
                                         </figure>
                                         <output class="usuario-info">CPF: <%= usuario.cpf %></output>
-                                        <output class="usuario-info">Telefone: <%= usuario.tel %></output>
+                                        <output class="usuario-info">Telefone: (<%= usuario.ddd || '00' %>) <%= usuario.tel %></output>
                                         <time class="usuario-info" datetime="<%= usuario.nasc %>">Nascimento: <%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></time>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do usuário <%= usuario.email %>">

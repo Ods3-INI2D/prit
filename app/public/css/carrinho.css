@@ -337,7 +337,7 @@ main {
 }
 
 
-/*  RESPONSIVIDADE PARA DESKTOPS (min-width: 901px) */
+/*  responsividade para desktops */
 
 @media (min-width: 901px) {
     .carrinho-layout {

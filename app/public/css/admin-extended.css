@@ -1,6 +1,3 @@
-/* extensao do css admin */
-
-
 /* tabs*/
 .tabs-container {
     width: 100%;
@@ -43,7 +40,7 @@
     display: block;
 }
 
-/* mensagem info - CORRIGIDO: adicionado position relative e z-index */
+/* mensagem info*/
 .mensagem-info {
     background-color: rgba(77, 166, 255, 0.1);
     border: 2px solid #4da6ff;

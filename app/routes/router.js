@@ -1,7 +1,7 @@
 var express = require('express');
 const { body, validationResult } = require('express-validator');
 var router = express.Router();
-var { valCPF, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
+var { valCPF, valDDD, valTel, valTelCompleto, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
 var db = require('../models/database');
 var multer = require('multer');
 var path = require('path');
@@ -14,14 +14,13 @@ const nodemailer = require('nodemailer');
 router.use(session({
     secret: 'chave-secreta-farmacia-super-segura-2024',
     resave: false,
-    saveUninitialized: true, // MUDANÇA: true para criar sessão mesmo sem login
+    saveUninitialized: true,
     cookie: { 
         secure: false,
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
 
-// Configuração do Multer para upload de imagens de produtos
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const uploadDir = path.join(__dirname, '../public/imagens/produtos');
@@ -93,7 +92,6 @@ const uploadBanner = multer({
 const ADMIN_EMAIL = 'maisaudeods3@gmail.com';
 const ADMIN_PASSWORD = '+SaudeINI2D';
 
-// MUDANÇA: Gerar ID único de sessão se não existir
 router.use(function(req, res, next) {
     if (!req.session.sessionId) {
         req.session.sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -147,7 +145,7 @@ router.get('/', function(req, res) {
 router.get('/cadastro', function(req, res) {
     res.render('pages/cadastro', { 
         erros: null, 
-        valores: {nome: "", nasc: "", cpf: "", tel: "", email: "", senhan: "", csenha: ""},
+        valores: {nome: "", nasc: "", cpf: "", ddd: "", tel: "", email: "", senhan: "", csenha: ""},
         listaErros: null
     });
 });
@@ -171,6 +169,15 @@ router.post("/cadastro",
                 return true;
             } else {
                 throw new Error('Data de Nascimento inválida! A idade deve ser no máximo 110 anos e não pode ser uma data futura.');
+            }
+        }),
+    body("ddd")
+        .isLength({ min: 2, max: 2 }).withMessage('O DDD deve conter 2 caracteres!')
+        .custom((value) => {
+            if (valDDD(value)) {
+                return true;
+            } else {
+                throw new Error('DDD inválido!');
             }
         }),
     body("tel")
@@ -243,7 +250,6 @@ router.post('/login',
         const usuario = db.findUsuario(req.body.email);
         
         if (usuario && req.body.senha === usuario.senhan) {
-            // MUDANÇA: Transferir carrinho da sessão anônima para o usuário
             const carrinhoAnonimo = db.getCarrinho(req.session.sessionId);
             if (carrinhoAnonimo && carrinhoAnonimo.length > 0) {
                 carrinhoAnonimo.forEach(function(item) {
@@ -288,7 +294,7 @@ router.get('/usuario', function(req, res) {
 router.post('/usuario/atualizar-campo', requireLogin, 
     body("campo")
         .notEmpty().withMessage('Campo é obrigatório!')
-        .isIn(['nome', 'nasc', 'cpf', 'tel']).withMessage('Campo inválido!'),
+        .isIn(['nome', 'nasc', 'cpf', 'ddd', 'tel']).withMessage('Campo inválido!'),
     body("valor")
         .notEmpty().withMessage('Valor é obrigatório!'),
     function(req, res) {
@@ -314,7 +320,6 @@ router.post('/usuario/atualizar-campo', requireLogin,
                 return res.redirect('/usuario?erro=' + encodeURIComponent('CPF inválido!'));
             }
             
-            // Verifica se o CPF já está em uso por outro usuário
             const usuarioExistente = db.getAllUsuarios().find(function(u) {
                 return u.cpf === valor && u.email !== req.session.usuarioEmail;
             });
@@ -327,6 +332,12 @@ router.post('/usuario/atualizar-campo', requireLogin,
         if (campo === 'nasc') {
             if (!valNasc(valor)) {
                 return res.redirect('/usuario?erro=' + encodeURIComponent('Data de nascimento inválida!'));
+            }
+        }
+        
+        if (campo === 'ddd') {
+            if (!valDDD(valor)) {
+                return res.redirect('/usuario?erro=' + encodeURIComponent('DDD inválido!'));
             }
         }
         
@@ -346,6 +357,7 @@ router.post('/usuario/atualizar-campo', requireLogin,
             'nome': 'Nome',
             'nasc': 'Data de nascimento',
             'cpf': 'CPF',
+            'ddd': 'DDD',
             'tel': 'Telefone'
         };
         
@@ -614,7 +626,6 @@ router.get('/produto/:id', function(req, res) {
     const usuarioLogado = req.session.usuarioEmail ? true : false;
     const isAdmin = req.session.isAdmin || false;
     
-    // MUDANÇA: Verificar carrinho por email OU sessionId
     const identificador = usuarioLogado && !isAdmin ? req.session.usuarioEmail : req.session.sessionId;
     const temProdutoNoCarrinho = db.usuarioTemProdutoNoCarrinho(req.params.id, identificador);
     
@@ -627,7 +638,6 @@ router.get('/produto/:id', function(req, res) {
     });
 });
 
-// MUDANÇA: Adicionar ao carrinho SEM exigir login (mas bloqueia admin)
 router.post('/produto/:id/adicionar-carrinho', blockAdmin, function(req, res) {
     const produto = db.getProdutoById(req.params.id);
     
@@ -635,22 +645,18 @@ router.post('/produto/:id/adicionar-carrinho', blockAdmin, function(req, res) {
         return res.redirect('/produto/' + req.params.id + '?erro=fora_de_estoque');
     }
     
-    // MUDANÇA: Usar email se logado, sessionId se não logado
     const identificador = req.session.usuarioEmail || req.session.sessionId;
     db.addToCarrinho(req.params.id, identificador);
     res.redirect('/carrinho');
 });
 
-// MUDANÇA: Ver carrinho NÃO exige login (mas bloqueia admin)
 router.get('/carrinho', blockAdmin, function(req, res) {
-    // MUDANÇA: Usar email se logado, sessionId se não logado
     const identificador = req.session.usuarioEmail || req.session.sessionId;
     const carrinho = db.getCarrinho(identificador);
     const usuarioLogado = req.session.usuarioEmail ? true : false;
     res.render('pages/carrinho', { carrinho: carrinho, usuarioLogado: usuarioLogado });
 });
 
-// MUDANÇA: Atualizar quantidade NÃO exige login (mas bloqueia admin)
 router.post('/carrinho/atualizar/:id', blockAdmin, function(req, res) {
     const novaQuantidade = parseInt(req.body.quantidade);
     const identificador = req.session.usuarioEmail || req.session.sessionId;
@@ -658,7 +664,6 @@ router.post('/carrinho/atualizar/:id', blockAdmin, function(req, res) {
     res.redirect('/carrinho');
 });
 
-// MUDANÇA: Remover do carrinho NÃO exige login (mas bloqueia admin)
 router.post('/carrinho/remover/:id', blockAdmin, function(req, res) {
     const identificador = req.session.usuarioEmail || req.session.sessionId;
     db.removeFromCarrinho(req.params.id, identificador);
@@ -891,22 +896,22 @@ router.post('/atendimento',
                             <h3 style="color: #333; margin-top: 0;">E-mail do Cliente</h3>
                             <output style="color: #555; display: block;">
                                 <a href="mailto:${req.body.email}" style="color: #4da6ff; text-decoration: none;">${req.body.email}</a>
-                            </o>
+                            </output>
                         </article>
                         
                         <article style="background-color: white; padding: 15px; margin: 15px 0; border-radius: 5px;">
                             <h3 style="color: #333; margin-top: 0;">Mensagem</h3>
-                            <output style="color: #555; display: block; white-space: pre-wrap;">${req.body.mensagem.replace(/\n/g, '<br>')}</o>
+                            <output style="color: #555; display: block; white-space: pre-wrap;">${req.body.mensagem.replace(/\n/g, '<br>')}</output>
                         </article>
                         
                         <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
                         <footer style="text-align: center; padding: 10px;">
                             <output style="color: #888; font-size: 12px; display: block;">
                                 <em>E-mail enviado automaticamente pelo sistema de atendimento +Saúde</em>
-                            </o>
+                            </output>
                             <output style="color: #888; font-size: 12px; display: block; margin-top: 5px;">
                                 <em>Para responder, utilize o e-mail: ${req.body.email}</em>
-                            </o>
+                            </output>
                         </footer>
                     </section>
                 `,

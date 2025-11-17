@@ -216,7 +216,6 @@ function deleteAvaliacao(produtoId, avaliacaoIndex) {
     return true;
 }
 
-// MUDANÇA: addToCarrinho agora aceita quantidade opcional
 function addToCarrinho(produtoId, identificador, quantidadeAdicional = 1) {
     const db = readDatabase();
     const produto = db.produtos.find(p => p.id == produtoId);
@@ -229,7 +228,6 @@ function addToCarrinho(produtoId, identificador, quantidadeAdicional = 1) {
         return false;
     }
     
-    // MUDANÇA: identificador pode ser email OU sessionId
     const itemExistente = db.carrinho.find(item => 
         item.produtoId == produtoId && item.usuarioEmail === identificador
     );
@@ -239,7 +237,7 @@ function addToCarrinho(produtoId, identificador, quantidadeAdicional = 1) {
     } else {
         db.carrinho.push({
             produtoId: produtoId.toString(),
-            usuarioEmail: identificador, // agora pode ser email ou sessionId
+            usuarioEmail: identificador,
             quantidade: quantidadeAdicional,
             dataAdicionado: new Date()
         });
@@ -249,7 +247,6 @@ function addToCarrinho(produtoId, identificador, quantidadeAdicional = 1) {
     return true;
 }
 
-// MUDANÇA: getCarrinho agora aceita email OU sessionId
 function getCarrinho(identificador) {
     const db = readDatabase();
     
@@ -275,7 +272,6 @@ function getCarrinho(identificador) {
     }).filter(item => item !== null);
 }
 
-// MUDANÇA: updateQuantidadeCarrinho agora aceita email OU sessionId
 function updateQuantidadeCarrinho(produtoId, identificador, novaQuantidade) {
     const db = readDatabase();
     
@@ -297,7 +293,6 @@ function updateQuantidadeCarrinho(produtoId, identificador, novaQuantidade) {
     return false;
 }
 
-// MUDANÇA: removeFromCarrinho agora aceita email OU sessionId
 function removeFromCarrinho(produtoId, identificador) {
     const db = readDatabase();
     
@@ -309,7 +304,6 @@ function removeFromCarrinho(produtoId, identificador) {
     return true;
 }
 
-// MUDANÇA: usuarioTemProdutoNoCarrinho agora aceita email OU sessionId
 function usuarioTemProdutoNoCarrinho(produtoId, identificador) {
     const db = readDatabase();
     return db.carrinho.some(item => 
@@ -323,7 +317,6 @@ function clearCarrinho() {
     writeDatabase(db);
 }
 
-// NOVA FUNÇÃO: Limpar carrinho por sessionId específico
 function clearCarrinhoBySession(sessionId) {
     const db = readDatabase();
     db.carrinho = db.carrinho.filter(item => item.usuarioEmail !== sessionId);

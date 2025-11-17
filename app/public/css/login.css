@@ -80,10 +80,10 @@ form {
     max-width: 100%;
     margin: 20px auto;
     padding: 25px 20px;
-    background-color: transparent; /* removendo fundo cinza */
+    background-color: transparent;
     border-radius: 10px;
-    box-shadow: none; /* removendo sombra */
-    border: 2px solid #555; /* borda suave pra manter o design */
+    box-shadow: none; 
+    border: 2px solid #555; 
 }
 
 

@@ -14,8 +14,8 @@
 </head>
 <body>
     <%
-    var cssErro = {nome: "", nasc: "", cpf: "", tel: "", email: "", senhan: "", csenha: ""} 
-    var msgErro = {nome: "", nasc: "", cpf: "", tel: "", email: "", senhan: "", csenha: ""}
+    var cssErro = {nome: "", nasc: "", cpf: "", ddd: "", tel: "", email: "", senhan: "", csenha: ""} 
+    var msgErro = {nome: "", nasc: "", cpf: "", ddd: "", tel: "", email: "", senhan: "", csenha: ""}
     if(erros) { 
         listaErros.errors.forEach(function(itemErro){
             if (itemErro.path == "nome"){ 
@@ -29,6 +29,10 @@
             if (itemErro.path == "cpf"){
                 cssErro.cpf = "erro";
                 msgErro.cpf = itemErro.msg;         
+            }
+            if (itemErro.path == "ddd"){
+                cssErro.ddd = "erro";
+                msgErro.ddd = itemErro.msg;         
             }
             if (itemErro.path == "tel"){
                 cssErro.tel = "erro";
@@ -96,16 +100,30 @@
                     <% } %>
                 </fieldset>
 
-                <fieldset>
-                    <legend>
-                        <h2>Telefone</h2>
-                    </legend>
-                    <label for="tel">
-                        <input type="tel" placeholder="Seu Telefone" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>" maxlength="9" required>
-                    </label>
-                    <% if(msgErro.tel) { %>
-                        <output class="erro" aria-live="polite"><%= msgErro.tel %></output>
-                    <% } %>
+                <fieldset style="display: flex; gap: 0.5rem;">
+                    <section style="flex: 0 0 30%;">
+                        <legend>
+                            <h2>DDD</h2>
+                        </legend>
+                        <label for="ddd">
+                            <input type="text" placeholder="DDD" name="ddd" id="ddd" value="<%= valores.ddd %>" class="<%= cssErro.ddd %>" maxlength="2" required>
+                        </label>
+                        <% if(msgErro.ddd) { %>
+                            <output class="erro" aria-live="polite"><%= msgErro.ddd %></output>
+                        <% } %>
+                    </section>
+
+                    <section style="flex: 1;">
+                        <legend>
+                            <h2>Telefone</h2>
+                        </legend>
+                        <label for="tel">
+                            <input type="tel" placeholder="Seu Telefone" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>" maxlength="9" required>
+                        </label>
+                        <% if(msgErro.tel) { %>
+                            <output class="erro" aria-live="polite"><%= msgErro.tel %></output>
+                        <% } %>
+                    </section>
                 </fieldset>
 
                 <fieldset>

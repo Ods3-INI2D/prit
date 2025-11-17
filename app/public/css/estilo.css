@@ -1,4 +1,3 @@
-/* --- Estilos Gerais de Estrutura e Cores (Mobile First) --- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 * {
@@ -17,7 +16,6 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-/* --- Estilos de Interação (Foco) - Mobile First --- */
 input[type="text"]:focus,
 input[type="number"]:focus,
 input[type="date"]:focus,
@@ -32,7 +30,6 @@ select:focus
   box-shadow: 0 0 0.35rem rgba(77, 166, 255, 0.35); 
 }
 
-/* --- Estilos de Mensagens Específicas (Mobile First) --- */
 .erro {
   font-size: 0.775rem;
   color: #d93025; 
@@ -41,9 +38,7 @@ select:focus
   text-align: left;
 }
 
-/* --- RESPONSIVIDADE PARA DESKTOPS --- */
 @media (min-width: 901px) {
-    /* aumenta tamanho da fonte base para melhor legibilidade */
     :root {
         font-size: 18px;
     }
@@ -55,7 +50,6 @@ select:focus
         margin-bottom: 0.5rem;
     }
 
-    /* melhora espaçamento dos inputs em foco */
     input[type="text"]:focus,
     input[type="number"]:focus,
     input[type="date"]:focus,

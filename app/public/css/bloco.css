@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-/*  Estilos do Componente Card Genérico (Produto em Bloco)  */
 .produto-card-bloco {
     background-color: #2a2a2a;
     font-family: 'Inter', sans-serif;

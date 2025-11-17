@@ -1,5 +1,3 @@
-/* Sistema de Temas - Claro e Escuro */
-
 :root {
     --bg-primary: #1f1f1f;
     --bg-secondary: #2a2a2a;
@@ -38,7 +36,7 @@
     --info-border: #4da6ff;
     --info-text: #4da6ff;
     
-    /* Imagens por tema - TEMA ESCURO */
+    /* Imagens tema escuro */
     --img-carrinho: url('/imagens/carrinho-branco.png');
     --img-lupa: url('/imagens/lupa-branca.png');
     --img-user: url('/imagens/user-branco.png');
@@ -86,7 +84,7 @@
     --info-border: #1a73e8;
     --info-text: #1557b0;
     
-    /* Imagens por tema - TEMA CLARO */
+    /* Imagens tema claro */
     --img-carrinho: url('/imagens/carrinho-branco.png');
     --img-lupa: url('/imagens/lupa-branca.png');
     --img-user: url('/imagens/user-branco.png');
@@ -96,7 +94,6 @@
     --img-estrela-vazia: url('/imagens/estrela-preta-vazia.png');
 }
 
-/* Aplicar imagens dinâmicas aos ícones */
 .cart {
     content: var(--img-carrinho);
 }
@@ -109,18 +106,16 @@
     content: var(--img-user);
 }
 
-/* Ícone de usuário específico do menu hambúrguer */
 .opcoes .user {
     content: var(--img-user-menu);
 }
 
-/* Logo principal */
 .logo,
 .icon {
     content: var(--img-logo);
 }
 
-/* Estrelas nas avaliações e cards de produtos */
+/* estrelas */
 .estrela-home[src*="estr.png"],
 .estrela[src*="estr.png"],
 .estrela-pequena[src*="estr.png"] {
@@ -151,7 +146,7 @@ header {
     background-color: var(--bg-header);
 }
 
-/* HAMBURGER - Linhas mudam de cor com o tema */
+/* linhas hamburger */
 .hamburger hr {
     background-color: var(--text-primary);
 }
@@ -323,7 +318,7 @@ header {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Formulários de Login e Cadastro */
+/* login e cadastro */
 .login-module form {
     background-color: var(--bg-secondary);
     color: var(--text-primary);
@@ -337,7 +332,6 @@ header {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Fieldsets e Legends em Formulários */
 fieldset {
     border-color: transparent;
 }
@@ -351,7 +345,7 @@ fieldset legend h3 {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Página de Produto */
+/* pagina de produto */
 .produto-detalhes {
     color: var(--text-primary);
 }
@@ -377,7 +371,6 @@ fieldset legend h3 {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Inputs de Formulários */
 input[type="text"],
 input[type="number"],
 input[type="date"],
@@ -412,7 +405,6 @@ select:focus {
     border-color: var(--border-focus);
 }
 
-/* CORREÇÃO: Labels e Legends */
 .label-form,
 .label-info,
 .label-avaliacao,
@@ -425,7 +417,6 @@ legend {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Informações e Descrições */
 .info-campo,
 .info-arquivo,
 .descricao-frete,
@@ -440,7 +431,6 @@ legend {
     color: var(--text-tertiary);
 }
 
-/* CORREÇÃO: Elementos sem cor */
 .sem-avaliacoes,
 .mensagem-vazio,
 .sem-produtos {
@@ -451,7 +441,7 @@ legend {
     color: var(--error-text);
 }
 
-/* CORREÇÃO: Títulos */
+/* titulos */
 h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
 }
@@ -475,13 +465,12 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Elementos com cor de destaque que devem manter a cor original */
 .usuario-email,
 .nome-descricao {
     color: var(--accent-primary);
 }
 
-/* CORREÇÃO: Links */
+/* links */
 .link,
 .link-ver-mais,
 .conta,
@@ -502,7 +491,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--accent-hover);
 }
 
-/* CORREÇÃO: Botões Primários */
+/* botões */
 #btn,
 #btn-login,
 .btn-finalizar {
@@ -516,7 +505,6 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--btn-primary-hover);
 }
 
-/* CORREÇÃO: Botões Secundários */
 .btn-adicionar,
 .btn-comprar,
 .btn-enviar,
@@ -547,7 +535,6 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--btn-secondary-hover);
 }
 
-/* CORREÇÃO: Botões de Ação */
 .btn-editar {
     background-color: var(--accent-primary);
     color: var(--bg-primary);
@@ -577,7 +564,7 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--btn-secondary-hover);
 }
 
-/* CORREÇÃO: Mensagens */
+/* mensagens */
 .mensagem-sucesso {
     background-color: var(--success-bg);
     border-color: var(--success-border);
@@ -610,7 +597,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--info-text);
 }
 
-/* CORREÇÃO: Preços */
+/* preços */
 .preco-produto,
 .preco-desconto,
 .precof,
@@ -627,7 +614,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-muted);
 }
 
-/* CORREÇÃO: Outros elementos */
+/* outros */
 .quantidade-atual {
     color: var(--text-primary);
 }
@@ -710,7 +697,6 @@ footer {
     background-color: white;
 }
 
-/* CORREÇÃO ESPECÍFICA: Formulários de Login/Cadastro */
 .txt {
     color: var(--text-primary);
 }
@@ -728,19 +714,16 @@ footer {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Texto de navegação */
 .signup-prompt,
 .signup-prompt p {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Info contato */
 .info-contato {
     background-color: var(--info-bg);
     border-color: var(--info-border);
 }
 
-/* CORREÇÃO: Campo senha com botão */
 .campo-senha {
     position: relative;
 }
@@ -755,13 +738,11 @@ footer {
     border: none;
 }
 
-/* CORREÇÃO: Select options no tema claro */
 [data-theme="light"] select option {
     background-color: var(--bg-input);
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Campos de formulário desabilitados */
 input:disabled,
 textarea:disabled,
 select:disabled {
@@ -769,12 +750,10 @@ select:disabled {
     cursor: not-allowed;
 }
 
-/* CORREÇÃO ESPECÍFICA: Outputs no tema claro */
 output {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Links dentro de outputs */
 output a {
     color: var(--accent-primary);
 }
@@ -783,17 +762,14 @@ output a:hover {
     color: var(--accent-hover);
 }
 
-/* CORREÇÃO: Mensagens de login/navegação */
 .mensagem-login {
     color: var(--text-muted);
 }
 
-/* CORREÇÃO: Sem usuário */
 .sem-usuario {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Opcao menu */
 .opcao-menu {
     color: var(--text-primary);
 }
@@ -806,21 +782,18 @@ output a:hover {
     background-color: var(--border-light);
 }
 
-/* CORREÇÃO: Valor info */
 .valor-info {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Categorias grupo */
 .categorias-grupo {
     color: var(--text-primary);
 }
 
-/* CORREÇÃO: Lista opcoes */
 .lista-opcoes {
     color: var(--text-primary);
 }
-/* Correção inputs e textarea no tema claro */
+
 [data-theme="light"] input,
 [data-theme="light"] textarea,
 [data-theme="light"] select {

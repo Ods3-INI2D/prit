@@ -1,5 +1,3 @@
-// funcoes de validacao pro node.js (lado do servidor)
-
 /**
  * tira os caracteres de formatacao tipo ponto e hifen do cpf/telefone
  * @param {string} str - o texto que vai limpar
@@ -11,7 +9,7 @@ function cleanDigits(str) {
 }
 
 /**
- * calcula o digito verificador do cpf aquele algoritmo chatao
+ * calcula o digito verificador do cpf
  * @param {string} cpfBase - os 9 primeiros digitos (pro 1 digito) ou 10 (pro 2 digito)
  * @returns {number} - o digito verificador calculado
  */
@@ -28,9 +26,9 @@ function calculateVerifierDigit(cpfBase) {
 }
 
 /**
- * validacao de cpf com algoritmo completo
+ * validacao de cpf
  * @param {string} cpf - cpf pra validar
- * @returns {boolean} - true se ta valido, false se ta errado
+ * @returns {boolean} - true se valido, false se errado
  */
 function valCPF(cpf) {
     const cleanedCpf = cleanDigits(cpf);
@@ -58,14 +56,14 @@ function valCPF(cpf) {
 /**
  * validacao de data de nascimento (max 110 anos e nao pode ser futura)
  * @param {string} dataNascimentoStr - data no formato iso 8601 (aaaa-mm-dd)
- * @returns {boolean} - true se ta valida, false se ta errada
+ * @returns {boolean} - true se valida, false se errada
  */
 function valNasc(dataNascimentoStr) {
     if (!dataNascimentoStr) return false;
 
     const dataNascimento = new Date(dataNascimentoStr);
     
-    // ve se a data eh invalida
+    // verificacao de data
     if (isNaN(dataNascimento.getTime())) {
         return false;
     }
@@ -74,7 +72,7 @@ function valNasc(dataNascimentoStr) {
     const dataLimite = new Date();
     dataLimite.setFullYear(hoje.getFullYear() - 110);
     
-    // zera as horas pra comparar so a data msm
+    // zera as horas pra comparar a data
     dataNascimento.setHours(0, 0, 0, 0);
     hoje.setHours(0, 0, 0, 0);
     dataLimite.setHours(0, 0, 0, 0);
@@ -88,15 +86,62 @@ function valNasc(dataNascimentoStr) {
 }
 
 /**
- * validacao de telefone (9 digitos)
- * @param {string} tel - telefone pra validar
+ * validacao de DDD (2 digitos validos)
+ * @param {string} ddd - ddd pra validar
  * @returns {boolean} - true se ta valido, false se ta errado
+ */
+function valDDD(ddd) {
+    const cleanedDDD = cleanDigits(ddd);
+    
+    // DDD deve ter exatamente 2 digitos
+    if (cleanedDDD.length !== 2) {
+        return false;
+    }
+    
+    // Lista de DDDs validos no Brasil
+    const dddsValidos = [
+        '11', '12', '13', '14', '15', '16', '17', '18', '19', // SP
+        '21', '22', '24', // RJ
+        '27', '28', // ES
+        '31', '32', '33', '34', '35', '37', '38', // MG
+        '41', '42', '43', '44', '45', '46', // PR
+        '47', '48', '49', // SC
+        '51', '53', '54', '55', // RS
+        '61', // DF
+        '62', '64', // GO
+        '63', // TO
+        '65', '66', // MT
+        '67', // MS
+        '68', // AC
+        '69', // RO
+        '71', '73', '74', '75', '77', // BA
+        '79', // SE
+        '81', '87', // PE
+        '82', // AL
+        '83', // PB
+        '84', // RN
+        '85', '88', // CE
+        '86', '89', // PI
+        '91', '93', '94', // PA
+        '92', '97', // AM
+        '95', // RR
+        '96', // AP
+        '98', '99' // MA
+    ];
+    
+    return dddsValidos.includes(cleanedDDD);
+}
+
+/**
+ * validacao de telefone (9 digitos) - SEM O DDD
+ * @param {string} tel - telefone pra validar
+ * @returns {boolean} - true se valido, false se errado
  */
 function valTel(tel) {
     const cleanedTel = cleanDigits(tel);
     const length = cleanedTel.length;
 
-    // ve se tem 9 digitos (celular)
+    // ve se tem 9 digitos
     if (length !== 9) {
         return false;
     }
@@ -110,19 +155,29 @@ function valTel(tel) {
 }
 
 /**
+ * validacao de telefone completo com DDD (11 digitos)
+ * @param {string} ddd - ddd de 2 digitos
+ * @param {string} tel - telefone de 9 digitos
+ * @returns {boolean} - true se valido, false se errado
+ */
+function valTelCompleto(ddd, tel) {
+    return valDDD(ddd) && valTel(tel);
+}
+
+/**
  * validacao de senha (6 a 20 caracteres, com maiuscula, numero e caractere especial)
  * @param {string} senhan - senha pra validar
- * @returns {boolean} - true se ta valida, false se ta errada
+ * @returns {boolean} - true se valida false se errada
  */
 function valSenha(senhan) {
     if (typeof senhan !== 'string' || senhan === '') return false;
 
-    // tamanho: 6 a 20 caracteres
+    // 6 a 20 caracteres
     if (senhan.length < 6 || senhan.length > 20) {
         return false;
     }
 
-    // complexidade: pelo menos um numero, uma letra maiuscula e um caractere especial
+    // pelo menos um numero, uma letra maiuscula e um caractere especial
     const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,20}$/; 
     
     if (!regex.test(senhan)) {
@@ -143,10 +198,11 @@ function valCsenha(csenha, senhan) {
     return csenha === senhan;
 }
 
-// exportacao das funcoes pro node.js
 module.exports = { 
     valCPF, 
+    valDDD,
     valTel, 
+    valTelCompleto,
     valSenha, 
     valCsenha, 
     valNasc
