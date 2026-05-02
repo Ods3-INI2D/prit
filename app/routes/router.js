@@ -9,10 +9,10 @@ var nodemailer = require('nodemailer');
 require('dotenv').config();
 
 // ── Models MySQL ──────────────────────────────────────────────────────────────
-const { usuariosModel  } = require('../models/usuariosModel');
-const { produtosModel  } = require('../models/produtosModel');
-const { carrinhoModel  } = require('../models/carrinhoModel');
-const { bannersModel   } = require('../models/bannersModel');
+const { usuariosModel  } = require('../models/usuariosmodel');
+const { produtosModel  } = require('../models/produtosmodel');
+const { carrinhoModel  } = require('../models/carrinhomodel');
+const { bannersModel   } = require('../models/bannersmodel');
 
 // ── Validações ────────────────────────────────────────────────────────────────
 var { valCPF, valDDD, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
