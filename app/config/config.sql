@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS `mais_saude`;
+CREATE DATABASE IF NOT EXISTS `buue1yllxo67imoeiw0b`;
 
-USE `mais_saude`;
+USE `buue1yllxo67imoeiw0b`;
 
 
 CREATE TABLE IF NOT EXISTS `usuarios` (
