@@ -1,9 +1,9 @@
-CREATE DATABASE`mais_saude`;
+CREATE DATABASE IF NOT EXISTS `mais_saude`;
 
 USE `mais_saude`;
 
 
-CREATE TABLE `usuarios` (
+CREATE TABLE IF NOT EXISTS `usuarios` (
     `id_usuario`  INT           NOT NULL AUTO_INCREMENT,
     `nome`        VARCHAR(50)   NOT NULL,
     `nasc`        DATE          NOT NULL,
@@ -17,14 +17,14 @@ CREATE TABLE `usuarios` (
 );
 
 
-CREATE TABLE `categorias` (
+CREATE TABLE IF NOT EXISTS `categorias` (
     `id_categoria`  INT          NOT NULL AUTO_INCREMENT,
     `nome`          VARCHAR(60)  NOT NULL UNIQUE,
     PRIMARY KEY (`id_categoria`)
 );
 
 
-CREATE TABLE `produtos` (
+CREATE TABLE IF NOT EXISTS `produtos` (
     `id_produto`     BIGINT         NOT NULL AUTO_INCREMENT,
     `nome`           VARCHAR(150)   NOT NULL,
     `descricao`      TEXT,
@@ -40,7 +40,7 @@ CREATE TABLE `produtos` (
 );
 
 
-CREATE TABLE `avaliacoes` (
+CREATE TABLE IF NOT EXISTS `avaliacoes` (
     `id_avaliacao`  INT   NOT NULL AUTO_INCREMENT,
     `id_produto`    BIGINT NOT NULL,
     `id_usuario`    INT   NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE `avaliacoes` (
 );
 
 
-CREATE TABLE `pedidos` (
+CREATE TABLE IF NOT EXISTS `pedidos` (
     `id_pedido`    INT            NOT NULL AUTO_INCREMENT,
     `id_usuario`   INT            NOT NULL,
     `data_pedido`  DATE           NOT NULL DEFAULT (CURDATE()),
@@ -69,7 +69,7 @@ CREATE TABLE `pedidos` (
 );
 
 
-CREATE TABLE `itens_pedido` (
+CREATE TABLE IF NOT EXISTS `itens_pedido` (
     `id_item`      INT            NOT NULL AUTO_INCREMENT,
     `id_pedido`    INT            NOT NULL,
     `id_produto`   BIGINT         NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE `itens_pedido` (
 );
 
 
-CREATE TABLE `carrinho` (
+CREATE TABLE IF NOT EXISTS `carrinho` (
     `id_carrinho`  INT     NOT NULL AUTO_INCREMENT,
     `id_usuario`   INT     DEFAULT NULL COMMENT 'NULL = sessão anônima',
     `session_id`   VARCHAR(100) DEFAULT NULL,
@@ -98,7 +98,7 @@ CREATE TABLE `carrinho` (
 );
 
 
-CREATE TABLE `pagamentos` (
+CREATE TABLE IF NOT EXISTS `pagamentos` (
     `id_pagamento` INT            NOT NULL AUTO_INCREMENT,
     `id_pedido`    INT            NOT NULL,
     `forma`        VARCHAR(50),
@@ -110,7 +110,7 @@ CREATE TABLE `pagamentos` (
 );
 
 
-CREATE TABLE `entregas` (
+CREATE TABLE IF NOT EXISTS `entregas` (
     `id_entrega`       INT          NOT NULL AUTO_INCREMENT,
     `id_pagamento`     INT          NOT NULL,
     `codigo_rastreio`  VARCHAR(50),
@@ -122,7 +122,7 @@ CREATE TABLE `entregas` (
 );
 
 
-CREATE TABLE `banners` (
+CREATE TABLE IF NOT EXISTS `banners` (
     `id_banner`  INT          NOT NULL AUTO_INCREMENT,
     `imagem`     VARCHAR(255) NOT NULL,
     `legenda`    VARCHAR(150) NOT NULL DEFAULT '',
