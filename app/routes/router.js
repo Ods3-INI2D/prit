@@ -69,7 +69,7 @@ const uploadBanner = multer({
 });
 
 // ── Constantes admin ──────────────────────────────────────────────────────────
-const ADMIN_EMAIL    = 'maisaudeods3@gmail.com';
+const ADMIN_EMAIL    = process.env.EMAIL_USER || 'maisaudeods3@gmail.com';
 const ADMIN_PASSWORD = '+SaudeINI2D';
 
 // ── Middleware global — session_id anônimo ────────────────────────────────────
@@ -125,6 +125,13 @@ function getIdentificador(req) {
         id_usuario: req.session.idUsuario || null,
         session_id: req.session.sessionId
     };
+}
+
+// Garante array de ids de categoria a partir do body
+function parseCategorias(body) {
+    let cats = body.categorias || body.id_categorias || [];
+    if (!Array.isArray(cats)) cats = [cats];
+    return cats.map(Number).filter(n => n > 0);
 }
 
 // =============================================================================
@@ -192,7 +199,6 @@ router.post('/login',
             return res.render('pages/login', { erro: 'E-mail ou senha inválidos!', redirect: '/home' });
         }
 
-        // Admin
         if (req.body.email === ADMIN_EMAIL && req.body.senha === ADMIN_PASSWORD) {
             req.session.usuarioEmail = ADMIN_EMAIL;
             req.session.isAdmin      = true;
@@ -201,13 +207,10 @@ router.post('/login',
 
         const usuario = await usuariosModel.findByEmail(req.body.email);
         if (usuario && req.body.senha === usuario.senhan) {
-            // Migra carrinho anônimo
             await carrinhoModel.migrarParaUsuario(req.session.sessionId, usuario.id_usuario);
-
             req.session.usuarioEmail = usuario.email;
             req.session.idUsuario    = usuario.id_usuario;
             req.session.isAdmin      = false;
-
             const redirectUrl = req.body.redirect || '/home';
             return res.redirect(redirectUrl);
         }
@@ -218,18 +221,18 @@ router.post('/login',
 
 // ── Home ──────────────────────────────────────────────────────────────────────
 router.get('/home', async (req, res) => {
-    const produtos = await produtosModel.findAll();
-    const banners  = await bannersModel.findAll();
+    const produtos    = await produtosModel.findAll();
+    const banners     = await bannersModel.findAll();
+    const categorias  = await produtosModel.findAllCategorias();
 
-    // Normaliza estrutura para compatibilidade com as views existentes
     const produtosNormalizados = produtos.map(p => ({
         ...p,
         id:            p.id_produto,
         precoDesconto: p.preco_desconto,
-        avaliacoes:    []                  // avaliações carregadas só na página do produto
+        avaliacoes:    []
     }));
 
-    res.render('pages/home', { produtos: produtosNormalizados, banners });
+    res.render('pages/home', { produtos: produtosNormalizados, banners, categorias });
 });
 
 // ── Usuário ───────────────────────────────────────────────────────────────────
@@ -273,17 +276,17 @@ router.post('/usuario/atualizar-campo', requireLogin,
         }
 
         await usuariosModel.updateCampo(req.session.usuarioEmail, campo, valor);
-
         const labels = { nome: 'Nome', nasc: 'Data de nascimento', cpf: 'CPF', ddd: 'DDD', tel: 'Telefone' };
         res.redirect('/usuario?sucesso=' + encodeURIComponent(labels[campo] + ' atualizado com sucesso!'));
     }
 );
 
-// ── Admin ─────────────────────────────────────────────────────────────────────
+// ── Admin — Painel ────────────────────────────────────────────────────────────
 router.get('/admin', requireAdmin, async (req, res) => {
-    const produtos  = await produtosModel.findAll();
-    const usuarios  = await usuariosModel.findAll();
-    const banners   = await bannersModel.findAll();
+    const produtos   = await produtosModel.findAll();
+    const usuarios   = await usuariosModel.findAll();
+    const banners    = await bannersModel.findAll();
+    const categorias = await produtosModel.findAllCategorias();
 
     const produtosNorm = produtos.map(p => ({
         ...p,
@@ -296,30 +299,40 @@ router.get('/admin', requireAdmin, async (req, res) => {
         totalProdutos: produtosNorm.length,
         usuarios,
         banners,
+        categorias,
         erro:    req.query.erro    || null,
         sucesso: req.query.sucesso || null
     });
 });
 
+// ── Admin — Adicionar produto ─────────────────────────────────────────────────
 router.post('/admin/adicionar-produto', requireAdmin, uploadProduto.single('imagem'), async (req, res) => {
     try {
-        const imagemPath   = req.file ? '/imagens/produtos/' + req.file.filename : '/imagens/foto.jpg';
-        const preco        = parseFloat(req.body.preco) || 0;
-        const precoDesc    = req.body.precoDesconto ? parseFloat(req.body.precoDesconto) || null : null;
+        const imagemPath = req.file ? '/imagens/produtos/' + req.file.filename : '/imagens/foto.jpg';
+        const preco      = parseFloat(req.body.preco) || 0;
+        const precoDesc  = req.body.precoDesconto ? parseFloat(req.body.precoDesconto) || null : null;
 
-        // Resolve id_categoria pelo nome
-        const cat = await produtosModel.findCategoriaPorNome(req.body.categoria);
-        if (!cat) return res.redirect('/admin?erro=categoria_invalida');
+        // Pega array de ids_categorias enviados pelo formulário
+        const ids_categorias = parseCategorias(req.body);
 
-        await produtosModel.create({
+        if (ids_categorias.length === 0) {
+            return res.redirect('/admin?erro=categoria_invalida');
+        }
+
+        const result = await produtosModel.create({
             nome:           req.body.nome || 'Produto sem nome',
             descricao:      req.body.descricao || '',
             preco,
             preco_desconto: precoDesc,
             imagem:         imagemPath,
-            status:         req.body.status || 'em-estoque',
-            id_categoria:   cat.id_categoria
-        });
+            status:         req.body.status || 'em-estoque'
+        }, ids_categorias);
+
+        if (result && result.errno) {
+            console.error('Erro ao criar produto:', result);
+            return res.redirect('/admin?erro=adicionar_produto');
+        }
+
         res.redirect('/admin?sucesso=produto_adicionado');
     } catch (err) {
         console.error(err);
@@ -327,13 +340,25 @@ router.post('/admin/adicionar-produto', requireAdmin, uploadProduto.single('imag
     }
 });
 
+// ── Admin — Editar produto (GET) ──────────────────────────────────────────────
 router.get('/admin/editar-produto/:id', requireAdmin, async (req, res) => {
     const produto    = await produtosModel.findById(req.params.id);
     if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
     const categorias = await produtosModel.findAllCategorias();
-    res.render('pages/editar-produto', { produto: { ...produto, id: produto.id_produto, precoDesconto: produto.preco_desconto }, categorias, erro: null });
+
+    // ids das categorias já associadas
+    const ids_atual = produto.ids_categorias
+        ? produto.ids_categorias.split(',').map(Number)
+        : [];
+
+    res.render('pages/editar-produto', {
+        produto: { ...produto, id: produto.id_produto, precoDesconto: produto.preco_desconto, ids_categorias_atual: ids_atual },
+        categorias,
+        erro: null
+    });
 });
 
+// ── Admin — Editar produto (POST) ─────────────────────────────────────────────
 router.post('/admin/editar-produto/:id', requireAdmin, uploadProduto.single('imagem'), async (req, res) => {
     try {
         const produto = await produtosModel.findById(req.params.id);
@@ -342,24 +367,31 @@ router.post('/admin/editar-produto/:id', requireAdmin, uploadProduto.single('ima
         let imagemPath = produto.imagem;
         if (req.file) {
             imagemPath = '/imagens/produtos/' + req.file.filename;
-            if (produto.imagem !== '/imagens/foto.jpg') {
+            if (produto.imagem && produto.imagem !== '/imagens/foto.jpg') {
                 const old = path.join(__dirname, '../public', produto.imagem);
                 if (fs.existsSync(old)) fs.unlinkSync(old);
             }
         }
 
-        const cat = await produtosModel.findCategoriaPorNome(req.body.categoria);
-        if (!cat) return res.redirect('/admin?erro=categoria_invalida');
+        const ids_categorias = parseCategorias(req.body);
+        if (ids_categorias.length === 0) {
+            return res.redirect('/admin?erro=categoria_invalida');
+        }
 
-        await produtosModel.update(req.params.id, {
+        const result = await produtosModel.update(req.params.id, {
             nome:           req.body.nome || produto.nome,
             descricao:      req.body.descricao || produto.descricao,
             preco:          parseFloat(req.body.preco) || 0,
             preco_desconto: req.body.precoDesconto ? parseFloat(req.body.precoDesconto) || null : null,
             imagem:         imagemPath,
-            status:         req.body.status || produto.status,
-            id_categoria:   cat.id_categoria
-        });
+            status:         req.body.status || produto.status
+        }, ids_categorias);
+
+        if (result && result.errno) {
+            console.error('Erro ao atualizar produto:', result);
+            return res.redirect('/admin?erro=editar_produto');
+        }
+
         res.redirect('/admin?sucesso=produto_editado');
     } catch (err) {
         console.error(err);
@@ -367,11 +399,12 @@ router.post('/admin/editar-produto/:id', requireAdmin, uploadProduto.single('ima
     }
 });
 
+// ── Admin — Excluir produto ───────────────────────────────────────────────────
 router.post('/admin/excluir-produto/:id', requireAdmin, async (req, res) => {
     try {
         const produto = await produtosModel.findById(req.params.id);
         if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
-        if (produto.imagem !== '/imagens/foto.jpg') {
+        if (produto.imagem && produto.imagem !== '/imagens/foto.jpg') {
             const imgPath = path.join(__dirname, '../public', produto.imagem);
             if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
         }
@@ -383,6 +416,7 @@ router.post('/admin/excluir-produto/:id', requireAdmin, async (req, res) => {
     }
 });
 
+// ── Admin — Excluir usuário ───────────────────────────────────────────────────
 router.post('/admin/excluir-usuario/:email', requireAdmin, async (req, res) => {
     try {
         await usuariosModel.delete(req.params.email);
@@ -393,6 +427,41 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, async (req, res) => {
     }
 });
 
+// ── Admin — Criar categoria ───────────────────────────────────────────────────
+router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
+    try {
+        const nome = (req.body.nome_categoria || '').trim();
+        if (!nome || nome.length < 2) {
+            return res.redirect('/admin?erro=categoria_nome_invalido');
+        }
+        // Verifica se já existe
+        const existe = await produtosModel.findCategoriaPorNome(nome);
+        if (existe) {
+            return res.redirect('/admin?erro=categoria_ja_existe');
+        }
+        const result = await produtosModel.createCategoria(nome);
+        if (result && result.errno) {
+            return res.redirect('/admin?erro=criar_categoria');
+        }
+        res.redirect('/admin?sucesso=categoria_criada');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/admin?erro=criar_categoria');
+    }
+});
+
+// ── Admin — Excluir categoria ─────────────────────────────────────────────────
+router.post('/admin/excluir-categoria/:id', requireAdmin, async (req, res) => {
+    try {
+        await produtosModel.deleteCategoria(req.params.id);
+        res.redirect('/admin?sucesso=categoria_excluida');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/admin?erro=excluir_categoria');
+    }
+});
+
+// ── Admin — Editar banner ─────────────────────────────────────────────────────
 router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
     uploadBanner.single('imagem')(req, res, async (err) => {
         if (err) return res.redirect('/admin?erro=editar_banner');
@@ -429,18 +498,18 @@ router.get('/produto/:id', async (req, res) => {
     const produto = await produtosModel.findById(req.params.id);
     if (!produto) return res.redirect('/home');
 
-    const produtos       = await produtosModel.findAll();
-    const { id_usuario, session_id } = getIdentificador(req);
-    const temNoCarrinho  = await carrinhoModel.temProduto(req.params.id, id_usuario, session_id);
-    const isAdmin        = req.session.isAdmin || false;
+    const produtos                       = await produtosModel.findAll();
+    const { id_usuario, session_id }     = getIdentificador(req);
+    const temNoCarrinho                  = await carrinhoModel.temProduto(req.params.id, id_usuario, session_id);
+    const isAdmin                        = req.session.isAdmin || false;
 
-    const produtoNorm = { ...produto, id: produto.id_produto, precoDesconto: produto.preco_desconto };
+    const produtoNorm  = { ...produto, id: produto.id_produto, precoDesconto: produto.preco_desconto };
     const produtosNorm = produtos.map(p => ({ ...p, id: p.id_produto, precoDesconto: p.preco_desconto, avaliacoes: [] }));
 
     res.render('pages/produto', {
-        produto:             produtoNorm,
-        produtos:            produtosNorm,
-        usuarioLogado:       !!req.session.usuarioEmail,
+        produto:              produtoNorm,
+        produtos:             produtosNorm,
+        usuarioLogado:        !!req.session.usuarioEmail,
         temProdutoNoCarrinho: temNoCarrinho,
         isAdmin
     });
@@ -491,11 +560,39 @@ router.post('/produto/:id/avaliar', requireLogin, blockAdmin, async (req, res) =
     res.redirect('/produto/' + req.params.id);
 });
 
-// ── Categoria ─────────────────────────────────────────────────────────────────
-router.get('/categoria/:nome', async (req, res) => {
-    const produtos = await produtosModel.findByCategoria(req.params.nome);
-    const produtosNorm = produtos.map(p => ({ ...p, id: p.id_produto, precoDesconto: p.preco_desconto, avaliacoes: [] }));
-    res.render('pages/categoria', { categoria: req.params.nome, produtos: produtosNorm });
+// ── Categoria por slug ────────────────────────────────────────────────────────
+router.get('/categoria/:slug', async (req, res) => {
+    const slug = req.params.slug;
+
+    // Verifica se é slug ou nome legado
+    let categoriaInfo = await produtosModel.findCategoriaPorSlug(slug);
+
+    let produtos;
+    let nomeExibicao;
+
+    if (categoriaInfo) {
+        produtos     = await produtosModel.findBySlugCategoria(slug);
+        nomeExibicao = categoriaInfo.nome;
+    } else {
+        // Fallback: tenta pelo nome (compatibilidade)
+        const nomeDecodificado = decodeURIComponent(slug);
+        if (nomeDecodificado.toLowerCase() === 'geral') {
+            produtos     = await produtosModel.findByCategoria('geral');
+            nomeExibicao = 'Geral';
+        } else {
+            produtos     = await produtosModel.findByCategoria(nomeDecodificado);
+            nomeExibicao = nomeDecodificado;
+        }
+    }
+
+    const produtosNorm = produtos.map(p => ({
+        ...p,
+        id:            p.id_produto,
+        precoDesconto: p.preco_desconto,
+        avaliacoes:    []
+    }));
+
+    res.render('pages/categoria', { categoria: nomeExibicao, slug, produtos: produtosNorm });
 });
 
 // ── Parceiros ─────────────────────────────────────────────────────────────────
@@ -522,7 +619,6 @@ router.post('/parceiros',
                 auth: { user: process.env.EMAIL_PARCEIROS, pass: process.env.EMAIL_PARCEIROS_PASS },
                 tls: { rejectUnauthorized: false }
             });
-            await transporter.verify();
             const cats = Array.isArray(req.body.categorias) ? req.body.categorias.join(', ') : req.body.categorias;
             await transporter.sendMail({
                 from: `"Sistema +Saúde" <${process.env.EMAIL_PARCEIROS}>`,
@@ -557,7 +653,6 @@ router.post('/atendimento',
                 auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
                 tls: { rejectUnauthorized: false }
             });
-            await transporter.verify();
             await transporter.sendMail({
                 from:    `"Sistema +Saúde - SAC" <${process.env.EMAIL_USER}>`,
                 to:      process.env.EMAIL_SAC,

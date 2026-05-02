@@ -18,86 +18,76 @@
     </header>
  
     <main>
-        <% if(typeof sucesso !== 'undefined' && sucesso === 'produto_adicionado') { %>
+        <%
+        const mensagensSucesso = {
+            produto_adicionado: 'Produto adicionado com sucesso!',
+            produto_editado:    'Produto editado com sucesso!',
+            produto_excluido:   'Produto excluído com sucesso!',
+            usuario_excluido:   'Usuário excluído com sucesso!',
+            banner_editado:     'Banner editado com sucesso!',
+            categoria_criada:   'Categoria criada com sucesso!',
+            categoria_excluida: 'Categoria excluída com sucesso!'
+        };
+        const mensagensErro = {
+            adicionar_produto:      'Erro ao adicionar produto! Verifique se preencheu todos os campos.',
+            editar_produto:         'Erro ao editar produto!',
+            excluir_produto:        'Erro ao excluir produto!',
+            produto_nao_encontrado: 'Produto não encontrado!',
+            excluir_usuario:        'Erro ao excluir usuário!',
+            editar_banner:          'Erro ao editar banner! Verifique se a imagem é válida (JPG, PNG ou WEBP com máximo de 5MB).',
+            banner_nao_encontrado:  'Banner não encontrado!',
+            categoria_invalida:     'Selecione ao menos uma categoria válida!',
+            categoria_nome_invalido:'Nome de categoria inválido (mínimo 2 caracteres)!',
+            categoria_ja_existe:    'Já existe uma categoria com esse nome!',
+            criar_categoria:        'Erro ao criar categoria!',
+            excluir_categoria:      'Erro ao excluir categoria! Pode haver produtos vinculados.'
+        };
+        %>
+
+        <% if (sucesso && mensagensSucesso[sucesso]) { %>
             <output class="mensagem-sucesso" role="status" aria-live="polite">
-                Produto adicionado com sucesso!
-            </output>
-        <% } else if(typeof sucesso !== 'undefined' && sucesso === 'produto_editado') { %>
-            <output class="mensagem-sucesso" role="status" aria-live="polite">
-                Produto editado com sucesso!
-            </output>
-        <% } else if(typeof sucesso !== 'undefined' && sucesso === 'produto_excluido') { %>
-            <output class="mensagem-sucesso" role="status" aria-live="polite">
-                Produto excluído com sucesso!
-            </output>
-        <% } else if(typeof sucesso !== 'undefined' && sucesso === 'usuario_excluido') { %>
-            <output class="mensagem-sucesso" role="status" aria-live="polite">
-                Usuário excluído com sucesso!
-            </output>
-        <% } else if(typeof sucesso !== 'undefined' && sucesso === 'banner_editado') { %>
-            <output class="mensagem-sucesso" role="status" aria-live="polite">
-                Banner editado com sucesso!
+                <%= mensagensSucesso[sucesso] %>
             </output>
         <% } %>
 
-        <% if(typeof erro !== 'undefined' && erro === 'adicionar_produto') { %>
-            <output class="mensagem-erro" role="alert" aria-live="assertive">
-                Erro ao adicionar produto!
-            </output>
-        <% } else if(typeof erro !== 'undefined' && erro === 'editar_produto') { %>
-            <output class="mensagem-erro" role="alert" aria-live="assertive">
-                Erro ao editar produto!
-            </output>
-        <% } else if(typeof erro !== 'undefined' && erro === 'excluir_produto') { %>
-            <output class="mensagem-erro" role="alert" aria-live="assertive">
-                Erro ao excluir produto!
-            </output>
-        <% } else if(typeof erro !== 'undefined' && erro === 'produto_nao_encontrado') { %>
-            <output class="mensagem-erro" role="alert" aria-live="assertive">
-                Produto não encontrado!
-            </output>
-        <% } else if(typeof erro !== 'undefined' && erro === 'excluir_usuario') { %>
-            <output class="mensagem-erro" role="alert" aria-live="assertive">
-                Erro ao excluir usuário!
-            </output>
-        <% } else if(typeof erro !== 'undefined' && erro === 'editar_banner') { %>
-            <output class="mensagem-erro" role="alert" aria-live="assertive">
-                Erro ao editar banner! Verifique se a imagem é válida (JPG, PNG ou WEBP com máximo de 5MB).
-            </output>
-        <% } else if(typeof erro !== 'undefined' && erro === 'banner_nao_encontrado') { %>
-            <output class="mensagem-erro" role="alert" aria-live="assertive">
-                Banner não encontrado!
-            </output>
-        <% } else if(typeof erro !== 'undefined' && erro === 'funcao_restrita') { %>
+        <% if (erro && erro === 'funcao_restrita') { %>
             <output class="mensagem-info" role="alert" aria-live="assertive">
                 ⚠️ Esta funcionalidade está restrita a usuários clientes. Como administrador, você não pode acessar o carrinho ou avaliar produtos.
+            </output>
+        <% } else if (erro && mensagensErro[erro]) { %>
+            <output class="mensagem-erro" role="alert" aria-live="assertive">
+                <%= mensagensErro[erro] %>
             </output>
         <% } %>
 
         <section class="estatisticas" aria-labelledby="titulo-estatisticas">
             <h2 id="titulo-estatisticas" class="subtitulo">Estatísticas do Site</h2>
-            
             <section class="estatisticas-grid">
                 <article class="card-stats">
                     <h3 class="stat-titulo">Total de Produtos</h3>
-                    <output class="stat-valor" aria-label="<%= totalProdutos %> produtos cadastrados"><%= totalProdutos %></output>
+                    <output class="stat-valor"><%= totalProdutos %></output>
                 </article>
-
                 <article class="card-stats">
                     <h3 class="stat-titulo">Total de Usuários</h3>
-                    <output class="stat-valor" aria-label="<%= usuarios.length %> usuários cadastrados"><%= usuarios.length %></output>
+                    <output class="stat-valor"><%= usuarios.length %></output>
+                </article>
+                <article class="card-stats">
+                    <h3 class="stat-titulo">Total de Categorias</h3>
+                    <output class="stat-valor"><%= categorias.length %></output>
                 </article>
             </section>
         </section>
 
         <section class="tabs-container">
             <nav class="tabs-header" role="tablist">
-                <button class="tab-button active" data-tab="adicionar" role="tab" aria-selected="true" aria-controls="tab-adicionar">Adicionar Produto</button>
-                <button class="tab-button" data-tab="produtos" role="tab" aria-selected="false" aria-controls="tab-produtos">Gerenciar Produtos</button>
-                <button class="tab-button" data-tab="usuarios" role="tab" aria-selected="false" aria-controls="tab-usuarios">Gerenciar Usuários</button>
-                <button class="tab-button" data-tab="banners" role="tab" aria-selected="false" aria-controls="tab-banners">Gerenciar Banners</button>
+                <button class="tab-button active" data-tab="adicionar"  role="tab" aria-selected="true"  aria-controls="tab-adicionar">Adicionar Produto</button>
+                <button class="tab-button"         data-tab="produtos"  role="tab" aria-selected="false" aria-controls="tab-produtos">Produtos</button>
+                <button class="tab-button"         data-tab="categorias" role="tab" aria-selected="false" aria-controls="tab-categorias">Categorias</button>
+                <button class="tab-button"         data-tab="usuarios"  role="tab" aria-selected="false" aria-controls="tab-usuarios">Usuários</button>
+                <button class="tab-button"         data-tab="banners"   role="tab" aria-selected="false" aria-controls="tab-banners">Banners</button>
             </nav>
 
+            <%-- ==================== ABA: ADICIONAR PRODUTO ==================== --%>
             <article class="tab-content active" id="tab-adicionar" role="tabpanel" aria-labelledby="titulo-adicionar">
                 <section class="adicionar-produto">
                     <h2 id="titulo-adicionar" class="subtitulo">Adicionar Novo Produto</h2>
@@ -105,81 +95,81 @@
                     <form method="POST" action="/admin/adicionar-produto" class="form-produto" enctype="multipart/form-data" aria-label="Formulário de cadastro de produto">
                         <fieldset>
                             <legend class="label-titulo">Nome do Produto</legend>
-                            <label for="nome">
-                                <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" required aria-required="true">
-                            </label>
-                        </fieldset>
-         
-                        <fieldset>
-                            <legend class="label-titulo">Preço</legend>
-                            <label for="preco">
-                                <input type="number" id="preco" name="preco" placeholder="0.00" step="0.01" min="0" required aria-required="true">
-                            </label>
-                        </fieldset>
-         
-                        <fieldset>
-                            <legend class="label-titulo">Preço com Desconto (opcional)</legend>
-                            <label for="precoDesconto">
-                                <input type="number" id="precoDesconto" name="precoDesconto" placeholder="0.00" step="0.01" min="0" aria-required="false">
-                            </label>
-                        </fieldset>
-         
-                        <fieldset>
-                            <legend class="label-titulo">Categoria</legend>
-                            <label for="categoria">
-                                <select id="categoria" name="categoria" required aria-required="true">
-                                    <option value="">Selecione uma categoria</option>
-                                    <option value="Cuidados com a Pele">Cuidados com a Pele</option>
-                                    <option value="Higiene Bucal">Higiene Bucal</option>
-                                    <option value="Cabelo">Cabelo</option>
-                                    <option value="Vitaminas e Suplementos">Vitaminas e Suplementos</option>
-                                    <option value="Terceira Idade">Terceira Idade</option>
-                                </select>
+                            <label for="nome-add">
+                                <input type="text" id="nome-add" name="nome" placeholder="Digite o nome do produto" required aria-required="true">
                             </label>
                         </fieldset>
 
                         <fieldset>
+                            <legend class="label-titulo">Preço (R$)</legend>
+                            <label for="preco-add">
+                                <input type="number" id="preco-add" name="preco" placeholder="0.00" step="0.01" min="0" required aria-required="true">
+                            </label>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend class="label-titulo">Preço com Desconto (opcional)</legend>
+                            <label for="precoDesconto-add">
+                                <input type="number" id="precoDesconto-add" name="precoDesconto" placeholder="0.00" step="0.01" min="0">
+                            </label>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend class="label-titulo">Categorias <output style="color:#ff6b6b">*</output> (selecione uma ou mais)</legend>
+                            <% if (categorias && categorias.length > 0) { %>
+                                <section class="categorias-grupo-admin">
+                                    <% categorias.forEach(function(cat) { %>
+                                        <label class="checkbox-item-admin">
+                                            <input type="checkbox"
+                                                   name="categorias"
+                                                   value="<%= cat.id_categoria %>"
+                                                   class="checkbox-input-admin">
+                                            <output class="checkbox-label-admin"><%= cat.nome %></output>
+                                        </label>
+                                    <% }); %>
+                                </section>
+                            <% } else { %>
+                                <output class="mensagem-info">Nenhuma categoria cadastrada. Crie categorias na aba "Categorias".</output>
+                            <% } %>
+                        </fieldset>
+
+                        <fieldset>
                             <legend class="label-titulo">Status do Produto</legend>
-                            <label for="status">
-                                <select id="status" name="status" required aria-required="true">
+                            <label for="status-add">
+                                <select id="status-add" name="status" required aria-required="true">
                                     <option value="em-estoque">Em Estoque</option>
                                     <option value="fora-de-estoque">Fora de Estoque</option>
                                 </select>
                             </label>
                         </fieldset>
-         
+
                         <fieldset class="campo-imagem">
-                            <legend>
-                                <strong class="label-titulo">Imagem do Produto</strong>
-                            </legend>
-                            <label for="imagem" class="label-arquivo">
-                                <input type="file"
-                                       id="imagem"
-                                       name="imagem"
+                            <legend><strong class="label-titulo">Imagem do Produto</strong></legend>
+                            <label for="imagem-add" class="label-arquivo">
+                                <input type="file" id="imagem-add" name="imagem"
                                        accept="image/jpeg,image/jpg,image/png,image/webp"
-                                       aria-describedby="imagem-info">
-                                <output id="imagem-info" class="info-arquivo">
-                                    Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB)
-                                </output>
+                                       aria-describedby="imagem-add-info">
+                                <output id="imagem-add-info" class="info-arquivo">Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB)</output>
                             </label>
-                            <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></output>
+                            <output id="preview-imagem-add" class="preview-container" role="status" aria-live="polite"></output>
                         </fieldset>
-         
-                        <label for="descricao">
+
+                        <label for="descricao-add">
                             <strong class="label-titulo">Descrição do Produto</strong>
-                            <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto" rows="5" required aria-required="true"></textarea>
+                            <textarea id="descricao-add" name="descricao" placeholder="Digite a descrição do produto" rows="5" required aria-required="true"></textarea>
                         </label>
-         
+
                         <button type="submit" class="btn-adicionar">Adicionar Produto</button>
                     </form>
                 </section>
             </article>
 
+            <%-- ==================== ABA: PRODUTOS ==================== --%>
             <article class="tab-content" id="tab-produtos" role="tabpanel" aria-labelledby="titulo-lista">
                 <section class="lista-produtos">
                     <h2 id="titulo-lista" class="subtitulo">Produtos Cadastrados</h2>
-                    
-                    <% if(produtos.length === 0) { %>
+
+                    <% if (produtos.length === 0) { %>
                         <output class="mensagem-vazia">Nenhum produto cadastrado ainda.</output>
                     <% } else { %>
                         <ul class="produtos-lista" role="list">
@@ -190,9 +180,9 @@
                                             <h3 class="produto-nome"><%= produto.nome %></h3>
                                             <figcaption class="produto-info">ID: <%= produto.id %></figcaption>
                                         </figure>
-                                        <output class="produto-info">Categoria: <%= produto.categoria %></output>
+                                        <output class="produto-info">Categorias: <%= produto.categoria || 'Sem categoria' %></output>
                                         <output class="produto-info produto-preco">R$ <%= produto.preco.toFixed(2) %></output>
-                                        <% if(produto.precoDesconto) { %>
+                                        <% if (produto.precoDesconto) { %>
                                             <output class="produto-info desconto">Com Desconto: R$ <%= produto.precoDesconto.toFixed(2) %></output>
                                         <% } %>
                                         <output class="produto-info <%= produto.status === 'em-estoque' ? '' : 'desconto' %>">
@@ -202,7 +192,9 @@
                                     <nav class="acoes-produto" aria-label="Ações do produto <%= produto.nome %>">
                                         <a href="/admin/editar-produto/<%= produto.id %>" class="btn-editar" aria-label="Editar produto <%= produto.nome %>">Editar</a>
                                         <form method="POST" action="/admin/excluir-produto/<%= produto.id %>" class="form-inline">
-                                            <button class="btn-excluir" type="submit" onclick="return confirm('Tem certeza que deseja excluir este produto?')" aria-label="Excluir produto <%= produto.nome %>">Excluir</button>
+                                            <button class="btn-excluir" type="submit"
+                                                    onclick="return confirm('Tem certeza que deseja excluir este produto?')"
+                                                    aria-label="Excluir produto <%= produto.nome %>">Excluir</button>
                                         </form>
                                     </nav>
                                 </li>
@@ -212,11 +204,60 @@
                 </section>
             </article>
 
+            <%-- ==================== ABA: CATEGORIAS ==================== --%>
+            <article class="tab-content" id="tab-categorias" role="tabpanel" aria-labelledby="titulo-categorias">
+                <section class="lista-categorias-section">
+                    <h2 id="titulo-categorias" class="subtitulo">Gerenciar Categorias</h2>
+
+                    <section class="adicionar-categoria">
+                        <h3 class="subtitulo" style="font-size:1.2rem;">Criar Nova Categoria</h3>
+                        <form method="POST" action="/admin/criar-categoria" class="form-produto" aria-label="Formulário de criação de categoria">
+                            <fieldset>
+                                <legend class="label-titulo">Nome da Categoria</legend>
+                                <label for="nome_categoria">
+                                    <input type="text" id="nome_categoria" name="nome_categoria"
+                                           placeholder="Ex: Medicamentos, Bebê, Dermocosméticos..."
+                                           required aria-required="true" minlength="2" maxlength="60">
+                                </label>
+                            </fieldset>
+                            <button type="submit" class="btn-adicionar">Criar Categoria</button>
+                        </form>
+                    </section>
+
+                    <% if (categorias && categorias.length > 0) { %>
+                        <ul class="usuarios-lista" role="list" style="margin-top:2rem;">
+                            <% categorias.forEach(function(cat) { %>
+                                <li class="usuario-item" role="listitem">
+                                    <article class="usuario-info-container">
+                                        <figure>
+                                            <h3 class="usuario-email"><%= cat.nome %></h3>
+                                            <figcaption class="usuario-info">Slug: /categoria/<%= cat.slug %></figcaption>
+                                        </figure>
+                                    </article>
+                                    <nav class="acoes-usuario" aria-label="Ações da categoria <%= cat.nome %>">
+                                        <a href="/categoria/<%= cat.slug %>" class="btn-editar" target="_blank"
+                                           aria-label="Ver página da categoria <%= cat.nome %>">Ver Página</a>
+                                        <form method="POST" action="/admin/excluir-categoria/<%= cat.id_categoria %>" class="form-inline">
+                                            <button class="btn-excluir" type="submit"
+                                                    onclick="return confirm('Excluir categoria \'<%= cat.nome %>\'? Produtos vinculados perderão esta categoria.')"
+                                                    aria-label="Excluir categoria <%= cat.nome %>">Excluir</button>
+                                        </form>
+                                    </nav>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } else { %>
+                        <output class="mensagem-vazia" style="margin-top:1rem;">Nenhuma categoria cadastrada ainda.</output>
+                    <% } %>
+                </section>
+            </article>
+
+            <%-- ==================== ABA: USUÁRIOS ==================== --%>
             <article class="tab-content" id="tab-usuarios" role="tabpanel" aria-labelledby="titulo-usuarios">
                 <section class="lista-usuarios-section">
                     <h2 id="titulo-usuarios" class="subtitulo">Usuários Cadastrados</h2>
-                    
-                    <% if(usuarios.length === 0) { %>
+
+                    <% if (usuarios.length === 0) { %>
                         <output class="mensagem-vazia">Nenhum usuário cadastrado ainda.</output>
                     <% } else { %>
                         <ul class="usuarios-lista" role="list">
@@ -229,11 +270,15 @@
                                         </figure>
                                         <output class="usuario-info">CPF: <%= usuario.cpf %></output>
                                         <output class="usuario-info">Telefone: (<%= usuario.ddd || '00' %>) <%= usuario.tel %></output>
-                                        <time class="usuario-info" datetime="<%= usuario.nasc %>">Nascimento: <%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></time>
+                                        <time class="usuario-info" datetime="<%= usuario.nasc %>">
+                                            Nascimento: <%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %>
+                                        </time>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do usuário <%= usuario.email %>">
                                         <form method="POST" action="/admin/excluir-usuario/<%= encodeURIComponent(usuario.email) %>" class="form-inline">
-                                            <button class="btn-excluir" type="submit" onclick="return confirm('Tem certeza que deseja excluir este usuário?')" aria-label="Excluir usuário <%= usuario.email %>">Excluir</button>
+                                            <button class="btn-excluir" type="submit"
+                                                    onclick="return confirm('Tem certeza que deseja excluir este usuário?')"
+                                                    aria-label="Excluir usuário <%= usuario.email %>">Excluir</button>
                                         </form>
                                     </nav>
                                 </li>
@@ -243,44 +288,41 @@
                 </section>
             </article>
 
+            <%-- ==================== ABA: BANNERS ==================== --%>
             <article class="tab-content" id="tab-banners" role="tabpanel" aria-labelledby="titulo-banners">
                 <section class="lista-banners-section">
                     <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners do Carrossel</h2>
-                    
+
                     <output class="mensagem-info" role="status">
-                        Edite os banners que aparecem no carrossel da página inicial. São 3 banners disponíveis. 
-                        Você pode alterar a legenda (descrição), o link de destino e a imagem de cada banner.
+                        Edite os banners que aparecem no carrossel da página inicial.
+                        Você pode alterar a legenda, o link de destino e a imagem de cada banner.
                     </output>
-                    
-                    <% if(typeof banners !== 'undefined' && banners && banners.length > 0) { %>
+
+                    <% if (typeof banners !== 'undefined' && banners && banners.length > 0) { %>
                         <ul class="usuarios-lista" role="list">
                             <% banners.forEach(function(banner, index) { %>
                                 <li class="usuario-item" role="listitem">
                                     <article class="usuario-info-container">
                                         <figure>
-                                            <img src="<%= banner.imagem %>" 
-                                                 alt="<%= banner.legenda %>" 
-                                                 style="max-width: 200px; height: auto; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                                            <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>"
+                                                 style="max-width:200px;height:auto;border-radius:.5rem;margin-bottom:.5rem;">
                                             <figcaption class="usuario-info">Banner <%= index + 1 %></figcaption>
                                         </figure>
                                         <output class="usuario-info">Legenda: <%= banner.legenda %></output>
                                         <output class="usuario-info">Link: <%= banner.link || '/home' %></output>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do banner <%= index + 1 %>">
-                                        <button class="btn-editar" 
-                                                type="button" 
-                                                data-banner-id="<%= banner.id %>"
+                                        <button class="btn-editar" type="button"
+                                                data-banner-id="<%= banner.id_banner %>"
                                                 data-banner-legenda="<%= banner.legenda %>"
                                                 data-banner-link="<%= banner.link || '/home' %>"
-                                                aria-label="Editar banner <%= index + 1 %>">
-                                            Editar Banner
-                                        </button>
+                                                aria-label="Editar banner <%= index + 1 %>">Editar Banner</button>
                                     </nav>
                                 </li>
                             <% }); %>
                         </ul>
                     <% } else { %>
-                        <output class="mensagem-vazia">Nenhum banner disponível. Verifique o banco de dados.</output>
+                        <output class="mensagem-vazia">Nenhum banner disponível.</output>
                     <% } %>
                 </section>
             </article>
@@ -288,85 +330,101 @@
     </main>
  
     <footer>
-        <nav aria-label="Navegação do rodapé" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1rem 2%;">
+        <nav aria-label="Navegação do rodapé" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;padding:1rem 2%;">
             <a href="/home" class="link-footer">Voltar ao Site</a>
-            <a href="/logout" class="link-footer" style="color: #ff6b6b; font-weight: 600;">Sair da Conta de Administrador</a>
+            <a href="/logout" class="link-footer" style="color:#ff6b6b;font-weight:600;">Sair da Conta de Administrador</a>
         </nav>
     </footer>
 
+    <%-- Modal de edição de banner --%>
     <aside id="modal-banner" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
         <article class="modal-content">
             <h2 class="subtitulo" id="modal-titulo">Editar Banner do Carrossel</h2>
-            
             <form method="POST" id="form-editar-banner" enctype="multipart/form-data" class="form-produto" aria-label="Formulário de edição de banner">
-                
                 <fieldset>
                     <legend class="label-titulo">Legenda do Banner</legend>
                     <label for="legenda-banner">
-                        <input type="text" 
-                               id="legenda-banner" 
-                               name="legenda" 
-                               placeholder="Ex: Promoções Especiais" 
-                               required
-                               aria-required="true"
+                        <input type="text" id="legenda-banner" name="legenda"
+                               placeholder="Ex: Promoções Especiais" required aria-required="true"
                                aria-describedby="legenda-info">
                     </label>
-                    <output id="legenda-info" class="info-arquivo">
-                        A legenda aparecerá sobreposta na imagem do banner no carrossel.
-                    </output>
+                    <output id="legenda-info" class="info-arquivo">A legenda aparecerá sobreposta na imagem do banner.</output>
                 </fieldset>
 
                 <fieldset>
-                    <legend class="label-titulo">Link de Destino do Banner</legend>
+                    <legend class="label-titulo">Link de Destino</legend>
                     <label for="link-banner">
-                        <input type="text" 
-                               id="link-banner" 
-                               name="link" 
-                               placeholder="/home ou /categoria/nome" 
-                               required
-                               aria-required="true"
+                        <input type="text" id="link-banner" name="link"
+                               placeholder="/home ou /categoria/nome" required aria-required="true"
                                aria-describedby="link-info">
                     </label>
-                    <output id="link-info" class="info-arquivo">
-                        Exemplos de links válidos: /home, /categoria/Cuidados com a Pele, /produto/123.
-                        O link deve começar com / e levar para uma página válida do site.
-                    </output>
+                    <output id="link-info" class="info-arquivo">Exemplos: /home, /categoria/cuidados-com-a-pele, /produto/123</output>
                 </fieldset>
 
                 <fieldset class="campo-imagem">
-                    <legend>
-                        <strong class="label-titulo">Nova Imagem do Banner (opcional)</strong>
-                    </legend>
+                    <legend><strong class="label-titulo">Nova Imagem (opcional)</strong></legend>
                     <label for="imagem-banner" class="label-arquivo">
-                        <input type="file"
-                               id="imagem-banner"
-                               name="imagem"
+                        <input type="file" id="imagem-banner" name="imagem"
                                accept="image/jpeg,image/jpg,image/png,image/webp"
                                aria-describedby="banner-info">
                         <output id="banner-info" class="info-arquivo">
-                            Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). 
-                            Deixe em branco para manter a imagem atual.
-                            Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).
+                            Formatos: JPG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
                         </output>
                     </label>
                     <output id="preview-banner" class="preview-container" role="status" aria-live="polite"></output>
                 </fieldset>
 
                 <button type="submit" class="btn-adicionar">Salvar Alterações do Banner</button>
-                <button type="button" class="btn-adicionar" id="btn-fechar-modal" style="background-color: #555; margin-top: 1rem;">Cancelar Edição</button>
+                <button type="button" class="btn-adicionar" id="btn-fechar-modal"
+                        style="background-color:#555;margin-top:1rem;">Cancelar</button>
             </form>
         </article>
     </aside>
- 
+
+    <style>
+        .categorias-grupo-admin {
+            display: flex;
+            flex-direction: column;
+            gap: .6rem;
+            margin-top: .5rem;
+        }
+        .checkbox-item-admin {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+        .checkbox-input-admin {
+            width: 1.1rem;
+            height: 1.1rem;
+            accent-color: #4da6ff;
+            cursor: pointer;
+        }
+        .checkbox-label-admin {
+            color: #d9d9d9;
+            font-size: .95rem;
+            cursor: pointer;
+        }
+        .adicionar-categoria {
+            margin-bottom: 1rem;
+        }
+        @media (min-width: 901px) {
+            .categorias-grupo-admin {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: .8rem;
+            }
+        }
+    </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const tabButtons = document.querySelectorAll('.tab-button');
+            // ── Tabs ──────────────────────────────────────────────────────────
+            const tabButtons  = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
 
             tabButtons.forEach(function(button) {
                 button.addEventListener('click', function() {
                     const tabId = this.getAttribute('data-tab');
-
                     tabButtons.forEach(function(btn) {
                         btn.classList.remove('active');
                         btn.setAttribute('aria-selected', 'false');
@@ -374,191 +432,91 @@
                     tabContents.forEach(function(content) {
                         content.classList.remove('active');
                     });
-
                     this.classList.add('active');
                     this.setAttribute('aria-selected', 'true');
                     document.getElementById('tab-' + tabId).classList.add('active');
                 });
             });
 
-            const inputImagem = document.getElementById('imagem');
-            const previewContainer = document.getElementById('preview-imagem');
-            const infoArquivo = document.getElementById('imagem-info');
- 
-            if (inputImagem) {
-                inputImagem.addEventListener('change', function(e) {
+            // ── Preview de imagem de produto (add) ────────────────────────────
+            function setupPreviewImagem(inputId, previewId, infoId) {
+                const input   = document.getElementById(inputId);
+                const preview = document.getElementById(previewId);
+                const info    = document.getElementById(infoId);
+                if (!input) return;
+
+                input.addEventListener('change', function(e) {
                     const arquivo = e.target.files[0];
-                    
-                    if (!arquivo) {
-                        previewContainer.innerHTML = '';
-                        infoArquivo.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB)';
-                        infoArquivo.style.color = '';
-                        return;
-                    }
- 
+                    if (!arquivo) { preview.innerHTML = ''; return; }
+
                     if (arquivo.size > 5 * 1024 * 1024) {
-                        infoArquivo.textContent = 'Erro: A imagem deve ter no máximo 5MB';
-                        infoArquivo.style.color = '#d93025';
-                        previewContainer.innerHTML = '';
-                        inputImagem.value = '';
-                        return;
+                        info.textContent = 'Erro: A imagem deve ter no máximo 5MB';
+                        info.style.color = '#d93025';
+                        preview.innerHTML = ''; input.value = ''; return;
                     }
- 
-                    const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-                    if (!tiposPermitidos.includes(arquivo.type)) {
-                        infoArquivo.textContent = 'Erro: Formato não suportado. Use JPG, PNG ou WEBP';
-                        infoArquivo.style.color = '#d93025';
-                        previewContainer.innerHTML = '';
-                        inputImagem.value = '';
-                        return;
+                    const tipos = ['image/jpeg','image/jpg','image/png','image/webp'];
+                    if (!tipos.includes(arquivo.type)) {
+                        info.textContent = 'Erro: Formato não suportado. Use JPG, PNG ou WEBP';
+                        info.style.color = '#d93025';
+                        preview.innerHTML = ''; input.value = ''; return;
                     }
- 
                     const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const figure = document.createElement('figure');
-                        figure.className = 'preview-figure';
-                        
+                    reader.onload = function(ev) {
+                        const fig = document.createElement('figure');
+                        fig.className = 'preview-figure';
                         const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.alt = 'Preview da imagem do produto';
-                        img.className = 'preview-img';
-                        
-                        const figcaption = document.createElement('figcaption');
-                        figcaption.textContent = arquivo.name;
-                        figcaption.className = 'preview-caption';
-                        
-                        figure.appendChild(img);
-                        figure.appendChild(figcaption);
-                        previewContainer.innerHTML = '';
-                        previewContainer.appendChild(figure);
-                        
-                        infoArquivo.textContent = 'Imagem selecionada com sucesso!';
-                        infoArquivo.style.color = '#4da6ff';
+                        img.src = ev.target.result; img.alt = 'Preview'; img.className = 'preview-img';
+                        const cap = document.createElement('figcaption');
+                        cap.textContent = arquivo.name; cap.className = 'preview-caption';
+                        fig.appendChild(img); fig.appendChild(cap);
+                        preview.innerHTML = ''; preview.appendChild(fig);
+                        info.textContent = 'Imagem selecionada!'; info.style.color = '#4da6ff';
                     };
                     reader.readAsDataURL(arquivo);
                 });
             }
 
-            const inputBanner = document.getElementById('imagem-banner');
-            const previewBanner = document.getElementById('preview-banner');
-            const infoBanner = document.getElementById('banner-info');
+            setupPreviewImagem('imagem-add',    'preview-imagem-add',    'imagem-add-info');
+            setupPreviewImagem('imagem-banner',  'preview-banner',        'banner-info');
 
-            if (inputBanner) {
-                inputBanner.addEventListener('change', function(e) {
-                    const arquivo = e.target.files[0];
-                    
-                    if (!arquivo) {
-                        previewBanner.innerHTML = '';
-                        infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual. Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).';
-                        infoBanner.style.color = '';
-                        return;
-                    }
+            // ── Modal de banner ───────────────────────────────────────────────
+            const modal         = document.getElementById('modal-banner');
+            const form          = document.getElementById('form-editar-banner');
+            const btnFechar     = document.getElementById('btn-fechar-modal');
+            const inputLegenda  = document.getElementById('legenda-banner');
+            const inputLink     = document.getElementById('link-banner');
 
-                    if (arquivo.size > 5 * 1024 * 1024) {
-                        infoBanner.textContent = 'Erro: A imagem deve ter no máximo 5MB';
-                        infoBanner.style.color = '#d93025';
-                        previewBanner.innerHTML = '';
-                        inputBanner.value = '';
-                        return;
-                    }
-
-                    const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-                    if (!tiposPermitidos.includes(arquivo.type)) {
-                        infoBanner.textContent = 'Erro: Formato não suportado. Use JPG, PNG ou WEBP';
-                        infoBanner.style.color = '#d93025';
-                        previewBanner.innerHTML = '';
-                        inputBanner.value = '';
-                        return;
-                    }
-
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const figure = document.createElement('figure');
-                        figure.className = 'preview-figure';
-                        
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.alt = 'Preview da nova imagem do banner';
-                        img.className = 'preview-img';
-                        
-                        const figcaption = document.createElement('figcaption');
-                        figcaption.textContent = arquivo.name;
-                        figcaption.className = 'preview-caption';
-                        
-                        figure.appendChild(img);
-                        figure.appendChild(figcaption);
-                        previewBanner.innerHTML = '';
-                        previewBanner.appendChild(figure);
-                        
-                        infoBanner.textContent = 'Nova imagem selecionada com sucesso!';
-                        infoBanner.style.color = '#4da6ff';
-                    };
-                    reader.readAsDataURL(arquivo);
-                });
-            }
-
-            const modal = document.getElementById('modal-banner');
-            const form = document.getElementById('form-editar-banner');
-            const btnFecharModal = document.getElementById('btn-fechar-modal');
-            const inputLegenda = document.getElementById('legenda-banner');
-            const inputLink = document.getElementById('link-banner');
-            
-            const botoesEditar = document.querySelectorAll('[data-banner-id]');
-
-            function abrirModalBanner(bannerId, legenda, link) {
+            function abrirModal(bannerId, legenda, link) {
                 form.action = '/admin/editar-banner/' + bannerId;
-                
                 inputLegenda.value = legenda || '';
-                inputLink.value = link || '/home';
-                
-                if (inputBanner) inputBanner.value = '';
-                if (previewBanner) previewBanner.innerHTML = '';
-                if (infoBanner) {
-                    infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual. Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).';
-                    infoBanner.style.color = '';
-                }
-                
+                inputLink.value    = link    || '/home';
+                document.getElementById('imagem-banner').value = '';
+                document.getElementById('preview-banner').innerHTML = '';
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
 
-            function fecharModalBanner() {
+            function fecharModal() {
                 form.reset();
-                if (previewBanner) previewBanner.innerHTML = '';
-                if (infoBanner) {
-                    infoBanner.textContent = 'Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual. Recomendado: imagens em formato paisagem (ex: 1200x400 pixels).';
-                    infoBanner.style.color = '';
-                }
+                document.getElementById('preview-banner').innerHTML = '';
                 modal.classList.remove('active');
                 document.body.style.overflow = '';
             }
 
-            botoesEditar.forEach(function(botao) {
-                botao.addEventListener('click', function() {
-                    const bannerId = this.getAttribute('data-banner-id');
-                    const legenda = this.getAttribute('data-banner-legenda');
-                    const link = this.getAttribute('data-banner-link');
-                    
-                    abrirModalBanner(bannerId, legenda, link);
+            document.querySelectorAll('[data-banner-id]').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    abrirModal(
+                        this.getAttribute('data-banner-id'),
+                        this.getAttribute('data-banner-legenda'),
+                        this.getAttribute('data-banner-link')
+                    );
                 });
             });
 
-            if (btnFecharModal) {
-                btnFecharModal.addEventListener('click', fecharModalBanner);
-            }
-
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
-                        fecharModalBanner();
-                    }
-                });
-            }
-
+            if (btnFechar) btnFechar.addEventListener('click', fecharModal);
+            if (modal)     modal.addEventListener('click', function(e) { if (e.target === modal) fecharModal(); });
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
-                    fecharModalBanner();
-                }
+                if (e.key === 'Escape' && modal && modal.classList.contains('active')) fecharModal();
             });
         });
     </script>
