@@ -79,23 +79,28 @@ const MSGS_SUCESSO = {
     produto_excluido:   'Produto excluído com sucesso!',
     usuario_excluido:   'Usuário excluído com sucesso!',
     banner_editado:     'Banner editado com sucesso!',
+    banner_criado:      'Banner criado com sucesso!',
+    banner_excluido:    'Banner excluído com sucesso!',
     categoria_criada:   'Categoria criada com sucesso!',
     categoria_excluida: 'Categoria excluída com sucesso!'
 };
 
 const MSGS_ERRO = {
-    adicionar_produto:       'Erro ao adicionar produto! Verifique se preencheu todos os campos.',
+    adicionar_produto:       'Erro ao adicionar produto! Verifique se preencheu todos os campos obrigatórios.',
     editar_produto:          'Erro ao editar produto!',
     excluir_produto:         'Erro ao excluir produto!',
     produto_nao_encontrado:  'Produto não encontrado!',
     excluir_usuario:         'Erro ao excluir usuário!',
     editar_banner:           'Erro ao editar banner! Verifique se a imagem é válida (JPG, PNG ou WEBP com máximo de 5MB).',
+    criar_banner:            'Erro ao criar banner! A imagem é obrigatória e deve ser JPG, PNG ou WEBP (máx. 5MB).',
     banner_nao_encontrado:   'Banner não encontrado!',
+    excluir_banner:          'Erro ao excluir banner!',
     categoria_invalida:      'Selecione ao menos uma categoria válida!',
     categoria_nome_invalido: 'Nome de categoria inválido (mínimo 2 caracteres)!',
     categoria_ja_existe:     'Já existe uma categoria com esse nome!',
     criar_categoria:         'Erro ao criar categoria!',
-    excluir_categoria:       'Erro ao excluir categoria! Pode haver produtos vinculados.'
+    excluir_categoria:       'Erro ao excluir categoria! Pode haver produtos vinculados.',
+    imagem_obrigatoria:      'A imagem do banner é obrigatória!'
 };
 
 // ── Middleware global — session_id anônimo ────────────────────────────────────
@@ -250,7 +255,7 @@ router.get('/home', async (req, res) => {
     const banners     = await bannersModel.findAll();
     const categorias  = await produtosModel.findAllCategorias();
 
-    const produtosNormalizados = produtos.map(p => ({
+    const produtosNormalizados = (Array.isArray(produtos) ? produtos : []).map(p => ({
         ...p,
         id:            p.id_produto,
         precoDesconto: p.preco_desconto,
@@ -305,7 +310,7 @@ router.get('/admin', requireAdmin, async (req, res) => {
     const banners    = await bannersModel.findAll();
     const categorias = await produtosModel.findAllCategorias();
 
-    const produtosNorm = produtos.map(p => ({
+    const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
         ...p,
         id:            p.id_produto,
         precoDesconto: p.preco_desconto
@@ -314,9 +319,9 @@ router.get('/admin', requireAdmin, async (req, res) => {
     res.render('pages/admin', {
         produtos:         produtosNorm,
         totalProdutos:    produtosNorm.length,
-        usuarios,
-        banners,
-        categorias,
+        usuarios:         Array.isArray(usuarios) ? usuarios : [],
+        banners:          Array.isArray(banners)  ? banners  : [],
+        categorias:       Array.isArray(categorias) ? categorias : [],
         erro:             req.query.erro    || null,
         sucesso:          req.query.sucesso || null,
         mensagensSucesso: MSGS_SUCESSO,
@@ -325,37 +330,45 @@ router.get('/admin', requireAdmin, async (req, res) => {
 });
 
 // ── Admin — Adicionar produto ─────────────────────────────────────────────────
-router.post('/admin/adicionar-produto', requireAdmin, uploadProduto.single('imagem'), async (req, res) => {
-    try {
-        const imagemPath = req.file ? '/imagens/produtos/' + req.file.filename : '/imagens/foto.jpg';
-        const preco      = parseFloat(req.body.preco) || 0;
-        const precoDesc  = req.body.precoDesconto ? parseFloat(req.body.precoDesconto) || null : null;
-
-        const ids_categorias = parseCategorias(req.body);
-
-        if (ids_categorias.length === 0) {
-            return res.redirect('/admin?erro=categoria_invalida');
-        }
-
-        const result = await produtosModel.create({
-            nome:           req.body.nome || 'Produto sem nome',
-            descricao:      req.body.descricao || '',
-            preco,
-            preco_desconto: precoDesc,
-            imagem:         imagemPath,
-            status:         req.body.status || 'em-estoque'
-        }, ids_categorias);
-
-        if (result && result.errno) {
-            console.error('Erro ao criar produto:', result);
+router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
+    uploadProduto.single('imagem')(req, res, async (err) => {
+        if (err) {
+            console.error('Multer erro produto:', err);
             return res.redirect('/admin?erro=adicionar_produto');
         }
+        try {
+            const imagemPath = req.file ? '/imagens/produtos/' + req.file.filename : '/imagens/foto.jpg';
+            const preco      = parseFloat(req.body.preco) || 0;
+            const precoDesc  = req.body.precoDesconto && req.body.precoDesconto !== ''
+                ? parseFloat(req.body.precoDesconto) || null
+                : null;
 
-        res.redirect('/admin?sucesso=produto_adicionado');
-    } catch (err) {
-        console.error(err);
-        res.redirect('/admin?erro=adicionar_produto');
-    }
+            const ids_categorias = parseCategorias(req.body);
+
+            if (ids_categorias.length === 0) {
+                return res.redirect('/admin?erro=categoria_invalida');
+            }
+
+            const result = await produtosModel.create({
+                nome:           req.body.nome || 'Produto sem nome',
+                descricao:      req.body.descricao || '',
+                preco,
+                preco_desconto: precoDesc,
+                imagem:         imagemPath,
+                status:         req.body.status || 'em-estoque'
+            }, ids_categorias);
+
+            if (result && result.errno) {
+                console.error('Erro ao criar produto:', result);
+                return res.redirect('/admin?erro=adicionar_produto');
+            }
+
+            res.redirect('/admin?sucesso=produto_adicionado');
+        } catch (err) {
+            console.error('Erro inesperado ao adicionar produto:', err);
+            res.redirect('/admin?erro=adicionar_produto');
+        }
+    });
 });
 
 // ── Admin — Editar produto (GET) ──────────────────────────────────────────────
@@ -376,44 +389,52 @@ router.get('/admin/editar-produto/:id', requireAdmin, async (req, res) => {
 });
 
 // ── Admin — Editar produto (POST) ─────────────────────────────────────────────
-router.post('/admin/editar-produto/:id', requireAdmin, uploadProduto.single('imagem'), async (req, res) => {
-    try {
-        const produto = await produtosModel.findById(req.params.id);
-        if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
-
-        let imagemPath = produto.imagem;
-        if (req.file) {
-            imagemPath = '/imagens/produtos/' + req.file.filename;
-            if (produto.imagem && produto.imagem !== '/imagens/foto.jpg') {
-                const old = path.join(__dirname, '../public', produto.imagem);
-                if (fs.existsSync(old)) fs.unlinkSync(old);
-            }
-        }
-
-        const ids_categorias = parseCategorias(req.body);
-        if (ids_categorias.length === 0) {
-            return res.redirect('/admin?erro=categoria_invalida');
-        }
-
-        const result = await produtosModel.update(req.params.id, {
-            nome:           req.body.nome || produto.nome,
-            descricao:      req.body.descricao || produto.descricao,
-            preco:          parseFloat(req.body.preco) || 0,
-            preco_desconto: req.body.precoDesconto ? parseFloat(req.body.precoDesconto) || null : null,
-            imagem:         imagemPath,
-            status:         req.body.status || produto.status
-        }, ids_categorias);
-
-        if (result && result.errno) {
-            console.error('Erro ao atualizar produto:', result);
+router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
+    uploadProduto.single('imagem')(req, res, async (err) => {
+        if (err) {
+            console.error('Multer erro editar produto:', err);
             return res.redirect('/admin?erro=editar_produto');
         }
+        try {
+            const produto = await produtosModel.findById(req.params.id);
+            if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
 
-        res.redirect('/admin?sucesso=produto_editado');
-    } catch (err) {
-        console.error(err);
-        res.redirect('/admin?erro=editar_produto');
-    }
+            let imagemPath = produto.imagem;
+            if (req.file) {
+                imagemPath = '/imagens/produtos/' + req.file.filename;
+                if (produto.imagem && produto.imagem !== '/imagens/foto.jpg') {
+                    const old = path.join(__dirname, '../public', produto.imagem);
+                    if (fs.existsSync(old)) fs.unlinkSync(old);
+                }
+            }
+
+            const ids_categorias = parseCategorias(req.body);
+            if (ids_categorias.length === 0) {
+                return res.redirect('/admin?erro=categoria_invalida');
+            }
+
+            const result = await produtosModel.update(req.params.id, {
+                nome:           req.body.nome || produto.nome,
+                descricao:      req.body.descricao || produto.descricao,
+                preco:          parseFloat(req.body.preco) || 0,
+                preco_desconto: req.body.precoDesconto && req.body.precoDesconto !== ''
+                    ? parseFloat(req.body.precoDesconto) || null
+                    : null,
+                imagem:         imagemPath,
+                status:         req.body.status || produto.status
+            }, ids_categorias);
+
+            if (result && result.errno) {
+                console.error('Erro ao atualizar produto:', result);
+                return res.redirect('/admin?erro=editar_produto');
+            }
+
+            res.redirect('/admin?sucesso=produto_editado');
+        } catch (err) {
+            console.error('Erro inesperado ao editar produto:', err);
+            res.redirect('/admin?erro=editar_produto');
+        }
+    });
 });
 
 // ── Admin — Excluir produto ───────────────────────────────────────────────────
@@ -457,11 +478,12 @@ router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
         }
         const result = await produtosModel.createCategoria(nome);
         if (result && result.errno) {
+            console.error('Erro ao criar categoria:', result);
             return res.redirect('/admin?erro=criar_categoria');
         }
         res.redirect('/admin?sucesso=categoria_criada');
     } catch (err) {
-        console.error(err);
+        console.error('Erro inesperado ao criar categoria:', err);
         res.redirect('/admin?erro=criar_categoria');
     }
 });
@@ -477,6 +499,38 @@ router.post('/admin/excluir-categoria/:id', requireAdmin, async (req, res) => {
     }
 });
 
+// ── Admin — Criar banner ──────────────────────────────────────────────────────
+router.post('/admin/criar-banner', requireAdmin, (req, res) => {
+    uploadBanner.single('imagem')(req, res, async (err) => {
+        if (err) {
+            console.error('Multer erro banner criar:', err);
+            return res.redirect('/admin?erro=criar_banner');
+        }
+        try {
+            if (!req.file) {
+                return res.redirect('/admin?erro=imagem_obrigatoria');
+            }
+
+            const imagemPath = '/imagens/' + req.file.filename;
+            const legenda    = (req.body.legenda || '').trim() || 'Novo Banner';
+            let   link       = (req.body.link    || '/home').trim();
+            if (!link.startsWith('/')) link = '/' + link;
+
+            const result = await bannersModel.create({ imagem: imagemPath, legenda, link });
+
+            if (result && result.errno) {
+                console.error('Erro ao criar banner:', result);
+                return res.redirect('/admin?erro=criar_banner');
+            }
+
+            res.redirect('/admin?sucesso=banner_criado');
+        } catch (e) {
+            console.error('Erro inesperado ao criar banner:', e);
+            res.redirect('/admin?erro=criar_banner');
+        }
+    });
+});
+
 // ── Admin — Editar banner ─────────────────────────────────────────────────────
 router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
     uploadBanner.single('imagem')(req, res, async (err) => {
@@ -489,6 +543,7 @@ router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
             let imagemPath = banner.imagem;
             if (req.file) {
                 imagemPath = '/imagens/' + req.file.filename;
+                // Apaga imagem antiga se não for das originais fixas
                 const originais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
                 if (!originais.includes(banner.imagem)) {
                     const old = path.join(__dirname, '../public', banner.imagem);
@@ -509,6 +564,27 @@ router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
     });
 });
 
+// ── Admin — Excluir banner ────────────────────────────────────────────────────
+router.post('/admin/excluir-banner/:id', requireAdmin, async (req, res) => {
+    try {
+        const banner = await bannersModel.findById(parseInt(req.params.id));
+        if (!banner) return res.redirect('/admin?erro=banner_nao_encontrado');
+
+        // Apaga arquivo físico se não for original
+        const originais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
+        if (!originais.includes(banner.imagem)) {
+            const imgPath = path.join(__dirname, '../public', banner.imagem);
+            if (fs.existsSync(imgPath)) { try { fs.unlinkSync(imgPath); } catch(_) {} }
+        }
+
+        await bannersModel.delete(parseInt(req.params.id));
+        res.redirect('/admin?sucesso=banner_excluido');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/admin?erro=excluir_banner');
+    }
+});
+
 // ── Produto ───────────────────────────────────────────────────────────────────
 router.get('/produto/:id', async (req, res) => {
     const produto = await produtosModel.findById(req.params.id);
@@ -520,7 +596,9 @@ router.get('/produto/:id', async (req, res) => {
     const isAdmin                        = req.session.isAdmin || false;
 
     const produtoNorm  = { ...produto, id: produto.id_produto, precoDesconto: produto.preco_desconto };
-    const produtosNorm = produtos.map(p => ({ ...p, id: p.id_produto, precoDesconto: p.preco_desconto, avaliacoes: [] }));
+    const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
+        ...p, id: p.id_produto, precoDesconto: p.preco_desconto, avaliacoes: []
+    }));
 
     res.render('pages/produto', {
         produto:              produtoNorm,
@@ -545,7 +623,7 @@ router.post('/produto/:id/adicionar-carrinho', blockAdmin, async (req, res) => {
 router.get('/carrinho', blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
     const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
-    const carrinho = itens.map(i => ({
+    const carrinho = (Array.isArray(itens) ? itens : []).map(i => ({
         ...i,
         id:            i.id_produto,
         precoDesconto: i.preco_desconto
@@ -599,7 +677,7 @@ router.get('/categoria/:slug', async (req, res) => {
         }
     }
 
-    const produtosNorm = produtos.map(p => ({
+    const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
         ...p,
         id:            p.id_produto,
         precoDesconto: p.preco_desconto,

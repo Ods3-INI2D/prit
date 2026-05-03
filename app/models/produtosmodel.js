@@ -1,3 +1,4 @@
+const mysql = require('mysql2');
 const pool = require('../config/pool_conexoes');
 
 const produtosModel = {
@@ -45,7 +46,8 @@ const produtosModel = {
             }
             return linhas;
         } catch (erro) {
-            return erro;
+            console.error('findAll erro:', erro);
+            return [];
         }
     },
 
@@ -74,6 +76,7 @@ const produtosModel = {
             produto.lista_categorias = produto.categoria ? produto.categoria.split(', ') : [];
             return produto;
         } catch (erro) {
+            console.error('findById erro:', erro);
             return null;
         }
     },
@@ -112,6 +115,7 @@ const produtosModel = {
             }
             return linhas;
         } catch (erro) {
+            console.error('findByCategoria erro:', erro);
             return [];
         }
     },
@@ -134,16 +138,16 @@ const produtosModel = {
             );
             return linhas;
         } catch (erro) {
+            console.error('findBySlugCategoria erro:', erro);
             return [];
         }
     },
 
     // ── Cadastro (admin) ─────────────────────────────────────────
     create: async (dados, ids_categorias = []) => {
-        const conn = await pool.getConnection();
         try {
-            await conn.beginTransaction();
-            const [result] = await conn.query(
+            // Insere produto
+            const [result] = await pool.query(
                 `INSERT INTO produtos (nome, descricao, preco, preco_desconto, imagem, status)
                  VALUES (?, ?, ?, ?, ?, ?)`,
                 [
@@ -156,28 +160,26 @@ const produtosModel = {
                 ]
             );
             const id_produto = result.insertId;
+
+            // Insere categorias
             for (const id_cat of ids_categorias) {
-                await conn.query(
+                await pool.query(
                     'INSERT IGNORE INTO produto_categorias (id_produto, id_categoria) VALUES (?, ?)',
                     [id_produto, id_cat]
                 );
             }
-            await conn.commit();
+
             return result;
         } catch (erro) {
-            await conn.rollback();
+            console.error('create produto erro:', erro);
             return erro;
-        } finally {
-            conn.release();
         }
     },
 
     // ── Atualização (admin) ───────────────────────────────────────
     update: async (id, dados, ids_categorias = []) => {
-        const conn = await pool.getConnection();
         try {
-            await conn.beginTransaction();
-            const [result] = await conn.query(
+            const [result] = await pool.query(
                 `UPDATE produtos SET
                     nome = ?, descricao = ?, preco = ?, preco_desconto = ?,
                     imagem = ?, status = ?
@@ -192,21 +194,20 @@ const produtosModel = {
                     id
                 ]
             );
+
             // Remove categorias antigas e insere as novas
-            await conn.query('DELETE FROM produto_categorias WHERE id_produto = ?', [id]);
+            await pool.query('DELETE FROM produto_categorias WHERE id_produto = ?', [id]);
             for (const id_cat of ids_categorias) {
-                await conn.query(
+                await pool.query(
                     'INSERT IGNORE INTO produto_categorias (id_produto, id_categoria) VALUES (?, ?)',
                     [id, id_cat]
                 );
             }
-            await conn.commit();
+
             return result;
         } catch (erro) {
-            await conn.rollback();
+            console.error('update produto erro:', erro);
             return erro;
-        } finally {
-            conn.release();
         }
     },
 
@@ -219,6 +220,7 @@ const produtosModel = {
             );
             return result;
         } catch (erro) {
+            console.error('delete produto erro:', erro);
             return erro;
         }
     },
@@ -232,6 +234,7 @@ const produtosModel = {
             );
             return result;
         } catch (erro) {
+            console.error('addAvaliacao erro:', erro);
             return erro;
         }
     },
@@ -256,6 +259,7 @@ const produtosModel = {
             );
             return linhas;
         } catch (erro) {
+            console.error('findAllCategorias erro:', erro);
             return [];
         }
     },
@@ -306,12 +310,14 @@ const produtosModel = {
                 .replace(/[^a-z0-9\s-]/g, '')
                 .trim()
                 .replace(/\s+/g, '-');
+
             const [result] = await pool.query(
                 'INSERT INTO categorias (nome, slug) VALUES (?, ?)',
                 [nome, slug]
             );
             return { ...result, slug };
         } catch (erro) {
+            console.error('createCategoria erro:', erro);
             return erro;
         }
     },
@@ -324,6 +330,7 @@ const produtosModel = {
             );
             return result;
         } catch (erro) {
+            console.error('deleteCategoria erro:', erro);
             return erro;
         }
     }

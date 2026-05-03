@@ -22,11 +22,34 @@ const bannersModel = {
         }
     },
 
+    create: async (dados) => {
+        try {
+            const [result] = await pool.query(
+                'INSERT INTO banners (imagem, legenda, link) VALUES (?, ?, ?)',
+                [dados.imagem, dados.legenda || '', dados.link || '/home']
+            );
+            return result;
+        } catch (erro) {
+            return erro;
+        }
+    },
+
     update: async (id, dados) => {
         try {
             const [result] = await pool.query(
                 'UPDATE banners SET imagem = ?, legenda = ?, link = ? WHERE id_banner = ?',
                 [dados.imagem, dados.legenda, dados.link, id]
+            );
+            return result;
+        } catch (erro) {
+            return erro;
+        }
+    },
+
+    delete: async (id) => {
+        try {
+            const [result] = await pool.query(
+                'DELETE FROM banners WHERE id_banner = ?', [id]
             );
             return result;
         } catch (erro) {

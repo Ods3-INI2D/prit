@@ -69,14 +69,14 @@
                     
                     <form method="POST" action="/admin/adicionar-produto" class="form-produto" enctype="multipart/form-data" aria-label="Formulário de cadastro de produto">
                         <fieldset>
-                            <legend class="label-titulo">Nome do Produto</legend>
+                            <legend class="label-titulo">Nome do Produto <output style="color:#ff6b6b">*</output></legend>
                             <label for="nome-add">
                                 <input type="text" id="nome-add" name="nome" placeholder="Digite o nome do produto" required aria-required="true">
                             </label>
                         </fieldset>
 
                         <fieldset>
-                            <legend class="label-titulo">Preço (R$)</legend>
+                            <legend class="label-titulo">Preço (R$) <output style="color:#ff6b6b">*</output></legend>
                             <label for="preco-add">
                                 <input type="number" id="preco-add" name="preco" placeholder="0.00" step="0.01" min="0" required aria-required="true">
                             </label>
@@ -109,7 +109,7 @@
                         </fieldset>
 
                         <fieldset>
-                            <legend class="label-titulo">Status do Produto</legend>
+                            <legend class="label-titulo">Status do Produto <output style="color:#ff6b6b">*</output></legend>
                             <label for="status-add">
                                 <select id="status-add" name="status" required aria-required="true">
                                     <option value="em-estoque">Em Estoque</option>
@@ -129,10 +129,12 @@
                             <output id="preview-imagem-add" class="preview-container" role="status" aria-live="polite"></output>
                         </fieldset>
 
-                        <label for="descricao-add">
-                            <strong class="label-titulo">Descrição do Produto</strong>
-                            <textarea id="descricao-add" name="descricao" placeholder="Digite a descrição do produto" rows="5" required aria-required="true"></textarea>
-                        </label>
+                        <fieldset>
+                            <legend class="label-titulo">Descrição do Produto <output style="color:#ff6b6b">*</output></legend>
+                            <label for="descricao-add">
+                                <textarea id="descricao-add" name="descricao" placeholder="Digite a descrição do produto" rows="5" required aria-required="true"></textarea>
+                            </label>
+                        </fieldset>
 
                         <button type="submit" class="btn-adicionar">Adicionar Produto</button>
                     </form>
@@ -188,7 +190,7 @@
                         <h3 class="subtitulo" style="font-size:1.2rem;">Criar Nova Categoria</h3>
                         <form method="POST" action="/admin/criar-categoria" class="form-produto" aria-label="Formulário de criação de categoria">
                             <fieldset>
-                                <legend class="label-titulo">Nome da Categoria</legend>
+                                <legend class="label-titulo">Nome da Categoria <output style="color:#ff6b6b">*</output></legend>
                                 <label for="nome_categoria">
                                     <input type="text" id="nome_categoria" name="nome_categoria"
                                            placeholder="Ex: Medicamentos, Bebê, Dermocosméticos..."
@@ -268,9 +270,52 @@
                 <section class="lista-banners-section">
                     <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners do Carrossel</h2>
 
+                    <%# --- Formulário de criar novo banner --- %>
+                    <section class="adicionar-categoria" style="margin-bottom:2rem;">
+                        <h3 class="subtitulo" style="font-size:1.2rem;">Adicionar Novo Banner</h3>
+                        <form method="POST" action="/admin/criar-banner" class="form-produto" enctype="multipart/form-data" aria-label="Formulário de criação de banner">
+                            <fieldset>
+                                <legend class="label-titulo">Legenda do Banner <output style="color:#ff6b6b">*</output></legend>
+                                <label for="legenda-novo-banner">
+                                    <input type="text" id="legenda-novo-banner" name="legenda"
+                                           placeholder="Ex: Promoções de Verão"
+                                           required aria-required="true" maxlength="150"
+                                           aria-describedby="legenda-novo-info">
+                                </label>
+                                <output id="legenda-novo-info" class="info-arquivo">A legenda aparece sobreposta na imagem do banner.</output>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend class="label-titulo">Link de Destino</legend>
+                                <label for="link-novo-banner">
+                                    <input type="text" id="link-novo-banner" name="link"
+                                           placeholder="/home ou /categoria/nome-da-categoria"
+                                           aria-describedby="link-novo-info">
+                                </label>
+                                <output id="link-novo-info" class="info-arquivo">Exemplos: /home, /categoria/cuidados-com-a-pele, /produto/123</output>
+                            </fieldset>
+
+                            <fieldset class="campo-imagem">
+                                <legend><strong class="label-titulo">Imagem do Banner <output style="color:#ff6b6b">*</output></strong></legend>
+                                <label for="imagem-novo-banner" class="label-arquivo">
+                                    <input type="file" id="imagem-novo-banner" name="imagem"
+                                           accept="image/jpeg,image/jpg,image/png,image/webp"
+                                           required aria-required="true"
+                                           aria-describedby="imagem-novo-info">
+                                    <output id="imagem-novo-info" class="info-arquivo">Formatos: JPG, PNG, WEBP (máx. 5MB). Recomendado: proporção 16:9.</output>
+                                </label>
+                                <output id="preview-novo-banner" class="preview-container" role="status" aria-live="polite"></output>
+                            </fieldset>
+
+                            <button type="submit" class="btn-adicionar">Adicionar Banner</button>
+                        </form>
+                    </section>
+
+                    <%# --- Lista de banners existentes --- %>
+                    <h3 class="subtitulo" style="font-size:1.2rem;">Banners Existentes</h3>
+
                     <output class="mensagem-info" role="status">
-                        Edite os banners que aparecem no carrossel da página inicial.
-                        Você pode alterar a legenda, o link de destino e a imagem de cada banner.
+                        Edite ou exclua os banners que aparecem no carrossel da página inicial.
                     </output>
 
                     <% if (typeof banners !== 'undefined' && banners && banners.length > 0) { %>
@@ -291,13 +336,18 @@
                                                 data-banner-id="<%= banner.id_banner %>"
                                                 data-banner-legenda="<%= banner.legenda %>"
                                                 data-banner-link="<%= banner.link || '/home' %>"
-                                                aria-label="Editar banner <%= index + 1 %>">Editar Banner</button>
+                                                aria-label="Editar banner <%= index + 1 %>">Editar</button>
+                                        <form method="POST" action="/admin/excluir-banner/<%= banner.id_banner %>" class="form-inline">
+                                            <button class="btn-excluir" type="submit"
+                                                    onclick="return confirm('Tem certeza que deseja excluir este banner?')"
+                                                    aria-label="Excluir banner <%= index + 1 %>">Excluir</button>
+                                        </form>
                                     </nav>
                                 </li>
                             <% }); %>
                         </ul>
                     <% } else { %>
-                        <output class="mensagem-vazia">Nenhum banner disponível.</output>
+                        <output class="mensagem-vazia">Nenhum banner cadastrado ainda. Adicione um acima!</output>
                     <% } %>
                 </section>
             </article>
@@ -393,7 +443,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Tabs
+            // ── Tabs ────────────────────────────────────────────────────────
             var tabButtons  = document.querySelectorAll('.tab-button');
             var tabContents = document.querySelectorAll('.tab-content');
 
@@ -413,26 +463,24 @@
                 });
             });
 
-            // Preview de imagem de produto (add)
-            function setupPreviewImagem(inputId, previewId, infoId) {
+            // ── Preview de imagem genérico ───────────────────────────────────
+            function setupPreview(inputId, previewId, infoId) {
                 var input   = document.getElementById(inputId);
                 var preview = document.getElementById(previewId);
-                var info    = document.getElementById(infoId);
-                if (!input) return;
+                var info    = infoId ? document.getElementById(infoId) : null;
+                if (!input || !preview) return;
 
                 input.addEventListener('change', function(e) {
                     var arquivo = e.target.files[0];
                     if (!arquivo) { preview.innerHTML = ''; return; }
 
                     if (arquivo.size > 5 * 1024 * 1024) {
-                        info.textContent = 'Erro: A imagem deve ter no máximo 5MB';
-                        info.style.color = '#d93025';
+                        if (info) { info.textContent = 'Erro: máximo 5MB'; info.style.color = '#d93025'; }
                         preview.innerHTML = ''; input.value = ''; return;
                     }
-                    var tipos = ['image/jpeg','image/jpg','image/png','image/webp'];
+                    var tipos = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
                     if (!tipos.includes(arquivo.type)) {
-                        info.textContent = 'Erro: Formato não suportado. Use JPG, PNG ou WEBP';
-                        info.style.color = '#d93025';
+                        if (info) { info.textContent = 'Erro: use JPG, PNG ou WEBP'; info.style.color = '#d93025'; }
                         preview.innerHTML = ''; input.value = ''; return;
                     }
                     var reader = new FileReader();
@@ -445,16 +493,17 @@
                         cap.textContent = arquivo.name; cap.className = 'preview-caption';
                         fig.appendChild(img); fig.appendChild(cap);
                         preview.innerHTML = ''; preview.appendChild(fig);
-                        info.textContent = 'Imagem selecionada!'; info.style.color = '#4da6ff';
+                        if (info) { info.textContent = 'Imagem selecionada!'; info.style.color = '#4da6ff'; }
                     };
                     reader.readAsDataURL(arquivo);
                 });
             }
 
-            setupPreviewImagem('imagem-add',   'preview-imagem-add', 'imagem-add-info');
-            setupPreviewImagem('imagem-banner', 'preview-banner',     'banner-info');
+            setupPreview('imagem-add',        'preview-imagem-add',  'imagem-add-info');
+            setupPreview('imagem-novo-banner', 'preview-novo-banner', 'imagem-novo-info');
+            setupPreview('imagem-banner',      'preview-banner',      'banner-info');
 
-            // Modal de banner
+            // ── Modal de edição de banner ────────────────────────────────────
             var modal        = document.getElementById('modal-banner');
             var form         = document.getElementById('form-editar-banner');
             var btnFechar    = document.getElementById('btn-fechar-modal');
@@ -469,6 +518,7 @@
                 document.getElementById('preview-banner').innerHTML = '';
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
+                inputLegenda.focus();
             }
 
             function fecharModal() {
@@ -493,6 +543,14 @@
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && modal && modal.classList.contains('active')) fecharModal();
             });
+
+            // ── Abre aba de banners se vier da query ?tab=banners ────────────
+            var params = new URLSearchParams(window.location.search);
+            var tabParam = params.get('tab');
+            if (tabParam) {
+                var targetBtn = document.querySelector('[data-tab="' + tabParam + '"]');
+                if (targetBtn) targetBtn.click();
+            }
         });
     </script>
 </body>
