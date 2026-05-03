@@ -328,10 +328,11 @@ router.get('/admin', requireAdmin, async (req, res) => {
     const categorias = await produtosModel.findAllCategorias();
 
     const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
-        ...p,
-        id:            p.id_produto,
-        precoDesconto: p.preco_desconto
-    }));
+    ...p,
+    id:            p.id_produto,
+    preco:         parseFloat(p.preco) || 0,
+    precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
+}));
 
     res.render('pages/admin', {
         produtos:         produtosNorm,
