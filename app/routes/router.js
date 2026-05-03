@@ -729,7 +729,6 @@ router.get('/categoria/:slug', async (req, res) => {
     ...p,
     id:            p.id_produto,
     preco:         parseFloat(p.preco) || 0,
-    avaliacoes:    [],
     precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
 }));
 
@@ -816,5 +815,6 @@ router.get('/logout', (req, res) => {
         res.redirect('/login');
     });
 });
+
 
 module.exports = router;
