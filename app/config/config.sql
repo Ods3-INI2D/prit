@@ -15,6 +15,19 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
     PRIMARY KEY (`id_usuario`)
 );
 
+-- Tabela de produtos (sem id_categoria direto - será pela tabela pivot)
+CREATE TABLE IF NOT EXISTS `produtos` (
+    `id_produto`     BIGINT         NOT NULL AUTO_INCREMENT,
+    `nome`           VARCHAR(150)   NOT NULL,
+    `descricao`      TEXT,
+    `preco`          DECIMAL(10,2)  NOT NULL DEFAULT 0.00,
+    `preco_desconto` DECIMAL(10,2)  DEFAULT NULL,
+    `imagem`         VARCHAR(255)   NOT NULL DEFAULT '/imagens/foto.jpg',
+    `status`         ENUM('em-estoque','fora-de-estoque') NOT NULL DEFAULT 'em-estoque',
+    `criado_em`      DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id_produto`)
+);
+
 -- Tabela de categorias
 CREATE TABLE IF NOT EXISTS `categorias` (
     `id_categoria`  INT          NOT NULL AUTO_INCREMENT,
@@ -37,28 +50,6 @@ CREATE TABLE IF NOT EXISTS `produto_categorias` (
 ALTER TABLE `categorias`
     MODIFY COLUMN `nome` VARCHAR(60) NOT NULL,
     MODIFY COLUMN `slug` VARCHAR(80) NOT NULL;
-
-
--- Insere categorias padrão se não existirem
-INSERT IGNORE INTO `categorias` (`nome`, `slug`) VALUES
-    ('Cuidados com a Pele', 'cuidados-com-a-pele'),
-    ('Higiene Bucal', 'higiene-bucal'),
-    ('Cabelo', 'cabelo'),
-    ('Vitaminas e Suplementos', 'vitaminas-e-suplementos'),
-    ('Terceira Idade', 'terceira-idade');
-
--- Tabela de produtos (sem id_categoria direto - será pela tabela pivot)
-CREATE TABLE IF NOT EXISTS `produtos` (
-    `id_produto`     BIGINT         NOT NULL AUTO_INCREMENT,
-    `nome`           VARCHAR(150)   NOT NULL,
-    `descricao`      TEXT,
-    `preco`          DECIMAL(10,2)  NOT NULL DEFAULT 0.00,
-    `preco_desconto` DECIMAL(10,2)  DEFAULT NULL,
-    `imagem`         VARCHAR(255)   NOT NULL DEFAULT '/imagens/foto.jpg',
-    `status`         ENUM('em-estoque','fora-de-estoque') NOT NULL DEFAULT 'em-estoque',
-    `criado_em`      DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id_produto`)
-);
 
 -- Tabela pivot produto <-> categoria (N:N)
 CREATE TABLE IF NOT EXISTS `produto_categorias` (
