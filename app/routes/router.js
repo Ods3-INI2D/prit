@@ -272,11 +272,12 @@ router.get('/home', async (req, res) => {
     const categorias  = await produtosModel.findAllCategorias();
 
     const produtosNormalizados = (Array.isArray(produtos) ? produtos : []).map(p => ({
-        ...p,
-        id:            p.id_produto,
-        precoDesconto: p.preco_desconto,
-        avaliacoes:    []
-    }));
+    ...p,
+    id:            p.id_produto,
+    preco:         parseFloat(p.preco) || 0,
+    precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null,
+    avaliacoes:    []
+}));
 
     res.render('pages/home', { produtos: produtosNormalizados, banners, categorias });
 });
@@ -633,10 +634,19 @@ router.get('/produto/:id', async (req, res) => {
     const temNoCarrinho                  = await carrinhoModel.temProduto(req.params.id, id_usuario, session_id);
     const isAdmin                        = req.session.isAdmin || false;
 
-    const produtoNorm  = { ...produto, id: produto.id_produto, precoDesconto: produto.preco_desconto };
-    const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
-        ...p, id: p.id_produto, precoDesconto: p.preco_desconto, avaliacoes: []
-    }));
+    const produtoNorm  = { 
+    ...produto, 
+    id: produto.id_produto, 
+    preco: parseFloat(produto.preco) || 0,
+    precoDesconto: produto.preco_desconto ? parseFloat(produto.preco_desconto) : null
+};
+const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
+    ...p, 
+    id: p.id_produto, 
+    preco: parseFloat(p.preco) || 0,
+    precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null,
+    avaliacoes: []
+}));
 
     res.render('pages/produto', {
         produto:              produtoNorm,
@@ -716,11 +726,12 @@ router.get('/categoria/:slug', async (req, res) => {
     }
 
     const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
-        ...p,
-        id:            p.id_produto,
-        precoDesconto: p.preco_desconto,
-        avaliacoes:    []
-    }));
+    ...p,
+    id:            p.id_produto,
+    preco:         parseFloat(p.preco) || 0,
+    avaliacoes:    [],
+    precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
+}));
 
     res.render('pages/categoria', { categoria: nomeExibicao, slug, produtos: produtosNorm });
 });
