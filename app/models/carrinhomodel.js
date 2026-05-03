@@ -31,27 +31,36 @@ const carrinhoModel = {
                 [linhas] = await pool.query(
                     `SELECT c.id_carrinho, c.quantidade, c.id_produto,
                             p.nome, p.imagem, p.preco, p.preco_desconto,
-                            p.status, cat.nome AS categoria
+                            p.status,
+                            GROUP_CONCAT(cat.nome ORDER BY cat.nome SEPARATOR ', ') AS categoria
                      FROM carrinho c
-                     JOIN produtos p   ON p.id_produto = c.id_produto
-                     JOIN categorias cat ON cat.id_categoria = p.id_categoria
-                     WHERE c.id_usuario = ?`,
+                     JOIN produtos p ON p.id_produto = c.id_produto
+                     LEFT JOIN produto_categorias pc ON pc.id_produto = p.id_produto
+                     LEFT JOIN categorias cat ON cat.id_categoria = pc.id_categoria
+                     WHERE c.id_usuario = ?
+                     GROUP BY c.id_carrinho, c.quantidade, c.id_produto,
+                              p.nome, p.imagem, p.preco, p.preco_desconto, p.status`,
                     [id_usuario]
                 );
             } else {
                 [linhas] = await pool.query(
                     `SELECT c.id_carrinho, c.quantidade, c.id_produto,
                             p.nome, p.imagem, p.preco, p.preco_desconto,
-                            p.status, cat.nome AS categoria
+                            p.status,
+                            GROUP_CONCAT(cat.nome ORDER BY cat.nome SEPARATOR ', ') AS categoria
                      FROM carrinho c
-                     JOIN produtos p   ON p.id_produto = c.id_produto
-                     JOIN categorias cat ON cat.id_categoria = p.id_categoria
-                     WHERE c.session_id = ?`,
+                     JOIN produtos p ON p.id_produto = c.id_produto
+                     LEFT JOIN produto_categorias pc ON pc.id_produto = p.id_produto
+                     LEFT JOIN categorias cat ON cat.id_categoria = pc.id_categoria
+                     WHERE c.session_id = ?
+                     GROUP BY c.id_carrinho, c.quantidade, c.id_produto,
+                              p.nome, p.imagem, p.preco, p.preco_desconto, p.status`,
                     [session_id]
                 );
             }
             return linhas;
         } catch (erro) {
+            console.error('findByIdentificador erro:', erro);
             return [];
         }
     },
@@ -59,7 +68,6 @@ const carrinhoModel = {
     // ── Adiciona / incrementa quantidade ─────────────────────────
     addProduto: async (id_produto, id_usuario, session_id, qtd = 1) => {
         try {
-            // Verifica se já existe
             let existente;
             if (id_usuario) {
                 const [rows] = await pool.query(
@@ -83,13 +91,13 @@ const carrinhoModel = {
                 return result;
             }
 
-            // Insere novo item
             const [result] = await pool.query(
                 'INSERT INTO carrinho (id_produto, id_usuario, session_id, quantidade) VALUES (?, ?, ?, ?)',
                 [id_produto, id_usuario || null, id_usuario ? null : session_id, qtd]
             );
             return result;
         } catch (erro) {
+            console.error('addProduto erro:', erro);
             return erro;
         }
     },
@@ -114,6 +122,7 @@ const carrinhoModel = {
             }
             return result;
         } catch (erro) {
+            console.error('updateQuantidade erro:', erro);
             return erro;
         }
     },
@@ -135,6 +144,7 @@ const carrinhoModel = {
             }
             return result;
         } catch (erro) {
+            console.error('removerProduto erro:', erro);
             return erro;
         }
     },
@@ -142,7 +152,6 @@ const carrinhoModel = {
     // ── Migra carrinho anônimo → usuário logado ───────────────────
     migrarParaUsuario: async (session_id, id_usuario) => {
         try {
-            // Para cada item anônimo, tenta fundir com possível item já existente do usuário
             const [itensAnonimos] = await pool.query(
                 'SELECT * FROM carrinho WHERE session_id = ?',
                 [session_id]
@@ -168,6 +177,7 @@ const carrinhoModel = {
             }
             return true;
         } catch (erro) {
+            console.error('migrarParaUsuario erro:', erro);
             return false;
         }
     },

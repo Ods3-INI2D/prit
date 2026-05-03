@@ -40,10 +40,13 @@ const uploadProduto = multer({
     storage: storageProduto,
     limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
-        /jpeg|jpg|png|webp/.test(path.extname(file.originalname).toLowerCase()) &&
-        /jpeg|jpg|png|webp/.test(file.mimetype)
-            ? cb(null, true)
-            : cb(new Error('Apenas imagens JPG, PNG ou WEBP são permitidas!'));
+        const ext = path.extname(file.originalname).toLowerCase();
+        const mime = file.mimetype;
+        if (/\.(jpeg|jpg|png|webp)$/.test(ext) && /image\/(jpeg|jpg|png|webp)/.test(mime)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Apenas imagens JPG, PNG ou WEBP são permitidas!'));
+        }
     }
 });
 
@@ -62,9 +65,12 @@ const uploadBanner = multer({
     storage: storageBanner,
     limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
-        /jpeg|jpg|png|webp/.test(path.extname(file.originalname).toLowerCase())
-            ? cb(null, true)
-            : cb(new Error('Apenas imagens são permitidas!'));
+        const ext = path.extname(file.originalname).toLowerCase();
+        if (/\.(jpeg|jpg|png|webp)$/.test(ext)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Apenas imagens são permitidas!'));
+        }
     }
 });
 
@@ -158,10 +164,22 @@ function getIdentificador(req) {
     };
 }
 
+/**
+ * Extrai ids de categorias do body de forma robusta.
+ * Suporta: campo "categorias" (checkboxes), "id_categorias" ou lista separada por vírgula.
+ */
 function parseCategorias(body) {
     let cats = body.categorias || body.id_categorias || [];
-    if (!Array.isArray(cats)) cats = [cats];
-    return cats.map(Number).filter(n => n > 0);
+
+    // Se vier como string (único checkbox marcado), converte para array
+    if (typeof cats === 'string') {
+        cats = [cats];
+    }
+
+    // Filtra, converte para número e remove zeros/NaN
+    return cats
+        .map(v => parseInt(String(v).trim(), 10))
+        .filter(n => Number.isFinite(n) && n > 0);
 }
 
 // =============================================================================
@@ -339,19 +357,20 @@ router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
         try {
             const imagemPath = req.file ? '/imagens/produtos/' + req.file.filename : '/imagens/foto.jpg';
             const preco      = parseFloat(req.body.preco) || 0;
-            const precoDesc  = req.body.precoDesconto && req.body.precoDesconto !== ''
+            const precoDesc  = req.body.precoDesconto && req.body.precoDesconto.trim() !== ''
                 ? parseFloat(req.body.precoDesconto) || null
                 : null;
 
             const ids_categorias = parseCategorias(req.body);
+            console.log('IDs categorias recebidos:', ids_categorias, '| Body:', req.body.categorias);
 
             if (ids_categorias.length === 0) {
                 return res.redirect('/admin?erro=categoria_invalida');
             }
 
             const result = await produtosModel.create({
-                nome:           req.body.nome || 'Produto sem nome',
-                descricao:      req.body.descricao || '',
+                nome:           (req.body.nome || '').trim() || 'Produto sem nome',
+                descricao:      (req.body.descricao || '').trim(),
                 preco,
                 preco_desconto: precoDesc,
                 imagem:         imagemPath,
@@ -414,10 +433,10 @@ router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
             }
 
             const result = await produtosModel.update(req.params.id, {
-                nome:           req.body.nome || produto.nome,
+                nome:           (req.body.nome || produto.nome).trim(),
                 descricao:      req.body.descricao || produto.descricao,
                 preco:          parseFloat(req.body.preco) || 0,
-                preco_desconto: req.body.precoDesconto && req.body.precoDesconto !== ''
+                preco_desconto: req.body.precoDesconto && req.body.precoDesconto.trim() !== ''
                     ? parseFloat(req.body.precoDesconto) || null
                     : null,
                 imagem:         imagemPath,
@@ -469,22 +488,34 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, async (req, res) => {
 router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
     try {
         const nome = (req.body.nome_categoria || '').trim();
+
         if (!nome || nome.length < 2) {
-            return res.redirect('/admin?erro=categoria_nome_invalido');
+            return res.redirect('/admin?erro=categoria_nome_invalido&tab=categorias');
         }
+
         const existe = await produtosModel.findCategoriaPorNome(nome);
         if (existe) {
-            return res.redirect('/admin?erro=categoria_ja_existe');
+            return res.redirect('/admin?erro=categoria_ja_existe&tab=categorias');
         }
+
         const result = await produtosModel.createCategoria(nome);
+
+        // Verifica se ocorreu erro MySQL (objeto de erro tem errno)
         if (result && result.errno) {
             console.error('Erro ao criar categoria:', result);
-            return res.redirect('/admin?erro=criar_categoria');
+            return res.redirect('/admin?erro=criar_categoria&tab=categorias');
         }
-        res.redirect('/admin?sucesso=categoria_criada');
+
+        // Verifica se insertId existe (indica sucesso)
+        if (!result || !result.insertId) {
+            console.error('Resultado inesperado ao criar categoria:', result);
+            return res.redirect('/admin?erro=criar_categoria&tab=categorias');
+        }
+
+        res.redirect('/admin?sucesso=categoria_criada&tab=categorias');
     } catch (err) {
         console.error('Erro inesperado ao criar categoria:', err);
-        res.redirect('/admin?erro=criar_categoria');
+        res.redirect('/admin?erro=criar_categoria&tab=categorias');
     }
 });
 
@@ -492,10 +523,10 @@ router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
 router.post('/admin/excluir-categoria/:id', requireAdmin, async (req, res) => {
     try {
         await produtosModel.deleteCategoria(req.params.id);
-        res.redirect('/admin?sucesso=categoria_excluida');
+        res.redirect('/admin?sucesso=categoria_excluida&tab=categorias');
     } catch (err) {
         console.error(err);
-        res.redirect('/admin?erro=excluir_categoria');
+        res.redirect('/admin?erro=excluir_categoria&tab=categorias');
     }
 });
 
@@ -504,11 +535,11 @@ router.post('/admin/criar-banner', requireAdmin, (req, res) => {
     uploadBanner.single('imagem')(req, res, async (err) => {
         if (err) {
             console.error('Multer erro banner criar:', err);
-            return res.redirect('/admin?erro=criar_banner');
+            return res.redirect('/admin?erro=criar_banner&tab=banners');
         }
         try {
             if (!req.file) {
-                return res.redirect('/admin?erro=imagem_obrigatoria');
+                return res.redirect('/admin?erro=imagem_obrigatoria&tab=banners');
             }
 
             const imagemPath = '/imagens/' + req.file.filename;
@@ -520,13 +551,13 @@ router.post('/admin/criar-banner', requireAdmin, (req, res) => {
 
             if (result && result.errno) {
                 console.error('Erro ao criar banner:', result);
-                return res.redirect('/admin?erro=criar_banner');
+                return res.redirect('/admin?erro=criar_banner&tab=banners');
             }
 
-            res.redirect('/admin?sucesso=banner_criado');
+            res.redirect('/admin?sucesso=banner_criado&tab=banners');
         } catch (e) {
             console.error('Erro inesperado ao criar banner:', e);
-            res.redirect('/admin?erro=criar_banner');
+            res.redirect('/admin?erro=criar_banner&tab=banners');
         }
     });
 });
@@ -534,16 +565,15 @@ router.post('/admin/criar-banner', requireAdmin, (req, res) => {
 // ── Admin — Editar banner ─────────────────────────────────────────────────────
 router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
     uploadBanner.single('imagem')(req, res, async (err) => {
-        if (err) return res.redirect('/admin?erro=editar_banner');
+        if (err) return res.redirect('/admin?erro=editar_banner&tab=banners');
         try {
             const bannerId = parseInt(req.params.id);
             const banner   = await bannersModel.findById(bannerId);
-            if (!banner) return res.redirect('/admin?erro=banner_nao_encontrado');
+            if (!banner) return res.redirect('/admin?erro=banner_nao_encontrado&tab=banners');
 
             let imagemPath = banner.imagem;
             if (req.file) {
                 imagemPath = '/imagens/' + req.file.filename;
-                // Apaga imagem antiga se não for das originais fixas
                 const originais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
                 if (!originais.includes(banner.imagem)) {
                     const old = path.join(__dirname, '../public', banner.imagem);
@@ -556,10 +586,10 @@ router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
             if (!link.startsWith('/')) link = '/' + link;
 
             await bannersModel.update(bannerId, { imagem: imagemPath, legenda, link });
-            res.redirect('/admin?sucesso=banner_editado');
+            res.redirect('/admin?sucesso=banner_editado&tab=banners');
         } catch (e) {
             console.error(e);
-            res.redirect('/admin?erro=editar_banner');
+            res.redirect('/admin?erro=editar_banner&tab=banners');
         }
     });
 });
@@ -568,9 +598,8 @@ router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
 router.post('/admin/excluir-banner/:id', requireAdmin, async (req, res) => {
     try {
         const banner = await bannersModel.findById(parseInt(req.params.id));
-        if (!banner) return res.redirect('/admin?erro=banner_nao_encontrado');
+        if (!banner) return res.redirect('/admin?erro=banner_nao_encontrado&tab=banners');
 
-        // Apaga arquivo físico se não for original
         const originais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
         if (!originais.includes(banner.imagem)) {
             const imgPath = path.join(__dirname, '../public', banner.imagem);
@@ -578,10 +607,10 @@ router.post('/admin/excluir-banner/:id', requireAdmin, async (req, res) => {
         }
 
         await bannersModel.delete(parseInt(req.params.id));
-        res.redirect('/admin?sucesso=banner_excluido');
+        res.redirect('/admin?sucesso=banner_excluido&tab=banners');
     } catch (err) {
         console.error(err);
-        res.redirect('/admin?erro=excluir_banner');
+        res.redirect('/admin?erro=excluir_banner&tab=banners');
     }
 });
 

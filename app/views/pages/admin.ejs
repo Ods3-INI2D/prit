@@ -10,6 +10,40 @@
     <link rel="stylesheet" href="/css/admin-extended.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
+    <style>
+        .categorias-grupo-admin {
+            display: flex;
+            flex-direction: column;
+            gap: .6rem;
+            margin-top: .5rem;
+        }
+        .checkbox-item-admin {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+        .checkbox-input-admin {
+            width: 1.1rem;
+            height: 1.1rem;
+            accent-color: #4da6ff;
+            cursor: pointer;
+        }
+        .checkbox-label-admin {
+            color: #d9d9d9;
+            font-size: .95rem;
+            cursor: pointer;
+        }
+        .adicionar-categoria {
+            margin-bottom: 1rem;
+        }
+        @media (min-width: 901px) {
+            .categorias-grupo-admin {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: .8rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -406,62 +440,42 @@
         </article>
     </aside>
 
-    <style>
-        .categorias-grupo-admin {
-            display: flex;
-            flex-direction: column;
-            gap: .6rem;
-            margin-top: .5rem;
-        }
-        .checkbox-item-admin {
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-        }
-        .checkbox-input-admin {
-            width: 1.1rem;
-            height: 1.1rem;
-            accent-color: #4da6ff;
-            cursor: pointer;
-        }
-        .checkbox-label-admin {
-            color: #d9d9d9;
-            font-size: .95rem;
-            cursor: pointer;
-        }
-        .adicionar-categoria {
-            margin-bottom: 1rem;
-        }
-        @media (min-width: 901px) {
-            .categorias-grupo-admin {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: .8rem;
-            }
-        }
-    </style>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
             // ── Tabs ────────────────────────────────────────────────────────
             var tabButtons  = document.querySelectorAll('.tab-button');
             var tabContents = document.querySelectorAll('.tab-content');
 
+            function ativarTab(tabId) {
+                tabButtons.forEach(function(btn) {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-selected', 'false');
+                });
+                tabContents.forEach(function(content) {
+                    content.classList.remove('active');
+                });
+                var targetBtn = document.querySelector('[data-tab="' + tabId + '"]');
+                var targetContent = document.getElementById('tab-' + tabId);
+                if (targetBtn && targetContent) {
+                    targetBtn.classList.add('active');
+                    targetBtn.setAttribute('aria-selected', 'true');
+                    targetContent.classList.add('active');
+                }
+            }
+
             tabButtons.forEach(function(button) {
                 button.addEventListener('click', function() {
-                    var tabId = this.getAttribute('data-tab');
-                    tabButtons.forEach(function(btn) {
-                        btn.classList.remove('active');
-                        btn.setAttribute('aria-selected', 'false');
-                    });
-                    tabContents.forEach(function(content) {
-                        content.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    this.setAttribute('aria-selected', 'true');
-                    document.getElementById('tab-' + tabId).classList.add('active');
+                    ativarTab(this.getAttribute('data-tab'));
                 });
             });
+
+            // ── Abre aba via querystring (?tab=categorias, ?tab=banners, etc.) ──
+            var params   = new URLSearchParams(window.location.search);
+            var tabParam = params.get('tab');
+            if (tabParam) {
+                ativarTab(tabParam);
+            }
 
             // ── Preview de imagem genérico ───────────────────────────────────
             function setupPreview(inputId, previewId, infoId) {
@@ -543,14 +557,6 @@
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && modal && modal.classList.contains('active')) fecharModal();
             });
-
-            // ── Abre aba de banners se vier da query ?tab=banners ────────────
-            var params = new URLSearchParams(window.location.search);
-            var tabParam = params.get('tab');
-            if (tabParam) {
-                var targetBtn = document.querySelector('[data-tab="' + tabParam + '"]');
-                if (targetBtn) targetBtn.click();
-            }
         });
     </script>
 </body>

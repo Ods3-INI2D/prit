@@ -1,4 +1,3 @@
-const mysql = require('mysql2');
 const pool = require('../config/pool_conexoes');
 
 const produtosModel = {
@@ -145,9 +144,11 @@ const produtosModel = {
 
     // ── Cadastro (admin) ─────────────────────────────────────────
     create: async (dados, ids_categorias = []) => {
+        const conn = await pool.getConnection();
         try {
-            // Insere produto
-            const [result] = await pool.query(
+            await conn.beginTransaction();
+
+            const [result] = await conn.query(
                 `INSERT INTO produtos (nome, descricao, preco, preco_desconto, imagem, status)
                  VALUES (?, ?, ?, ?, ?, ?)`,
                 [
@@ -161,16 +162,19 @@ const produtosModel = {
             );
             const id_produto = result.insertId;
 
-            // Insere categorias
             for (const id_cat of ids_categorias) {
-                await pool.query(
+                await conn.query(
                     'INSERT IGNORE INTO produto_categorias (id_produto, id_categoria) VALUES (?, ?)',
                     [id_produto, id_cat]
                 );
             }
 
+            await conn.commit();
+            conn.release();
             return result;
         } catch (erro) {
+            await conn.rollback();
+            conn.release();
             console.error('create produto erro:', erro);
             return erro;
         }
@@ -178,8 +182,11 @@ const produtosModel = {
 
     // ── Atualização (admin) ───────────────────────────────────────
     update: async (id, dados, ids_categorias = []) => {
+        const conn = await pool.getConnection();
         try {
-            const [result] = await pool.query(
+            await conn.beginTransaction();
+
+            const [result] = await conn.query(
                 `UPDATE produtos SET
                     nome = ?, descricao = ?, preco = ?, preco_desconto = ?,
                     imagem = ?, status = ?
@@ -195,17 +202,20 @@ const produtosModel = {
                 ]
             );
 
-            // Remove categorias antigas e insere as novas
-            await pool.query('DELETE FROM produto_categorias WHERE id_produto = ?', [id]);
+            await conn.query('DELETE FROM produto_categorias WHERE id_produto = ?', [id]);
             for (const id_cat of ids_categorias) {
-                await pool.query(
+                await conn.query(
                     'INSERT IGNORE INTO produto_categorias (id_produto, id_categoria) VALUES (?, ?)',
                     [id, id_cat]
                 );
             }
 
+            await conn.commit();
+            conn.release();
             return result;
         } catch (erro) {
+            await conn.rollback();
+            conn.release();
             console.error('update produto erro:', erro);
             return erro;
         }
@@ -300,22 +310,37 @@ const produtosModel = {
         }
     },
 
+    // ── Criar categoria com slug gerado de forma segura ───────────
     createCategoria: async (nome) => {
         try {
-            // Gera slug a partir do nome
-            const slug = nome
+            // Gera slug normalizado e único
+            const slugBase = nome
                 .toLowerCase()
                 .normalize('NFD')
                 .replace(/[\u0300-\u036f]/g, '')
                 .replace(/[^a-z0-9\s-]/g, '')
                 .trim()
-                .replace(/\s+/g, '-');
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+
+            // Verifica colisão de slug e adiciona sufixo se necessário
+            let slug = slugBase;
+            let sufixo = 1;
+            while (true) {
+                const [existe] = await pool.query(
+                    'SELECT id_categoria FROM categorias WHERE slug = ?',
+                    [slug]
+                );
+                if (existe.length === 0) break;
+                slug = slugBase + '-' + sufixo;
+                sufixo++;
+            }
 
             const [result] = await pool.query(
                 'INSERT INTO categorias (nome, slug) VALUES (?, ?)',
                 [nome, slug]
             );
-            return { ...result, slug };
+            return { insertId: result.insertId, slug, affectedRows: result.affectedRows };
         } catch (erro) {
             console.error('createCategoria erro:', erro);
             return erro;
