@@ -72,6 +72,32 @@ const uploadBanner = multer({
 const ADMIN_EMAIL    = process.env.EMAIL_USER || 'maisaudeods3@gmail.com';
 const ADMIN_PASSWORD = '+SaudeINI2D';
 
+// ── Mapas de mensagens para o painel admin ────────────────────────────────────
+const MSGS_SUCESSO = {
+    produto_adicionado: 'Produto adicionado com sucesso!',
+    produto_editado:    'Produto editado com sucesso!',
+    produto_excluido:   'Produto excluído com sucesso!',
+    usuario_excluido:   'Usuário excluído com sucesso!',
+    banner_editado:     'Banner editado com sucesso!',
+    categoria_criada:   'Categoria criada com sucesso!',
+    categoria_excluida: 'Categoria excluída com sucesso!'
+};
+
+const MSGS_ERRO = {
+    adicionar_produto:       'Erro ao adicionar produto! Verifique se preencheu todos os campos.',
+    editar_produto:          'Erro ao editar produto!',
+    excluir_produto:         'Erro ao excluir produto!',
+    produto_nao_encontrado:  'Produto não encontrado!',
+    excluir_usuario:         'Erro ao excluir usuário!',
+    editar_banner:           'Erro ao editar banner! Verifique se a imagem é válida (JPG, PNG ou WEBP com máximo de 5MB).',
+    banner_nao_encontrado:   'Banner não encontrado!',
+    categoria_invalida:      'Selecione ao menos uma categoria válida!',
+    categoria_nome_invalido: 'Nome de categoria inválido (mínimo 2 caracteres)!',
+    categoria_ja_existe:     'Já existe uma categoria com esse nome!',
+    criar_categoria:         'Erro ao criar categoria!',
+    excluir_categoria:       'Erro ao excluir categoria! Pode haver produtos vinculados.'
+};
+
 // ── Middleware global — session_id anônimo ────────────────────────────────────
 router.use((req, res, next) => {
     if (!req.session.sessionId) {
@@ -127,7 +153,6 @@ function getIdentificador(req) {
     };
 }
 
-// Garante array de ids de categoria a partir do body
 function parseCategorias(body) {
     let cats = body.categorias || body.id_categorias || [];
     if (!Array.isArray(cats)) cats = [cats];
@@ -262,18 +287,10 @@ router.post('/usuario/atualizar-campo', requireLogin,
         if (campo === 'nome' && (valor.length < 3 || valor.length > 50)) {
             return res.redirect('/usuario?erro=' + encodeURIComponent('Nome deve ter entre 3 e 50 caracteres!'));
         }
-        if (campo === 'cpf' && !valCPF(valor)) {
-            return res.redirect('/usuario?erro=' + encodeURIComponent('CPF inválido!'));
-        }
-        if (campo === 'nasc' && !valNasc(valor)) {
-            return res.redirect('/usuario?erro=' + encodeURIComponent('Data de nascimento inválida!'));
-        }
-        if (campo === 'ddd' && !valDDD(valor)) {
-            return res.redirect('/usuario?erro=' + encodeURIComponent('DDD inválido!'));
-        }
-        if (campo === 'tel' && !valTel(valor)) {
-            return res.redirect('/usuario?erro=' + encodeURIComponent('Telefone inválido!'));
-        }
+        if (campo === 'cpf'  && !valCPF(valor))  return res.redirect('/usuario?erro=' + encodeURIComponent('CPF inválido!'));
+        if (campo === 'nasc' && !valNasc(valor))  return res.redirect('/usuario?erro=' + encodeURIComponent('Data de nascimento inválida!'));
+        if (campo === 'ddd'  && !valDDD(valor))   return res.redirect('/usuario?erro=' + encodeURIComponent('DDD inválido!'));
+        if (campo === 'tel'  && !valTel(valor))   return res.redirect('/usuario?erro=' + encodeURIComponent('Telefone inválido!'));
 
         await usuariosModel.updateCampo(req.session.usuarioEmail, campo, valor);
         const labels = { nome: 'Nome', nasc: 'Data de nascimento', cpf: 'CPF', ddd: 'DDD', tel: 'Telefone' };
@@ -295,13 +312,15 @@ router.get('/admin', requireAdmin, async (req, res) => {
     }));
 
     res.render('pages/admin', {
-        produtos:      produtosNorm,
-        totalProdutos: produtosNorm.length,
+        produtos:         produtosNorm,
+        totalProdutos:    produtosNorm.length,
         usuarios,
         banners,
         categorias,
-        erro:    req.query.erro    || null,
-        sucesso: req.query.sucesso || null
+        erro:             req.query.erro    || null,
+        sucesso:          req.query.sucesso || null,
+        mensagensSucesso: MSGS_SUCESSO,
+        mensagensErro:    MSGS_ERRO
     });
 });
 
@@ -312,7 +331,6 @@ router.post('/admin/adicionar-produto', requireAdmin, uploadProduto.single('imag
         const preco      = parseFloat(req.body.preco) || 0;
         const precoDesc  = req.body.precoDesconto ? parseFloat(req.body.precoDesconto) || null : null;
 
-        // Pega array de ids_categorias enviados pelo formulário
         const ids_categorias = parseCategorias(req.body);
 
         if (ids_categorias.length === 0) {
@@ -346,7 +364,6 @@ router.get('/admin/editar-produto/:id', requireAdmin, async (req, res) => {
     if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
     const categorias = await produtosModel.findAllCategorias();
 
-    // ids das categorias já associadas
     const ids_atual = produto.ids_categorias
         ? produto.ids_categorias.split(',').map(Number)
         : [];
@@ -434,7 +451,6 @@ router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
         if (!nome || nome.length < 2) {
             return res.redirect('/admin?erro=categoria_nome_invalido');
         }
-        // Verifica se já existe
         const existe = await produtosModel.findCategoriaPorNome(nome);
         if (existe) {
             return res.redirect('/admin?erro=categoria_ja_existe');
@@ -564,7 +580,6 @@ router.post('/produto/:id/avaliar', requireLogin, blockAdmin, async (req, res) =
 router.get('/categoria/:slug', async (req, res) => {
     const slug = req.params.slug;
 
-    // Verifica se é slug ou nome legado
     let categoriaInfo = await produtosModel.findCategoriaPorSlug(slug);
 
     let produtos;
@@ -574,7 +589,6 @@ router.get('/categoria/:slug', async (req, res) => {
         produtos     = await produtosModel.findBySlugCategoria(slug);
         nomeExibicao = categoriaInfo.nome;
     } else {
-        // Fallback: tenta pelo nome (compatibilidade)
         const nomeDecodificado = decodeURIComponent(slug);
         if (nomeDecodificado.toLowerCase() === 'geral') {
             produtos     = await produtosModel.findByCategoria('geral');

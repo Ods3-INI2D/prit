@@ -11,38 +11,13 @@
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
 </head>
-<body> ===
+<body>
     <header>
         <img src="/imagens/logo.png" alt="Logotipo da Farmácia" class="logo">
         <h1 class="titulo">Painel Administrativo</h1>
     </header>
  
     <main>
-        <%
-        const mensagensSucesso = {
-            produto_adicionado: 'Produto adicionado com sucesso!',
-            produto_editado:    'Produto editado com sucesso!',
-            produto_excluido:   'Produto excluído com sucesso!',
-            usuario_excluido:   'Usuário excluído com sucesso!',
-            banner_editado:     'Banner editado com sucesso!',
-            categoria_criada:   'Categoria criada com sucesso!',
-            categoria_excluida: 'Categoria excluída com sucesso!'
-        };
-        const mensagensErro = {
-            adicionar_produto:      'Erro ao adicionar produto! Verifique se preencheu todos os campos.',
-            editar_produto:         'Erro ao editar produto!',
-            excluir_produto:        'Erro ao excluir produto!',
-            produto_nao_encontrado: 'Produto não encontrado!',
-            excluir_usuario:        'Erro ao excluir usuário!',
-            editar_banner:          'Erro ao editar banner! Verifique se a imagem é válida (JPG, PNG ou WEBP com máximo de 5MB).',
-            banner_nao_encontrado:  'Banner não encontrado!',
-            categoria_invalida:     'Selecione ao menos uma categoria válida!',
-            categoria_nome_invalido:'Nome de categoria inválido (mínimo 2 caracteres)!',
-            categoria_ja_existe:    'Já existe uma categoria com esse nome!',
-            criar_categoria:        'Erro ao criar categoria!',
-            excluir_categoria:      'Erro ao excluir categoria! Pode haver produtos vinculados.'
-        };
-        %>
 
         <% if (sucesso && mensagensSucesso[sucesso]) { %>
             <output class="mensagem-sucesso" role="status" aria-live="polite">
@@ -80,13 +55,14 @@
 
         <section class="tabs-container">
             <nav class="tabs-header" role="tablist">
-                <button class="tab-button active" data-tab="adicionar"  role="tab" aria-selected="true"  aria-controls="tab-adicionar">Adicionar Produto</button>
-                <button class="tab-button"         data-tab="produtos"  role="tab" aria-selected="false" aria-controls="tab-produtos">Produtos</button>
+                <button class="tab-button active" data-tab="adicionar"   role="tab" aria-selected="true"  aria-controls="tab-adicionar">Adicionar Produto</button>
+                <button class="tab-button"         data-tab="produtos"   role="tab" aria-selected="false" aria-controls="tab-produtos">Produtos</button>
                 <button class="tab-button"         data-tab="categorias" role="tab" aria-selected="false" aria-controls="tab-categorias">Categorias</button>
-                <button class="tab-button"         data-tab="usuarios"  role="tab" aria-selected="false" aria-controls="tab-usuarios">Usuários</button>
-                <button class="tab-button"         data-tab="banners"   role="tab" aria-selected="false" aria-controls="tab-banners">Banners</button>
+                <button class="tab-button"         data-tab="usuarios"   role="tab" aria-selected="false" aria-controls="tab-usuarios">Usuários</button>
+                <button class="tab-button"         data-tab="banners"    role="tab" aria-selected="false" aria-controls="tab-banners">Banners</button>
             </nav>
 
+            <%# ==================== ABA: ADICIONAR PRODUTO ==================== %>
             <article class="tab-content active" id="tab-adicionar" role="tabpanel" aria-labelledby="titulo-adicionar">
                 <section class="adicionar-produto">
                     <h2 id="titulo-adicionar" class="subtitulo">Adicionar Novo Produto</h2>
@@ -163,6 +139,7 @@
                 </section>
             </article>
 
+            <%# ==================== ABA: PRODUTOS ==================== %>
             <article class="tab-content" id="tab-produtos" role="tabpanel" aria-labelledby="titulo-lista">
                 <section class="lista-produtos">
                     <h2 id="titulo-lista" class="subtitulo">Produtos Cadastrados</h2>
@@ -202,7 +179,7 @@
                 </section>
             </article>
 
-            <%-- ==================== ABA: CATEGORIAS ==================== --%>
+            <%# ==================== ABA: CATEGORIAS ==================== %>
             <article class="tab-content" id="tab-categorias" role="tabpanel" aria-labelledby="titulo-categorias">
                 <section class="lista-categorias-section">
                     <h2 id="titulo-categorias" class="subtitulo">Gerenciar Categorias</h2>
@@ -250,7 +227,7 @@
                 </section>
             </article>
 
-            <%-- ==================== ABA: USUÁRIOS ==================== --%>
+            <%# ==================== ABA: USUÁRIOS ==================== %>
             <article class="tab-content" id="tab-usuarios" role="tabpanel" aria-labelledby="titulo-usuarios">
                 <section class="lista-usuarios-section">
                     <h2 id="titulo-usuarios" class="subtitulo">Usuários Cadastrados</h2>
@@ -286,7 +263,7 @@
                 </section>
             </article>
 
-            <%-- ==================== ABA: BANNERS ==================== --%>
+            <%# ==================== ABA: BANNERS ==================== %>
             <article class="tab-content" id="tab-banners" role="tabpanel" aria-labelledby="titulo-banners">
                 <section class="lista-banners-section">
                     <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners do Carrossel</h2>
@@ -334,7 +311,7 @@
         </nav>
     </footer>
 
-    <%-- Modal de edição de banner --%>
+    <%# Modal de edição de banner %>
     <aside id="modal-banner" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
         <article class="modal-content">
             <h2 class="subtitulo" id="modal-titulo">Editar Banner do Carrossel</h2>
@@ -416,13 +393,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // ── Tabs ──────────────────────────────────────────────────────────
-            const tabButtons  = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
+            // Tabs
+            var tabButtons  = document.querySelectorAll('.tab-button');
+            var tabContents = document.querySelectorAll('.tab-content');
 
             tabButtons.forEach(function(button) {
                 button.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
+                    var tabId = this.getAttribute('data-tab');
                     tabButtons.forEach(function(btn) {
                         btn.classList.remove('active');
                         btn.setAttribute('aria-selected', 'false');
@@ -436,15 +413,15 @@
                 });
             });
 
-            // ── Preview de imagem de produto (add) ────────────────────────────
+            // Preview de imagem de produto (add)
             function setupPreviewImagem(inputId, previewId, infoId) {
-                const input   = document.getElementById(inputId);
-                const preview = document.getElementById(previewId);
-                const info    = document.getElementById(infoId);
+                var input   = document.getElementById(inputId);
+                var preview = document.getElementById(previewId);
+                var info    = document.getElementById(infoId);
                 if (!input) return;
 
                 input.addEventListener('change', function(e) {
-                    const arquivo = e.target.files[0];
+                    var arquivo = e.target.files[0];
                     if (!arquivo) { preview.innerHTML = ''; return; }
 
                     if (arquivo.size > 5 * 1024 * 1024) {
@@ -452,19 +429,19 @@
                         info.style.color = '#d93025';
                         preview.innerHTML = ''; input.value = ''; return;
                     }
-                    const tipos = ['image/jpeg','image/jpg','image/png','image/webp'];
+                    var tipos = ['image/jpeg','image/jpg','image/png','image/webp'];
                     if (!tipos.includes(arquivo.type)) {
                         info.textContent = 'Erro: Formato não suportado. Use JPG, PNG ou WEBP';
                         info.style.color = '#d93025';
                         preview.innerHTML = ''; input.value = ''; return;
                     }
-                    const reader = new FileReader();
+                    var reader = new FileReader();
                     reader.onload = function(ev) {
-                        const fig = document.createElement('figure');
+                        var fig = document.createElement('figure');
                         fig.className = 'preview-figure';
-                        const img = document.createElement('img');
+                        var img = document.createElement('img');
                         img.src = ev.target.result; img.alt = 'Preview'; img.className = 'preview-img';
-                        const cap = document.createElement('figcaption');
+                        var cap = document.createElement('figcaption');
                         cap.textContent = arquivo.name; cap.className = 'preview-caption';
                         fig.appendChild(img); fig.appendChild(cap);
                         preview.innerHTML = ''; preview.appendChild(fig);
@@ -474,15 +451,15 @@
                 });
             }
 
-            setupPreviewImagem('imagem-add',    'preview-imagem-add',    'imagem-add-info');
-            setupPreviewImagem('imagem-banner',  'preview-banner',        'banner-info');
+            setupPreviewImagem('imagem-add',   'preview-imagem-add', 'imagem-add-info');
+            setupPreviewImagem('imagem-banner', 'preview-banner',     'banner-info');
 
-            // ── Modal de banner ───────────────────────────────────────────────
-            const modal         = document.getElementById('modal-banner');
-            const form          = document.getElementById('form-editar-banner');
-            const btnFechar     = document.getElementById('btn-fechar-modal');
-            const inputLegenda  = document.getElementById('legenda-banner');
-            const inputLink     = document.getElementById('link-banner');
+            // Modal de banner
+            var modal        = document.getElementById('modal-banner');
+            var form         = document.getElementById('form-editar-banner');
+            var btnFechar    = document.getElementById('btn-fechar-modal');
+            var inputLegenda = document.getElementById('legenda-banner');
+            var inputLink    = document.getElementById('link-banner');
 
             function abrirModal(bannerId, legenda, link) {
                 form.action = '/admin/editar-banner/' + bannerId;
