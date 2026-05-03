@@ -18,11 +18,26 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 -- Tabela de categorias
 CREATE TABLE IF NOT EXISTS `categorias` (
     `id_categoria`  INT          NOT NULL AUTO_INCREMENT,
-    `nome`          VARCHAR(60)  NOT NULL UNIQUE,
-    `slug`          VARCHAR(80)  NOT NULL UNIQUE,
+    `nome`          VARCHAR(60)  NOT NULL,
+    `slug`          VARCHAR(80)  NOT NULL,
     `criado_em`     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id_categoria`)
+    PRIMARY KEY (`id_categoria`),
+    UNIQUE KEY `uk_categorias_nome` (`nome`),
+    UNIQUE KEY `uk_categorias_slug` (`slug`)
 );
+
+CREATE TABLE IF NOT EXISTS `produto_categorias` (
+    `id_produto`    BIGINT  NOT NULL,
+    `id_categoria`  INT     NOT NULL,
+    PRIMARY KEY (`id_produto`, `id_categoria`),
+    FOREIGN KEY (`id_produto`)   REFERENCES `produtos`(`id_produto`)     ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (`id_categoria`) REFERENCES `categorias`(`id_categoria`) ON UPDATE CASCADE ON DELETE CASCADE
+);
+ 
+ALTER TABLE `categorias`
+    MODIFY COLUMN `nome` VARCHAR(60) NOT NULL,
+    MODIFY COLUMN `slug` VARCHAR(80) NOT NULL;
+
 
 -- Insere categorias padrão se não existirem
 INSERT IGNORE INTO `categorias` (`nome`, `slug`) VALUES

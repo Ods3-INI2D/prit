@@ -171,12 +171,10 @@ function getIdentificador(req) {
 function parseCategorias(body) {
     let cats = body.categorias || body.id_categorias || [];
 
-    // Se vier como string (único checkbox marcado), converte para array
     if (typeof cats === 'string') {
         cats = [cats];
     }
 
-    // Filtra, converte para número e remove zeros/NaN
     return cats
         .map(v => parseInt(String(v).trim(), 10))
         .filter(n => Number.isFinite(n) && n > 0);
@@ -357,12 +355,12 @@ router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
         try {
             const imagemPath = req.file ? '/imagens/produtos/' + req.file.filename : '/imagens/foto.jpg';
             const preco      = parseFloat(req.body.preco) || 0;
-            const precoDesc  = req.body.precoDesconto && req.body.precoDesconto.trim() !== ''
+            const precoDesc  = req.body.precoDesconto && String(req.body.precoDesconto).trim() !== ''
                 ? parseFloat(req.body.precoDesconto) || null
                 : null;
 
             const ids_categorias = parseCategorias(req.body);
-            console.log('IDs categorias recebidos:', ids_categorias, '| Body:', req.body.categorias);
+            console.log('IDs categorias recebidos:', ids_categorias, '| Body categorias:', req.body.categorias);
 
             if (ids_categorias.length === 0) {
                 return res.redirect('/admin?erro=categoria_invalida');
@@ -436,7 +434,7 @@ router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
                 nome:           (req.body.nome || produto.nome).trim(),
                 descricao:      req.body.descricao || produto.descricao,
                 preco:          parseFloat(req.body.preco) || 0,
-                preco_desconto: req.body.precoDesconto && req.body.precoDesconto.trim() !== ''
+                preco_desconto: req.body.precoDesconto && String(req.body.precoDesconto).trim() !== ''
                     ? parseFloat(req.body.precoDesconto) || null
                     : null,
                 imagem:         imagemPath,
@@ -489,25 +487,36 @@ router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
     try {
         const nome = (req.body.nome_categoria || '').trim();
 
+        // Validação básica do nome
         if (!nome || nome.length < 2) {
             return res.redirect('/admin?erro=categoria_nome_invalido&tab=categorias');
         }
 
+        // Verifica duplicata antes de tentar inserir
         const existe = await produtosModel.findCategoriaPorNome(nome);
         if (existe) {
             return res.redirect('/admin?erro=categoria_ja_existe&tab=categorias');
         }
 
+        // Cria a categoria
         const result = await produtosModel.createCategoria(nome);
 
-        // Verifica se ocorreu erro MySQL (objeto de erro tem errno)
-        if (result && result.errno) {
-            console.error('Erro ao criar categoria:', result);
+        console.log('Resultado createCategoria:', result);
+
+        // Verifica se ocorreu erro estruturado
+        if (result && result.erro) {
+            console.error('Erro ao criar categoria (estruturado):', result.mensagem);
             return res.redirect('/admin?erro=criar_categoria&tab=categorias');
         }
 
-        // Verifica se insertId existe (indica sucesso)
-        if (!result || !result.insertId) {
+        // Verifica errno (erro MySQL bruto)
+        if (result && result.errno) {
+            console.error('Erro MySQL ao criar categoria:', result);
+            return res.redirect('/admin?erro=criar_categoria&tab=categorias');
+        }
+
+        // Verifica se insertId existe e é válido (> 0)
+        if (!result || !result.insertId || result.insertId <= 0) {
             console.error('Resultado inesperado ao criar categoria:', result);
             return res.redirect('/admin?erro=criar_categoria&tab=categorias');
         }

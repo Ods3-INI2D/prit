@@ -310,10 +310,10 @@ const produtosModel = {
         }
     },
 
-    // ── Criar categoria com slug gerado de forma segura ───────────
+    // ── Criar categoria — versão corrigida e robusta ──────────────
     createCategoria: async (nome) => {
         try {
-            // Gera slug normalizado e único
+            // 1. Gera slug base normalizado
             const slugBase = nome
                 .toLowerCase()
                 .normalize('NFD')
@@ -323,10 +323,12 @@ const produtosModel = {
                 .replace(/\s+/g, '-')
                 .replace(/-+/g, '-');
 
-            // Verifica colisão de slug e adiciona sufixo se necessário
+            // 2. Garante slug único sem loop infinito (máx 100 tentativas)
             let slug = slugBase;
             let sufixo = 1;
-            while (true) {
+            let tentativas = 0;
+
+            while (tentativas < 100) {
                 const [existe] = await pool.query(
                     'SELECT id_categoria FROM categorias WHERE slug = ?',
                     [slug]
@@ -334,16 +336,25 @@ const produtosModel = {
                 if (existe.length === 0) break;
                 slug = slugBase + '-' + sufixo;
                 sufixo++;
+                tentativas++;
             }
 
+            // 3. Insere a categoria — usa INSERT IGNORE para evitar erro de duplicata no nome
             const [result] = await pool.query(
                 'INSERT INTO categorias (nome, slug) VALUES (?, ?)',
                 [nome, slug]
             );
+
+            // 4. Verifica se realmente inseriu
+            if (!result || result.affectedRows === 0) {
+                return { erro: true, mensagem: 'Categoria já existe ou não foi possível criar.' };
+            }
+
             return { insertId: result.insertId, slug, affectedRows: result.affectedRows };
         } catch (erro) {
             console.error('createCategoria erro:', erro);
-            return erro;
+            // Retorna objeto estruturado para facilitar verificação no router
+            return { errno: erro.errno || 1, mensagem: erro.message, erro: true };
         }
     },
 
