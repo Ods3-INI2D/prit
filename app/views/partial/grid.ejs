@@ -1,142 +1,125 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>grid</title>
-    <link rel="stylesheet" href="/css/reset.css">
-    <link rel="stylesheet" href="/css/estilo.css">
-    <link rel="stylesheet" href="/css/grid.css">
-    <link rel="stylesheet" href="/css/menu.css">
-    <link rel="stylesheet" href="/css/theme.css">
-    <script src="/js/theme.js"></script>
-</head>
-<body>
-    <nav class="nav-principal">
-        <button class="hamburger"
-                aria-controls="menuhamburger"
-                aria-expanded="false" 
-                aria-label="abrir menu hamburger">
-            <hr class="linha1">
-            <hr class="linha2">
-            <hr class="linha3">
-        </button>
+<nav class="nav-principal">
+    <button class="hamburger"
+            aria-controls="menuhamburger"
+            aria-expanded="false" 
+            aria-label="abrir menu hamburger">
+        <hr class="linha1">
+        <hr class="linha2">
+        <hr class="linha3">
+    </button>
 
-        <a href="/home"><img src="/imagens/logo.png" alt="logo" class="logo"></a>
+    <a href="/home"><img src="/imagens/logo.png" alt="logo" class="logo"></a>
 
-        <section class="busca-container">
-            <a href="<%= isAdmin ? '/admin' : '/usuario' %>"><img src="/imagens/user.png" alt="user" class="user"></a>
+    <section class="busca-container">
+        <a href="<%= isAdmin ? '/admin' : '/usuario' %>"><img src="/imagens/user.png" alt="user" class="user"></a>
 
-            <form class="busca-form" method="GET" action="/busca" role="search">
-                <label for="busca">
-                    <input type="text" 
-                           placeholder="Buscar..." 
-                           name="q" 
-                           id="busca"
-                           value="<%= typeof termoBusca !== 'undefined' ? termoBusca : '' %>"
-                           autocomplete="off"
-                           aria-label="Campo de busca de produtos">
-                </label>
-                <button type="submit" class="lupa-btn" aria-label="Buscar produtos">
-                    <img src="/imagens/lupa.png" alt="buscar" class="lupa">
-                </button>
-            </form>
+        <form class="busca-form" method="GET" action="/busca" role="search">
+            <label for="busca">
+                <input type="text" 
+                       placeholder="Buscar..." 
+                       name="q" 
+                       id="busca"
+                       value="<%= typeof termoBusca !== 'undefined' ? termoBusca : '' %>"
+                       autocomplete="off"
+                       aria-label="Campo de busca de produtos">
+            </label>
+            <button type="submit" class="lupa-btn" aria-label="Buscar produtos">
+                <img src="/imagens/lupa.png" alt="buscar" class="lupa">
+            </button>
+        </form>
 
-            <% if(!isAdmin) { %>
-                <a href="/carrinho"><img src="/imagens/cart.png" alt="carrinho" class="cart"></a>
+        <% if(!isAdmin) { %>
+            <a href="/carrinho"><img src="/imagens/cart.png" alt="carrinho" class="cart"></a>
+        <% } %>
+    </section>
+</nav>
+
+<nav class="opcoes" id="menuhamburger">
+    <img src="/imagens/plogo.png" class="plogo" alt="Logo da Farmácia">
+    <img src="/imagens/userb.png" class="user" alt="Ícone do usuário">
+
+    <section class="menu-content">
+        <section class="perfil">
+            <% if(usuario) { %>
+                <h2 class="nome">Olá, <%= usuario.nome %>!</h2>
+                <% if(isAdmin) { %>
+                    <a href="/admin" class="conta">Gerenciar o Site</a>
+                <% } else { %>
+                    <a href="/usuario" class="conta">Gerenciar sua Conta</a>
+                <% } %>
+            <% } else { %>
+                <h2 class="nome">Olá, Visitante!</h2>
+                <a href="/login" class="conta">Fazer Login</a>
             <% } %>
         </section>
-    </nav>
 
-    <nav class="opcoes" id="menuhamburger">
-        <img src="/imagens/plogo.png" class="plogo" alt="Logo da Farmácia">
-        <img src="/imagens/userb.png" class="user" alt="Ícone do usuário">
+        <section class="categorias">
+            <h2 class="tit">Categorias</h2>
 
-        <section class="menu-content">
-            <section class="perfil">
-                <% if(usuario) { %>
-                    <h2 class="nome">Olá, <%= usuario.nome %>!</h2>
-                    <% if(isAdmin) { %>
-                        <a href="/admin" class="conta">Gerenciar o Site</a>
-                    <% } else { %>
-                        <a href="/usuario" class="conta">Gerenciar sua Conta</a>
-                    <% } %>
-                <% } else { %>
-                    <h2 class="nome">Olá, Visitante!</h2>
-                    <a href="/login" class="conta">Fazer Login</a>
-                <% } %>
-            </section>
-
-            <section class="categorias">
-                <h2 class="tit">Categorias</h2>
-
-                <% if (typeof categoriasMenu !== 'undefined' && categoriasMenu && categoriasMenu.length > 0) { %>
-                    <ul class="menu-principal" role="menu">
-                        <% categoriasMenu.forEach(function(cat) { %>
-                            <li class="menu-item" role="none">
-                                <a href="/categoria/<%= cat.slug %>" role="menuitem">
-                                    <%= cat.nome %>
-                                </a>
-                            </li>
-                        <% }); %>
-                    </ul>
-                <% } else { %>
-                    <ul class="menu-principal" role="menu">
+            <% if (typeof categoriasMenu !== 'undefined' && categoriasMenu && categoriasMenu.length > 0) { %>
+                <ul class="menu-principal" role="menu">
+                    <% categoriasMenu.forEach(function(cat) { %>
                         <li class="menu-item" role="none">
-                            <a href="/home" role="menuitem">Nenhuma categoria cadastrada</a>
+                            <a href="/categoria/<%= cat.slug %>" role="menuitem">
+                                <%= cat.nome %>
+                            </a>
                         </li>
-                    </ul>
-                <% } %>
-            </section>
-
-            <footer>
-                <nav>
-                    <ul class="outro" role="menu">
-                        <li class="menu-item">
-                            <button class="theme-toggle" 
-                                    aria-label="Alternar tema"
-                                    type="button">
-                                <img src="/imagens/lua-branca.png" 
-                                     alt="Ícone de tema" 
-                                     class="theme-icon"
-                                     id="theme-icon">
-                                <output class="theme-text">Tema Claro</output>
-                            </button>
-                        </li>
-                        <li class="menu-item"><a href="/parceiros">Parceiros</a></li>
-                        <li class="menu-item"><a href="/atendimento">Central de Atendimento</a></li>
-                    </ul>
-                </nav>
-            </footer>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <ul class="menu-principal" role="menu">
+                    <li class="menu-item" role="none">
+                        <a href="/home" role="menuitem">Nenhuma categoria cadastrada</a>
+                    </li>
+                </ul>
+            <% } %>
         </section>
-    </nav>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuToggle = document.querySelector('.hamburger');
-            const navMenu = document.getElementById('menuhamburger');
+        <footer>
+            <nav>
+                <ul class="outro" role="menu">
+                    <li class="menu-item">
+                        <button class="theme-toggle" 
+                                aria-label="Alternar tema"
+                                type="button">
+                            <img src="/imagens/lua-branca.png" 
+                                 alt="Ícone de tema" 
+                                 class="theme-icon"
+                                 id="theme-icon">
+                            <output class="theme-text">Tema Claro</output>
+                        </button>
+                    </li>
+                    <li class="menu-item"><a href="/parceiros">Parceiros</a></li>
+                    <li class="menu-item"><a href="/atendimento">Central de Atendimento</a></li>
+                </ul>
+            </nav>
+        </footer>
+    </section>
+</nav>
 
-            if (menuToggle && navMenu) {
-                menuToggle.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
-                    menuToggle.setAttribute('aria-expanded', !isExpanded);
-                    navMenu.classList.toggle('is-open');
-                    
-                    const newLabel = isExpanded ? 'abrir menu hamburger' : 'fechar menu hamburger';
-                    menuToggle.setAttribute('aria-label', newLabel);
-                });
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.querySelector('.hamburger');
+        const navMenu = document.getElementById('menuhamburger');
 
-                document.addEventListener('click', function(e) {
-                    if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
-                        navMenu.classList.remove('is-open');
-                        menuToggle.setAttribute('aria-expanded', 'false');
-                        menuToggle.setAttribute('aria-label', 'abrir menu hamburger');
-                    }
-                });
-            }
-        });
-    </script>
-</body>
-</html>
+        if (menuToggle && navMenu) {
+            menuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+                menuToggle.setAttribute('aria-expanded', !isExpanded);
+                navMenu.classList.toggle('is-open');
+                
+                const newLabel = isExpanded ? 'abrir menu hamburger' : 'fechar menu hamburger';
+                menuToggle.setAttribute('aria-label', newLabel);
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+                    navMenu.classList.remove('is-open');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                    menuToggle.setAttribute('aria-label', 'abrir menu hamburger');
+                }
+            });
+        }
+    });
+</script>

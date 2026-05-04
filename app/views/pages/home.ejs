@@ -7,9 +7,12 @@
     <title>Home</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/estilo.css">
+    <link rel="stylesheet" href="/css/grid.css">
+    <link rel="stylesheet" href="/css/menu.css">
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/bloco.css">
     <link rel="stylesheet" href="/css/carousel.css">
+    <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
 </head>
@@ -19,7 +22,6 @@
     </header>
 
     <main>
-        <%# carrossel de banners %>
         <section class="carousel-container" aria-label="Carrossel de destaques">
             <% if(banners && banners.length > 0) { %>
                 <% banners.forEach(function(banner, index) { %>
@@ -51,7 +53,6 @@
 
         <% if(produtos && produtos.length > 0) { %>
 
-            <%# seçao de descontos %>
             <%
                 var produtosComDesconto = produtos.filter(function(p) {
                     return p.precoDesconto !== null && p.precoDesconto > 0;
@@ -111,19 +112,16 @@
                 </section>
             <% } %>
 
-            <%# seçoes por cada categoria cadastrada no banco %>
             <% if(categorias && categorias.length > 0) { %>
                 <% categorias.forEach(function(categoria) {
 
-                    // Filtra produtos que pertencem a esta categoria
                     var produtosDaCategoria = produtos.filter(function(p) {
                         if (!p.categoria) return false;
-                        // categoria é uma string com nomes separados por ', '
                         var nomes = p.categoria.split(', ').map(function(n) { return n.trim(); });
                         return nomes.indexOf(categoria.nome) !== -1;
                     });
 
-                    if(produtosDaCategoria.length === 0) return; // pula categorias sem produtos
+                    if(produtosDaCategoria.length === 0) return;
                 %>
                     <section class="secao-categoria" aria-labelledby="titulo-cat-<%= categoria.id_categoria %>">
                         <header class="header-categoria">
@@ -199,9 +197,7 @@
         <% } %>
     </main>
 
-    <footer>
-        <%- include('../partial/footer.ejs') %>
-    </footer>
+    <%- include('../partial/footer.ejs') %>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

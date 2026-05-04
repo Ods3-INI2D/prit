@@ -6,10 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= produto.nome %></title>
     <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/grid.css">
+    <link rel="stylesheet" href="/css/menu.css">
     <link rel="stylesheet" href="/css/produto.css">
+    <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
-    <script src="/js/validacao.js" defer></script>
 </head>
 <body>
     <header>
@@ -20,7 +22,7 @@
         <nav class="navegacao">
             <a href="/home" class="voltar">
                 <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
-                <output>Voltar</o>
+                <output>Voltar</output>
             </a>
         </nav>
 
@@ -30,29 +32,29 @@
             <article class="info-principal">
                 <h1 class="nome-produto"><%= produto.nome %></h1>
                 
-                <output class="categoria-produto"><%= produto.categoria %></o>
+                <output class="categoria-produto"><%= produto.categoria %></output>
                 
                 <% if(produto.precoDesconto) { %>
                     <section class="preco-container com-desconto">
-                        <output class="preco-original">R$ <%= produto.preco.toFixed(2) %></o>
-                        <output class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></o>
+                        <output class="preco-original">R$ <%= produto.preco.toFixed(2) %></output>
+                        <output class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></output>
                         <output class="percentual-desconto">
                             -<%= Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100) %>%
-                        </o>
+                        </output>
                     </section>
                 <% } else { %>
-                    <output class="preco-produto">R$ <%= produto.preco.toFixed(2) %></o>
+                    <output class="preco-produto">R$ <%= produto.preco.toFixed(2) %></output>
                 <% } %>
 
                 <% if(produto.status === 'fora-de-estoque') { %>
                     <output class="mensagem-fora-estoque" role="alert" aria-live="assertive">
                         ⚠️ Este produto está temporariamente fora de estoque
-                    </o>
+                    </output>
                 <% } else { %>
                     <% if(isAdmin) { %>
                         <output class="mensagem-admin-bloqueio" role="status">
                             ℹ️ Administradores não podem adicionar produtos ao carrinho. Esta é uma funcionalidade exclusiva para clientes.
-                        </o>
+                        </output>
                     <% } else { %>
                         <form method="POST" action="/produto/<%= produto.id %>/adicionar-carrinho">
                             <button type="submit" class="btn-comprar">
@@ -65,7 +67,7 @@
                 <% if(typeof erro !== 'undefined' && erro === 'fora_de_estoque') { %>
                     <output class="mensagem-erro-avaliacao" role="alert" aria-live="assertive">
                         Não é possível adicionar este produto ao carrinho pois está fora de estoque!
-                    </o>
+                    </output>
                 <% } %>
             </article>
         </section>
@@ -73,7 +75,7 @@
         <section class="frete-container">
             <h2 class="titulo-secao">Cálculo de Frete e Prazo</h2>
             
-            <output class="descricao-frete">Insira seu CEP para calcular o frete e o prazo para entrega do produto</o>
+            <output class="descricao-frete">Insira seu CEP para calcular o frete e o prazo para entrega do produto</output>
             
             <form class="form-frete">
                 <label for="cep">
@@ -88,7 +90,7 @@
         <section class="descricao-container">
             <h2 class="titulo-secao">Descrição do Produto</h2>
             <h3 class="nome-descricao"><%= produto.nome %></h3>
-            <output class="texto-descricao"><%= produto.descricao %></o>
+            <output class="texto-descricao"><%= produto.descricao %></output>
         </section>
 
         <hr class="divisor">
@@ -114,7 +116,7 @@
                                  alt="Estrela <%= i <= notaArredondada ? 'preenchida' : 'vazia' %>">
                         <% } %>
                     </section>
-                    <output class="valor-media"><%= media %></o>
+                    <output class="valor-media"><%= media %></output>
                 </article>
 
                 <a href="#form-avaliacao" class="ver-mais">Ver todas as avaliações</a>
@@ -129,12 +131,12 @@
                                          alt="Estrela">
                                 <% } %>
                             </section>
-                            <output class="texto-avaliacao"><%= avaliacao.texto %></o>
+                            <output class="texto-avaliacao"><%= avaliacao.texto %></output>
                         </li>
                     <% }); %>
                 </ul>
             <% } else { %>
-                <output class="sem-avaliacoes">Ainda não há avaliações para este produto.</o>
+                <output class="sem-avaliacoes">Ainda não há avaliações para este produto.</output>
             <% } %>
 
             <article class="form-avaliacao-container" id="form-avaliacao">
@@ -143,22 +145,22 @@
                 <% if(isAdmin) { %>
                     <output class="mensagem-admin-bloqueio" role="alert">
                         ℹ️ Administradores não podem avaliar produtos. Esta é uma funcionalidade exclusiva para clientes que adquiriram o produto.
-                    </o>
+                    </output>
                 <% } else if(!usuarioLogado) { %>
                     <output class="mensagem-aviso" role="alert">
                         Você precisa estar logado para avaliar este produto.
                         <a href="/login?redirect=/produto/<%= produto.id %>" style="color: #ffc107; text-decoration: underline;">Fazer login</a>
-                    </o>
+                    </output>
                 <% } else if(!temProdutoNoCarrinho) { %>
                     <output class="mensagem-aviso" role="alert">
                         Você precisa adicionar este produto ao carrinho antes de avaliá-lo.
-                    </o>
+                    </output>
                 <% } %>
 
                 <% if(typeof erro !== 'undefined' && erro === 'carrinho') { %>
                     <output class="mensagem-erro-avaliacao" role="alert">
                         Erro: Você precisa ter este produto no carrinho para avaliá-lo!
-                    </o>
+                    </output>
                 <% } %>
                 
                 <form method="POST" 
@@ -211,7 +213,7 @@
                         <a href="/produto/<%= outroProduto.id %>" class="link-produto">
                             <img src="<%= outroProduto.imagem %>" class="img-produto-bloco" alt="<%= outroProduto.nome %>">
                             <h3 class="nome-produto-bloco"><%= outroProduto.nome %></h3>
-                            <output class="preco-produto-bloco">R$ <%= (outroProduto.precoDesconto || outroProduto.preco).toFixed(2) %></o>
+                            <output class="preco-produto-bloco">R$ <%= (outroProduto.precoDesconto || outroProduto.preco).toFixed(2) %></output>
                         </a>
                     </article>
             <% }
@@ -219,9 +221,7 @@
         </section>
     </main>
 
-    <footer>
-        <%- include('../partial/footer.ejs') %>
-    </footer>
+    <%- include('../partial/footer.ejs') %>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
