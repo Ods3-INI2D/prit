@@ -117,10 +117,19 @@ router.use((req, res, next) => {
     next();
 });
 
-// ── Middleware global — injeta usuario/isAdmin nas views ──────────────────────
+// ── Middleware global — injeta usuario/isAdmin/categoriasMenu nas views ───────
 router.use(async (req, res, next) => {
-    res.locals.usuario  = null;
-    res.locals.isAdmin  = false;
+    res.locals.usuario         = null;
+    res.locals.isAdmin         = false;
+    res.locals.categoriasMenu  = [];
+
+    // Carrega categorias para o menu lateral (todas as rotas)
+    try {
+        const cats = await produtosModel.findAllCategorias();
+        res.locals.categoriasMenu = Array.isArray(cats) ? cats : [];
+    } catch (_) {
+        res.locals.categoriasMenu = [];
+    }
 
     if (req.session && req.session.usuarioEmail) {
         if (req.session.usuarioEmail === ADMIN_EMAIL && req.session.isAdmin) {
@@ -272,12 +281,12 @@ router.get('/home', async (req, res) => {
     const categorias  = await produtosModel.findAllCategorias();
 
     const produtosNormalizados = (Array.isArray(produtos) ? produtos : []).map(p => ({
-    ...p,
-    id:            p.id_produto,
-    preco:         parseFloat(p.preco) || 0,
-    precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null,
-    avaliacoes:    []
-}));
+        ...p,
+        id:            p.id_produto,
+        preco:         parseFloat(p.preco) || 0,
+        precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null,
+        avaliacoes:    []
+    }));
 
     res.render('pages/home', { produtos: produtosNormalizados, banners, categorias });
 });
@@ -328,11 +337,11 @@ router.get('/admin', requireAdmin, async (req, res) => {
     const categorias = await produtosModel.findAllCategorias();
 
     const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
-    ...p,
-    id:            p.id_produto,
-    preco:         parseFloat(p.preco) || 0,
-    precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
-}));
+        ...p,
+        id:            p.id_produto,
+        preco:         parseFloat(p.preco) || 0,
+        precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
+    }));
 
     res.render('pages/admin', {
         produtos:         produtosNorm,
@@ -489,35 +498,29 @@ router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
     try {
         const nome = (req.body.nome_categoria || '').trim();
 
-        // Validação básica do nome
         if (!nome || nome.length < 2) {
             return res.redirect('/admin?erro=categoria_nome_invalido&tab=categorias');
         }
 
-        // Verifica duplicata antes de tentar inserir
         const existe = await produtosModel.findCategoriaPorNome(nome);
         if (existe) {
             return res.redirect('/admin?erro=categoria_ja_existe&tab=categorias');
         }
 
-        // Cria a categoria
         const result = await produtosModel.createCategoria(nome);
 
         console.log('Resultado createCategoria:', result);
 
-        // Verifica se ocorreu erro estruturado
         if (result && result.erro) {
             console.error('Erro ao criar categoria (estruturado):', result.mensagem);
             return res.redirect('/admin?erro=criar_categoria&tab=categorias');
         }
 
-        // Verifica errno (erro MySQL bruto)
         if (result && result.errno) {
             console.error('Erro MySQL ao criar categoria:', result);
             return res.redirect('/admin?erro=criar_categoria&tab=categorias');
         }
 
-        // Verifica se insertId existe e é válido (> 0)
         if (!result || !result.insertId || result.insertId <= 0) {
             console.error('Resultado inesperado ao criar categoria:', result);
             return res.redirect('/admin?erro=criar_categoria&tab=categorias');
@@ -635,19 +638,19 @@ router.get('/produto/:id', async (req, res) => {
     const temNoCarrinho                  = await carrinhoModel.temProduto(req.params.id, id_usuario, session_id);
     const isAdmin                        = req.session.isAdmin || false;
 
-    const produtoNorm  = { 
-    ...produto, 
-    id: produto.id_produto, 
-    preco: parseFloat(produto.preco) || 0,
-    precoDesconto: produto.preco_desconto ? parseFloat(produto.preco_desconto) : null
-};
-const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
-    ...p, 
-    id: p.id_produto, 
-    preco: parseFloat(p.preco) || 0,
-    precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null,
-    avaliacoes: []
-}));
+    const produtoNorm  = {
+        ...produto,
+        id: produto.id_produto,
+        preco: parseFloat(produto.preco) || 0,
+        precoDesconto: produto.preco_desconto ? parseFloat(produto.preco_desconto) : null
+    };
+    const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
+        ...p,
+        id: p.id_produto,
+        preco: parseFloat(p.preco) || 0,
+        precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null,
+        avaliacoes: []
+    }));
 
     res.render('pages/produto', {
         produto:              produtoNorm,
@@ -727,11 +730,11 @@ router.get('/categoria/:slug', async (req, res) => {
     }
 
     const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
-    ...p,
-    id:            p.id_produto,
-    preco:         parseFloat(p.preco) || 0,
-    precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
-}));
+        ...p,
+        id:            p.id_produto,
+        preco:         parseFloat(p.preco) || 0,
+        precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
+    }));
 
     res.render('pages/categoria', { categoria: nomeExibicao, slug, produtos: produtosNorm });
 });
