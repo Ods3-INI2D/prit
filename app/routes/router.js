@@ -675,13 +675,22 @@ router.post('/produto/:id/adicionar-carrinho', blockAdmin, async (req, res) => {
 router.get('/carrinho', blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
     const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
-    const carrinho = (Array.isArray(itens) ? itens : []).map(i => ({
-        ...i,
-        id:            i.id_produto,
-        precoDesconto: i.preco_desconto
-    }));
-    res.render('pages/carrinho', { carrinho, usuarioLogado: !!req.session.usuarioEmail });
+ 
+    const carrinho = (Array.isArray(itens) ? itens : []).map(function(i) {
+        return {
+            ...i,
+            id:             i.id_produto,
+            preco:          parseFloat(i.preco)          || 0,
+            precoDesconto:  i.preco_desconto != null ? parseFloat(i.preco_desconto) : null
+        };
+    });
+ 
+    res.render('pages/carrinho', {
+        carrinho,
+        usuarioLogado: !!req.session.usuarioEmail
+    });
 });
+
 
 router.post('/carrinho/atualizar/:id', blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);

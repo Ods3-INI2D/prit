@@ -19,7 +19,7 @@
         <section class="carrinho-container">
             <h1 class="titulo-carrinho">Meu Carrinho</h1>
 
-            <% if(carrinho.length === 0) { %>
+            <% if (carrinho.length === 0) { %>
                 <article class="carrinho-vazio">
                     <output class="mensagem-vazio">Seu carrinho está vazio!</output>
                     <a href="/home" class="btn-continuar">Continuar Comprando</a>
@@ -28,39 +28,46 @@
                 <section class="carrinho-layout">
                     <section class="lista-carrinho-wrapper">
                         <ul class="lista-carrinho">
-                            <% 
+                            <%
                             let total = 0;
-                            carrinho.forEach(function(produto) { 
-                                const precoFinal = produto.precoDesconto || produto.preco;
-                                const subtotal = precoFinal * produto.quantidade;
+                            carrinho.forEach(function(produto) {
+                                /* Garante que os valores são numéricos independente do tipo retornado pelo banco */
+                                const preco          = parseFloat(produto.preco)         || 0;
+                                const precoDesconto  = produto.precoDesconto != null
+                                                        ? parseFloat(produto.precoDesconto)
+                                                        : null;
+                                const precoFinal     = (precoDesconto !== null && precoDesconto > 0)
+                                                        ? precoDesconto
+                                                        : preco;
+                                const subtotal       = precoFinal * (parseInt(produto.quantidade) || 1);
                                 total += subtotal;
                             %>
                                 <li class="item-carrinho">
                                     <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto">
-                                    
+
                                     <article class="info-produto">
                                         <h2 class="nome-produto"><%= produto.nome %></h2>
                                         <output class="categoria-produto"><%= produto.categoria %></output>
-                                        
+
                                         <section class="preco-container">
-                                            <% if(produto.precoDesconto) { %>
-                                                <output class="preco-original">R$ <%= produto.preco.toFixed(2) %></output>
-                                                <output class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></output>
+                                            <% if (precoDesconto !== null && precoDesconto > 0) { %>
+                                                <output class="preco-original">R$ <%= preco.toFixed(2) %></output>
+                                                <output class="preco-desconto">R$ <%= precoDesconto.toFixed(2) %></output>
                                             <% } else { %>
-                                                <output class="preco-produto">R$ <%= produto.preco.toFixed(2) %></output>
+                                                <output class="preco-produto">R$ <%= preco.toFixed(2) %></output>
                                             <% } %>
                                         </section>
 
                                         <section class="controles-quantidade">
-                                            <form method="POST" action="/carrinho/atualizar/<%= produto.id %>" class="form-quantidade">
-                                                <input type="hidden" name="quantidade" value="<%= produto.quantidade - 1 %>">
+                                            <form method="POST" action="/carrinho/atualizar/<%= produto.id_produto || produto.id %>" class="form-quantidade">
+                                                <input type="hidden" name="quantidade" value="<%= (parseInt(produto.quantidade) || 1) - 1 %>">
                                                 <button type="submit" class="btn-quantidade" aria-label="Diminuir quantidade">−</button>
                                             </form>
-                                            
+
                                             <output class="quantidade-atual"><%= produto.quantidade %></output>
-                                            
-                                            <form method="POST" action="/carrinho/atualizar/<%= produto.id %>" class="form-quantidade">
-                                                <input type="hidden" name="quantidade" value="<%= produto.quantidade + 1 %>">
+
+                                            <form method="POST" action="/carrinho/atualizar/<%= produto.id_produto || produto.id %>" class="form-quantidade">
+                                                <input type="hidden" name="quantidade" value="<%= (parseInt(produto.quantidade) || 1) + 1 %>">
                                                 <button type="submit" class="btn-quantidade" aria-label="Aumentar quantidade">+</button>
                                             </form>
                                         </section>
@@ -69,10 +76,10 @@
                                     </article>
 
                                     <nav class="acoes-item">
-                                        <% if(usuarioLogado) { %>
-                                            <a href="/produto/<%= produto.id %>#avaliar" class="btn-avaliar">Avaliar Produto</a>
+                                        <% if (usuarioLogado) { %>
+                                            <a href="/produto/<%= produto.id_produto || produto.id %>#avaliar" class="btn-avaliar">Avaliar Produto</a>
                                         <% } %>
-                                        <form method="POST" action="/carrinho/remover/<%= produto.id %>">
+                                        <form method="POST" action="/carrinho/remover/<%= produto.id_produto || produto.id %>">
                                             <button type="submit" class="btn-remover" aria-label="Remover <%= produto.nome %> do carrinho">Remover</button>
                                         </form>
                                     </nav>
@@ -83,7 +90,7 @@
 
                     <aside class="resumo-carrinho">
                         <h2 class="titulo-resumo">Resumo do Pedido</h2>
-                        
+
                         <section class="linhas-resumo">
                             <output class="linha-resumo">
                                 <strong>Subtotal:</strong>
@@ -94,16 +101,16 @@
                                 <output>A calcular</output>
                             </output>
                         </section>
-                        
+
                         <output class="total-resumo">
                             <strong>Total:</strong>
                             <output>R$ <%= total.toFixed(2) %></output>
                         </output>
 
-                        <% if(usuarioLogado) { %>
+                        <% if (usuarioLogado) { %>
                             <button class="btn-finalizar" type="button">Finalizar Compra</button>
                         <% } else { %>
-                            <a href="/login?redirect=/carrinho" class="btn-finalizar" style="text-decoration: none; display: block; text-align: center;">
+                            <a href="/login?redirect=/carrinho" class="btn-finalizar" style="text-decoration:none;display:block;text-align:center;">
                                 Fazer Login para Finalizar
                             </a>
                         <% } %>

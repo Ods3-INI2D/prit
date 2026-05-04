@@ -1,252 +1,258 @@
-document.addEventListener('DOMContentLoaded', function() {
-    
+document.addEventListener('DOMContentLoaded', function () {
+
     const formCadastro = document.querySelector('form[action="/cadastro"]');
-    const formLogin = document.querySelector('form[action="/login"]');
+    const formLogin    = document.querySelector('form[action="/login"]');
 
-    if(formCadastro) {
-        validarCadastro(formCadastro);
-    }
-
-    if(formLogin) {
-        validarLogin(formLogin);
-    }
+    if (formCadastro) validarCadastro(formCadastro);
+    if (formLogin)    validarLogin(formLogin);
 });
 
+/* =====================================================================
+   CADASTRO
+   ===================================================================== */
 function validarCadastro(form) {
-    const inputNome = form.querySelector('#nome');
-    const inputNasc = form.querySelector('#nasc');
-    const inputCPF = form.querySelector('#cpf');
-    const inputTel = form.querySelector('#tel');
-    const inputEmail = form.querySelector('#email');
-    const inputSenha = form.querySelector('#senhan');
+    const inputNome           = form.querySelector('#nome');
+    const inputNasc           = form.querySelector('#nasc');
+    const inputCPF            = form.querySelector('#cpf');
+    const inputDDD            = form.querySelector('#ddd');
+    const inputTel            = form.querySelector('#tel');
+    const inputEmail          = form.querySelector('#email');
+    const inputSenha          = form.querySelector('#senhan');
     const inputConfirmarSenha = form.querySelector('#senha');
 
-    form.addEventListener('submit', function(e) {
+    /* ── Máscara CPF: exibe 000.000.000-00, envia 00000000000 ── */
+    if (inputCPF) {
+        inputCPF.addEventListener('input', function () {
+            let v = this.value.replace(/\D/g, '').slice(0, 11);
+            if (v.length > 9)      v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+            else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+            else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+            this.value = v;
+        });
+    }
+
+    /* ── Máscara Telefone: exibe 99999-9999, envia 999999999 ── */
+    if (inputTel) {
+        inputTel.addEventListener('input', function () {
+            let v = this.value.replace(/\D/g, '').slice(0, 9);
+            if (v.length > 5) v = v.replace(/(\d{5})(\d{1,4})/, '$1-$2');
+            this.value = v;
+        });
+    }
+
+    /* ── DDD: apenas 2 dígitos numéricos ── */
+    if (inputDDD) {
+        inputDDD.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 2);
+        });
+    }
+
+    /* ── Validação blur em tempo real ── */
+    if (inputNome)           inputNome.addEventListener('blur',   () => validarNome(inputNome));
+    if (inputNasc)           inputNasc.addEventListener('blur',   () => validarDataNasc(inputNasc));
+    if (inputCPF)            inputCPF.addEventListener('blur',    () => validarCPF(inputCPF));
+    if (inputDDD)            inputDDD.addEventListener('blur',    () => validarDDD(inputDDD));
+    if (inputTel)            inputTel.addEventListener('blur',    () => validarTelefone(inputTel));
+    if (inputEmail)          inputEmail.addEventListener('blur',  () => validarEmail(inputEmail));
+    if (inputSenha)          inputSenha.addEventListener('blur',  () => validarSenha(inputSenha));
+    if (inputConfirmarSenha) inputConfirmarSenha.addEventListener('blur',
+        () => validarConfirmaSenha(inputSenha, inputConfirmarSenha));
+
+    /* ── Submit: valida + remove máscaras antes de enviar ── */
+    form.addEventListener('submit', function (e) {
+        limparErros(form);
         let valido = true;
-        limparErros();
 
-        if(!validarNome(inputNome.value)) {
-            mostrarErro(inputNome, 'Nome deve conter de 3 a 50 caracteres!');
-            valido = false;
-        }
+        if (inputNome           && !validarNome(inputNome))                                 valido = false;
+        if (inputNasc           && !validarDataNasc(inputNasc))                             valido = false;
+        if (inputCPF            && !validarCPF(inputCPF))                                   valido = false;
+        if (inputDDD            && !validarDDD(inputDDD))                                   valido = false;
+        if (inputTel            && !validarTelefone(inputTel))                              valido = false;
+        if (inputEmail          && !validarEmail(inputEmail))                               valido = false;
+        if (inputSenha          && !validarSenha(inputSenha))                               valido = false;
+        if (inputConfirmarSenha && !validarConfirmaSenha(inputSenha, inputConfirmarSenha))  valido = false;
 
-        if(!validarDataNascimento(inputNasc.value)) {
-            mostrarErro(inputNasc, 'Data de nascimento inválida!');
-            valido = false;
-        }
-
-        if(!validarCPF(inputCPF.value)) {
-            mostrarErro(inputCPF, 'CPF inválido!');
-            valido = false;
-        }
-
-        if(!validarTelefone(inputTel.value)) {
-            mostrarErro(inputTel, 'Telefone deve conter 9 dígitos!');
-            valido = false;
-        }
-
-        if(!validarEmail(inputEmail.value)) {
-            mostrarErro(inputEmail, 'E-mail inválido!');
-            valido = false;
-        }
-
-        if(!validarSenha(inputSenha.value)) {
-            mostrarErro(inputSenha, 'Senha deve conter de 6 a 20 caracteres, incluindo letra maiúscula, número e caractere especial!');
-            valido = false;
-        }
-
-        if(inputSenha.value !== inputConfirmarSenha.value) {
-            mostrarErro(inputConfirmarSenha, 'As senhas não conferem!');
-            valido = false;
-        }
-
-        if(!valido) {
+        if (!valido) {
             e.preventDefault();
+            return;
         }
-    });
 
-    inputNome.addEventListener('blur', function() {
-        if(!validarNome(this.value)) {
-            mostrarErro(this, 'Nome deve conter de 3 a 50 caracteres!');
-        } else {
-            limparErroInput(this);
-        }
-    });
-
-    inputCPF.addEventListener('blur', function() {
-        if(!validarCPF(this.value)) {
-            mostrarErro(this, 'CPF inválido!');
-        } else {
-            limparErroInput(this);
-        }
-    });
-
-    inputTel.addEventListener('blur', function() {
-        if(!validarTelefone(this.value)) {
-            mostrarErro(this, 'Telefone deve conter 9 dígitos!');
-        } else {
-            limparErroInput(this);
-        }
-    });
-
-    inputEmail.addEventListener('blur', function() {
-        if(!validarEmail(this.value)) {
-            mostrarErro(this, 'E-mail inválido!');
-        } else {
-            limparErroInput(this);
-        }
-    });
-
-    inputSenha.addEventListener('blur', function() {
-        if(!validarSenha(this.value)) {
-            mostrarErro(this, 'Senha deve conter de 6 a 20 caracteres, incluindo letra maiúscula, número e caractere especial!');
-        } else {
-            limparErroInput(this);
-        }
-    });
-
-    inputConfirmarSenha.addEventListener('blur', function() {
-        if(inputSenha.value !== this.value) {
-            mostrarErro(this, 'As senhas não conferem!');
-        } else {
-            limparErroInput(this);
-        }
+        /*
+         * CRÍTICO: remove a formatação das máscaras antes do POST
+         * para que o backend receba apenas os dígitos (11 para CPF, 9 para tel)
+         */
+        if (inputCPF) inputCPF.value = inputCPF.value.replace(/\D/g, '');
+        if (inputTel) inputTel.value = inputTel.value.replace(/\D/g, '');
     });
 }
 
+/* =====================================================================
+   LOGIN
+   ===================================================================== */
 function validarLogin(form) {
     const inputEmail = form.querySelector('#email');
     const inputSenha = form.querySelector('#senha');
 
-    form.addEventListener('submit', function(e) {
-        let valido = true;
-        limparErros();
-
-        if(!validarEmail(inputEmail.value)) {
-            mostrarErro(inputEmail, 'E-mail inválido!');
-            valido = false;
+    if (inputEmail) inputEmail.addEventListener('blur', () => validarEmail(inputEmail));
+    if (inputSenha) inputSenha.addEventListener('blur', function () {
+        if (!inputSenha.value || inputSenha.value.length < 6) {
+            mostrarErro(inputSenha, 'Senha deve ter no mínimo 6 caracteres!');
+        } else {
+            mostrarSucesso(inputSenha);
         }
+    });
 
-        if(!inputSenha.value || inputSenha.value.length < 6) {
+    form.addEventListener('submit', function (e) {
+        limparErros(form);
+        let valido = true;
+        if (inputEmail && !validarEmail(inputEmail)) valido = false;
+        if (inputSenha && (!inputSenha.value || inputSenha.value.length < 6)) {
             mostrarErro(inputSenha, 'Senha deve ter no mínimo 6 caracteres!');
             valido = false;
         }
-
-        if(!valido) {
-            e.preventDefault();
-        }
+        if (!valido) e.preventDefault();
     });
 }
 
-function validarNome(nome) {
-    return nome.length >= 3 && nome.length <= 50;
+/* =====================================================================
+   FUNÇÕES DE VALIDAÇÃO  (operam sempre sobre dígitos limpos)
+   ===================================================================== */
+
+function validarNome(input) {
+    const v = input.value.trim();
+    if (!v)                               { mostrarErro(input, 'Nome é obrigatório!'); return false; }
+    if (!/^[a-zA-ZÀ-ÿ\s]{3,50}$/.test(v)) { mostrarErro(input, 'Nome deve conter apenas letras e ter de 3 a 50 caracteres!'); return false; }
+    mostrarSucesso(input); return true;
 }
 
-function validarDataNascimento(data) {
-    if(!data) return false;
-    
-    const dataNasc = new Date(data);
+function validarDataNasc(input) {
+    const v = input.value;
+    if (!v) { mostrarErro(input, 'Data de nascimento é obrigatória!'); return false; }
+    const dataNasc = new Date(v);
     const hoje = new Date();
-    const idadeMaxima = new Date();
-    idadeMaxima.setFullYear(hoje.getFullYear() - 110);
-
-    return dataNasc <= hoje && dataNasc >= idadeMaxima;
+    const limite = new Date();
+    limite.setFullYear(hoje.getFullYear() - 110);
+    if (isNaN(dataNasc.getTime()) || dataNasc > hoje || dataNasc < limite) {
+        mostrarErro(input, 'Data de nascimento inválida!'); return false;
+    }
+    mostrarSucesso(input); return true;
 }
 
-function validarCPF(cpf) {
-    cpf = cpf.replace(/[^\d]/g, '');
-    
-    if(cpf.length !== 11) return false;
-    
-    if(/^(\d)\1{10}$/.test(cpf)) return false;
+function validarCPF(input) {
+    const cpf = input.value.replace(/\D/g, ''); /* remove pontos e hífen da máscara */
+    if (!cpf)            { mostrarErro(input, 'CPF é obrigatório!'); return false; }
+    if (cpf.length !== 11) { mostrarErro(input, 'CPF deve ter 11 dígitos!'); return false; }
+    if (!isValidCPF(cpf))  { mostrarErro(input, 'CPF inválido!'); return false; }
+    mostrarSucesso(input); return true;
+}
 
+function validarDDD(input) {
+    const v = input.value.replace(/\D/g, '');
+    const dddsValidos = [
+        '11','12','13','14','15','16','17','18','19',
+        '21','22','24','27','28',
+        '31','32','33','34','35','37','38',
+        '41','42','43','44','45','46',
+        '47','48','49',
+        '51','53','54','55',
+        '61','62','63','64','65','66','67','68','69',
+        '71','73','74','75','77','79',
+        '81','82','83','84','85','86','87','88','89',
+        '91','92','93','94','95','96','97','98','99'
+    ];
+    if (!v || v.length !== 2)      { mostrarErro(input, 'DDD deve ter 2 dígitos!'); return false; }
+    if (!dddsValidos.includes(v))  { mostrarErro(input, 'DDD inválido!'); return false; }
+    mostrarSucesso(input); return true;
+}
+
+function validarTelefone(input) {
+    const v = input.value.replace(/\D/g, ''); /* remove o hífen da máscara */
+    if (!v)              { mostrarErro(input, 'Telefone é obrigatório!'); return false; }
+    if (v.length !== 9)  { mostrarErro(input, 'Telefone deve ter 9 dígitos!'); return false; }
+    if (/^(\d)\1{8}$/.test(v)) { mostrarErro(input, 'Telefone inválido!'); return false; }
+    mostrarSucesso(input); return true;
+}
+
+function validarEmail(input) {
+    const v = input.value.trim();
+    if (!v)                                     { mostrarErro(input, 'E-mail é obrigatório!'); return false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { mostrarErro(input, 'E-mail inválido!'); return false; }
+    mostrarSucesso(input); return true;
+}
+
+function validarSenha(input) {
+    const v = input.value;
+    if (!v)                          { mostrarErro(input, 'Senha é obrigatória!'); return false; }
+    if (v.length < 6 || v.length > 20) { mostrarErro(input, 'Senha deve ter de 6 a 20 caracteres!'); return false; }
+    if (!/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,20}$/.test(v)) {
+        mostrarErro(input, 'Senha deve incluir letra maiúscula, número e símbolo (!@#$%^&*)!'); return false;
+    }
+    mostrarSucesso(input); return true;
+}
+
+function validarConfirmaSenha(inputSenha, inputConfirmar) {
+    if (!inputConfirmar.value)                    { mostrarErro(inputConfirmar, 'Confirmação de senha é obrigatória!'); return false; }
+    if (inputSenha.value !== inputConfirmar.value) { mostrarErro(inputConfirmar, 'As senhas não conferem!'); return false; }
+    mostrarSucesso(inputConfirmar); return true;
+}
+
+/* =====================================================================
+   ALGORITMO CPF
+   ===================================================================== */
+function isValidCPF(cpf) {
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
     let soma = 0;
-    for(let i = 0; i < 9; i++) {
-        soma += parseInt(cpf.charAt(i)) * (10 - i);
-    }
-    let resto = soma % 11;
-    let digito1 = resto < 2 ? 0 : 11 - resto;
-
-    if(parseInt(cpf.charAt(9)) !== digito1) return false;
-
+    for (let i = 0; i < 9; i++) soma += parseInt(cpf.charAt(i)) * (10 - i);
+    let resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(cpf.charAt(9))) return false;
     soma = 0;
-    for(let i = 0; i < 10; i++) {
-        soma += parseInt(cpf.charAt(i)) * (11 - i);
-    }
-    resto = soma % 11;
-    let digito2 = resto < 2 ? 0 : 11 - resto;
-
-    return parseInt(cpf.charAt(10)) === digito2;
+    for (let i = 0; i < 10; i++) soma += parseInt(cpf.charAt(i)) * (11 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    return resto === parseInt(cpf.charAt(10));
 }
 
-function validarTelefone(tel) {
-    tel = tel.replace(/[^\d]/g, '');
-    
-    if(tel.length !== 9) return false;
-    
-    if(/^(\d)\1{8}$/.test(tel)) return false;
-    
-    return true;
-}
-
-function validarEmail(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-}
-
-function validarSenha(senha) {
-    if(senha.length < 6 || senha.length > 20) return false;
-    
-    const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,20}$/;
-    return regex.test(senha);
-}
-
+/* =====================================================================
+   HELPERS DE UI
+   ===================================================================== */
 function mostrarErro(input, mensagem) {
     input.setAttribute('aria-invalid', 'true');
-    input.classList.add('erro');
-    
-    const erroId = input.id + '-erro';
-    let erroElement = document.getElementById(erroId);
-    
-    if(!erroElement) {
-        erroElement = document.createElement('output');
-        erroElement.id = erroId;
-        erroElement.setAttribute('role', 'alert');
-        erroElement.setAttribute('aria-live', 'polite');
-        erroElement.className = 'erro';
-        input.parentNode.insertBefore(erroElement, input.nextSibling);
+    input.classList.remove('success');
+    input.classList.add('error');
+
+    const erroId = input.id + '-error';
+    let out = document.getElementById(erroId);
+    if (!out) {
+        out = document.createElement('output');
+        out.id        = erroId;
+        out.className = 'error-message';
+        out.setAttribute('role', 'alert');
+        out.setAttribute('aria-live', 'polite');
+        input.parentNode.insertBefore(out, input.nextSibling);
     }
-    
-    erroElement.textContent = mensagem;
-    erroElement.style.display = 'block';
+    out.textContent   = mensagem;
+    out.style.display = 'block';
     input.setAttribute('aria-describedby', erroId);
 }
 
-function limparErroInput(input) {
+function mostrarSucesso(input) {
     input.removeAttribute('aria-invalid');
     input.removeAttribute('aria-describedby');
-    input.classList.remove('erro');
-    
-    const erroId = input.id + '-erro';
-    const erroElement = document.getElementById(erroId);
-    
-    if(erroElement) {
-        erroElement.style.display = 'none';
-        erroElement.textContent = '';
-    }
+    input.classList.remove('error');
+    input.classList.add('success');
+    const out = document.getElementById(input.id + '-error');
+    if (out) { out.textContent = ''; out.style.display = 'none'; }
 }
 
-function limparErros() {
-    const inputs = document.querySelectorAll('input.erro');
-    inputs.forEach(input => {
+function limparErros(form) {
+    form.querySelectorAll('input.error').forEach(function (input) {
         input.removeAttribute('aria-invalid');
         input.removeAttribute('aria-describedby');
-        input.classList.remove('erro');
+        input.classList.remove('error');
     });
-    
-    const outputs = document.querySelectorAll('output[role="alert"]');
-    outputs.forEach(output => {
-        output.style.display = 'none';
-        output.textContent = '';
+    form.querySelectorAll('output[role="alert"]').forEach(function (out) {
+        out.style.display = 'none';
+        out.textContent   = '';
     });
 }
