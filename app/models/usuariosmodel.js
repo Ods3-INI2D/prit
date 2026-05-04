@@ -2,7 +2,7 @@ const pool = require('../config/pool_conexoes');
 
 const usuariosModel = {
 
-    // ── Busca todos os usuários ──────────────────────────────────
+    // busca todos os usuarios
     findAll: async () => {
         try {
             const [linhas] = await pool.query(
@@ -14,7 +14,7 @@ const usuariosModel = {
         }
     },
 
-    // ── Busca por e-mail (login / verificação de duplicidade) ────
+    // busca por email
     findByEmail: async (email) => {
         try {
             const [linhas] = await pool.query(
@@ -27,7 +27,7 @@ const usuariosModel = {
         }
     },
 
-    // ── Busca por id ─────────────────────────────────────────────
+    // busca por id
     findById: async (id) => {
         try {
             const [linhas] = await pool.query(
@@ -40,7 +40,7 @@ const usuariosModel = {
         }
     },
 
-    // ── Cadastro ─────────────────────────────────────────────────
+    // cadastro
     create: async (dados) => {
         /*
             dados: { nome, nasc, cpf, ddd, tel, email, senhan }
@@ -56,7 +56,7 @@ const usuariosModel = {
         }
     },
 
-    // ── Atualiza um campo específico ─────────────────────────────
+    // atualiza um campo especifico 
     updateCampo: async (email, campo, valor) => {
         const camposPermitidos = ['nome', 'nasc', 'cpf', 'ddd', 'tel'];
         if (!camposPermitidos.includes(campo)) return null;
@@ -71,7 +71,7 @@ const usuariosModel = {
         }
     },
 
-    // ── Remove usuário (admin) ───────────────────────────────────
+    // remove usuario admin
     delete: async (email) => {
         try {
             const [result] = await pool.query(

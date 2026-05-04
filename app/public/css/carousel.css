@@ -70,7 +70,7 @@
     pointer-events: none;
 }
 
-/* Controles do Carrossel */
+/* controles do carrossel */
 .carousel-controls {
     position: absolute;
     top: 50%;
@@ -115,7 +115,7 @@
     outline-offset: 0.125rem;
 }
 
-/* Indicadores do Carrossel */
+/* indicadores do carrossel */
 .carousel-indicators {
     position: absolute;
     bottom: 0.5rem;
@@ -153,7 +153,7 @@
     outline-offset: 0.125rem;
 }
 
-/* Responsividade Desktop */
+/* responsividade desktop */
 @media (min-width: 901px) {
     .carousel-container {
         aspect-ratio: 16 / 9;
@@ -200,7 +200,7 @@
     }
 }
 
-/* Ajuste para temas */
+/* ajuste para temas */
 [data-theme="light"] .carousel-container {
     background-color: #f0f0f0;
 }

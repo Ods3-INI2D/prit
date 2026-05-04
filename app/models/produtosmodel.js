@@ -2,7 +2,7 @@ const pool = require('../config/pool_conexoes');
 
 const produtosModel = {
 
-    // ── Total de registros (paginação) ───────────────────────────
+    // total de registros
     totRegistros: async () => {
         try {
             const [result] = await pool.query(
@@ -14,7 +14,7 @@ const produtosModel = {
         }
     },
 
-    // ── Lista paginada com categorias ────────────────────────────
+    // lista com categorias
     findAll: async (offset = null, qtde = null) => {
         try {
             let linhas;
@@ -50,7 +50,7 @@ const produtosModel = {
         }
     },
 
-    // ── Busca por id ─────────────────────────────────────────────
+    // busca por id
     findById: async (id) => {
         try {
             const [linhas] = await pool.query(
@@ -80,7 +80,7 @@ const produtosModel = {
         }
     },
 
-    // ── Busca por categoria (pelo nome) ──────────────────────────
+    // busca por categoria
     findByCategoria: async (nomeCategoria) => {
         try {
             let linhas;
@@ -119,7 +119,7 @@ const produtosModel = {
         }
     },
 
-    // ── Busca por slug da categoria ──────────────────────────────
+    // busca por slug da categoria
     findBySlugCategoria: async (slug) => {
         try {
             const [linhas] = await pool.query(
@@ -142,7 +142,7 @@ const produtosModel = {
         }
     },
 
-    // ── Cadastro (admin) ─────────────────────────────────────────
+    // cadastro admin
     create: async (dados, ids_categorias = []) => {
         const conn = await pool.getConnection();
         try {
@@ -180,7 +180,7 @@ const produtosModel = {
         }
     },
 
-    // ── Atualização (admin) ───────────────────────────────────────
+    // atualizaçao admin
     update: async (id, dados, ids_categorias = []) => {
         const conn = await pool.getConnection();
         try {
@@ -221,7 +221,7 @@ const produtosModel = {
         }
     },
 
-    // ── Exclusão física (admin) ───────────────────────────────────
+    // exclusao fisica admin
     delete: async (id) => {
         try {
             const [result] = await pool.query(
@@ -235,7 +235,7 @@ const produtosModel = {
         }
     },
 
-    // ── Avaliações ────────────────────────────────────────────────
+    // avaliaçoes
     addAvaliacao: async (id_produto, id_usuario, nota, texto) => {
         try {
             const [result] = await pool.query(
@@ -261,7 +261,7 @@ const produtosModel = {
         }
     },
 
-    // ── Categorias ────────────────────────────────────────────────
+    // categorias
     findAllCategorias: async () => {
         try {
             const [linhas] = await pool.query(
@@ -310,10 +310,9 @@ const produtosModel = {
         }
     },
 
-    // ── Criar categoria — versão corrigida e robusta ──────────────
+    // criar categoria
     createCategoria: async (nome) => {
         try {
-            // 1. Gera slug base normalizado
             const slugBase = nome
                 .toLowerCase()
                 .normalize('NFD')
@@ -322,8 +321,6 @@ const produtosModel = {
                 .trim()
                 .replace(/\s+/g, '-')
                 .replace(/-+/g, '-');
-
-            // 2. Garante slug único sem loop infinito (máx 100 tentativas)
             let slug = slugBase;
             let sufixo = 1;
             let tentativas = 0;
@@ -338,14 +335,10 @@ const produtosModel = {
                 sufixo++;
                 tentativas++;
             }
-
-            // 3. Insere a categoria — usa INSERT IGNORE para evitar erro de duplicata no nome
             const [result] = await pool.query(
                 'INSERT INTO categorias (nome, slug) VALUES (?, ?)',
                 [nome, slug]
             );
-
-            // 4. Verifica se realmente inseriu
             if (!result || result.affectedRows === 0) {
                 return { erro: true, mensagem: 'Categoria já existe ou não foi possível criar.' };
             }
@@ -353,7 +346,6 @@ const produtosModel = {
             return { insertId: result.insertId, slug, affectedRows: result.affectedRows };
         } catch (erro) {
             console.error('createCategoria erro:', erro);
-            // Retorna objeto estruturado para facilitar verificação no router
             return { errno: erro.errno || 1, mensagem: erro.message, erro: true };
         }
     },
@@ -371,7 +363,7 @@ const produtosModel = {
         }
     },
 
-    // ── Busca por palavra-chave ───────────────────────────────────────────────
+    // busca por palavra chave
     search: async (termo) => {
         try {
             const termoBusca = '%' + termo + '%';

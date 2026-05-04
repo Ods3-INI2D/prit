@@ -1,17 +1,17 @@
-/* ── Estado de erro ── */
+/* erro*/
 input.error,
 input[aria-invalid="true"] {
     border-color: #e74c3c !important;
     box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.18) !important;
 }
 
-/* ── Estado de sucesso ── */
+/* sucesso*/
 input.success {
     border-color: #27ae60 !important;
     box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.15) !important;
 }
 
-/* ── Mensagem de erro inline ── */
+/* erro inline*/
 output.error-message {
     display: none;
     color: #e74c3c;
@@ -22,12 +22,12 @@ output.error-message {
     line-height: 1.35;
 }
 
-/* ── Garante que o label da legenda fique corretamente posicionado ── */
+/* legenda posicionada*/
 fieldset {
     position: relative;
 }
 
-/* ── Responsividade ── */
+/* Responsividade*/
 @media (min-width: 901px) {
     output.error-message {
         font-size: 0.9rem;

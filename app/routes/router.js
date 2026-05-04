@@ -8,16 +8,16 @@ var fs         = require('fs');
 var nodemailer = require('nodemailer');
 require('dotenv').config();
 
-// ── Models MySQL ──────────────────────────────────────────────────────────────
+// models mysql
 const { usuariosModel  } = require('../models/usuariosmodel');
 const { produtosModel  } = require('../models/produtosmodel');
 const { carrinhoModel  } = require('../models/carrinhomodel');
 const { bannersModel   } = require('../models/bannersmodel');
 
-// ── Validações ────────────────────────────────────────────────────────────────
+// validaçoes
 var { valCPF, valDDD, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
 
-// ── Sessão ────────────────────────────────────────────────────────────────────
+// sessao 
 router.use(session({
     secret: process.env.SESSION_SECRET || 'chave-secreta-farmacia-super-segura-2024',
     resave: false,
@@ -25,7 +25,7 @@ router.use(session({
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// ── Multer — produtos ─────────────────────────────────────────────────────────
+// multer produtos
 const storageProduto = multer.diskStorage({
     destination: (req, file, cb) => {
         const dir = path.join(__dirname, '../public/imagens/produtos');
@@ -50,7 +50,7 @@ const uploadProduto = multer({
     }
 });
 
-// ── Multer — banners ──────────────────────────────────────────────────────────
+// multer banners
 const storageBanner = multer.diskStorage({
     destination: (req, file, cb) => {
         const dir = path.join(__dirname, '../public/imagens');
@@ -74,11 +74,11 @@ const uploadBanner = multer({
     }
 });
 
-// ── Constantes admin ──────────────────────────────────────────────────────────
+// constantes admin
 const ADMIN_EMAIL    = process.env.EMAIL_USER || 'maisaudeods3@gmail.com';
 const ADMIN_PASSWORD = '+SaudeINI2D';
 
-// ── Mapas de mensagens para o painel admin ────────────────────────────────────
+// mensagens para o painel admin
 const MSGS_SUCESSO = {
     produto_adicionado: 'Produto adicionado com sucesso!',
     produto_editado:    'Produto editado com sucesso!',
@@ -109,7 +109,7 @@ const MSGS_ERRO = {
     imagem_obrigatoria:      'A imagem do banner é obrigatória!'
 };
 
-// ── Middleware global — session_id anônimo ────────────────────────────────────
+// middleware global sem conta
 router.use((req, res, next) => {
     if (!req.session.sessionId) {
         req.session.sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -117,13 +117,13 @@ router.use((req, res, next) => {
     next();
 });
 
-// ── Middleware global — injeta usuario/isAdmin/categoriasMenu nas views ───────
+// middleware global usuario isAdmin categoriasMenu
 router.use(async (req, res, next) => {
     res.locals.usuario         = null;
     res.locals.isAdmin         = false;
     res.locals.categoriasMenu  = [];
 
-    // Carrega categorias para o menu lateral (todas as rotas)
+    // carrega categorias para o menu lateral
     try {
         const cats = await produtosModel.findAllCategorias();
         res.locals.categoriasMenu = Array.isArray(cats) ? cats : [];
@@ -143,7 +143,7 @@ router.use(async (req, res, next) => {
     next();
 });
 
-// ── Guards ────────────────────────────────────────────────────────────────────
+// guards 
 function requireLogin(req, res, next) {
     if (!req.session.usuarioEmail) {
         return res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
@@ -165,7 +165,7 @@ function blockAdmin(req, res, next) {
     next();
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// helpers
 function getIdentificador(req) {
     return {
         id_usuario: req.session.idUsuario || null,
@@ -173,10 +173,6 @@ function getIdentificador(req) {
     };
 }
 
-/**
- * Extrai ids de categorias do body de forma robusta.
- * Suporta: campo "categorias" (checkboxes), "id_categorias" ou lista separada por vírgula.
- */
 function parseCategorias(body) {
     let cats = body.categorias || body.id_categorias || [];
 
@@ -189,13 +185,11 @@ function parseCategorias(body) {
         .filter(n => Number.isFinite(n) && n > 0);
 }
 
-// =============================================================================
-// ROTAS
-// =============================================================================
+// rotas
 
 router.get('/', (req, res) => res.redirect('/home'));
 
-// ── Cadastro ──────────────────────────────────────────────────────────────────
+// Cadastro
 router.get('/cadastro', (req, res) => {
     res.render('pages/cadastro', {
         erros: null,
@@ -237,7 +231,7 @@ router.post('/cadastro',
     }
 );
 
-// ── Login ─────────────────────────────────────────────────────────────────────
+// login
 router.get('/login', (req, res) => {
     const erroAdmin = req.query.erro === 'admin'
         ? 'Acesso negado. Apenas administradores podem acessar esta área.'
@@ -274,7 +268,7 @@ router.post('/login',
     }
 );
 
-// ── Home ──────────────────────────────────────────────────────────────────────
+// home
 router.get('/home', async (req, res) => {
     const produtos    = await produtosModel.findAll();
     const banners     = await bannersModel.findAll();
@@ -291,7 +285,7 @@ router.get('/home', async (req, res) => {
     res.render('pages/home', { produtos: produtosNormalizados, banners, categorias });
 });
 
-// ── Usuário ───────────────────────────────────────────────────────────────────
+// usuario
 router.get('/usuario', async (req, res) => {
     if (!req.session.usuarioEmail) {
         return res.render('pages/usuario', { usuario: null, mensagemSucesso: null, mensagemErro: null });
@@ -329,7 +323,7 @@ router.post('/usuario/atualizar-campo', requireLogin,
     }
 );
 
-// ── Admin — Painel ────────────────────────────────────────────────────────────
+// painel de admin
 router.get('/admin', requireAdmin, async (req, res) => {
     const produtos   = await produtosModel.findAll();
     const usuarios   = await usuariosModel.findAll();
@@ -356,7 +350,7 @@ router.get('/admin', requireAdmin, async (req, res) => {
     });
 });
 
-// ── Admin — Adicionar produto ─────────────────────────────────────────────────
+// admin adicionar produto
 router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
     uploadProduto.single('imagem')(req, res, async (err) => {
         if (err) {
@@ -399,7 +393,7 @@ router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
     });
 });
 
-// ── Admin — Editar produto (GET) ──────────────────────────────────────────────
+// admin editar produto
 router.get('/admin/editar-produto/:id', requireAdmin, async (req, res) => {
     const produto    = await produtosModel.findById(req.params.id);
     if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
@@ -416,7 +410,7 @@ router.get('/admin/editar-produto/:id', requireAdmin, async (req, res) => {
     });
 });
 
-// ── Admin — Editar produto (POST) ─────────────────────────────────────────────
+// admin postar produto editado
 router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
     uploadProduto.single('imagem')(req, res, async (err) => {
         if (err) {
@@ -465,7 +459,7 @@ router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
     });
 });
 
-// ── Admin — Excluir produto ───────────────────────────────────────────────────
+// admin excluir produto
 router.post('/admin/excluir-produto/:id', requireAdmin, async (req, res) => {
     try {
         const produto = await produtosModel.findById(req.params.id);
@@ -482,7 +476,7 @@ router.post('/admin/excluir-produto/:id', requireAdmin, async (req, res) => {
     }
 });
 
-// ── Admin — Excluir usuário ───────────────────────────────────────────────────
+// admin excluir usuario
 router.post('/admin/excluir-usuario/:email', requireAdmin, async (req, res) => {
     try {
         await usuariosModel.delete(req.params.email);
@@ -493,7 +487,7 @@ router.post('/admin/excluir-usuario/:email', requireAdmin, async (req, res) => {
     }
 });
 
-// ── Admin — Criar categoria ───────────────────────────────────────────────────
+// admin criar categoria
 router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
     try {
         const nome = (req.body.nome_categoria || '').trim();
@@ -533,7 +527,7 @@ router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
     }
 });
 
-// ── Admin — Excluir categoria ─────────────────────────────────────────────────
+// admin exluir categoria
 router.post('/admin/excluir-categoria/:id', requireAdmin, async (req, res) => {
     try {
         await produtosModel.deleteCategoria(req.params.id);
@@ -544,7 +538,7 @@ router.post('/admin/excluir-categoria/:id', requireAdmin, async (req, res) => {
     }
 });
 
-// ── Admin — Criar banner ──────────────────────────────────────────────────────
+// admin criar banner
 router.post('/admin/criar-banner', requireAdmin, (req, res) => {
     uploadBanner.single('imagem')(req, res, async (err) => {
         if (err) {
@@ -576,7 +570,7 @@ router.post('/admin/criar-banner', requireAdmin, (req, res) => {
     });
 });
 
-// ── Admin — Editar banner ─────────────────────────────────────────────────────
+// admin editar banner
 router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
     uploadBanner.single('imagem')(req, res, async (err) => {
         if (err) return res.redirect('/admin?erro=editar_banner&tab=banners');
@@ -608,7 +602,7 @@ router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
     });
 });
 
-// ── Admin — Excluir banner ────────────────────────────────────────────────────
+// admin excluir banner
 router.post('/admin/excluir-banner/:id', requireAdmin, async (req, res) => {
     try {
         const banner = await bannersModel.findById(parseInt(req.params.id));
@@ -628,7 +622,7 @@ router.post('/admin/excluir-banner/:id', requireAdmin, async (req, res) => {
     }
 });
 
-// ── Produto ───────────────────────────────────────────────────────────────────
+// produto
 router.get('/produto/:id', async (req, res) => {
     const produto = await produtosModel.findById(req.params.id);
     if (!produto) return res.redirect('/home');
@@ -671,7 +665,7 @@ router.post('/produto/:id/adicionar-carrinho', blockAdmin, async (req, res) => {
     res.redirect('/carrinho');
 });
 
-// ── Carrinho ──────────────────────────────────────────────────────────────────
+// carrinho
 router.get('/carrinho', blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
     const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
@@ -704,7 +698,7 @@ router.post('/carrinho/remover/:id', blockAdmin, async (req, res) => {
     res.redirect('/carrinho');
 });
 
-// ── Avaliação ─────────────────────────────────────────────────────────────────
+// avaliaçao
 router.post('/produto/:id/avaliar', requireLogin, blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
     const temNoCarrinho = await carrinhoModel.temProduto(req.params.id, id_usuario, session_id);
@@ -715,7 +709,7 @@ router.post('/produto/:id/avaliar', requireLogin, blockAdmin, async (req, res) =
     res.redirect('/produto/' + req.params.id);
 });
 
-// ── Categoria por slug ────────────────────────────────────────────────────────
+// categoria slug
 router.get('/categoria/:slug', async (req, res) => {
     const slug = req.params.slug;
 
@@ -748,7 +742,7 @@ router.get('/categoria/:slug', async (req, res) => {
     res.render('pages/categoria', { categoria: nomeExibicao, slug, produtos: produtosNorm });
 });
 
-// ── Busca de produtos ─────────────────────────────────────────────────────────
+// busca de produtos
 router.get('/busca', async (req, res) => {
     const termo = (req.query.q || '').trim();
 
@@ -768,7 +762,7 @@ router.get('/busca', async (req, res) => {
     res.render('pages/busca', { termo, produtos: produtosNorm });
 });
 
-// ── Parceiros ─────────────────────────────────────────────────────────────────
+// parceiros
 router.get('/parceiros', (req, res) => {
     res.render('pages/parceiros', { sucesso: null, erro: null, valores: { empresa: '', email: '', categorias: [], descricao: '' } });
 });
@@ -807,7 +801,7 @@ router.post('/parceiros',
     }
 );
 
-// ── Atendimento ───────────────────────────────────────────────────────────────
+// atendimento 
 router.get('/atendimento', (req, res) => {
     res.render('pages/atendimento', { sucesso: null, erro: null, valores: { email: '', mensagem: '' } });
 });
@@ -841,7 +835,7 @@ router.post('/atendimento',
     }
 );
 
-// ── Logout ────────────────────────────────────────────────────────────────────
+// logout 
 router.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) console.error('Erro ao destruir sessão:', err);

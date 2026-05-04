@@ -96,7 +96,7 @@
                 <button class="tab-button"         data-tab="banners"    role="tab" aria-selected="false" aria-controls="tab-banners">Banners</button>
             </nav>
 
-            <%# ==================== ABA: ADICIONAR PRODUTO ==================== %>
+            <%# adicionar produto%>
             <article class="tab-content active" id="tab-adicionar" role="tabpanel" aria-labelledby="titulo-adicionar">
                 <section class="adicionar-produto">
                     <h2 id="titulo-adicionar" class="subtitulo">Adicionar Novo Produto</h2>
@@ -175,7 +175,7 @@
                 </section>
             </article>
 
-            <%# ==================== ABA: PRODUTOS ==================== %>
+            <%# produtos %>
             <article class="tab-content" id="tab-produtos" role="tabpanel" aria-labelledby="titulo-lista">
                 <section class="lista-produtos">
                     <h2 id="titulo-lista" class="subtitulo">Produtos Cadastrados</h2>
@@ -215,7 +215,7 @@
                 </section>
             </article>
 
-            <%# ==================== ABA: CATEGORIAS ==================== %>
+            <%# categorias%>
             <article class="tab-content" id="tab-categorias" role="tabpanel" aria-labelledby="titulo-categorias">
                 <section class="lista-categorias-section">
                     <h2 id="titulo-categorias" class="subtitulo">Gerenciar Categorias</h2>
@@ -263,7 +263,7 @@
                 </section>
             </article>
 
-            <%# ==================== ABA: USUÁRIOS ==================== %>
+            <%# usuarios %>
             <article class="tab-content" id="tab-usuarios" role="tabpanel" aria-labelledby="titulo-usuarios">
                 <section class="lista-usuarios-section">
                     <h2 id="titulo-usuarios" class="subtitulo">Usuários Cadastrados</h2>
@@ -299,7 +299,7 @@
                 </section>
             </article>
 
-            <%# ==================== ABA: BANNERS ==================== %>
+            <%# banners %>
             <article class="tab-content" id="tab-banners" role="tabpanel" aria-labelledby="titulo-banners">
                 <section class="lista-banners-section">
                     <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners do Carrossel</h2>
@@ -443,7 +443,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            // ── Tabs ────────────────────────────────────────────────────────
+            // tabs
             var tabButtons  = document.querySelectorAll('.tab-button');
             var tabContents = document.querySelectorAll('.tab-content');
 
@@ -469,15 +469,13 @@
                     ativarTab(this.getAttribute('data-tab'));
                 });
             });
-
-            // ── Abre aba via querystring (?tab=categorias, ?tab=banners, etc.) ──
             var params   = new URLSearchParams(window.location.search);
             var tabParam = params.get('tab');
             if (tabParam) {
                 ativarTab(tabParam);
             }
 
-            // ── Preview de imagem genérico ───────────────────────────────────
+            // preview da imagem
             function setupPreview(inputId, previewId, infoId) {
                 var input   = document.getElementById(inputId);
                 var preview = document.getElementById(previewId);
@@ -517,7 +515,7 @@
             setupPreview('imagem-novo-banner', 'preview-novo-banner', 'imagem-novo-info');
             setupPreview('imagem-banner',      'preview-banner',      'banner-info');
 
-            // ── Modal de edição de banner ────────────────────────────────────
+            // ediçao de banner
             var modal        = document.getElementById('modal-banner');
             var form         = document.getElementById('form-editar-banner');
             var btnFechar    = document.getElementById('btn-fechar-modal');

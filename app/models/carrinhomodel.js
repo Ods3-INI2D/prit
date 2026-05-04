@@ -2,7 +2,7 @@ const pool = require('../config/pool_conexoes');
 
 const carrinhoModel = {
 
-    // ── Verifica se produto está no carrinho do identificador ─────
+    // verifica se produto esta no carrinho
     temProduto: async (id_produto, id_usuario, session_id) => {
         try {
             let linhas;
@@ -23,7 +23,7 @@ const carrinhoModel = {
         }
     },
 
-    // ── Retorna itens do carrinho com dados do produto ────────────
+    // retorna itens do carrinho com dados do produto
     findByIdentificador: async (id_usuario, session_id) => {
         try {
             let linhas;
@@ -65,7 +65,7 @@ const carrinhoModel = {
         }
     },
 
-    // ── Adiciona / incrementa quantidade ─────────────────────────
+    // adiciona quantidade
     addProduto: async (id_produto, id_usuario, session_id, qtd = 1) => {
         try {
             let existente;
@@ -102,7 +102,7 @@ const carrinhoModel = {
         }
     },
 
-    // ── Atualiza quantidade ───────────────────────────────────────
+    // atualiza quantidade
     updateQuantidade: async (id_produto, id_usuario, session_id, novaQtd) => {
         try {
             if (novaQtd <= 0) {
@@ -127,7 +127,7 @@ const carrinhoModel = {
         }
     },
 
-    // ── Remove produto ────────────────────────────────────────────
+    // remove produto
     removerProduto: async (id_produto, id_usuario, session_id) => {
         try {
             let result;
@@ -149,7 +149,7 @@ const carrinhoModel = {
         }
     },
 
-    // ── Migra carrinho anônimo → usuário logado ───────────────────
+    // migra carrinho sem conta para usuario logado
     migrarParaUsuario: async (session_id, id_usuario) => {
         try {
             const [itensAnonimos] = await pool.query(
@@ -182,7 +182,7 @@ const carrinhoModel = {
         }
     },
 
-    // ── Limpa carrinho por session_id ─────────────────────────────
+    // limpa carrinho por session_id
     limparPorSession: async (session_id) => {
         try {
             await pool.query('DELETE FROM carrinho WHERE session_id = ?', [session_id]);

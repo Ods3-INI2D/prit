@@ -19,7 +19,7 @@
     </header>
 
     <main>
-        <%# ── Carrossel de banners ── %>
+        <%# carrossel de banners %>
         <section class="carousel-container" aria-label="Carrossel de destaques">
             <% if(banners && banners.length > 0) { %>
                 <% banners.forEach(function(banner, index) { %>
@@ -51,7 +51,7 @@
 
         <% if(produtos && produtos.length > 0) { %>
 
-            <%# ── Seção de Descontos (produtos com preço promocional) ── %>
+            <%# seçao de descontos %>
             <%
                 var produtosComDesconto = produtos.filter(function(p) {
                     return p.precoDesconto !== null && p.precoDesconto > 0;
@@ -111,7 +111,7 @@
                 </section>
             <% } %>
 
-            <%# ── Seções por cada categoria cadastrada no banco ── %>
+            <%# seçoes por cada categoria cadastrada no banco %>
             <% if(categorias && categorias.length > 0) { %>
                 <% categorias.forEach(function(categoria) {
 

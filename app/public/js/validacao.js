@@ -7,9 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (formLogin)    validarLogin(formLogin);
 });
 
-/* =====================================================================
-   CADASTRO
-   ===================================================================== */
+/*cadastro */
 function validarCadastro(form) {
     const inputNome           = form.querySelector('#nome');
     const inputNasc           = form.querySelector('#nasc');
@@ -20,7 +18,7 @@ function validarCadastro(form) {
     const inputSenha          = form.querySelector('#senhan');
     const inputConfirmarSenha = form.querySelector('#senha');
 
-    /* ── Máscara CPF: exibe 000.000.000-00, envia 00000000000 ── */
+    /* masscara CPF: exibe 000.000.000-00 */
     if (inputCPF) {
         inputCPF.addEventListener('input', function () {
             let v = this.value.replace(/\D/g, '').slice(0, 11);
@@ -31,7 +29,7 @@ function validarCadastro(form) {
         });
     }
 
-    /* ── Máscara Telefone: exibe 99999-9999, envia 999999999 ── */
+    /* mascara telefone: exibe 99999-9999 */
     if (inputTel) {
         inputTel.addEventListener('input', function () {
             let v = this.value.replace(/\D/g, '').slice(0, 9);
@@ -40,14 +38,14 @@ function validarCadastro(form) {
         });
     }
 
-    /* ── DDD: apenas 2 dígitos numéricos ── */
+    /* DDD: apenas 2 digitos*/
     if (inputDDD) {
         inputDDD.addEventListener('input', function () {
             this.value = this.value.replace(/\D/g, '').slice(0, 2);
         });
     }
 
-    /* ── Validação blur em tempo real ── */
+    /* validaçao blur*/
     if (inputNome)           inputNome.addEventListener('blur',   () => validarNome(inputNome));
     if (inputNasc)           inputNasc.addEventListener('blur',   () => validarDataNasc(inputNasc));
     if (inputCPF)            inputCPF.addEventListener('blur',    () => validarCPF(inputCPF));
@@ -58,7 +56,7 @@ function validarCadastro(form) {
     if (inputConfirmarSenha) inputConfirmarSenha.addEventListener('blur',
         () => validarConfirmaSenha(inputSenha, inputConfirmarSenha));
 
-    /* ── Submit: valida + remove máscaras antes de enviar ── */
+    /* submit: valida + remove mascaras antes de enviar*/
     form.addEventListener('submit', function (e) {
         limparErros(form);
         let valido = true;
@@ -77,18 +75,13 @@ function validarCadastro(form) {
             return;
         }
 
-        /*
-         * CRÍTICO: remove a formatação das máscaras antes do POST
-         * para que o backend receba apenas os dígitos (11 para CPF, 9 para tel)
-         */
+        /*para que o backend receba apenas os dígitos (11 para CPF, 9 para tel)*/
         if (inputCPF) inputCPF.value = inputCPF.value.replace(/\D/g, '');
         if (inputTel) inputTel.value = inputTel.value.replace(/\D/g, '');
     });
 }
 
-/* =====================================================================
-   LOGIN
-   ===================================================================== */
+/*login*/
 function validarLogin(form) {
     const inputEmail = form.querySelector('#email');
     const inputSenha = form.querySelector('#senha');
@@ -114,9 +107,7 @@ function validarLogin(form) {
     });
 }
 
-/* =====================================================================
-   FUNÇÕES DE VALIDAÇÃO  (operam sempre sobre dígitos limpos)
-   ===================================================================== */
+/*funçoes de validaçao*/
 
 function validarNome(input) {
     const v = input.value.trim();
@@ -196,9 +187,7 @@ function validarConfirmaSenha(inputSenha, inputConfirmar) {
     mostrarSucesso(inputConfirmar); return true;
 }
 
-/* =====================================================================
-   ALGORITMO CPF
-   ===================================================================== */
+/*algoritipo*/
 function isValidCPF(cpf) {
     if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
     let soma = 0;
@@ -213,9 +202,7 @@ function isValidCPF(cpf) {
     return resto === parseInt(cpf.charAt(10));
 }
 
-/* =====================================================================
-   HELPERS DE UI
-   ===================================================================== */
+/*helpers*/
 function mostrarErro(input, mensagem) {
     input.setAttribute('aria-invalid', 'true');
     input.classList.remove('success');
