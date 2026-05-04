@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca: <%= termo %> - +Saúde</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/categoria.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <header>
+        <%- include('../partial/grid.ejs') %>
+    </header>
+
+    <main>
+        <nav class="navegacao" aria-label="Navegação de retorno">
+            <a href="/home" class="voltar">
+                <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
+                <output>Voltar</output>
+            </a>
+        </nav>
+
+        <section class="categoria-container">
+            <h1 class="titulo-categoria">
+                Resultados para: "<%= termo %>"
+            </h1>
+
+            <% if (produtos.length === 0) { %>
+                <article class="categoria-vazia">
+                    <output class="mensagem-vazio">Nenhum produto encontrado para "<%= termo %>".</output>
+                    <a href="/home" class="btn-voltar-home">Voltar para Home</a>
+                </article>
+            <% } else { %>
+                <output style="display:block;text-align:center;color:#888;margin-bottom:1rem;">
+                    <%= produtos.length %> produto<%= produtos.length !== 1 ? 's' : '' %> encontrado<%= produtos.length !== 1 ? 's' : '' %>
+                </output>
+                <section class="produtos-container">
+                    <% produtos.forEach(function(produto) {
+                        var precoAtual = produto.preco || 0;
+                        var precoComDesconto = produto.precoDesconto || null;
+                        var temDesconto = precoComDesconto !== null && precoComDesconto > 0;
+                        var percentualDesconto = 0;
+                        if (temDesconto && precoAtual > 0) {
+                            percentualDesconto = Math.round(((precoAtual - precoComDesconto) / precoAtual) * 100);
+                        }
+                    %>
+                        <article class="bloco-produto-home">
+                            <a href="/produto/<%= produto.id %>" class="link-produto-home">
+                                <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto-home">
+
+                                <h2 class="nome-produto-home"><%= produto.nome %></h2>
+
+                                <% if (temDesconto) { %>
+                                    <section class="preco-container-home">
+                                        <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                        <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></output>
+                                        <aside class="badge-desconto">
+                                            <output class="percentual-home">-<%= percentualDesconto %>%</output>
+                                        </aside>
+                                    </section>
+                                <% } else { %>
+                                    <output class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                <% } %>
+
+                                <output class="categoria-home"><%= produto.categoria || '' %></output>
+                            </a>
+                        </article>
+                    <% }); %>
+                </section>
+            <% } %>
+        </section>
+    </main>
+
+    <footer>
+        <%- include('../partial/footer.ejs') %>
+    </footer>
+</body>
+</html>

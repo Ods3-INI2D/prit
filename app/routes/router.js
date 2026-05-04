@@ -739,6 +739,26 @@ router.get('/categoria/:slug', async (req, res) => {
     res.render('pages/categoria', { categoria: nomeExibicao, slug, produtos: produtosNorm });
 });
 
+// ── Busca de produtos ─────────────────────────────────────────────────────────
+router.get('/busca', async (req, res) => {
+    const termo = (req.query.q || '').trim();
+
+    if (!termo) {
+        return res.redirect('/home');
+    }
+
+    const produtos = await produtosModel.search(termo);
+
+    const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
+        ...p,
+        id:            p.id_produto,
+        preco:         parseFloat(p.preco) || 0,
+        precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
+    }));
+
+    res.render('pages/busca', { termo, produtos: produtosNorm });
+});
+
 // ── Parceiros ─────────────────────────────────────────────────────────────────
 router.get('/parceiros', (req, res) => {
     res.render('pages/parceiros', { sucesso: null, erro: null, valores: { empresa: '', email: '', categorias: [], descricao: '' } });

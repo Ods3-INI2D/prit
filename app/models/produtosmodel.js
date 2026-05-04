@@ -369,7 +369,34 @@ const produtosModel = {
             console.error('deleteCategoria erro:', erro);
             return erro;
         }
-    }
+    },
+
+    // ── Busca por palavra-chave ───────────────────────────────────────────────
+    search: async (termo) => {
+        try {
+            const termoBusca = '%' + termo + '%';
+            const [linhas] = await pool.query(
+                `SELECT p.*,
+                        GROUP_CONCAT(c.nome ORDER BY c.nome SEPARATOR ', ') AS categoria,
+                        GROUP_CONCAT(c.id_categoria ORDER BY c.nome SEPARATOR ',') AS ids_categorias
+                 FROM produtos p
+                 LEFT JOIN produto_categorias pc ON pc.id_produto = p.id_produto
+                 LEFT JOIN categorias c ON c.id_categoria = pc.id_categoria
+                 WHERE p.nome LIKE ?
+                    OR p.descricao LIKE ?
+                    OR c.nome LIKE ?
+                 GROUP BY p.id_produto
+                 ORDER BY
+                   CASE WHEN p.nome LIKE ? THEN 0 ELSE 1 END,
+                   p.id_produto DESC`,
+                [termoBusca, termoBusca, termoBusca, termoBusca]
+            );
+            return linhas;
+        } catch (erro) {
+            console.error('search erro:', erro);
+            return [];
+        }
+    },
 };
 
 module.exports = { produtosModel };

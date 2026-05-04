@@ -28,11 +28,17 @@
         <section class="busca-container">
             <a href="<%= isAdmin ? '/admin' : '/usuario' %>"><img src="/imagens/user.png" alt="user" class="user"></a>
 
-            <form class="busca-form">
+            <form class="busca-form" method="GET" action="/busca" role="search">
                 <label for="busca">
-                    <input type="text" placeholder="Buscar..." name="barra" id="busca">
+                    <input type="text" 
+                           placeholder="Buscar..." 
+                           name="q" 
+                           id="busca"
+                           value="<%= typeof termoBusca !== 'undefined' ? termoBusca : '' %>"
+                           autocomplete="off"
+                           aria-label="Campo de busca de produtos">
                 </label>
-                <button type="submit" class="lupa-btn">
+                <button type="submit" class="lupa-btn" aria-label="Buscar produtos">
                     <img src="/imagens/lupa.png" alt="buscar" class="lupa">
                 </button>
             </form>
@@ -122,7 +128,6 @@
                     menuToggle.setAttribute('aria-label', newLabel);
                 });
 
-                // Fecha o menu ao clicar fora
                 document.addEventListener('click', function(e) {
                     if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
                         navMenu.classList.remove('is-open');
