@@ -156,9 +156,9 @@
                             <legend><strong class="label-titulo">Imagem do Produto</strong></legend>
                             <label for="imagem-add" class="label-arquivo">
                                 <input type="file" id="imagem-add" name="imagem"
-                                       accept="image/jpeg,image/jpg,image/png,image/webp"
+                                       accept="image/svg+xml"
                                        aria-describedby="imagem-add-info">
-                                <output id="imagem-add-info" class="info-arquivo">Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB)</output>
+                                <output id="imagem-add-info" class="info-arquivo">Formato aceito: SVG (máx. 5MB)</output>
                             </label>
                             <output id="preview-imagem-add" class="preview-container" role="status" aria-live="polite"></output>
                         </fieldset>
@@ -475,8 +475,8 @@
                 ativarTab(tabParam);
             }
 
-            // preview da imagem
-            function setupPreview(inputId, previewId, infoId) {
+            // preview da imagem — aceita SVG para produtos e JPG/PNG/WEBP para banners
+            function setupPreview(inputId, previewId, infoId, tiposAceitos) {
                 var input   = document.getElementById(inputId);
                 var preview = document.getElementById(previewId);
                 var info    = infoId ? document.getElementById(infoId) : null;
@@ -490,9 +490,8 @@
                         if (info) { info.textContent = 'Erro: máximo 5MB'; info.style.color = '#d93025'; }
                         preview.innerHTML = ''; input.value = ''; return;
                     }
-                    var tipos = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-                    if (!tipos.includes(arquivo.type)) {
-                        if (info) { info.textContent = 'Erro: use JPG, PNG ou WEBP'; info.style.color = '#d93025'; }
+                    if (!tiposAceitos.includes(arquivo.type)) {
+                        if (info) { info.textContent = 'Erro: formato não permitido'; info.style.color = '#d93025'; }
                         preview.innerHTML = ''; input.value = ''; return;
                     }
                     var reader = new FileReader();
@@ -511,9 +510,10 @@
                 });
             }
 
-            setupPreview('imagem-add',        'preview-imagem-add',  'imagem-add-info');
-            setupPreview('imagem-novo-banner', 'preview-novo-banner', 'imagem-novo-info');
-            setupPreview('imagem-banner',      'preview-banner',      'banner-info');
+            // produto aceita apenas SVG; banners aceitam JPG/PNG/WEBP
+            setupPreview('imagem-add',        'preview-imagem-add',  'imagem-add-info',  ['image/svg+xml']);
+            setupPreview('imagem-novo-banner', 'preview-novo-banner', 'imagem-novo-info', ['image/jpeg', 'image/png', 'image/webp']);
+            setupPreview('imagem-banner',      'preview-banner',      'banner-info',      ['image/jpeg', 'image/png', 'image/webp']);
 
             // ediçao de banner
             var modal        = document.getElementById('modal-banner');

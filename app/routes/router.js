@@ -25,7 +25,7 @@ router.use(session({
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// multer produtos
+// multer produtos — aceita apenas SVG
 const storageProduto = multer.diskStorage({
     destination: (req, file, cb) => {
         const dir = path.join(__dirname, '../public/imagens/produtos');
@@ -42,10 +42,10 @@ const uploadProduto = multer({
     fileFilter: (req, file, cb) => {
         const ext = path.extname(file.originalname).toLowerCase();
         const mime = file.mimetype;
-        if (/\.(jpeg|jpg|png|webp)$/.test(ext) && /image\/(jpeg|jpg|png|webp)/.test(mime)) {
+        if (ext === '.svg' && (mime === 'image/svg+xml' || mime === 'image/svg')) {
             cb(null, true);
         } else {
-            cb(new Error('Apenas imagens JPG, PNG ou WEBP são permitidas!'));
+            cb(new Error('Apenas imagens no formato SVG são permitidas!'));
         }
     }
 });

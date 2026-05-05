@@ -126,13 +126,13 @@
                 </fieldset>
 
                 <fieldset class="campo-imagem">
-                    <legend class="label-titulo">Nova Imagem (opcional)</legend>
+                    <legend class="label-titulo">Nova Imagem SVG (opcional)</legend>
                     <label for="imagem" class="label-arquivo">
                         <input type="file" id="imagem" name="imagem"
-                               accept="image/jpeg,image/jpg,image/png,image/webp"
+                               accept="image/svg+xml"
                                aria-describedby="imagem-info">
                         <output id="imagem-info" class="info-arquivo">
-                            Formatos aceitos: JPG, JPEG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
+                            Formato aceito: SVG (máx. 5MB). Deixe em branco para manter a imagem atual.
                         </output>
                     </label>
                     <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></output>
@@ -162,13 +162,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const inputImagem   = document.getElementById('imagem');
-            const previewContainer = document.getElementById('preview-imagem');
-            const infoArquivo   = document.getElementById('imagem-info');
+            var inputImagem        = document.getElementById('imagem');
+            var previewContainer   = document.getElementById('preview-imagem');
+            var infoArquivo        = document.getElementById('imagem-info');
 
             if (inputImagem) {
                 inputImagem.addEventListener('change', function(e) {
-                    const arquivo = e.target.files[0];
+                    var arquivo = e.target.files[0];
                     if (!arquivo) { previewContainer.innerHTML = ''; return; }
 
                     if (arquivo.size > 5 * 1024 * 1024) {
@@ -176,23 +176,22 @@
                         infoArquivo.style.color = '#d93025';
                         previewContainer.innerHTML = ''; inputImagem.value = ''; return;
                     }
-                    const tipos = ['image/jpeg','image/jpg','image/png','image/webp'];
-                    if (!tipos.includes(arquivo.type)) {
-                        infoArquivo.textContent = 'Erro: Formato não suportado. Use JPG, PNG ou WEBP';
+                    if (arquivo.type !== 'image/svg+xml') {
+                        infoArquivo.textContent = 'Erro: Formato não suportado. Use apenas SVG';
                         infoArquivo.style.color = '#d93025';
                         previewContainer.innerHTML = ''; inputImagem.value = ''; return;
                     }
-                    const reader = new FileReader();
+                    var reader = new FileReader();
                     reader.onload = function(ev) {
-                        const fig = document.createElement('figure');
+                        var fig = document.createElement('figure');
                         fig.className = 'preview-figure';
-                        const img = document.createElement('img');
+                        var img = document.createElement('img');
                         img.src = ev.target.result; img.alt = 'Preview da nova imagem'; img.className = 'preview-img';
-                        const cap = document.createElement('figcaption');
+                        var cap = document.createElement('figcaption');
                         cap.textContent = arquivo.name; cap.className = 'preview-caption';
                         fig.appendChild(img); fig.appendChild(cap);
                         previewContainer.innerHTML = ''; previewContainer.appendChild(fig);
-                        infoArquivo.textContent = 'Nova imagem selecionada!'; infoArquivo.style.color = '#4da6ff';
+                        infoArquivo.textContent = 'Imagem SVG selecionada!'; infoArquivo.style.color = '#4da6ff';
                     };
                     reader.readAsDataURL(arquivo);
                 });
