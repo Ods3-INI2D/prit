@@ -21,7 +21,7 @@
     <main>
         <nav class="navegacao">
             <a href="/home" class="voltar">
-                <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
+                <img src="/imagens/setae.svg" alt="Voltar" class="seta-voltar">
                 <output>Voltar</output>
             </a>
         </nav>
@@ -111,7 +111,7 @@
                     %>
                     <section class="estrelas-media">
                         <% for(let i = 1; i <= 5; i++) { %>
-                            <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.png" 
+                            <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.svg" 
                                  class="estrela" 
                                  alt="Estrela <%= i <= notaArredondada ? 'preenchida' : 'vazia' %>">
                         <% } %>
@@ -126,7 +126,7 @@
                         <li class="item-avaliacao">
                             <section class="estrelas-avaliacao">
                                 <% for(let i = 1; i <= 5; i++) { %>
-                                    <img src="/imagens/estr<%= i <= avaliacao.nota ? '' : 'v' %>.png" 
+                                    <img src="/imagens/estr<%= i <= avaliacao.nota ? '' : 'v' %>.svg" 
                                          class="estrela-pequena" 
                                          alt="Estrela">
                                 <% } %>
