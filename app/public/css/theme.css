@@ -1,23 +1,23 @@
 /* Sistema de Temas - Claro e Escuro */
 
 :root {
-    --bg-primary: #1f1f1f;
-    --bg-secondary: #2a2a2a;
-    --bg-tertiary: #383838;
-    --bg-menu: #2D2D2D;
-    --bg-submenu: #1B1B1B;
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #2a2a2a;
+    --bg-menu: #0f0f0f;
+    --bg-submenu: #0a0a0a;
     --bg-header: #163069;
     --bg-footer: rgb(91, 123, 225);
-    --bg-input: #383838;
-    --bg-modal: rgba(0, 0, 0, 0.85);
+    --bg-input: #2a2a2a;
+    --bg-modal: rgba(0, 0, 0, 0.95);
     --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.8);
-    --text-tertiary: #d9d9d9;
-    --text-muted: #888888;
-    --text-footer: #000000;
-    --text-placeholder: rgba(255, 255, 255, 0.6);
-    --border-color: #555555;
-    --border-light: rgba(255, 255, 255, 0.1);
+    --text-secondary: rgba(255, 255, 255, 0.85);
+    --text-tertiary: #e0e0e0;
+    --text-muted: #a0a0a0;
+    --text-footer: #ffffff;
+    --text-placeholder: rgba(255, 255, 255, 0.7);
+    --border-color: #404040;
+    --border-light: rgba(255, 255, 255, 0.15);
     --border-focus: #4da6ff;
     --accent-primary: #4da6ff;
     --accent-hover: #6bb5ff;
@@ -49,49 +49,49 @@
 }
 
 [data-theme="light"] {
-    --bg-primary: #f5f5f5;
+    --bg-primary: #f8f8f8;
     --bg-secondary: #ffffff;
-    --bg-tertiary: #e8e8e8;
-    --bg-menu: #f0f0f0;
+    --bg-tertiary: #f0f0f0;
+    --bg-menu: #f5f5f5;
     --bg-submenu: #ffffff;
     --bg-header: #2563a8;
     --bg-footer: rgb(91, 123, 225);
     --bg-input: #ffffff;
-    --bg-modal: rgba(255, 255, 255, 0.95);
-    --text-primary: #1f1f1f;
+    --bg-modal: rgba(255, 255, 255, 0.98);
+    --text-primary: #1a1a1a;
     --text-secondary: #333333;
-    --text-tertiary: #4a4a4a;
-    --text-muted: #666666;
-    --text-footer: #000000;
-    --text-placeholder: rgba(0, 0, 0, 0.5);
-    --border-color: #cccccc;
-    --border-light: rgba(0, 0, 0, 0.1);
-    --border-focus: #1a73e8;
+    --text-tertiary: #555555;
+    --text-muted: #777777;
+    --text-footer: #ffffff;
+    --text-placeholder: rgba(0, 0, 0, 0.6);
+    --border-color: #d0d0d0;
+    --border-light: rgba(0, 0, 0, 0.12);
+    --border-focus: #0d47a1;
     --accent-primary: #1a73e8;
     --accent-hover: #1557b0;
     --btn-primary-bg: #1a73e8;
     --btn-primary-hover: #1557b0;
     --btn-secondary-bg: #2563a8;
     --btn-secondary-hover: #1a4d87;
-    --success-bg: rgba(26, 115, 232, 0.1);
+    --success-bg: rgba(26, 115, 232, 0.12);
     --success-border: #1a73e8;
     --success-text: #1557b0;
-    --error-bg: rgba(217, 48, 37, 0.1);
+    --error-bg: rgba(217, 48, 37, 0.12);
     --error-border: #d93025;
     --error-text: #c5221f;
-    --warning-bg: rgba(255, 193, 7, 0.1);
+    --warning-bg: rgba(255, 193, 7, 0.12);
     --warning-border: #f9ab00;
     --warning-text: #ea8600;
-    --info-bg: rgba(26, 115, 232, 0.1);
+    --info-bg: rgba(26, 115, 232, 0.12);
     --info-border: #1a73e8;
     --info-text: #1557b0;
     
     /* Imagens por tema - TEMA CLARO */
-    --img-carrinho: url('/imagens/carrinho-branco.png');
-    --img-lupa: url('/imagens/lupa-branca.png');
-    --img-user: url('/imagens/user-branco.png');
+    --img-carrinho: url('/imagens/carrinho-preto.png');
+    --img-lupa: url('/imagens/lupa-preta.png');
+    --img-user: url('/imagens/user-preto.png');
     --img-user-menu: url('/imagens/user-preto.png');
-    --img-logo: url('/imagens/logo-branco.png');
+    --img-logo: url('/imagens/logo-preto.png');
     --img-estrela: url('/imagens/estrela-preta.png');
     --img-estrela-vazia: url('/imagens/estrela-preta-vazia.png');
 }
@@ -820,18 +820,19 @@ output a:hover {
 .lista-opcoes {
     color: var(--text-primary);
 }
+
 /* Correção inputs e textarea no tema claro */
 [data-theme="light"] input,
 [data-theme="light"] textarea,
 [data-theme="light"] select {
     background-color: #ffffff !important;
-    color: #1f1f1f !important;
-    border-color: #ccc !important;
+    color: #1a1a1a !important;
+    border-color: #d0d0d0 !important;
 }
 
 [data-theme="light"] input::placeholder,
 [data-theme="light"] textarea::placeholder {
-    color: #888 !important;
+    color: #999999 !important;
 }
 
 
