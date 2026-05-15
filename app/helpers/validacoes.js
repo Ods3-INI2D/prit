@@ -123,7 +123,7 @@ function valSenha(senhan) {
     }
 
     // complexidade: pelo menos um numero, uma letra maiuscula e um caractere especial
-    const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,20}$/; 
+    const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{6,20}$/; 
     
     if (!regex.test(senhan)) {
         return false;

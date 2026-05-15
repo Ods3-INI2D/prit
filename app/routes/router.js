@@ -2,6 +2,7 @@ var express = require('express');
 const { body, validationResult } = require('express-validator');
 var router = express.Router();
 var { valCPF, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
+var { hashSenha, compareSenha } = require('../helpers/auth');
 var db = require('../models/database');
 var multer = require('multer');
 var path = require('path');
@@ -13,7 +14,7 @@ require('dotenv').config();
 const nodemailer = require('nodemailer');
 
 router.use(session({
-    secret: 'chave-secreta-farmacia-super-segura-2024',
+    secret: process.env.SESSION_SECRET || 'chave-secreta-farmacia-super-segura-2024',
     resave: false,
     saveUninitialized: false,
     cookie: { 
@@ -92,9 +93,9 @@ const uploadBanner = multer({
     }
 });
 
-// Credenciais do administrador
-const ADMIN_EMAIL = 'maisaudeods3@gmail.com';
-const ADMIN_PASSWORD = '+SaudeINI2D';
+// Credenciais do administrador (do .env)
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'maisaudeods3@gmail.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '+SaudeINI2D';
 
 // Middleware para disponibilizar o usuário em todas as views
 router.use(function(req, res, next) {
@@ -205,7 +206,7 @@ router.post("/cadastro",
             }
             return true;
         }),
-    (req, res) => {
+    async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("pages/cadastro", { 
@@ -215,8 +216,31 @@ router.post("/cadastro",
             });
         }
         
-        db.addUsuario(req.body);
-        res.redirect('/login');
+        try {
+            // Hash da senha antes de armazenar
+            const senhaHash = await hashSenha(req.body.senhan);
+            
+            // Criar objeto do usuário com senha hasheada
+            const novoUsuario = {
+                nome: req.body.nome,
+                cpf: req.body.cpf,
+                nasc: req.body.nasc,
+                tel: req.body.tel,
+                email: req.body.email,
+                senhan: senhaHash, // armazenar o hash, não a senha
+                cep: req.body.cep || ''
+            };
+            
+            db.addUsuario(novoUsuario);
+            res.redirect('/login');
+        } catch (error) {
+            console.error('Erro ao cadastrar usuário:', error);
+            return res.render("pages/cadastro", { 
+                erros: true, 
+                valores: req.body, 
+                listaErros: { array: () => [{ msg: 'Erro ao cadastrar. Tente novamente.' }] }
+            });
+        }
     }
 );
 
@@ -232,29 +256,40 @@ router.post('/login',
         .isEmail().withMessage('O e-mail deve ser válido!'),
     body("senha")
         .notEmpty().withMessage('A senha é obrigatória!'),
-    (req, res) => {
+    async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render('pages/login', { erro: 'E-mail ou senha inválidos!', redirect: '/home' });
         }
 
-        // Verifica se é o administrador
-        if (req.body.email === ADMIN_EMAIL && req.body.senha === ADMIN_PASSWORD) {
-            req.session.usuarioEmail = ADMIN_EMAIL;
-            req.session.isAdmin = true;
-            return res.redirect('/admin');
-        }
+        try {
+            // Verifica se é o administrador
+            if (req.body.email === ADMIN_EMAIL && req.body.senha === ADMIN_PASSWORD) {
+                req.session.usuarioEmail = ADMIN_EMAIL;
+                req.session.isAdmin = true;
+                return res.redirect('/admin');
+            }
 
-        // Login de usuário normal
-        const usuario = db.findUsuario(req.body.email);
-        
-        if (usuario && req.body.senha === usuario.senhan) {
-            req.session.usuarioEmail = usuario.email;
-            req.session.isAdmin = false;
-            const redirectUrl = req.body.redirect || '/home';
-            return res.redirect(redirectUrl);
-        } else {
+            // Login de usuário normal
+            const usuario = db.findUsuario(req.body.email);
+            
+            if (usuario) {
+                // Comparar senha digitada com o hash armazenado
+                const senhaValida = await compareSenha(req.body.senha, usuario.senhan);
+                
+                if (senhaValida) {
+                    req.session.usuarioEmail = usuario.email;
+                    req.session.isAdmin = false;
+                    const redirectUrl = req.body.redirect || '/home';
+                    return res.redirect(redirectUrl);
+                }
+            }
+            
+            // Se chegou aqui, credenciais inválidas
             return res.render('pages/login', { erro: 'E-mail ou senha inválidos!', redirect: '/home' });
+        } catch (error) {
+            console.error('Erro ao fazer login:', error);
+            return res.render('pages/login', { erro: 'Erro ao processar login. Tente novamente.', redirect: '/home' });
         }
     }
 );
@@ -664,9 +699,9 @@ router.post('/parceiros',
 
             // Configurar o transportador de e-mail com configurações mais robustas
             const transporter = nodemailer.createTransport({
-                host: 'smtp.gmail.com',
-                port: 587,
-                secure: false, // true para 465, false para outras portas
+                host: process.env.SMTP_HOST || 'smtp.gmail.com',
+                port: process.env.SMTP_PORT || 587,
+                secure: process.env.SMTP_SECURE === 'true' ? true : false,
                 auth: {
                     user: process.env.EMAIL_PARCEIROS,
                     pass: process.env.EMAIL_PARCEIROS_PASS
@@ -674,8 +709,8 @@ router.post('/parceiros',
                 tls: {
                     rejectUnauthorized: false
                 },
-                debug: true, // Ativa logs de debug
-                logger: true // Ativa logs detalhados
+                debug: true,
+                logger: true
             });
 
             // Verificar conexão antes de enviar
@@ -826,9 +861,9 @@ router.post('/atendimento',
 
             // Configurar o transportador de e-mail
             const transporter = nodemailer.createTransport({
-                host: 'smtp.gmail.com',
-                port: 587,
-                secure: false,
+                host: process.env.SMTP_HOST || 'smtp.gmail.com',
+                port: process.env.SMTP_PORT || 587,
+                secure: process.env.SMTP_SECURE === 'true' ? true : false,
                 auth: {
                     user: process.env.EMAIL_USER,
                     pass: process.env.EMAIL_PASS
@@ -850,7 +885,7 @@ router.post('/atendimento',
             // Configurar o conteúdo do e-mail
             const mailOptions = {
                 from: `"Sistema +Saúde - SAC" <${process.env.EMAIL_USER}>`,
-                to: 'maisaudeods3SAC@gmail.com',
+                to: process.env.EMAIL_SAC || 'maisaudeods3SAC@gmail.com',
                 replyTo: req.body.email,
                 subject: `Nova Mensagem do SAC - ${req.body.email}`,
                 html: `
