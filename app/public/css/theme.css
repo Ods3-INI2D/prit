@@ -612,13 +612,17 @@ h1, h2, h3, h4, h5, h6 {
 
 /* CORREÇÃO: Preços */
 .preco-produto,
-.preco-desconto,
-.precof,
-.preco-desconto-home,
+.preco-unico-home,
 .stat-valor,
 .valor-media,
 .preco-produto-bloco,
 .subtotal-item {
+    color: var(--text-primary);
+}
+
+.preco-desconto,
+.preco-desconto-home,
+.precof {
     color: var(--accent-primary);
 }
 
