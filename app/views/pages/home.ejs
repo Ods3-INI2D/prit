@@ -7,9 +7,12 @@
     <title>Home</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/estilo.css">
+    <link rel="stylesheet" href="/css/grid.css">
+    <link rel="stylesheet" href="/css/menu.css">
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/bloco.css">
     <link rel="stylesheet" href="/css/carousel.css">
+    <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
 </head>
@@ -22,7 +25,7 @@
         <section class="carousel-container" aria-label="Carrossel de destaques">
             <% if(banners && banners.length > 0) { %>
                 <% banners.forEach(function(banner, index) { %>
-                    <figure class="carousel-slide <%= index === 0 ? 'active' : '' %>" 
+                    <figure class="carousel-slide <%= index === 0 ? 'active' : '' %>"
                             aria-hidden="<%= index === 0 ? 'false' : 'true' %>">
                         <a href="<%= banner.link || '/home' %>" class="carousel-link" aria-label="<%= banner.legenda %>">
                             <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>">
@@ -40,8 +43,8 @@
             <nav class="carousel-indicators" aria-label="Indicadores do carrossel">
                 <% if(banners && banners.length > 0) { %>
                     <% banners.forEach(function(banner, index) { %>
-                        <button class="indicator <%= index === 0 ? 'active' : '' %>" 
-                                aria-label="Ir para slide <%= index + 1 %>" 
+                        <button class="indicator <%= index === 0 ? 'active' : '' %>"
+                                aria-label="Ir para slide <%= index + 1 %>"
                                 data-slide="<%= index %>"></button>
                     <% }); %>
                 <% } %>
@@ -49,77 +52,33 @@
         </section>
 
         <% if(produtos && produtos.length > 0) { %>
+
             <%
-            var produtosPorCategoria = {
-                'Descontos': [],
-                'Cuidados com a Pele': [],
-                'Higiene Bucal': [],
-                'Cabelo': [],
-                'Vitaminas e Suplementos': [],
-                'Terceira Idade': []
-            };
-
-            produtos.forEach(function(produto) {
-                if(produto.precoDesconto) {
-                    produtosPorCategoria['Descontos'].push(produto);
-                }
-                if(produtosPorCategoria[produto.categoria]) {
-                    produtosPorCategoria[produto.categoria].push(produto);
-                }
-            });
-
-            var descontosBalanceados = [];
-            var categoriasPrincipais = ['Cuidados com a Pele', 'Higiene Bucal', 'Cabelo', 'Vitaminas e Suplementos', 'Terceira Idade'];
-            
-            categoriasPrincipais.forEach(function(cat) {
-                var produtoCategoria = produtosPorCategoria['Descontos'].find(function(p) {
-                    return p.categoria === cat;
+                var produtosComDesconto = produtos.filter(function(p) {
+                    return p.precoDesconto !== null && p.precoDesconto > 0;
                 });
-                if(produtoCategoria && descontosBalanceados.length < 8) {
-                    descontosBalanceados.push(produtoCategoria);
-                }
-            });
-
-            produtosPorCategoria['Descontos'].forEach(function(p) {
-                if(descontosBalanceados.length < 8 && !descontosBalanceados.includes(p)) {
-                    descontosBalanceados.push(p);
-                }
-            });
-
-            produtosPorCategoria['Descontos'] = descontosBalanceados;
             %>
-
-            <% if(produtosPorCategoria['Descontos'].length > 0) { %>
+            <% if(produtosComDesconto.length > 0) { %>
                 <section class="secao-categoria" aria-labelledby="titulo-descontos">
                     <header class="header-categoria">
                         <h2 id="titulo-descontos" class="titulo-categoria">Descontos</h2>
                         <a href="/home" class="link-ver-mais">
                             <output>Ver mais</output>
-                            <img src="/imagens/setal.png" alt="" class="seta-ver-mais">
+                            <img src="/imagens/setal.svg" alt="" class="seta-ver-mais">
                         </a>
                     </header>
 
                     <section class="produtos-container produtos-descontos">
-                        <% produtosPorCategoria['Descontos'].slice(0, 8).forEach(function(produto) { 
-                            var precoAtual = produto.preco || 0;
-                            var precoComDesconto = produto.precoDesconto || null;
-                            var temDesconto = precoComDesconto !== null && precoComDesconto > 0;
-                            var percentualDesconto = 0;
-                            
-                            if(temDesconto && precoAtual > 0) {
-                                percentualDesconto = Math.round(((precoAtual - precoComDesconto) / precoAtual) * 100);
-                            }
-                            
-                            var temAvaliacoes = produto.avaliacoes && produto.avaliacoes.length > 0;
-                            var notaArredondada = 0;
-                            
-                            if(temAvaliacoes) {
-                                var somaNotas = 0;
-                                produto.avaliacoes.forEach(function(avaliacao) {
-                                    somaNotas += avaliacao.nota;
-                                });
-                                var media = somaNotas / produto.avaliacoes.length;
-                                notaArredondada = Math.round(media);
+                        <% produtosComDesconto.slice(0, 8).forEach(function(produto) {
+                            var precoAtual       = produto.preco || 0;
+                            var precoComDesconto = produto.precoDesconto;
+                            var percentual       = Math.round(((precoAtual - precoComDesconto) / precoAtual) * 100);
+                            var temAvals         = produto.avaliacoes && produto.avaliacoes.length > 0;
+                            var notaMedia        = 0;
+                            if(temAvals) {
+                                var soma = 0;
+                                produto.avaliacoes.forEach(function(a) { soma += a.nota; });
+                                notaMedia = Math.round(soma / produto.avaliacoes.length);
                             }
                         %>
                             <article class="bloco-produto-home">
@@ -127,24 +86,22 @@
                                     <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto-home">
                                     <h3 class="nome-produto-home"><%= produto.nome %></h3>
 
-                                    <% if(temDesconto) { %>
-                                        <section class="preco-container-home">
-                                            <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></output>
-                                            <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></output>
-                                            <aside class="badge-desconto">
-                                                <output class="percentual-home">-<%= percentualDesconto %>%</output>
-                                            </aside>
-                                        </section>
-                                    <% } else { %>
-                                        <output class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></output>
-                                    <% } %>
+                                    <section class="preco-container-home">
+                                        <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                        <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></output>
+                                        <aside class="badge-desconto">
+                                            <output class="percentual-home">-<%= percentual %>%</output>
+                                        </aside>
+                                    </section>
 
                                     <output class="categoria-home"><%= produto.categoria %></output>
 
-                                    <% if(temAvaliacoes) { %>
+                                    <% if(temAvals) { %>
                                         <section class="estrelas-home">
                                             <% for(var i = 1; i <= 5; i++) { %>
-                                                <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.png" alt="Estrela" class="estrela-home">
+                                                <img src="/imagens/estr<%= i <= notaMedia ? '' : 'v' %>.svg"
+                                                     alt="<%= i <= notaMedia ? 'estrela preenchida' : 'estrela vazia' %>"
+                                                     class="estrela-home">
                                             <% } %>
                                         </section>
                                     <% } %>
@@ -155,75 +112,80 @@
                 </section>
             <% } %>
 
-            <% categoriasPrincipais.forEach(function(nomeCategoria) { 
-                if(produtosPorCategoria[nomeCategoria].length > 0) { 
-                    var idCategoria = nomeCategoria.toLowerCase().replace(/\s+/g, '-');
-            %>
-                <section class="secao-categoria" aria-labelledby="titulo-<%= idCategoria %>">
-                    <header class="header-categoria">
-                        <h2 id="titulo-<%= idCategoria %>" class="titulo-categoria"><%= nomeCategoria %></h2>
-                        <a href="/categoria/<%= encodeURIComponent(nomeCategoria) %>" class="link-ver-mais">
-                            <output>Ver mais</output>
-                            <img src="/imagens/setal.png" alt="" class="seta-ver-mais">
-                        </a>
-                    </header>
+            <% if(categorias && categorias.length > 0) { %>
+                <% categorias.forEach(function(categoria) {
 
-                    <section class="produtos-container">
-                        <% produtosPorCategoria[nomeCategoria].slice(0, 4).forEach(function(produto) { 
-                            var precoAtual = produto.preco || 0;
-                            var precoComDesconto = produto.precoDesconto || null;
-                            var temDesconto = precoComDesconto !== null && precoComDesconto > 0;
-                            var percentualDesconto = 0;
-                            
-                            if(temDesconto && precoAtual > 0) {
-                                percentualDesconto = Math.round(((precoAtual - precoComDesconto) / precoAtual) * 100);
-                            }
-                            
-                            var temAvaliacoes = produto.avaliacoes && produto.avaliacoes.length > 0;
-                            var notaArredondada = 0;
-                            
-                            if(temAvaliacoes) {
-                                var somaNotas = 0;
-                                produto.avaliacoes.forEach(function(avaliacao) {
-                                    somaNotas += avaliacao.nota;
-                                });
-                                var media = somaNotas / produto.avaliacoes.length;
-                                notaArredondada = Math.round(media);
-                            }
-                        %>
-                            <article class="bloco-produto-home">
-                                <a href="/produto/<%= produto.id %>" class="link-produto-home">
-                                    <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto-home">
-                                    <h3 class="nome-produto-home"><%= produto.nome %></h3>
+                    var produtosDaCategoria = produtos.filter(function(p) {
+                        if (!p.categoria) return false;
+                        var nomes = p.categoria.split(', ').map(function(n) { return n.trim(); });
+                        return nomes.indexOf(categoria.nome) !== -1;
+                    });
 
-                                    <% if(temDesconto) { %>
-                                        <section class="preco-container-home">
-                                            <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></output>
-                                            <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></output>
-                                            <aside class="badge-desconto">
-                                                <output class="percentual-home">-<%= percentualDesconto %>%</output>
-                                            </aside>
-                                        </section>
-                                    <% } else { %>
-                                        <output class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></output>
-                                    <% } %>
+                    if(produtosDaCategoria.length === 0) return;
+                %>
+                    <section class="secao-categoria" aria-labelledby="titulo-cat-<%= categoria.id_categoria %>">
+                        <header class="header-categoria">
+                            <h2 id="titulo-cat-<%= categoria.id_categoria %>" class="titulo-categoria">
+                                <%= categoria.nome %>
+                            </h2>
+                            <a href="/categoria/<%= categoria.slug %>" class="link-ver-mais">
+                                <output>Ver mais</output>
+                                <img src="/imagens/setal.svg" alt="" class="seta-ver-mais">
+                            </a>
+                        </header>
 
-                                    <output class="categoria-home"><%= produto.categoria %></output>
+                        <section class="produtos-container">
+                            <% produtosDaCategoria.slice(0, 4).forEach(function(produto) {
+                                var precoAtual       = produto.preco || 0;
+                                var precoComDesconto = produto.precoDesconto || null;
+                                var temDesconto      = precoComDesconto !== null && precoComDesconto > 0;
+                                var percentual       = 0;
+                                if(temDesconto && precoAtual > 0) {
+                                    percentual = Math.round(((precoAtual - precoComDesconto) / precoAtual) * 100);
+                                }
+                                var temAvals  = produto.avaliacoes && produto.avaliacoes.length > 0;
+                                var notaMedia = 0;
+                                if(temAvals) {
+                                    var soma = 0;
+                                    produto.avaliacoes.forEach(function(a) { soma += a.nota; });
+                                    notaMedia = Math.round(soma / produto.avaliacoes.length);
+                                }
+                            %>
+                                <article class="bloco-produto-home">
+                                    <a href="/produto/<%= produto.id %>" class="link-produto-home">
+                                        <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto-home">
+                                        <h3 class="nome-produto-home"><%= produto.nome %></h3>
 
-                                    <% if(temAvaliacoes) { %>
-                                        <section class="estrelas-home">
-                                            <% for(var i = 1; i <= 5; i++) { %>
-                                                <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.png" alt="Estrela" class="estrela-home">
-                                            <% } %>
-                                        </section>
-                                    <% } %>
-                                </a>
-                            </article>
-                        <% }); %>
+                                        <% if(temDesconto) { %>
+                                            <section class="preco-container-home">
+                                                <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                                <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></output>
+                                                <aside class="badge-desconto">
+                                                    <output class="percentual-home">-<%= percentual %>%</output>
+                                                </aside>
+                                            </section>
+                                        <% } else { %>
+                                            <output class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                        <% } %>
+
+                                        <output class="categoria-home"><%= produto.categoria %></output>
+
+                                        <% if(temAvals) { %>
+                                            <section class="estrelas-home">
+                                                <% for(var i = 1; i <= 5; i++) { %>
+                                                    <img src="/imagens/estr<%= i <= notaMedia ? '' : 'v' %>.svg"
+                                                         alt="<%= i <= notaMedia ? 'estrela preenchida' : 'estrela vazia' %>"
+                                                         class="estrela-home">
+                                                <% } %>
+                                            </section>
+                                        <% } %>
+                                    </a>
+                                </article>
+                            <% }); %>
+                        </section>
                     </section>
-                </section>
-            <% } 
-            }); %>
+                <% }); %>
+            <% } %>
 
         <% } else { %>
             <article class="sem-produtos">
@@ -235,15 +197,13 @@
         <% } %>
     </main>
 
-    <footer>
-        <%- include('../partial/footer.ejs') %>
-    </footer>
+    <%- include('../partial/footer.ejs') %>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var slides = document.querySelectorAll('.carousel-slide');
-            var prevBtn = document.querySelector('.carousel-btn.prev');
-            var nextBtn = document.querySelector('.carousel-btn.next');
+            var slides     = document.querySelectorAll('.carousel-slide');
+            var prevBtn    = document.querySelector('.carousel-btn.prev');
+            var nextBtn    = document.querySelector('.carousel-btn.next');
             var indicators = document.querySelectorAll('.indicator');
             var currentSlide = 0;
             var autoPlayInterval;
@@ -251,73 +211,40 @@
             if(slides.length === 0) return;
 
             function showSlide(n) {
-                for(var i = 0; i < slides.length; i++) {
-                    slides[i].classList.remove('active');
-                    slides[i].setAttribute('aria-hidden', 'true');
-                }
-                for(var i = 0; i < indicators.length; i++) {
-                    indicators[i].classList.remove('active');
-                }
+                slides.forEach(function(s) {
+                    s.classList.remove('active');
+                    s.setAttribute('aria-hidden', 'true');
+                });
+                indicators.forEach(function(ind) { ind.classList.remove('active'); });
 
                 currentSlide = (n + slides.length) % slides.length;
-                
+
                 slides[currentSlide].classList.add('active');
                 slides[currentSlide].setAttribute('aria-hidden', 'false');
-                if(indicators[currentSlide]) {
-                    indicators[currentSlide].classList.add('active');
-                }
+                if(indicators[currentSlide]) indicators[currentSlide].classList.add('active');
             }
 
-            function nextSlide() {
-                showSlide(currentSlide + 1);
-            }
+            function startAutoPlay() { autoPlayInterval = setInterval(function() { showSlide(currentSlide + 1); }, 5000); }
+            function stopAutoPlay()  { clearInterval(autoPlayInterval); }
 
-            function prevSlide() {
-                showSlide(currentSlide - 1);
-            }
+            if(prevBtn) prevBtn.addEventListener('click', function(e) { e.stopPropagation(); showSlide(currentSlide - 1); stopAutoPlay(); startAutoPlay(); });
+            if(nextBtn) nextBtn.addEventListener('click', function(e) { e.stopPropagation(); showSlide(currentSlide + 1); stopAutoPlay(); startAutoPlay(); });
 
-            function startAutoPlay() {
-                autoPlayInterval = setInterval(nextSlide, 5000);
-            }
-
-            function stopAutoPlay() {
-                clearInterval(autoPlayInterval);
-            }
-
-            if(prevBtn) {
-                prevBtn.addEventListener('click', function(e) {
+            indicators.forEach(function(ind) {
+                ind.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    prevSlide();
+                    showSlide(parseInt(this.getAttribute('data-slide')));
                     stopAutoPlay();
                     startAutoPlay();
                 });
-            }
-
-            if(nextBtn) {
-                nextBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    nextSlide();
-                    stopAutoPlay();
-                    startAutoPlay();
-                });
-            }
-
-            for(var i = 0; i < indicators.length; i++) {
-                indicators[i].addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    var index = parseInt(this.getAttribute('data-slide'));
-                    showSlide(index);
-                    stopAutoPlay();
-                    startAutoPlay();
-                });
-            }
+            });
 
             startAutoPlay();
 
-            var carouselContainer = document.querySelector('.carousel-container');
-            if(carouselContainer) {
-                carouselContainer.addEventListener('mouseenter', stopAutoPlay);
-                carouselContainer.addEventListener('mouseleave', startAutoPlay);
+            var container = document.querySelector('.carousel-container');
+            if(container) {
+                container.addEventListener('mouseenter', stopAutoPlay);
+                container.addEventListener('mouseleave', startAutoPlay);
             }
         });
     </script>

@@ -15,7 +15,6 @@ footer {
     gap: 0.5625rem;
 }
 
-/* Classe genérica para itens do footer */
 .footer-item {
     color: black;
     font-size: 0.8125rem;
@@ -24,7 +23,6 @@ footer {
     font-weight: 700;
 }
 
-/* Sub-textos */
 .footer-text-secondary {
     color: rgb(49, 49, 49);
     font-size: 0.6875rem;
@@ -45,7 +43,7 @@ footer {
     margin-bottom: 0;
 }
 
-/* RESPONSIVIDADE DESKTOP */
+/* responsividade desktop */
 @media (min-width: 901px) {
     footer {
         flex-direction: row;

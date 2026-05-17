@@ -10,46 +10,57 @@
     <link rel="stylesheet" href="/css/cad.css">
     <link rel="stylesheet" href="/css/login.css">
     <link rel="stylesheet" href="/css/toggle-senha.css">
+    <link rel="stylesheet" href="/css/validacao-frontend.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
 </head>
 <body>
     <header>
-        <img class="icon" src="/imagens/logo.png" alt="Logo">
+        <img class="icon" src="/imagens/logo.svg" alt="Logo +Saúde">
     </header>
-    
+
     <main>
         <section class="txt">
             <article class="title-group">
                 <h1 class="tit">Login</h1>
             </article>
 
-            <% if(erro) { %>
-                <article class="erro-login">
-                    <output class="mensagem-erro" role="alert" aria-live="polite"><%= erro %></o>
+            <% if (erro) { %>
+                <article class="erro-login" role="alert">
+                    <output class="mensagem-erro" aria-live="polite"><%= erro %></output>
                 </article>
             <% } %>
 
-            <form method="POST" action="/login" novalidate>
+            <form method="POST" action="/login" novalidate aria-label="Formulário de login">
                 <input type="hidden" name="redirect" value="<%= typeof redirect !== 'undefined' ? redirect : '/home' %>">
-                
+
                 <fieldset>
-                    <legend>
-                        <h2>E-mail</h2>
-                    </legend>
+                    <legend><h2>E-mail</h2></legend>
                     <label for="email">
-                        <input type="email" placeholder="exemplo@dominio.com" name="email" id="email" required>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="exemplo@dominio.com"
+                            aria-describedby="email-error"
+                            required>
                     </label>
+                    <output class="error-message" id="email-error" role="alert" aria-live="polite"></output>
                 </fieldset>
 
                 <fieldset>
-                    <legend>
-                        <h2>Senha</h2>
-                    </legend>
+                    <legend><h2>Senha</h2></legend>
                     <label for="senha" class="campo-senha">
-                        <input type="password" placeholder="Sua Senha" name="senha" id="senha" required>
+                        <input
+                            type="password"
+                            id="senha"
+                            name="senha"
+                            placeholder="Sua senha"
+                            aria-describedby="senha-error"
+                            required>
                         <button type="button" class="btn-toggle-senha" aria-label="Mostrar senha" data-target="senha"></button>
                     </label>
+                    <output class="error-message" id="senha-error" role="alert" aria-live="polite"></output>
                 </fieldset>
 
                 <button id="btn-login" type="submit">Entrar</button>
@@ -65,18 +76,15 @@
         </section>
     </main>
 
-    <footer>
-    </footer>
+    <footer></footer>
 
+    <script src="/js/validacao.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleButton = document.querySelector('.btn-toggle-senha');
-            
-            if (toggleButton) {
-                toggleButton.addEventListener('click', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.btn-toggle-senha').forEach(function (btn) {
+                btn.addEventListener('click', function () {
                     const targetId = this.getAttribute('data-target');
-                    const input = document.getElementById(targetId);
-                    
+                    const input    = document.getElementById(targetId);
                     if (input.type === 'password') {
                         input.type = 'text';
                         this.setAttribute('aria-label', 'Ocultar senha');
@@ -85,7 +93,7 @@
                         this.setAttribute('aria-label', 'Mostrar senha');
                     }
                 });
-            }
+            });
         });
     </script>
 </body>

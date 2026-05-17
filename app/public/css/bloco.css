@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-/*  Estilos do Componente Card Genérico (Produto em Bloco)  */
 .produto-card-bloco {
     background-color: #2a2a2a;
     font-family: 'Inter', sans-serif;
@@ -21,7 +20,7 @@
     transform: translateY(-0.1875rem);
 }
 
-/* Imagem */
+/* imagem */
 .produto-card-bloco .produto {
     width: 100%;
     height: 12.5rem;
@@ -29,7 +28,7 @@
     border-radius: 0.5rem 0.5rem 0 0;
 }
 
-/* Nome do Produto */
+/* nome do Produto */
 .produto-card-bloco .nome {
     font-size: 1.0625rem;
     font-weight: 600;
@@ -41,7 +40,7 @@
     line-height: 1.3;
 }
 
-/* Container para preços e badge */
+/* container para preços e badge */
 .preco-container-bloco {
     display: flex;
     align-items: center;
@@ -51,7 +50,7 @@
     margin-bottom: 0.625rem;
 }
 
-/* Preço Original/Antigo */
+/* preço original/antigo */
 .produto-card-bloco .preco {
     font-size: 0.9375rem;
     text-decoration: line-through;
@@ -59,7 +58,7 @@
     margin: 0;
 }
 
-/* Preço Final/Com Desconto */
+/* preço final/com desconto */
 .produto-card-bloco .precof {
     font-size: 1.125rem;
     font-weight: 700;
@@ -67,7 +66,7 @@
     margin: 0;
 }
 
-/* Badge de Desconto */
+/* badge de desconto */
 .produto-card-bloco .badge-container {
     margin-left: auto;
     display: flex;
@@ -89,7 +88,7 @@
     font-weight: 700;
 }
 
-/* Descrição ou Categoria */
+/* descriçao ou categoria */
 .produto-card-bloco .desc {
     font-size: 0.875rem;
     color: #ccc;

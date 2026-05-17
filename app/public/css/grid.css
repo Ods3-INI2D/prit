@@ -4,7 +4,7 @@ body {
     font-family: 'Inter', sans-serif;
 }
 
-/* Nav principal */
+/* nav principal */
 .nav-principal {
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -16,7 +16,7 @@ body {
     min-height: 3.75rem;
 }
 
-/* hamburger deve ficar à esquerda */
+/* hamburger */
 .hamburger {
     grid-column: 1;
     flex-shrink: 0;
@@ -44,7 +44,7 @@ body {
     margin-left: auto;
 }
 
-/* Busca - VISÍVEL NO MOBILE */
+/* busca */
 .busca-form {
     display: flex;
     align-items: center;
@@ -94,7 +94,7 @@ body {
     height: 1.125rem;
 }
 
-/* Ícones usuário e carrinho */
+/* icones usuário e carrinho */
 .user, .cart {
     width: 1.25rem;
     height: 1.25rem;

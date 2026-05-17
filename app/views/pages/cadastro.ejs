@@ -9,144 +9,227 @@
     <link rel="stylesheet" href="/css/estilo.css">
     <link rel="stylesheet" href="/css/cad.css">
     <link rel="stylesheet" href="/css/toggle-senha.css">
+    <link rel="stylesheet" href="/css/validacao-frontend.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
 </head>
 <body>
     <%
-    var cssErro = {nome: "", nasc: "", cpf: "", tel: "", email: "", senhan: "", csenha: ""} 
-    var msgErro = {nome: "", nasc: "", cpf: "", tel: "", email: "", senhan: "", csenha: ""}
-    if(erros) { 
-        listaErros.errors.forEach(function(itemErro){
-            if (itemErro.path == "nome"){ 
-                cssErro.nome = "erro";
-                msgErro.nome = itemErro.msg;
-            } 
-            if (itemErro.path == "nasc"){ 
-                cssErro.nasc = "erro";
-                msgErro.nasc = itemErro.msg;         
-            } 
-            if (itemErro.path == "cpf"){
-                cssErro.cpf = "erro";
-                msgErro.cpf = itemErro.msg;         
-            }
-            if (itemErro.path == "tel"){
-                cssErro.tel = "erro";
-                msgErro.tel = itemErro.msg;         
-            }
-            if (itemErro.path == "email"){ 
-                cssErro.email = "erro";
-                msgErro.email = itemErro.msg;
-            }
-            if (itemErro.path == "senhan"){
-                cssErro.senhan = "erro";
-                msgErro.senhan = itemErro.msg;         
-            }
-            if (itemErro.path == "csenha"){
-                cssErro.csenha = "erro";
-                msgErro.csenha = itemErro.msg;         
-            }
-        }); 
-    }; %>
-    
+    var cssErro = { nome:"", nasc:"", cpf:"", ddd:"", tel:"", email:"", senhan:"", csenha:"" };
+    var msgErro = { nome:"", nasc:"", cpf:"", ddd:"", tel:"", email:"", senhan:"", csenha:"" };
+
+    if (erros) {
+        listaErros.errors.forEach(function(itemErro) {
+            if (itemErro.path === 'nome')   { cssErro.nome   = 'error'; msgErro.nome   = itemErro.msg; }
+            if (itemErro.path === 'nasc')   { cssErro.nasc   = 'error'; msgErro.nasc   = itemErro.msg; }
+            if (itemErro.path === 'cpf')    { cssErro.cpf    = 'error'; msgErro.cpf    = itemErro.msg; }
+            if (itemErro.path === 'ddd')    { cssErro.ddd    = 'error'; msgErro.ddd    = itemErro.msg; }
+            if (itemErro.path === 'tel')    { cssErro.tel    = 'error'; msgErro.tel    = itemErro.msg; }
+            if (itemErro.path === 'email')  { cssErro.email  = 'error'; msgErro.email  = itemErro.msg; }
+            if (itemErro.path === 'senhan') { cssErro.senhan = 'error'; msgErro.senhan = itemErro.msg; }
+            if (itemErro.path === 'csenha') { cssErro.csenha = 'error'; msgErro.csenha = itemErro.msg; }
+        });
+    }
+    %>
+
     <header>
-        <img class="icon" src="/imagens/logo.png" alt="Logo">
+        <img class="icon" src="/imagens/logo.svg" alt="Logo +Saúde">
     </header>
-    
+
     <main>
         <section class="txt">
             <article class="title-group">
                 <h1 class="tit">Cadastro</h1>
             </article>
 
-            <form method="POST" action="/cadastro" novalidate>
+            <form method="POST" action="/cadastro" novalidate aria-label="Formulário de cadastro de usuário">
+
                 <fieldset>
-                    <legend>
-                        <h2>Nome</h2>
-                    </legend>
+                    <legend><h2>Nome Completo</h2></legend>
                     <label for="nome">
-                        <input type="text" placeholder="Seu nome" name="nome" id="nome" value="<%= valores.nome %>" class="<%= cssErro.nome %>" required>
+                        <input
+                            type="text"
+                            id="nome"
+                            name="nome"
+                            placeholder="Seu nome completo"
+                            value="<%= valores.nome %>"
+                            class="<%= cssErro.nome %>"
+                            aria-describedby="nome-error"
+                            required>
                     </label>
-                    <% if(msgErro.nome) { %>
-                        <output class="erro" aria-live="polite"><%= msgErro.nome %></output>
+                    <% if (msgErro.nome) { %>
+                        <output class="error-message" id="nome-error" role="alert" aria-live="polite" style="display:block">
+                            <%= msgErro.nome %>
+                        </output>
+                    <% } else { %>
+                        <output class="error-message" id="nome-error" role="alert" aria-live="polite"></output>
                     <% } %>
                 </fieldset>
 
                 <fieldset>
-                    <legend>
-                        <h2>Data de Nascimento</h2>
-                    </legend>
+                    <legend><h2>Data de Nascimento</h2></legend>
                     <label for="nasc">
-                        <input type="date" name="nasc" id="nasc" value="<%= valores.nasc %>" class="<%= cssErro.nasc %>" required>
+                        <input
+                            type="date"
+                            id="nasc"
+                            name="nasc"
+                            value="<%= valores.nasc %>"
+                            class="<%= cssErro.nasc %>"
+                            aria-describedby="nasc-error"
+                            required>
                     </label>
-                    <% if(msgErro.nasc) { %>
-                        <output class="erro" aria-live="polite"><%= msgErro.nasc %></output>
+                    <% if (msgErro.nasc) { %>
+                        <output class="error-message" id="nasc-error" role="alert" aria-live="polite" style="display:block">
+                            <%= msgErro.nasc %>
+                        </output>
+                    <% } else { %>
+                        <output class="error-message" id="nasc-error" role="alert" aria-live="polite"></output>
                     <% } %>
                 </fieldset>
 
                 <fieldset>
-                    <legend>
-                        <h2>CPF</h2>
-                    </legend>
+                    <legend><h2>CPF</h2></legend>
                     <label for="cpf">
-                        <input type="text" placeholder="Seu CPF" name="cpf" id="cpf" value="<%= valores.cpf %>" class="<%= cssErro.cpf %>" maxlength="11" required>
+                        <input
+                            type="text"
+                            id="cpf"
+                            name="cpf"
+                            placeholder="000.000.000-00"
+                            value="<%= valores.cpf %>"
+                            class="<%= cssErro.cpf %>"
+                            maxlength="14"
+                            aria-describedby="cpf-error"
+                            required>
                     </label>
-                    <% if(msgErro.cpf) { %>
-                        <output class="erro" aria-live="polite"><%= msgErro.cpf %></output>
+                    <% if (msgErro.cpf) { %>
+                        <output class="error-message" id="cpf-error" role="alert" aria-live="polite" style="display:block">
+                            <%= msgErro.cpf %>
+                        </output>
+                    <% } else { %>
+                        <output class="error-message" id="cpf-error" role="alert" aria-live="polite"></output>
                     <% } %>
                 </fieldset>
 
-                <fieldset>
-                    <legend>
-                        <h2>Telefone</h2>
-                    </legend>
-                    <label for="tel">
-                        <input type="tel" placeholder="Seu Telefone" name="tel" id="tel" value="<%= valores.tel %>" class="<%= cssErro.tel %>" maxlength="9" required>
-                    </label>
-                    <% if(msgErro.tel) { %>
-                        <output class="erro" aria-live="polite"><%= msgErro.tel %></output>
-                    <% } %>
+                <fieldset style="display:flex; gap:0.5rem;">
+                    <section style="flex: 0 0 30%;">
+                        <legend><h2>DDD</h2></legend>
+                        <label for="ddd">
+                            <input
+                                type="text"
+                                id="ddd"
+                                name="ddd"
+                                placeholder="11"
+                                value="<%= valores.ddd %>"
+                                class="<%= cssErro.ddd %>"
+                                maxlength="2"
+                                aria-describedby="ddd-error"
+                                required>
+                        </label>
+                        <% if (msgErro.ddd) { %>
+                            <output class="error-message" id="ddd-error" role="alert" aria-live="polite" style="display:block">
+                                <%= msgErro.ddd %>
+                            </output>
+                        <% } else { %>
+                            <output class="error-message" id="ddd-error" role="alert" aria-live="polite"></output>
+                        <% } %>
+                    </section>
+
+                    <section style="flex: 1;">
+                        <legend><h2>Telefone</h2></legend>
+                        <label for="tel">
+                            <input
+                                type="tel"
+                                id="tel"
+                                name="tel"
+                                placeholder="99999-9999"
+                                value="<%= valores.tel %>"
+                                class="<%= cssErro.tel %>"
+                                maxlength="10"
+                                aria-describedby="tel-error"
+                                required>
+                        </label>
+                        <% if (msgErro.tel) { %>
+                            <output class="error-message" id="tel-error" role="alert" aria-live="polite" style="display:block">
+                                <%= msgErro.tel %>
+                            </output>
+                        <% } else { %>
+                            <output class="error-message" id="tel-error" role="alert" aria-live="polite"></output>
+                        <% } %>
+                    </section>
                 </fieldset>
 
                 <fieldset>
-                    <legend>
-                        <h2>E-mail</h2>
-                    </legend>
+                    <legend><h2>E-mail</h2></legend>
                     <label for="email">
-                        <input type="email" placeholder="exemplo@dominio.com" name="email" id="email" value="<%= valores.email %>" class="<%= cssErro.email %>" required>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="exemplo@dominio.com"
+                            value="<%= valores.email %>"
+                            class="<%= cssErro.email %>"
+                            aria-describedby="email-error"
+                            required>
                     </label>
-                    <% if(msgErro.email) { %>
-                        <output class="erro" aria-live="polite"><%= msgErro.email %></output>
+                    <% if (msgErro.email) { %>
+                        <output class="error-message" id="email-error" role="alert" aria-live="polite" style="display:block">
+                            <%= msgErro.email %>
+                        </output>
+                    <% } else { %>
+                        <output class="error-message" id="email-error" role="alert" aria-live="polite"></output>
                     <% } %>
                 </fieldset>
 
                 <fieldset>
-                    <legend>
-                        <h2>Senha</h2>
-                    </legend>
+                    <legend><h2>Senha</h2></legend>
                     <label for="senhan" class="campo-senha">
-                        <input type="password" placeholder="Sua Senha" name="senhan" id="senhan" value="<%= valores.senhan %>" class="<%= cssErro.senhan %>" required>
+                        <input
+                            type="password"
+                            id="senhan"
+                            name="senhan"
+                            placeholder="Sua senha"
+                            value="<%= valores.senhan %>"
+                            class="<%= cssErro.senhan %>"
+                            aria-describedby="senhan-error senhan-dica"
+                            required>
                         <button type="button" class="btn-toggle-senha" aria-label="Mostrar senha" data-target="senhan"></button>
                     </label>
-                    <% if(msgErro.senhan) { %>
-                        <output class="erro" aria-live="polite"><%= msgErro.senhan %></output>
+                    <output id="senhan-dica" class="error-message" style="color:#888;display:block;">
+                        6–20 caracteres, com maiúscula, número e símbolo (!@#$%^&*)
+                    </output>
+                    <% if (msgErro.senhan) { %>
+                        <output class="error-message" id="senhan-error" role="alert" aria-live="polite" style="display:block">
+                            <%= msgErro.senhan %>
+                        </output>
+                    <% } else { %>
+                        <output class="error-message" id="senhan-error" role="alert" aria-live="polite"></output>
                     <% } %>
                 </fieldset>
 
                 <fieldset>
-                    <legend>
-                        <h2>Confirmar Senha</h2>
-                    </legend>
+                    <legend><h2>Confirmar Senha</h2></legend>
                     <label for="senha" class="campo-senha">
-                        <input type="password" placeholder="Confirme sua Senha" name="csenha" id="senha" value="<%= valores.csenha %>" class="<%= cssErro.csenha %>" required>
+                        <input
+                            type="password"
+                            id="senha"
+                            name="csenha"
+                            placeholder="Confirme sua senha"
+                            value="<%= valores.csenha %>"
+                            class="<%= cssErro.csenha %>"
+                            aria-describedby="csenha-error"
+                            required>
                         <button type="button" class="btn-toggle-senha" aria-label="Mostrar senha" data-target="senha"></button>
                     </label>
-                    <% if(msgErro.csenha) { %>
-                        <output class="erro" aria-live="polite"><%= msgErro.csenha %></output>
+                    <% if (msgErro.csenha) { %>
+                        <output class="error-message" id="csenha-error" role="alert" aria-live="polite" style="display:block">
+                            <%= msgErro.csenha %>
+                        </output>
+                    <% } else { %>
+                        <output class="error-message" id="csenha-error" role="alert" aria-live="polite"></output>
                     <% } %>
                 </fieldset>
 
-                <button id="btn" type="submit">Cadastro</button>
+                <button id="btn" type="submit">Cadastrar</button>
 
                 <nav class="signup-prompt">
                     <p>
@@ -159,18 +242,16 @@
         </section>
     </main>
 
-    <footer>
-    </footer>
+    <footer></footer>
 
+    <script src="/js/validacao.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleButtons = document.querySelectorAll('.btn-toggle-senha');
-            
-            toggleButtons.forEach(function(button) {
-                button.addEventListener('click', function() {
+        /* toggle de visibilidade da senha */
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.btn-toggle-senha').forEach(function (btn) {
+                btn.addEventListener('click', function () {
                     const targetId = this.getAttribute('data-target');
-                    const input = document.getElementById(targetId);
-                    
+                    const input    = document.getElementById(targetId);
                     if (input.type === 'password') {
                         input.type = 'text';
                         this.setAttribute('aria-label', 'Ocultar senha');

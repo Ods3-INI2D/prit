@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* Carrossel de Imagens - Mobile First */
 .carousel-container {
     position: relative;
     width: calc(100% - 1.25rem);
@@ -71,7 +70,7 @@
     pointer-events: none;
 }
 
-/* Controles do Carrossel */
+/* controles do carrossel */
 .carousel-controls {
     position: absolute;
     top: 50%;
@@ -116,7 +115,7 @@
     outline-offset: 0.125rem;
 }
 
-/* Indicadores do Carrossel */
+/* indicadores do carrossel */
 .carousel-indicators {
     position: absolute;
     bottom: 0.5rem;
@@ -154,7 +153,7 @@
     outline-offset: 0.125rem;
 }
 
-/* Responsividade Desktop */
+/* responsividade desktop */
 @media (min-width: 901px) {
     .carousel-container {
         aspect-ratio: 16 / 9;
@@ -201,7 +200,7 @@
     }
 }
 
-/* Ajuste para temas */
+/* ajuste para temas */
 [data-theme="light"] .carousel-container {
     background-color: #f0f0f0;
 }

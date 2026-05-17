@@ -6,7 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Central de Atendimento - +Saúde</title>
     <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/grid.css">
+    <link rel="stylesheet" href="/css/menu.css">
     <link rel="stylesheet" href="/css/atendimento.css">
+    <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
 </head>
@@ -19,8 +22,8 @@
         <section class="atendimento-container">
             <nav class="navegacao" aria-label="Navegação de retorno">
                 <a href="/home" class="voltar">
-                    <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
-                    <output>Voltar</o>
+                    <img src="/imagens/setae.svg" alt="Voltar" class="seta-voltar">
+                    <output>Voltar</output>
                 </a>
             </nav>
 
@@ -29,13 +32,13 @@
             <% if(typeof sucesso !== 'undefined' && sucesso) { %>
                 <output class="mensagem-sucesso" role="status" aria-live="polite">
                     ✓ Mensagem enviada com sucesso! Entraremos em contato em breve através do e-mail fornecido.
-                </o>
+                </output>
             <% } %>
 
             <% if(typeof erro !== 'undefined' && erro) { %>
                 <output class="mensagem-erro" role="alert" aria-live="assertive">
                     ⚠ <%= erro %>
-                </o>
+                </output>
             <% } %>
 
             <article class="intro-atendimento">
@@ -51,15 +54,15 @@
 
                 <aside class="info-contato" role="complementary">
                     <p class="contato-item">
-                        <output class="icone-contato">📧</o>
-                        <output>E-mail SAC: </o>
+                        <output class="icone-contato">📧</output>
+                        <output>E-mail SAC: </output>
                         <a href="mailto:maisaudeods3SAC@gmail.com" class="link-contato">
                             maisaudeods3SAC@gmail.com
                         </a>
                     </p>
                     <p class="contato-item">
-                        <output class="icone-contato">💬</o>
-                        <output>Tempo médio de resposta: 24 a 48 horas</o>
+                        <output class="icone-contato">💬</output>
+                        <output>Tempo médio de resposta: 24 a 48 horas</output>
                     </p>
                 </aside>
             </article>
@@ -69,7 +72,7 @@
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Seu E-mail <output class="obrigatorio">*</o>
+                        Seu E-mail <output class="obrigatorio">*</output>
                     </legend>
                     <label for="email">
                         <input 
@@ -85,12 +88,12 @@
                     </label>
                     <output id="email-info" class="info-campo">
                         Utilizaremos este e-mail para responder sua solicitação
-                    </o>
+                    </output>
                 </fieldset>
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Sua Mensagem <output class="obrigatorio">*</o>
+                        Sua Mensagem <output class="obrigatorio">*</output>
                     </legend>
                     <label for="mensagem">
                         <textarea 
@@ -105,7 +108,7 @@
                     </label>
                     <output id="mensagem-info" class="info-campo">
                         Mínimo de 20 caracteres, máximo de 1000 caracteres
-                    </o>
+                    </output>
                 </fieldset>
 
                 <button type="submit" class="btn-enviar" aria-label="Enviar mensagem para atendimento">
@@ -115,8 +118,6 @@
         </section>
     </main>
 
-    <footer>
-        <%- include('../partial/footer.ejs') %>
-    </footer>
+    <%- include('../partial/footer.ejs') %>
 </body>
 </html>

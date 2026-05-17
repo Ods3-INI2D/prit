@@ -64,7 +64,7 @@ main {
     text-align: center;
 }
 
-/* mensagens de sucesso e erro - CORRIGIDO */
+/* mensagens de sucesso e erro */
 .mensagem-sucesso,
 .mensagem-erro {
     padding: 1rem;
@@ -242,7 +242,7 @@ main {
     transform: translateY(0);
 }
 
-/* Responsividade para Desktop (min-width: 901px) */
+/* Responsividade para Desktop */
 @media (min-width: 901px) {
     main {
         padding: 2.5rem 0;

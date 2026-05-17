@@ -40,7 +40,7 @@ main {
     word-wrap: break-word;
 }
 
-/*Carrinho Vazio */
+/*carrinho vazio */
 .carrinho-vazio {
     text-align: center;
     padding: 5rem 0;
@@ -70,7 +70,7 @@ main {
     transform: translateY(-0.125rem);
 }
 
-/*Layout do Carrinho*/
+/*layout do carrinho*/
 .carrinho-layout {
     display: flex;
     flex-direction: column;
@@ -81,7 +81,7 @@ main {
     width: 100%;
 }
 
-/*Lista de Itens */
+/*lista de itens */
 .lista-carrinho {
     list-style: none;
     padding: 0;
@@ -125,7 +125,7 @@ main {
     display: block;
 }
 
-/*Preços */
+/*preços */
 .preco-container {
     display: flex;
     flex-direction: row;
@@ -151,7 +151,7 @@ main {
     display: block;
 }
 
-/*Controles de Quantidade*/
+/*controles de quantidade*/
 .controles-quantidade {
     display: flex;
     align-items: center;
@@ -208,7 +208,7 @@ main {
     display: block;
 }
 
-/*Ações do Item*/
+/*açoes do item*/
 .acoes-item {
     display: flex;
     flex-direction: column;
@@ -337,7 +337,7 @@ main {
 }
 
 
-/*  RESPONSIVIDADE PARA DESKTOPS (min-width: 901px) */
+/*  responsividade para desktops */
 
 @media (min-width: 901px) {
     .carrinho-layout {

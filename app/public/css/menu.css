@@ -52,7 +52,7 @@
     transform: rotate(-45deg);
 }
 
-/* menu lateral - largura ajustada para mobile */
+/* menu lateral */
 .opcoes {
     position: fixed;
     top: 0;
@@ -356,8 +356,7 @@
         width: 1.25rem;
         height: 1.25rem;
     }
-
-    /* overlay aparece no desktop */
+    
     .opcoes.is-open::before {
         content: '';
         position: fixed;

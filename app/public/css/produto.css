@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-/* Correções para tema claro */
+
 [data-theme="light"] .titulo-outros {
     color: #000000;
 }
@@ -46,7 +46,7 @@ main {
     padding: 0;
 }
 
-/* navegação & títulos de seção */
+/* navegaçao e titulos de seçao */
 .navegacao {
     margin: 0.9375rem 0.9375rem 1.25rem;
 }
@@ -297,7 +297,7 @@ main {
     display: block;
 }
 
-/* AVALIAÇÕES */
+/* avaliacoes */
 .avaliacoes-container {
     margin-bottom: 1.5625rem;
     padding: 0 0.9375rem;
@@ -352,7 +352,7 @@ main {
     color: #6bb5ff;
 }
 
-/* lista de avaliações */
+/* lista de avaliacoes */
 .lista-avaliacoes {
     list-style: none;
     padding: 0;
@@ -392,7 +392,7 @@ main {
     padding: 1.5625rem 0;
 }
 
-/* formulário de avaliação */
+/* formulário de avaliacao */
 .form-avaliacao-container {
     background-color: #2a2a2a;
     padding: 1.25rem;
@@ -536,7 +536,7 @@ main {
     display: block;
 }
 
-/* responsividade para desktop (min-width: 901px) */
+/* responsividade para desktop */
 @media (min-width: 901px) {
     main {
         width: 92%;

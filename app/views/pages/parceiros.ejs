@@ -6,7 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parceiros - +Saúde</title>
     <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/grid.css">
+    <link rel="stylesheet" href="/css/menu.css">
     <link rel="stylesheet" href="/css/parceiros.css">
+    <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
 </head>
@@ -19,8 +22,8 @@
         <section class="parceiros-container">
             <nav class="navegacao">
                 <a href="/home" class="voltar">
-                    <img src="/imagens/setae.png" alt="Voltar" class="seta-voltar">
-                    <o>Voltar</o>
+                    <img src="/imagens/setae.svg" alt="Voltar" class="seta-voltar">
+                    <output>Voltar</output>
                 </a>
             </nav>
 
@@ -29,13 +32,13 @@
             <% if(typeof sucesso !== 'undefined' && sucesso) { %>
                 <output class="mensagem-sucesso" role="status" aria-live="polite">
                     Solicitação enviada com sucesso! Entraremos em contato em breve.
-                </o>
+                </output>
             <% } %>
 
             <% if(typeof erro !== 'undefined' && erro) { %>
                 <output class="mensagem-erro" role="alert" aria-live="assertive">
                     <%= erro %>
-                </o>
+                </output>
             <% } %>
 
             <article class="intro-parceiros">
@@ -55,7 +58,7 @@
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Nome da Empresa <output class="obrigatorio">*</o>
+                        Nome da Empresa <output class="obrigatorio">*</output>
                     </legend>
                     <label for="empresa">
                         <input 
@@ -72,7 +75,7 @@
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        E-mail da Empresa <output class="obrigatorio">*</o>
+                        E-mail da Empresa <output class="obrigatorio">*</output>
                     </legend>
                     <label for="email">
                         <input 
@@ -89,11 +92,11 @@
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Categorias de Produtos <output class="obrigatorio">*</o>
+                        Categorias de Produtos <output class="obrigatorio">*</output>
                     </legend>
                     <output class="info-campo">
                         Selecione uma ou mais categorias que representam seus produtos
-                    </o>
+                    </output>
                     <section class="categorias-grupo">
                         <label class="checkbox-item">
                             <input 
@@ -102,7 +105,7 @@
                                 value="Cuidados com a Pele"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Cuidados com a Pele') ? 'checked' : '' %>>
-                            <output class="checkbox-label">Cuidados com a Pele</o>
+                            <output class="checkbox-label">Cuidados com a Pele</output>
                         </label>
 
                         <label class="checkbox-item">
@@ -112,7 +115,7 @@
                                 value="Higiene Bucal"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Higiene Bucal') ? 'checked' : '' %>>
-                            <output class="checkbox-label">Higiene Bucal</o>
+                            <output class="checkbox-label">Higiene Bucal</output>
                         </label>
 
                         <label class="checkbox-item">
@@ -122,7 +125,7 @@
                                 value="Cabelo"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Cabelo') ? 'checked' : '' %>>
-                            <output class="checkbox-label">Cabelo</o>
+                            <output class="checkbox-label">Cabelo</output>
                         </label>
 
                         <label class="checkbox-item">
@@ -132,7 +135,7 @@
                                 value="Vitaminas e Suplementos"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Vitaminas e Suplementos') ? 'checked' : '' %>>
-                            <output class="checkbox-label">Vitaminas e Suplementos</o>
+                            <output class="checkbox-label">Vitaminas e Suplementos</output>
                         </label>
 
                         <label class="checkbox-item">
@@ -142,7 +145,7 @@
                                 value="Bebê"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Bebê') ? 'checked' : '' %>>
-                            <output class="checkbox-label">Bebê</o>
+                            <output class="checkbox-label">Bebê</output>
                         </label>
 
                         <label class="checkbox-item">
@@ -152,14 +155,14 @@
                                 value="Terceira Idade"
                                 class="checkbox-input"
                                 <%= typeof valores !== 'undefined' && valores.categorias && valores.categorias.includes('Terceira Idade') ? 'checked' : '' %>>
-                            <output class="checkbox-label">Terceira Idade</o>
+                            <output class="checkbox-label">Terceira Idade</output>
                         </label>
                     </section>
                 </fieldset>
 
                 <fieldset class="campo-form">
                     <legend class="label-form">
-                        Descrição dos Produtos e Propostas <output class="obrigatorio">*</o>
+                        Descrição dos Produtos e Propostas <output class="obrigatorio">*</output>
                     </legend>
                     <label for="descricao">
                         <textarea 
@@ -178,8 +181,6 @@
         </section>
     </main>
 
-    <footer>
-        <%- include('../partial/footer.ejs') %>
-    </footer>
+    <%- include('../partial/footer.ejs') %>
 </body>
 </html>
