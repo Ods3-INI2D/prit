@@ -8,17 +8,16 @@
 
 body {
   font-family: "Inter", sans-serif;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: #1f1f1f;
+  color: white;
 }
 
-/* Oculta elementos indesejados */
 .whatsapp-sac-bloco,
 .atendimento-container {
   display: none !important;
 }
 
-/* SEÇÃO DE CATEGORIA */
+/* seçao de categoria */
 .secao-categoria {
   width: 100%;
   margin: 2.5rem auto 0;
@@ -37,14 +36,14 @@ body {
 .titulo-categoria {
   font-size: 1.375rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: white;
   margin: 0;
 }
 
 .link-ver-mais {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--accent-primary);
+  color: #4da6ff;
   text-decoration: none;
   transition: color 0.3s ease;
   display: flex;
@@ -53,7 +52,7 @@ body {
 }
 
 .link-ver-mais:hover {
-  color: var(--accent-hover);
+  color: #6bb5ff;
 }
 
 .link-ver-mais:hover .seta-ver-mais {
@@ -66,7 +65,7 @@ body {
   transition: transform 0.3s ease;
 }
 
-/* Layout Produtos - Grid 2 colunas no mobile */
+/* layout produtos  */
 .produtos-container {
   width: 100%;
   display: grid;
@@ -74,7 +73,7 @@ body {
   gap: 1.25rem;
 }
 
-/* Descontos - Grid 2 colunas no mobile (8 produtos) */
+/* descontos */
 .produtos-descontos {
   grid-template-columns: repeat(2, 1fr);
 }
@@ -82,7 +81,7 @@ body {
 .bloco-produto-home {
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-secondary);
+  background-color: #2a2a2a;
   border-radius: 0.5rem;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -96,7 +95,7 @@ body {
 
 .link-produto-home {
   text-decoration: none;
-  color: var(--text-primary);
+  color: white;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -122,13 +121,13 @@ body {
 
 .categoria-home {
   font-size: 0.6875rem;
-  color: var(--text-muted);
+  color: #aaa;
   padding: 0.25rem 0.625rem 0.625rem;
   text-align: left;
   margin-top: 0.125rem;
 }
 
-/* Preços */
+/* preços */
 .preco-container-home {
   display: flex;
   align-items: center;
@@ -140,20 +139,15 @@ body {
 
 .preco-original-home {
   text-decoration: line-through;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.5);
   font-size: 0.75rem;
 }
 
-.preco-desconto-home {
-  font-size: 0.9375rem;
-  font-weight: 700;
-  color: var(--accent-primary);
-}
-
+.preco-desconto-home,
 .preco-unico-home {
   font-size: 0.9375rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: white;
 }
 
 .preco-unico-home {
@@ -168,15 +162,15 @@ body {
 }
 
 .percentual-home {
-  background-color: var(--accent-primary);
-  color: var(--bg-primary);
+  background-color: #4da6ff;
+  color: #1f1f1f;
   font-size: 0.625rem;
   font-weight: 700;
   padding: 0.1875rem 0.375rem;
   border-radius: 0.1875rem;
 }
 
-/* Estrelas */
+/* estrelas */
 .estrelas-home {
   display: flex;
   gap: 0.1875rem;
@@ -188,7 +182,7 @@ body {
   height: auto;
 }
 
-/* Sem produtos */
+/* sem produtos */
 .sem-produtos {
   text-align: center;
   padding: 1.875rem 0.9375rem;
@@ -198,14 +192,14 @@ body {
 .mensagem-vazio {
   font-size: 1rem;
   margin-bottom: 1.0625rem;
-  color: var(--text-muted);
+  color: #888;
 }
 
 .btn-admin {
   display: inline-block;
   padding: 0.5625rem 1.125rem;
-  background-color: var(--accent-primary);
-  color: var(--bg-primary);
+  background-color: #4da6ff;
+  color: #1f1f1f;
   font-weight: 700;
   border-radius: 0.375rem;
   text-decoration: none;
@@ -214,10 +208,10 @@ body {
 }
 
 .btn-admin:hover {
-  background-color: var(--accent-hover);
+  background-color: #3b88d1;
 }
 
-/* Responsividade Desktop */
+/* responsividade desktop */
 @media (min-width: 901px) {
     .secao-categoria {
         width: 90%;
@@ -245,13 +239,11 @@ body {
         width: 1.25rem;
     }
 
-    /* Descontos - 4 colunas (8 produtos em 2 linhas) */
     .produtos-descontos {
         grid-template-columns: repeat(4, 1fr);
         gap: 2rem;
     }
 
-    /* Outras categorias - 4 colunas (4 produtos em 1 linha) */
     .produtos-container {
         grid-template-columns: repeat(4, 1fr);
         gap: 2rem;
