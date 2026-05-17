@@ -12,12 +12,13 @@ body {
   color: var(--text-primary);
 }
 
+/* Oculta elementos indesejados */
 .whatsapp-sac-bloco,
 .atendimento-container {
   display: none !important;
 }
 
-/* seçao de categoria */
+/* SEÇÃO DE CATEGORIA */
 .secao-categoria {
   width: 100%;
   margin: 2.5rem auto 0;
@@ -65,7 +66,7 @@ body {
   transition: transform 0.3s ease;
 }
 
-/* layout produtos  */
+/* Layout Produtos - Grid 2 colunas no mobile */
 .produtos-container {
   width: 100%;
   display: grid;
@@ -73,7 +74,7 @@ body {
   gap: 1.25rem;
 }
 
-/* descontos */
+/* Descontos - Grid 2 colunas no mobile (8 produtos) */
 .produtos-descontos {
   grid-template-columns: repeat(2, 1fr);
 }
@@ -127,7 +128,7 @@ body {
   margin-top: 0.125rem;
 }
 
-/* preços */
+/* Preços */
 .preco-container-home {
   display: flex;
   align-items: center;
@@ -175,7 +176,7 @@ body {
   border-radius: 0.1875rem;
 }
 
-/* estrelas */
+/* Estrelas */
 .estrelas-home {
   display: flex;
   gap: 0.1875rem;
@@ -187,7 +188,7 @@ body {
   height: auto;
 }
 
-/* sem produtos */
+/* Sem produtos */
 .sem-produtos {
   text-align: center;
   padding: 1.875rem 0.9375rem;
@@ -216,7 +217,7 @@ body {
   background-color: var(--accent-hover);
 }
 
-/* responsividade desktop */
+/* Responsividade Desktop */
 @media (min-width: 901px) {
     .secao-categoria {
         width: 90%;
@@ -244,11 +245,13 @@ body {
         width: 1.25rem;
     }
 
+    /* Descontos - 4 colunas (8 produtos em 2 linhas) */
     .produtos-descontos {
         grid-template-columns: repeat(4, 1fr);
         gap: 2rem;
     }
 
+    /* Outras categorias - 4 colunas (4 produtos em 1 linha) */
     .produtos-container {
         grid-template-columns: repeat(4, 1fr);
         gap: 2rem;
