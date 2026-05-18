@@ -7,24 +7,24 @@
     
     const imagens = {
         dark: {
-            carrinho: '/imagens/carrinho-branco.png',
-            lupa: '/imagens/lupa-branca.png',
-            user: '/imagens/user-branco.png',
-            userMenu: '/imagens/userb.png', 
-            logo: '/imagens/logo-branco.png',
-            estrela: '/imagens/estrela-branca.png',
-            estrelaVazia: '/imagens/estrela-branca-vazia.png',
-            lua: '/imagens/lua-branca.png'
+            carrinho: '/imagens/carrinho-branco.svg',
+            lupa: '/imagens/lupa-branca.svg',
+            user: '/imagens/user-branco.svg',
+            userMenu: '/imagens/userb.svg', 
+            logo: '/imagens/logo-branco.svg',
+            estrela: '/imagens/estrela-branca.svg',
+            estrelaVazia: '/imagens/estrela-branca-vazia.svg',
+            lua: '/imagens/lua-branca.svg'
         },
         light: {
-            carrinho: '/imagens/carrinho-branco.png',
-            lupa: '/imagens/lupa-branca.png',
-            user: '/imagens/user-branco.png',
-            userMenu: '/imagens/userb-preto.png',
-            logo: '/imagens/logo-branco.png', 
-            estrela: '/imagens/estrela-preta.png',
-            estrelaVazia: '/imagens/estrela-preta-vazia.png',
-            lua: '/imagens/lua-preta.png'
+            carrinho: '/imagens/carrinho-branco.svg',
+            lupa: '/imagens/lupa-branca.svg',
+            user: '/imagens/user-branco.svg',
+            userMenu: '/imagens/userb-preto.svg',
+            logo: '/imagens/logo-branco.svg', 
+            estrela: '/imagens/estrela-preta.svg',
+            estrelaVazia: '/imagens/estrela-preta-vazia.svg',
+            lua: '/imagens/lua-preta.svg'
         }
     };
 
@@ -75,24 +75,24 @@
 
         const estrelasHome = document.querySelectorAll('.estrela-home');
         estrelasHome.forEach(function(estrela) {
-            if (estrela.src.includes('estr.png') || estrela.src.includes('estrela-')) {
-                const isCheia = !estrela.src.includes('v.png') && !estrela.src.includes('vazia');
+            if (estrela.src.includes('estr.svg') || estrela.src.includes('estrela-')) {
+                const isCheia = !estrela.src.includes('v.svg') && !estrela.src.includes('vazia');
                 estrela.src = isCheia ? imgs.estrela : imgs.estrelaVazia;
             }
         });
 
         const estrelas = document.querySelectorAll('.estrela');
         estrelas.forEach(function(estrela) {
-            if (estrela.src.includes('estr.png') || estrela.src.includes('estrela-')) {
-                const isCheia = !estrela.src.includes('v.png') && !estrela.src.includes('vazia');
+            if (estrela.src.includes('estr.svg') || estrela.src.includes('estrela-')) {
+                const isCheia = !estrela.src.includes('v.svg') && !estrela.src.includes('vazia');
                 estrela.src = isCheia ? imgs.estrela : imgs.estrelaVazia;
             }
         });
 
         const estrelasPequenas = document.querySelectorAll('.estrela-pequena');
         estrelasPequenas.forEach(function(estrela) {
-            if (estrela.src.includes('estr.png') || estrela.src.includes('estrela-')) {
-                const isCheia = !estrela.src.includes('v.png') && !estrela.src.includes('vazia');
+            if (estrela.src.includes('estr.svg') || estrela.src.includes('estrela-')) {
+                const isCheia = !estrela.src.includes('v.svg') && !estrela.src.includes('vazia');
                 estrela.src = isCheia ? imgs.estrela : imgs.estrelaVazia;
             }
         });
