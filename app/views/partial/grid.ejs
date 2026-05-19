@@ -8,10 +8,10 @@
         <hr class="linha3">
     </button>
 
-    <a href="/home"><img src="/imagens/logo.svg" alt="logo" class="logo"></a>
+    <a href="/home"><img src="/imagens/logo.png" alt="logo" class="logo"></a>
 
     <section class="busca-container">
-        <a href="<%= isAdmin ? '/admin' : '/usuario' %>"><img src="/imagens/user.svg" alt="user" class="user"></a>
+        <a href="<%= isAdmin ? '/admin' : '/usuario' %>"><img src="/imagens/user.png" alt="user" class="user"></a>
 
         <form class="busca-form" method="GET" action="/busca" role="search">
             <label for="busca">
@@ -24,19 +24,19 @@
                        aria-label="Campo de busca de produtos">
             </label>
             <button type="submit" class="lupa-btn" aria-label="Buscar produtos">
-                <img src="/imagens/lupa.svg" alt="buscar" class="lupa">
+                <img src="/imagens/lupa.png" alt="buscar" class="lupa">
             </button>
         </form>
 
         <% if(!isAdmin) { %>
-            <a href="/carrinho"><img src="/imagens/cart.svg" alt="carrinho" class="cart"></a>
+            <a href="/carrinho"><img src="/imagens/cart.png" alt="carrinho" class="cart"></a>
         <% } %>
     </section>
 </nav>
 
 <nav class="opcoes" id="menuhamburger">
-    <img src="/imagens/plogo.svg" class="plogo" alt="Logo da Farmácia">
-    <img src="/imagens/userb.svg" class="user" alt="Ícone do usuário">
+    <img src="/imagens/plogo.png" class="plogo" alt="Logo da Farmácia">
+    <img src="/imagens/userb.png" class="user" alt="Ícone do usuário">
 
     <section class="menu-content">
         <section class="perfil">
@@ -82,7 +82,7 @@
                         <button class="theme-toggle" 
                                 aria-label="Alternar tema"
                                 type="button">
-                            <img src="/imagens/lua-branca.svg" 
+                            <img src="/imagens/lua-branca.png" 
                                  alt="Ícone de tema" 
                                  class="theme-icon"
                                  id="theme-icon">
