@@ -1,5 +1,3 @@
-
-
 (function() {
     'use strict';
 
@@ -21,7 +19,7 @@
             lupa: '/imagens/lupa-branca.svg',
             user: '/imagens/user-branco.svg',
             userMenu: '/imagens/user-preto.svg',
-            logo: '/imagens/logo-branco.svg', 
+            logo: '/imagens/logo-branco.svg',
             estrela: '/imagens/estrela-preta.svg',
             estrelaVazia: '/imagens/estrela-preta-vazia.svg',
             lua: '/imagens/lua-preta.svg'
@@ -51,19 +49,19 @@
 
         const carrinhoImg = document.querySelector('.cart');
         if (carrinhoImg) {
-            carrinhoImg.src = imagens.dark.carrinho;
+            carrinhoImg.src = imgs.carrinho;
             carrinhoImg.alt = 'Ícone do carrinho';
         }
 
         const lupaImg = document.querySelector('.lupa');
         if (lupaImg) {
-            lupaImg.src = imagens.dark.lupa;
+            lupaImg.src = imgs.lupa;
             lupaImg.alt = 'Ícone de busca';
         }
 
         const userImgsHeader = document.querySelectorAll('.nav-principal .user');
         userImgsHeader.forEach(function(img) {
-            img.src = imagens.dark.user; 
+            img.src = imgs.user;
             img.alt = 'Ícone do usuário';
         });
 
@@ -115,7 +113,6 @@
         }
     }
 
-    // Alternar tema
     function toggleTheme() {
         const currentTheme = htmlElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
