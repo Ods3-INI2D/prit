@@ -887,51 +887,77 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             return res.redirect('/carrinho');
         }
 
-        // normaliza itens
+        // Rejeita se houver itens fora de estoque
+        const temForaEstoque = itens.some(function(i) {
+            return i.status === 'fora-de-estoque';
+        });
+        if (temForaEstoque) {
+            return res.redirect('/finalizar-compra?erro=' +
+                encodeURIComponent('Remova os itens fora de estoque antes de finalizar.'));
+        }
+
+        // Normaliza itens
         const itensMapeados = itens.map(function(i) {
             return {
                 id_produto:    i.id_produto,
                 preco:         parseFloat(i.preco)         || 0,
                 precoDesconto: i.preco_desconto != null ? parseFloat(i.preco_desconto) : null,
-                quantidade:    parseInt(i.quantidade)       || 1
+                quantidade:    parseInt(i.quantidade)      || 1
             };
         });
 
-        // valor total vem do form (já com possíveis descontos PIX/boleto e frete)
-        const valor_total = parseFloat(req.body.total_pedido) || itensMapeados.reduce(function(acc, i) {
+        // Calcula o total no SERVIDOR — ignora valor enviado pelo cliente (segurança)
+        var subtotal = itensMapeados.reduce(function(acc, i) {
             var p = (i.precoDesconto && i.precoDesconto > 0) ? i.precoDesconto : i.preco;
             return acc + p * i.quantidade;
         }, 0);
 
-        // cria pedido
+        // Aplica desconto conforme forma de pagamento
+        var desconto = 0;
+        if (req.body.forma_pagamento === 'pix')    desconto = subtotal * 0.05;
+        if (req.body.forma_pagamento === 'boleto') desconto = subtotal * 0.03;
+
+        // Frete simulado pelo CEP
+        var cepNumeros = (req.body.cep || '').replace(/\D/g, '');
+        var frete = 19.90;
+        if (cepNumeros.length === 8) {
+            var prefixo = parseInt(cepNumeros.substring(0, 5));
+            if (prefixo >= 1000  && prefixo <= 19999) frete = 9.90;
+            else if (prefixo >= 20000 && prefixo <= 28999) frete = 12.90;
+            else if (prefixo >= 30000 && prefixo <= 39999) frete = 14.90;
+        }
+        if (subtotal >= 150) frete = 0;
+
+        const valor_total = parseFloat((subtotal + frete - desconto).toFixed(2));
+
+        // Cria pedido
         const pedidoResult = await pedidosModel.create(id_usuario, itensMapeados, valor_total);
         if (pedidoResult.erro) {
-            return res.redirect('/finalizar-compra?erro=' + encodeURIComponent('Erro ao criar pedido. Tente novamente.'));
+            return res.redirect('/finalizar-compra?erro=' +
+                encodeURIComponent('Erro ao criar pedido. Tente novamente.'));
         }
 
-        // cria pagamento
+        // Cria pagamento
         const pagResult = await pedidosModel.createPagamento(
             pedidoResult.id_pedido,
             req.body.forma_pagamento,
             valor_total
         );
 
-        // cria entrega
+        // Cria entrega
         if (!pagResult.erro) {
             await pedidosModel.createEntrega(pagResult.id_pagamento, '+Saúde Entregas');
         }
 
-        // limpa carrinho
+        // Limpa carrinho — usa pool diretamente para garantir remoção total
+        const pool = require('../config/pool_conexoes');
         if (id_usuario) {
-            await carrinhoModel.findByIdentificador(id_usuario, null);
-            // remove todos os itens do carrinho do usuário
-            const pool = require('../config/pool_conexoes');
             await pool.query('DELETE FROM carrinho WHERE id_usuario = ?', [id_usuario]);
         } else {
             await carrinhoModel.limparPorSession(session_id);
         }
 
-        // monta rótulo legível para forma de pagamento
+        // Rótulo legível da forma de pagamento
         const formasLabel = {
             cartao_credito: 'Cartão de Crédito',
             cartao_debito:  'Cartão de Débito',
@@ -939,7 +965,7 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             boleto:         'Boleto Bancário'
         };
 
-        // monta endereço resumido
+        // Monta endereço resumido
         const { rua, numero, complemento, bairro, cidade, estado, cep } = req.body;
         const endereco = [
             rua + ', ' + numero + (complemento ? ' ' + complemento : ''),
@@ -947,13 +973,13 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             'CEP: ' + cep
         ].join(' | ');
 
-        // busca itens do pedido para exibir na confirmação
+        // Busca itens do pedido para exibir na confirmação
         const pedidoCompleto = await pedidosModel.findById(pedidoResult.id_pedido);
 
         res.render('pages/pedido-confirmado', {
-            id_pedido:           pedidoResult.id_pedido,
-            valor_total:         valor_total,
-            itens:               pedidoCompleto ? pedidoCompleto.itens : itensMapeados,
+            id_pedido:             pedidoResult.id_pedido,
+            valor_total,
+            itens:                 pedidoCompleto ? pedidoCompleto.itens : itensMapeados,
             endereco,
             forma_pagamento_label: formasLabel[req.body.forma_pagamento] || req.body.forma_pagamento
         });
