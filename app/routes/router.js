@@ -13,12 +13,12 @@ const { usuariosModel  } = require('../models/usuariosmodel');
 const { produtosModel  } = require('../models/produtosmodel');
 const { carrinhoModel  } = require('../models/carrinhomodel');
 const { bannersModel   } = require('../models/bannersmodel');
-const { pedidosModel } = require('../models/pedidosmodel');
+const { pedidosModel   } = require('../models/pedidosmodel');
 
-// validaçoes
+// validacoes
 var { valCPF, valDDD, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
 
-// sessao 
+// sessao
 router.use(session({
     secret: process.env.SESSION_SECRET || 'chave-secreta-farmacia-super-segura-2024',
     resave: false,
@@ -41,7 +41,7 @@ const uploadProduto = multer({
     storage: storageProduto,
     limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
-        const ext = path.extname(file.originalname).toLowerCase();
+        const ext  = path.extname(file.originalname).toLowerCase();
         const mime = file.mimetype;
         if (ext === '.svg' && (mime === 'image/svg+xml' || mime === 'image/svg')) {
             cb(null, true);
@@ -110,7 +110,7 @@ const MSGS_ERRO = {
     imagem_obrigatoria:      'A imagem do banner é obrigatória!'
 };
 
-// middleware global sem conta
+// middleware global — gera sessionId para visitantes
 router.use((req, res, next) => {
     if (!req.session.sessionId) {
         req.session.sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -118,13 +118,12 @@ router.use((req, res, next) => {
     next();
 });
 
-// middleware global usuario isAdmin categoriasMenu
+// middleware global — popula res.locals
 router.use(async (req, res, next) => {
-    res.locals.usuario         = null;
-    res.locals.isAdmin         = false;
-    res.locals.categoriasMenu  = [];
+    res.locals.usuario        = null;
+    res.locals.isAdmin        = false;
+    res.locals.categoriasMenu = [];
 
-    // carrega categorias para o menu lateral
     try {
         const cats = await produtosModel.findAllCategorias();
         res.locals.categoriasMenu = Array.isArray(cats) ? cats : [];
@@ -144,7 +143,7 @@ router.use(async (req, res, next) => {
     next();
 });
 
-// guards 
+// guards
 function requireLogin(req, res, next) {
     if (!req.session.usuarioEmail) {
         return res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
@@ -176,21 +175,19 @@ function getIdentificador(req) {
 
 function parseCategorias(body) {
     let cats = body.categorias || body.id_categorias || [];
-
-    if (typeof cats === 'string') {
-        cats = [cats];
-    }
-
+    if (typeof cats === 'string') cats = [cats];
     return cats
         .map(v => parseInt(String(v).trim(), 10))
         .filter(n => Number.isFinite(n) && n > 0);
 }
 
-// rotas
+// ============================================================
+// ROTAS
+// ============================================================
 
 router.get('/', (req, res) => res.redirect('/home'));
 
-// Cadastro
+// ── Cadastro ──────────────────────────────────────────────
 router.get('/cadastro', (req, res) => {
     res.render('pages/cadastro', {
         erros: null,
@@ -232,12 +229,15 @@ router.post('/cadastro',
     }
 );
 
-// login
+// ── Login ─────────────────────────────────────────────────
 router.get('/login', (req, res) => {
     const erroAdmin = req.query.erro === 'admin'
         ? 'Acesso negado. Apenas administradores podem acessar esta área.'
         : null;
-    res.render('pages/login', { erro: erroAdmin, redirect: req.query.redirect || '/home' });
+    res.render('pages/login', {
+        erro:     erroAdmin,
+        redirect: req.query.redirect || '/home'
+    });
 });
 
 router.post('/login',
@@ -246,7 +246,10 @@ router.post('/login',
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.render('pages/login', { erro: 'E-mail ou senha inválidos!', redirect: '/home' });
+            return res.render('pages/login', {
+                erro:     'E-mail ou senha inválidos!',
+                redirect: req.body.redirect || '/home'
+            });
         }
 
         if (req.body.email === ADMIN_EMAIL && req.body.senha === ADMIN_PASSWORD) {
@@ -265,15 +268,26 @@ router.post('/login',
             return res.redirect(redirectUrl);
         }
 
-        return res.render('pages/login', { erro: 'E-mail ou senha inválidos!', redirect: '/home' });
+        return res.render('pages/login', {
+            erro:     'E-mail ou senha inválidos!',
+            redirect: req.body.redirect || '/home'
+        });
     }
 );
 
-// home
+// ── Logout ────────────────────────────────────────────────
+router.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) console.error('Erro ao destruir sessão:', err);
+        res.redirect('/login');
+    });
+});
+
+// ── Home ──────────────────────────────────────────────────
 router.get('/home', async (req, res) => {
-    const produtos    = await produtosModel.findAll();
-    const banners     = await bannersModel.findAll();
-    const categorias  = await produtosModel.findAllCategorias();
+    const produtos   = await produtosModel.findAll();
+    const banners    = await bannersModel.findAll();
+    const categorias = await produtosModel.findAllCategorias();
 
     const produtosNormalizados = (Array.isArray(produtos) ? produtos : []).map(p => ({
         ...p,
@@ -286,7 +300,7 @@ router.get('/home', async (req, res) => {
     res.render('pages/home', { produtos: produtosNormalizados, banners, categorias });
 });
 
-// usuario
+// ── Usuário ───────────────────────────────────────────────
 router.get('/usuario', async (req, res) => {
     if (!req.session.usuarioEmail) {
         return res.render('pages/usuario', { usuario: null, mensagemSucesso: null, mensagemErro: null });
@@ -310,13 +324,16 @@ router.post('/usuario/atualizar-campo', requireLogin,
 
         const { campo, valor } = req.body;
 
-        if (campo === 'nome' && (valor.length < 3 || valor.length > 50)) {
+        if (campo === 'nome' && (valor.length < 3 || valor.length > 50))
             return res.redirect('/usuario?erro=' + encodeURIComponent('Nome deve ter entre 3 e 50 caracteres!'));
-        }
-        if (campo === 'cpf'  && !valCPF(valor))  return res.redirect('/usuario?erro=' + encodeURIComponent('CPF inválido!'));
-        if (campo === 'nasc' && !valNasc(valor))  return res.redirect('/usuario?erro=' + encodeURIComponent('Data de nascimento inválida!'));
-        if (campo === 'ddd'  && !valDDD(valor))   return res.redirect('/usuario?erro=' + encodeURIComponent('DDD inválido!'));
-        if (campo === 'tel'  && !valTel(valor))   return res.redirect('/usuario?erro=' + encodeURIComponent('Telefone inválido!'));
+        if (campo === 'cpf'  && !valCPF(valor))
+            return res.redirect('/usuario?erro=' + encodeURIComponent('CPF inválido!'));
+        if (campo === 'nasc' && !valNasc(valor))
+            return res.redirect('/usuario?erro=' + encodeURIComponent('Data de nascimento inválida!'));
+        if (campo === 'ddd'  && !valDDD(valor))
+            return res.redirect('/usuario?erro=' + encodeURIComponent('DDD inválido!'));
+        if (campo === 'tel'  && !valTel(valor))
+            return res.redirect('/usuario?erro=' + encodeURIComponent('Telefone inválido!'));
 
         await usuariosModel.updateCampo(req.session.usuarioEmail, campo, valor);
         const labels = { nome: 'Nome', nasc: 'Data de nascimento', cpf: 'CPF', ddd: 'DDD', tel: 'Telefone' };
@@ -324,327 +341,28 @@ router.post('/usuario/atualizar-campo', requireLogin,
     }
 );
 
-// painel de admin
-router.get('/admin', requireAdmin, async (req, res) => {
-    const produtos   = await produtosModel.findAll();
-    const usuarios   = await usuariosModel.findAll();
-    const banners    = await bannersModel.findAll();
-    const categorias = await produtosModel.findAllCategorias();
-
-    const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
-        ...p,
-        id:            p.id_produto,
-        preco:         parseFloat(p.preco) || 0,
-        precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
-    }));
-
-    res.render('pages/admin', {
-        produtos:         produtosNorm,
-        totalProdutos:    produtosNorm.length,
-        usuarios:         Array.isArray(usuarios) ? usuarios : [],
-        banners:          Array.isArray(banners)  ? banners  : [],
-        categorias:       Array.isArray(categorias) ? categorias : [],
-        erro:             req.query.erro    || null,
-        sucesso:          req.query.sucesso || null,
-        mensagensSucesso: MSGS_SUCESSO,
-        mensagensErro:    MSGS_ERRO
-    });
-});
-
-// admin adicionar produto
-router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
-    uploadProduto.single('imagem')(req, res, async (err) => {
-        if (err) {
-            console.error('Multer erro produto:', err);
-            return res.redirect('/admin?erro=adicionar_produto');
-        }
-        try {
-            const imagemPath = req.file ? '/imagens/produtos/' + req.file.filename : '/imagens/foto.jpg';
-            const preco      = parseFloat(req.body.preco) || 0;
-            const precoDesc  = req.body.precoDesconto && String(req.body.precoDesconto).trim() !== ''
-                ? parseFloat(req.body.precoDesconto) || null
-                : null;
-
-            const ids_categorias = parseCategorias(req.body);
-            console.log('IDs categorias recebidos:', ids_categorias, '| Body categorias:', req.body.categorias);
-
-            if (ids_categorias.length === 0) {
-                return res.redirect('/admin?erro=categoria_invalida');
-            }
-
-            const result = await produtosModel.create({
-                nome:           (req.body.nome || '').trim() || 'Produto sem nome',
-                descricao:      (req.body.descricao || '').trim(),
-                preco,
-                preco_desconto: precoDesc,
-                imagem:         imagemPath,
-                status:         req.body.status || 'em-estoque'
-            }, ids_categorias);
-
-            if (result && result.errno) {
-                console.error('Erro ao criar produto:', result);
-                return res.redirect('/admin?erro=adicionar_produto');
-            }
-
-            res.redirect('/admin?sucesso=produto_adicionado');
-        } catch (err) {
-            console.error('Erro inesperado ao adicionar produto:', err);
-            res.redirect('/admin?erro=adicionar_produto');
-        }
-    });
-});
-
-// admin editar produto
-router.get('/admin/editar-produto/:id', requireAdmin, async (req, res) => {
-    const produto    = await produtosModel.findById(req.params.id);
-    if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
-    const categorias = await produtosModel.findAllCategorias();
-
-    const ids_atual = produto.ids_categorias
-        ? produto.ids_categorias.split(',').map(Number)
-        : [];
-
-    res.render('pages/editar-produto', {
-        produto: { ...produto, id: produto.id_produto, precoDesconto: produto.preco_desconto, ids_categorias_atual: ids_atual },
-        categorias,
-        erro: null
-    });
-});
-
-// admin postar produto editado
-router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
-    uploadProduto.single('imagem')(req, res, async (err) => {
-        if (err) {
-            console.error('Multer erro editar produto:', err);
-            return res.redirect('/admin?erro=editar_produto');
-        }
-        try {
-            const produto = await produtosModel.findById(req.params.id);
-            if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
-
-            let imagemPath = produto.imagem;
-            if (req.file) {
-                imagemPath = '/imagens/produtos/' + req.file.filename;
-                if (produto.imagem && produto.imagem !== '/imagens/foto.jpg') {
-                    const old = path.join(__dirname, '../public', produto.imagem);
-                    if (fs.existsSync(old)) fs.unlinkSync(old);
-                }
-            }
-
-            const ids_categorias = parseCategorias(req.body);
-            if (ids_categorias.length === 0) {
-                return res.redirect('/admin?erro=categoria_invalida');
-            }
-
-            const result = await produtosModel.update(req.params.id, {
-                nome:           (req.body.nome || produto.nome).trim(),
-                descricao:      req.body.descricao || produto.descricao,
-                preco:          parseFloat(req.body.preco) || 0,
-                preco_desconto: req.body.precoDesconto && String(req.body.precoDesconto).trim() !== ''
-                    ? parseFloat(req.body.precoDesconto) || null
-                    : null,
-                imagem:         imagemPath,
-                status:         req.body.status || produto.status
-            }, ids_categorias);
-
-            if (result && result.errno) {
-                console.error('Erro ao atualizar produto:', result);
-                return res.redirect('/admin?erro=editar_produto');
-            }
-
-            res.redirect('/admin?sucesso=produto_editado');
-        } catch (err) {
-            console.error('Erro inesperado ao editar produto:', err);
-            res.redirect('/admin?erro=editar_produto');
-        }
-    });
-});
-
-// admin excluir produto
-router.post('/admin/excluir-produto/:id', requireAdmin, async (req, res) => {
-    try {
-        const produto = await produtosModel.findById(req.params.id);
-        if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
-        if (produto.imagem && produto.imagem !== '/imagens/foto.jpg') {
-            const imgPath = path.join(__dirname, '../public', produto.imagem);
-            if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
-        }
-        await produtosModel.delete(req.params.id);
-        res.redirect('/admin?sucesso=produto_excluido');
-    } catch (err) {
-        console.error(err);
-        res.redirect('/admin?erro=excluir_produto');
-    }
-});
-
-// admin excluir usuario
-router.post('/admin/excluir-usuario/:email', requireAdmin, async (req, res) => {
-    try {
-        await usuariosModel.delete(req.params.email);
-        res.redirect('/admin?sucesso=usuario_excluido');
-    } catch (err) {
-        console.error(err);
-        res.redirect('/admin?erro=excluir_usuario');
-    }
-});
-
-// admin criar categoria
-router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
-    try {
-        const nome = (req.body.nome_categoria || '').trim();
-
-        if (!nome || nome.length < 2) {
-            return res.redirect('/admin?erro=categoria_nome_invalido&tab=categorias');
-        }
-
-        const existe = await produtosModel.findCategoriaPorNome(nome);
-        if (existe) {
-            return res.redirect('/admin?erro=categoria_ja_existe&tab=categorias');
-        }
-
-        const result = await produtosModel.createCategoria(nome);
-
-        console.log('Resultado createCategoria:', result);
-
-        if (result && result.erro) {
-            console.error('Erro ao criar categoria (estruturado):', result.mensagem);
-            return res.redirect('/admin?erro=criar_categoria&tab=categorias');
-        }
-
-        if (result && result.errno) {
-            console.error('Erro MySQL ao criar categoria:', result);
-            return res.redirect('/admin?erro=criar_categoria&tab=categorias');
-        }
-
-        if (!result || !result.insertId || result.insertId <= 0) {
-            console.error('Resultado inesperado ao criar categoria:', result);
-            return res.redirect('/admin?erro=criar_categoria&tab=categorias');
-        }
-
-        res.redirect('/admin?sucesso=categoria_criada&tab=categorias');
-    } catch (err) {
-        console.error('Erro inesperado ao criar categoria:', err);
-        res.redirect('/admin?erro=criar_categoria&tab=categorias');
-    }
-});
-
-// admin exluir categoria
-router.post('/admin/excluir-categoria/:id', requireAdmin, async (req, res) => {
-    try {
-        await produtosModel.deleteCategoria(req.params.id);
-        res.redirect('/admin?sucesso=categoria_excluida&tab=categorias');
-    } catch (err) {
-        console.error(err);
-        res.redirect('/admin?erro=excluir_categoria&tab=categorias');
-    }
-});
-
-// admin criar banner
-router.post('/admin/criar-banner', requireAdmin, (req, res) => {
-    uploadBanner.single('imagem')(req, res, async (err) => {
-        if (err) {
-            console.error('Multer erro banner criar:', err);
-            return res.redirect('/admin?erro=criar_banner&tab=banners');
-        }
-        try {
-            if (!req.file) {
-                return res.redirect('/admin?erro=imagem_obrigatoria&tab=banners');
-            }
-
-            const imagemPath = '/imagens/' + req.file.filename;
-            const legenda    = (req.body.legenda || '').trim() || 'Novo Banner';
-            let   link       = (req.body.link    || '/home').trim();
-            if (!link.startsWith('/')) link = '/' + link;
-
-            const result = await bannersModel.create({ imagem: imagemPath, legenda, link });
-
-            if (result && result.errno) {
-                console.error('Erro ao criar banner:', result);
-                return res.redirect('/admin?erro=criar_banner&tab=banners');
-            }
-
-            res.redirect('/admin?sucesso=banner_criado&tab=banners');
-        } catch (e) {
-            console.error('Erro inesperado ao criar banner:', e);
-            res.redirect('/admin?erro=criar_banner&tab=banners');
-        }
-    });
-});
-
-// admin editar banner
-router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
-    uploadBanner.single('imagem')(req, res, async (err) => {
-        if (err) return res.redirect('/admin?erro=editar_banner&tab=banners');
-        try {
-            const bannerId = parseInt(req.params.id);
-            const banner   = await bannersModel.findById(bannerId);
-            if (!banner) return res.redirect('/admin?erro=banner_nao_encontrado&tab=banners');
-
-            let imagemPath = banner.imagem;
-            if (req.file) {
-                imagemPath = '/imagens/' + req.file.filename;
-                const originais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
-                if (!originais.includes(banner.imagem)) {
-                    const old = path.join(__dirname, '../public', banner.imagem);
-                    if (fs.existsSync(old)) { try { fs.unlinkSync(old); } catch(_) {} }
-                }
-            }
-
-            let legenda = (req.body.legenda || '').trim() || banner.legenda;
-            let link    = (req.body.link    || '/home').trim();
-            if (!link.startsWith('/')) link = '/' + link;
-
-            await bannersModel.update(bannerId, { imagem: imagemPath, legenda, link });
-            res.redirect('/admin?sucesso=banner_editado&tab=banners');
-        } catch (e) {
-            console.error(e);
-            res.redirect('/admin?erro=editar_banner&tab=banners');
-        }
-    });
-});
-
-// admin excluir banner
-router.post('/admin/excluir-banner/:id', requireAdmin, async (req, res) => {
-    try {
-        const banner = await bannersModel.findById(parseInt(req.params.id));
-        if (!banner) return res.redirect('/admin?erro=banner_nao_encontrado&tab=banners');
-
-        const originais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
-        if (!originais.includes(banner.imagem)) {
-            const imgPath = path.join(__dirname, '../public', banner.imagem);
-            if (fs.existsSync(imgPath)) { try { fs.unlinkSync(imgPath); } catch(_) {} }
-        }
-
-        await bannersModel.delete(parseInt(req.params.id));
-        res.redirect('/admin?sucesso=banner_excluido&tab=banners');
-    } catch (err) {
-        console.error(err);
-        res.redirect('/admin?erro=excluir_banner&tab=banners');
-    }
-});
-
-// produto
+// ── Produto ───────────────────────────────────────────────
 router.get('/produto/:id', async (req, res) => {
     const produto = await produtosModel.findById(req.params.id);
     if (!produto) return res.redirect('/home');
 
-    const produtos                       = await produtosModel.findAll();
-    const { id_usuario, session_id }     = getIdentificador(req);
-    const temNoCarrinho                  = await carrinhoModel.temProduto(req.params.id, id_usuario, session_id);
-    const isAdmin                        = req.session.isAdmin || false;
+    const produtos                   = await produtosModel.findAll();
+    const { id_usuario, session_id } = getIdentificador(req);
+    const temNoCarrinho              = await carrinhoModel.temProduto(req.params.id, id_usuario, session_id);
+    const isAdmin                    = req.session.isAdmin || false;
 
     const produtoNorm  = {
         ...produto,
-        id: produto.id_produto,
-        preco: parseFloat(produto.preco) || 0,
+        id:            produto.id_produto,
+        preco:         parseFloat(produto.preco) || 0,
         precoDesconto: produto.preco_desconto ? parseFloat(produto.preco_desconto) : null
     };
     const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
         ...p,
-        id: p.id_produto,
-        preco: parseFloat(p.preco) || 0,
+        id:            p.id_produto,
+        preco:         parseFloat(p.preco) || 0,
         precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null,
-        avaliacoes: []
+        avaliacoes:    []
     }));
 
     res.render('pages/produto', {
@@ -666,26 +384,36 @@ router.post('/produto/:id/adicionar-carrinho', blockAdmin, async (req, res) => {
     res.redirect('/carrinho');
 });
 
-// carrinho
+// avaliacao
+router.post('/produto/:id/avaliar', requireLogin, blockAdmin, async (req, res) => {
+    const { id_usuario, session_id } = getIdentificador(req);
+    const temNoCarrinho = await carrinhoModel.temProduto(req.params.id, id_usuario, session_id);
+    if (!temNoCarrinho) {
+        return res.redirect('/produto/' + req.params.id + '?erro=carrinho');
+    }
+    await produtosModel.addAvaliacao(req.params.id, id_usuario, parseInt(req.body.nota), req.body.texto);
+    res.redirect('/produto/' + req.params.id);
+});
+
+// ── Carrinho ──────────────────────────────────────────────
 router.get('/carrinho', blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
     const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
- 
+
     const carrinho = (Array.isArray(itens) ? itens : []).map(function(i) {
         return {
             ...i,
-            id:             i.id_produto,
-            preco:          parseFloat(i.preco)          || 0,
-            precoDesconto:  i.preco_desconto != null ? parseFloat(i.preco_desconto) : null
+            id:            i.id_produto,
+            preco:         parseFloat(i.preco)          || 0,
+            precoDesconto: i.preco_desconto != null ? parseFloat(i.preco_desconto) : null
         };
     });
- 
+
     res.render('pages/carrinho', {
         carrinho,
         usuarioLogado: !!req.session.usuarioEmail
     });
 });
-
 
 router.post('/carrinho/atualizar/:id', blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
@@ -699,25 +427,153 @@ router.post('/carrinho/remover/:id', blockAdmin, async (req, res) => {
     res.redirect('/carrinho');
 });
 
-// avaliaçao
-router.post('/produto/:id/avaliar', requireLogin, blockAdmin, async (req, res) => {
+// ── Finalizar Compra ──────────────────────────────────────
+router.get('/finalizar-compra', requireLogin, blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
-    const temNoCarrinho = await carrinhoModel.temProduto(req.params.id, id_usuario, session_id);
-    if (!temNoCarrinho) {
-        return res.redirect('/produto/' + req.params.id + '?erro=carrinho');
+    const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
+
+    if (!itens || itens.length === 0) {
+        return res.redirect('/carrinho');
     }
-    await produtosModel.addAvaliacao(req.params.id, id_usuario, parseInt(req.body.nota), req.body.texto);
-    res.redirect('/produto/' + req.params.id);
+
+    const carrinho = itens.map(function(i) {
+        return {
+            ...i,
+            id:            i.id_produto,
+            preco:         parseFloat(i.preco)         || 0,
+            precoDesconto: i.preco_desconto != null ? parseFloat(i.preco_desconto) : null
+        };
+    });
+
+    res.render('pages/finalizar-compra', {
+        carrinho,
+        mensagemErro: req.query.erro ? decodeURIComponent(req.query.erro) : null
+    });
 });
 
-// categoria slug
+router.post('/finalizar-compra', requireLogin, blockAdmin,
+    body('cep').notEmpty().withMessage('CEP obrigatório!')
+        .matches(/^\d{5}-?\d{3}$/).withMessage('CEP inválido!'),
+    body('rua').notEmpty().isLength({ min: 3, max: 150 }).withMessage('Rua obrigatória!'),
+    body('numero').notEmpty().withMessage('Número obrigatório!'),
+    body('bairro').notEmpty().isLength({ min: 2, max: 80 }).withMessage('Bairro obrigatório!'),
+    body('cidade').notEmpty().isLength({ min: 2, max: 80 }).withMessage('Cidade obrigatória!'),
+    body('estado').notEmpty().isLength({ min: 2, max: 2 }).withMessage('Estado obrigatório!'),
+    body('forma_pagamento').notEmpty()
+        .isIn(['cartao_credito', 'cartao_debito', 'pix', 'boleto'])
+        .withMessage('Forma de pagamento inválida!'),
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const msg = encodeURIComponent(errors.array()[0].msg);
+            return res.redirect('/finalizar-compra?erro=' + msg);
+        }
+
+        const { id_usuario, session_id } = getIdentificador(req);
+        const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
+
+        if (!itens || itens.length === 0) {
+            return res.redirect('/carrinho');
+        }
+
+        // Rejeita itens fora de estoque
+        const temForaEstoque = itens.some(function(i) {
+            return i.status === 'fora-de-estoque';
+        });
+        if (temForaEstoque) {
+            return res.redirect('/finalizar-compra?erro=' +
+                encodeURIComponent('Remova os itens fora de estoque antes de finalizar.'));
+        }
+
+        // Normaliza itens
+        const itensMapeados = itens.map(function(i) {
+            return {
+                id_produto:    i.id_produto,
+                preco:         parseFloat(i.preco)         || 0,
+                precoDesconto: i.preco_desconto != null ? parseFloat(i.preco_desconto) : null,
+                quantidade:    parseInt(i.quantidade)      || 1
+            };
+        });
+
+        // Calcula total no SERVIDOR
+        var subtotal = itensMapeados.reduce(function(acc, i) {
+            var p = (i.precoDesconto && i.precoDesconto > 0) ? i.precoDesconto : i.preco;
+            return acc + p * i.quantidade;
+        }, 0);
+
+        var desconto = 0;
+        if (req.body.forma_pagamento === 'pix')    desconto = subtotal * 0.05;
+        if (req.body.forma_pagamento === 'boleto') desconto = subtotal * 0.03;
+
+        // Frete simulado
+        var cepNumeros = (req.body.cep || '').replace(/\D/g, '');
+        var frete = 19.90;
+        if (cepNumeros.length === 8) {
+            var prefixo = parseInt(cepNumeros.substring(0, 5));
+            if      (prefixo >= 1000  && prefixo <= 19999) frete = 9.90;
+            else if (prefixo >= 20000 && prefixo <= 28999) frete = 12.90;
+            else if (prefixo >= 30000 && prefixo <= 39999) frete = 14.90;
+        }
+        if (subtotal >= 150) frete = 0;
+
+        const valor_total = parseFloat((subtotal + frete - desconto).toFixed(2));
+
+        // Cria pedido
+        const pedidoResult = await pedidosModel.create(id_usuario, itensMapeados, valor_total);
+        if (pedidoResult.erro) {
+            return res.redirect('/finalizar-compra?erro=' +
+                encodeURIComponent('Erro ao criar pedido. Tente novamente.'));
+        }
+
+        // Cria pagamento e entrega
+        const pagResult = await pedidosModel.createPagamento(
+            pedidoResult.id_pedido,
+            req.body.forma_pagamento,
+            valor_total
+        );
+        if (!pagResult.erro) {
+            await pedidosModel.createEntrega(pagResult.id_pagamento, '+Saúde Entregas');
+        }
+
+        // Limpa carrinho
+        const pool = require('../config/pool_conexoes');
+        if (id_usuario) {
+            await pool.query('DELETE FROM carrinho WHERE id_usuario = ?', [id_usuario]);
+        } else {
+            await carrinhoModel.limparPorSession(session_id);
+        }
+
+        const formasLabel = {
+            cartao_credito: 'Cartão de Crédito',
+            cartao_debito:  'Cartão de Débito',
+            pix:            'PIX',
+            boleto:         'Boleto Bancário'
+        };
+
+        const { rua, numero, complemento, bairro, cidade, estado, cep } = req.body;
+        const endereco = [
+            rua + ', ' + numero + (complemento ? ' ' + complemento : ''),
+            bairro + ' — ' + cidade + '/' + estado,
+            'CEP: ' + cep
+        ].join(' | ');
+
+        const pedidoCompleto = await pedidosModel.findById(pedidoResult.id_pedido);
+
+        res.render('pages/pedido-confirmado', {
+            id_pedido:             pedidoResult.id_pedido,
+            valor_total,
+            itens:                 pedidoCompleto ? pedidoCompleto.itens : itensMapeados,
+            endereco,
+            forma_pagamento_label: formasLabel[req.body.forma_pagamento] || req.body.forma_pagamento
+        });
+    }
+);
+
+// ── Categoria ─────────────────────────────────────────────
 router.get('/categoria/:slug', async (req, res) => {
     const slug = req.params.slug;
-
     let categoriaInfo = await produtosModel.findCategoriaPorSlug(slug);
-
-    let produtos;
-    let nomeExibicao;
+    let produtos, nomeExibicao;
 
     if (categoriaInfo) {
         produtos     = await produtosModel.findBySlugCategoria(slug);
@@ -743,13 +599,10 @@ router.get('/categoria/:slug', async (req, res) => {
     res.render('pages/categoria', { categoria: nomeExibicao, slug, produtos: produtosNorm });
 });
 
-// busca de produtos
+// ── Busca ─────────────────────────────────────────────────
 router.get('/busca', async (req, res) => {
     const termo = (req.query.q || '').trim();
-
-    if (!termo) {
-        return res.redirect('/home');
-    }
+    if (!termo) return res.redirect('/home');
 
     const produtos = await produtosModel.search(termo);
 
@@ -763,9 +616,13 @@ router.get('/busca', async (req, res) => {
     res.render('pages/busca', { termo, produtos: produtosNorm });
 });
 
-// parceiros
+// ── Parceiros ─────────────────────────────────────────────
 router.get('/parceiros', (req, res) => {
-    res.render('pages/parceiros', { sucesso: null, erro: null, valores: { empresa: '', email: '', categorias: [], descricao: '' } });
+    res.render('pages/parceiros', {
+        sucesso: null,
+        erro:    null,
+        valores: { empresa: '', email: '', categorias: [], descricao: '' }
+    });
 });
 
 router.post('/parceiros',
@@ -789,12 +646,16 @@ router.post('/parceiros',
             });
             const cats = Array.isArray(req.body.categorias) ? req.body.categorias.join(', ') : req.body.categorias;
             await transporter.sendMail({
-                from: `"Sistema +Saúde" <${process.env.EMAIL_PARCEIROS}>`,
-                to:   process.env.EMAIL_PARCEIROS,
+                from:    `"Sistema +Saúde" <${process.env.EMAIL_PARCEIROS}>`,
+                to:      process.env.EMAIL_PARCEIROS,
                 subject: `Nova Solicitação de Parceria - ${req.body.empresa}`,
-                text: `Empresa: ${req.body.empresa}\nCategorias: ${cats}\nE-mail: ${req.body.email}\nProposta:\n${req.body.descricao}`
+                text:    `Empresa: ${req.body.empresa}\nCategorias: ${cats}\nE-mail: ${req.body.email}\nProposta:\n${req.body.descricao}`
             });
-            res.render('pages/parceiros', { sucesso: true, erro: null, valores: { empresa: '', email: '', categorias: [], descricao: '' } });
+            res.render('pages/parceiros', {
+                sucesso: true,
+                erro:    null,
+                valores: { empresa: '', email: '', categorias: [], descricao: '' }
+            });
         } catch (err) {
             console.error(err);
             res.render('pages/parceiros', { sucesso: null, erro: 'Erro ao enviar solicitação. Tente novamente.', valores: req.body });
@@ -802,7 +663,7 @@ router.post('/parceiros',
     }
 );
 
-// atendimento 
+// ── Atendimento ───────────────────────────────────────────
 router.get('/atendimento', (req, res) => {
     res.render('pages/atendimento', { sucesso: null, erro: null, valores: { email: '', mensagem: '' } });
 });
@@ -836,163 +697,245 @@ router.post('/atendimento',
     }
 );
 
-// GET /finalizar-compra — exibe o formulário de checkout
-router.get('/finalizar-compra', requireLogin, blockAdmin, async (req, res) => {
-    const { id_usuario, session_id } = getIdentificador(req);
-    const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
+// ── Admin ─────────────────────────────────────────────────
+router.get('/admin', requireAdmin, async (req, res) => {
+    const produtos   = await produtosModel.findAll();
+    const usuarios   = await usuariosModel.findAll();
+    const banners    = await bannersModel.findAll();
+    const categorias = await produtosModel.findAllCategorias();
 
-    if (!itens || itens.length === 0) {
-        return res.redirect('/carrinho');
-    }
+    const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
+        ...p,
+        id:            p.id_produto,
+        preco:         parseFloat(p.preco) || 0,
+        precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
+    }));
 
-    const carrinho = itens.map(function(i) {
-        return {
-            ...i,
-            id:            i.id_produto,
-            preco:         parseFloat(i.preco)         || 0,
-            precoDesconto: i.preco_desconto != null ? parseFloat(i.preco_desconto) : null
-        };
-    });
-
-    res.render('pages/finalizar-compra', {
-        carrinho,
-        mensagemErro: req.query.erro ? decodeURIComponent(req.query.erro) : null
-    });
-});
-
-
-// POST /finalizar-compra — processa o pedido
-router.post('/finalizar-compra', requireLogin, blockAdmin,
-    body('cep').notEmpty().withMessage('CEP obrigatório!')
-        .matches(/^\d{5}-?\d{3}$/).withMessage('CEP inválido!'),
-    body('rua').notEmpty().isLength({ min: 3, max: 150 }).withMessage('Rua obrigatória!'),
-    body('numero').notEmpty().withMessage('Número obrigatório!'),
-    body('bairro').notEmpty().isLength({ min: 2, max: 80 }).withMessage('Bairro obrigatório!'),
-    body('cidade').notEmpty().isLength({ min: 2, max: 80 }).withMessage('Cidade obrigatória!'),
-    body('estado').notEmpty().isLength({ min: 2, max: 2 }).withMessage('Estado obrigatório!'),
-    body('forma_pagamento').notEmpty()
-        .isIn(['cartao_credito', 'cartao_debito', 'pix', 'boleto'])
-        .withMessage('Forma de pagamento inválida!'),
-    async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            const msg = encodeURIComponent(errors.array()[0].msg);
-            return res.redirect('/finalizar-compra?erro=' + msg);
-        }
-
-        const { id_usuario, session_id } = getIdentificador(req);
-        const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
-
-        if (!itens || itens.length === 0) {
-            return res.redirect('/carrinho');
-        }
-
-        // Rejeita se houver itens fora de estoque
-        const temForaEstoque = itens.some(function(i) {
-            return i.status === 'fora-de-estoque';
-        });
-        if (temForaEstoque) {
-            return res.redirect('/finalizar-compra?erro=' +
-                encodeURIComponent('Remova os itens fora de estoque antes de finalizar.'));
-        }
-
-        // Normaliza itens
-        const itensMapeados = itens.map(function(i) {
-            return {
-                id_produto:    i.id_produto,
-                preco:         parseFloat(i.preco)         || 0,
-                precoDesconto: i.preco_desconto != null ? parseFloat(i.preco_desconto) : null,
-                quantidade:    parseInt(i.quantidade)      || 1
-            };
-        });
-
-        // Calcula o total no SERVIDOR — ignora valor enviado pelo cliente (segurança)
-        var subtotal = itensMapeados.reduce(function(acc, i) {
-            var p = (i.precoDesconto && i.precoDesconto > 0) ? i.precoDesconto : i.preco;
-            return acc + p * i.quantidade;
-        }, 0);
-
-        // Aplica desconto conforme forma de pagamento
-        var desconto = 0;
-        if (req.body.forma_pagamento === 'pix')    desconto = subtotal * 0.05;
-        if (req.body.forma_pagamento === 'boleto') desconto = subtotal * 0.03;
-
-        // Frete simulado pelo CEP
-        var cepNumeros = (req.body.cep || '').replace(/\D/g, '');
-        var frete = 19.90;
-        if (cepNumeros.length === 8) {
-            var prefixo = parseInt(cepNumeros.substring(0, 5));
-            if (prefixo >= 1000  && prefixo <= 19999) frete = 9.90;
-            else if (prefixo >= 20000 && prefixo <= 28999) frete = 12.90;
-            else if (prefixo >= 30000 && prefixo <= 39999) frete = 14.90;
-        }
-        if (subtotal >= 150) frete = 0;
-
-        const valor_total = parseFloat((subtotal + frete - desconto).toFixed(2));
-
-        // Cria pedido
-        const pedidoResult = await pedidosModel.create(id_usuario, itensMapeados, valor_total);
-        if (pedidoResult.erro) {
-            return res.redirect('/finalizar-compra?erro=' +
-                encodeURIComponent('Erro ao criar pedido. Tente novamente.'));
-        }
-
-        // Cria pagamento
-        const pagResult = await pedidosModel.createPagamento(
-            pedidoResult.id_pedido,
-            req.body.forma_pagamento,
-            valor_total
-        );
-
-        // Cria entrega
-        if (!pagResult.erro) {
-            await pedidosModel.createEntrega(pagResult.id_pagamento, '+Saúde Entregas');
-        }
-
-        // Limpa carrinho — usa pool diretamente para garantir remoção total
-        const pool = require('../config/pool_conexoes');
-        if (id_usuario) {
-            await pool.query('DELETE FROM carrinho WHERE id_usuario = ?', [id_usuario]);
-        } else {
-            await carrinhoModel.limparPorSession(session_id);
-        }
-
-        // Rótulo legível da forma de pagamento
-        const formasLabel = {
-            cartao_credito: 'Cartão de Crédito',
-            cartao_debito:  'Cartão de Débito',
-            pix:            'PIX',
-            boleto:         'Boleto Bancário'
-        };
-
-        // Monta endereço resumido
-        const { rua, numero, complemento, bairro, cidade, estado, cep } = req.body;
-        const endereco = [
-            rua + ', ' + numero + (complemento ? ' ' + complemento : ''),
-            bairro + ' — ' + cidade + '/' + estado,
-            'CEP: ' + cep
-        ].join(' | ');
-
-        // Busca itens do pedido para exibir na confirmação
-        const pedidoCompleto = await pedidosModel.findById(pedidoResult.id_pedido);
-
-        res.render('pages/pedido-confirmado', {
-            id_pedido:             pedidoResult.id_pedido,
-            valor_total,
-            itens:                 pedidoCompleto ? pedidoCompleto.itens : itensMapeados,
-            endereco,
-            forma_pagamento_label: formasLabel[req.body.forma_pagamento] || req.body.forma_pagamento
-        });
-    }
-);
-
-// logout 
-router.get('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) console.error('Erro ao destruir sessão:', err);
-        res.redirect('/login');
+    res.render('pages/admin', {
+        produtos:         produtosNorm,
+        totalProdutos:    produtosNorm.length,
+        usuarios:         Array.isArray(usuarios)   ? usuarios   : [],
+        banners:          Array.isArray(banners)    ? banners    : [],
+        categorias:       Array.isArray(categorias) ? categorias : [],
+        erro:             req.query.erro    || null,
+        sucesso:          req.query.sucesso || null,
+        mensagensSucesso: MSGS_SUCESSO,
+        mensagensErro:    MSGS_ERRO
     });
 });
 
+router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
+    uploadProduto.single('imagem')(req, res, async (err) => {
+        if (err) {
+            console.error('Multer erro produto:', err);
+            return res.redirect('/admin?erro=adicionar_produto');
+        }
+        try {
+            const imagemPath    = req.file ? '/imagens/produtos/' + req.file.filename : '/imagens/foto.jpg';
+            const preco         = parseFloat(req.body.preco) || 0;
+            const precoDesc     = req.body.precoDesconto && String(req.body.precoDesconto).trim() !== ''
+                                  ? parseFloat(req.body.precoDesconto) || null
+                                  : null;
+            const ids_categorias = parseCategorias(req.body);
+
+            if (ids_categorias.length === 0) return res.redirect('/admin?erro=categoria_invalida');
+
+            const result = await produtosModel.create({
+                nome:           (req.body.nome || '').trim() || 'Produto sem nome',
+                descricao:      (req.body.descricao || '').trim(),
+                preco,
+                preco_desconto: precoDesc,
+                imagem:         imagemPath,
+                status:         req.body.status || 'em-estoque'
+            }, ids_categorias);
+
+            if (result && result.errno) return res.redirect('/admin?erro=adicionar_produto');
+            res.redirect('/admin?sucesso=produto_adicionado');
+        } catch (err) {
+            console.error(err);
+            res.redirect('/admin?erro=adicionar_produto');
+        }
+    });
+});
+
+router.get('/admin/editar-produto/:id', requireAdmin, async (req, res) => {
+    const produto    = await produtosModel.findById(req.params.id);
+    if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
+    const categorias = await produtosModel.findAllCategorias();
+    const ids_atual  = produto.ids_categorias
+                       ? produto.ids_categorias.split(',').map(Number)
+                       : [];
+    res.render('pages/editar-produto', {
+        produto: { ...produto, id: produto.id_produto, precoDesconto: produto.preco_desconto, ids_categorias_atual: ids_atual },
+        categorias,
+        erro: null
+    });
+});
+
+router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
+    uploadProduto.single('imagem')(req, res, async (err) => {
+        if (err) return res.redirect('/admin?erro=editar_produto');
+        try {
+            const produto = await produtosModel.findById(req.params.id);
+            if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
+
+            let imagemPath = produto.imagem;
+            if (req.file) {
+                imagemPath = '/imagens/produtos/' + req.file.filename;
+                if (produto.imagem && produto.imagem !== '/imagens/foto.jpg') {
+                    const old = path.join(__dirname, '../public', produto.imagem);
+                    if (fs.existsSync(old)) fs.unlinkSync(old);
+                }
+            }
+
+            const ids_categorias = parseCategorias(req.body);
+            if (ids_categorias.length === 0) return res.redirect('/admin?erro=categoria_invalida');
+
+            const result = await produtosModel.update(req.params.id, {
+                nome:           (req.body.nome || produto.nome).trim(),
+                descricao:      req.body.descricao || produto.descricao,
+                preco:          parseFloat(req.body.preco) || 0,
+                preco_desconto: req.body.precoDesconto && String(req.body.precoDesconto).trim() !== ''
+                                ? parseFloat(req.body.precoDesconto) || null
+                                : null,
+                imagem:         imagemPath,
+                status:         req.body.status || produto.status
+            }, ids_categorias);
+
+            if (result && result.errno) return res.redirect('/admin?erro=editar_produto');
+            res.redirect('/admin?sucesso=produto_editado');
+        } catch (err) {
+            console.error(err);
+            res.redirect('/admin?erro=editar_produto');
+        }
+    });
+});
+
+router.post('/admin/excluir-produto/:id', requireAdmin, async (req, res) => {
+    try {
+        const produto = await produtosModel.findById(req.params.id);
+        if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
+        if (produto.imagem && produto.imagem !== '/imagens/foto.jpg') {
+            const imgPath = path.join(__dirname, '../public', produto.imagem);
+            if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
+        }
+        await produtosModel.delete(req.params.id);
+        res.redirect('/admin?sucesso=produto_excluido');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/admin?erro=excluir_produto');
+    }
+});
+
+router.post('/admin/excluir-usuario/:email', requireAdmin, async (req, res) => {
+    try {
+        await usuariosModel.delete(req.params.email);
+        res.redirect('/admin?sucesso=usuario_excluido');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/admin?erro=excluir_usuario');
+    }
+});
+
+router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
+    try {
+        const nome = (req.body.nome_categoria || '').trim();
+        if (!nome || nome.length < 2) return res.redirect('/admin?erro=categoria_nome_invalido&tab=categorias');
+
+        const existe = await produtosModel.findCategoriaPorNome(nome);
+        if (existe)  return res.redirect('/admin?erro=categoria_ja_existe&tab=categorias');
+
+        const result = await produtosModel.createCategoria(nome);
+        if (!result || result.erro || result.errno || !result.insertId || result.insertId <= 0) {
+            console.error('Erro ao criar categoria:', result);
+            return res.redirect('/admin?erro=criar_categoria&tab=categorias');
+        }
+        res.redirect('/admin?sucesso=categoria_criada&tab=categorias');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/admin?erro=criar_categoria&tab=categorias');
+    }
+});
+
+router.post('/admin/excluir-categoria/:id', requireAdmin, async (req, res) => {
+    try {
+        await produtosModel.deleteCategoria(req.params.id);
+        res.redirect('/admin?sucesso=categoria_excluida&tab=categorias');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/admin?erro=excluir_categoria&tab=categorias');
+    }
+});
+
+router.post('/admin/criar-banner', requireAdmin, (req, res) => {
+    uploadBanner.single('imagem')(req, res, async (err) => {
+        if (err) return res.redirect('/admin?erro=criar_banner&tab=banners');
+        try {
+            if (!req.file) return res.redirect('/admin?erro=imagem_obrigatoria&tab=banners');
+
+            const imagemPath = '/imagens/' + req.file.filename;
+            const legenda    = (req.body.legenda || '').trim() || 'Novo Banner';
+            let   link       = (req.body.link    || '/home').trim();
+            if (!link.startsWith('/')) link = '/' + link;
+
+            const result = await bannersModel.create({ imagem: imagemPath, legenda, link });
+            if (result && result.errno) return res.redirect('/admin?erro=criar_banner&tab=banners');
+            res.redirect('/admin?sucesso=banner_criado&tab=banners');
+        } catch (e) {
+            console.error(e);
+            res.redirect('/admin?erro=criar_banner&tab=banners');
+        }
+    });
+});
+
+router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
+    uploadBanner.single('imagem')(req, res, async (err) => {
+        if (err) return res.redirect('/admin?erro=editar_banner&tab=banners');
+        try {
+            const bannerId = parseInt(req.params.id);
+            const banner   = await bannersModel.findById(bannerId);
+            if (!banner) return res.redirect('/admin?erro=banner_nao_encontrado&tab=banners');
+
+            let imagemPath = banner.imagem;
+            if (req.file) {
+                imagemPath = '/imagens/' + req.file.filename;
+                const originais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
+                if (!originais.includes(banner.imagem)) {
+                    const old = path.join(__dirname, '../public', banner.imagem);
+                    if (fs.existsSync(old)) { try { fs.unlinkSync(old); } catch(_) {} }
+                }
+            }
+
+            let legenda = (req.body.legenda || '').trim() || banner.legenda;
+            let link    = (req.body.link    || '/home').trim();
+            if (!link.startsWith('/')) link = '/' + link;
+
+            await bannersModel.update(bannerId, { imagem: imagemPath, legenda, link });
+            res.redirect('/admin?sucesso=banner_editado&tab=banners');
+        } catch (e) {
+            console.error(e);
+            res.redirect('/admin?erro=editar_banner&tab=banners');
+        }
+    });
+});
+
+router.post('/admin/excluir-banner/:id', requireAdmin, async (req, res) => {
+    try {
+        const banner = await bannersModel.findById(parseInt(req.params.id));
+        if (!banner) return res.redirect('/admin?erro=banner_nao_encontrado&tab=banners');
+
+        const originais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
+        if (!originais.includes(banner.imagem)) {
+            const imgPath = path.join(__dirname, '../public', banner.imagem);
+            if (fs.existsSync(imgPath)) { try { fs.unlinkSync(imgPath); } catch(_) {} }
+        }
+
+        await bannersModel.delete(parseInt(req.params.id));
+        res.redirect('/admin?sucesso=banner_excluido&tab=banners');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/admin?erro=excluir_banner&tab=banners');
+    }
+});
 
 module.exports = router;
