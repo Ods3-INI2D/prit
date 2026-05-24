@@ -110,9 +110,11 @@
                         </output>
 
                         <% if (usuarioLogado) { %>
-                            <button class="btn-finalizar" type="button">Finalizar Compra</button>
+                            <a href="/finalizar-compra" class="btn-finalizar" style="text-decoration:none; display:block; text-align:center;">
+                                Finalizar Compra
+                            </a>
                         <% } else { %>
-                            <a href="/login?redirect=/carrinho" class="btn-finalizar" style="text-decoration:none;display:block;text-align:center;">
+                            <a href="/login?redirect=/finalizar-compra" class="btn-finalizar" style="text-decoration:none;display:block;text-align:center;">
                                 Fazer Login para Finalizar
                             </a>
                         <% } %>

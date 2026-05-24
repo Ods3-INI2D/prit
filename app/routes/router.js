@@ -13,6 +13,7 @@ const { usuariosModel  } = require('../models/usuariosmodel');
 const { produtosModel  } = require('../models/produtosmodel');
 const { carrinhoModel  } = require('../models/carrinhomodel');
 const { bannersModel   } = require('../models/bannersmodel');
+const { pedidosModel } = require('../models/pedidosmodel');
 
 // validaçoes
 var { valCPF, valDDD, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
@@ -832,6 +833,130 @@ router.post('/atendimento',
             console.error(err);
             res.render('pages/atendimento', { sucesso: null, erro: 'Erro ao enviar mensagem. Tente novamente.', valores: req.body });
         }
+    }
+);
+
+// GET /finalizar-compra — exibe o formulário de checkout
+router.get('/finalizar-compra', requireLogin, blockAdmin, async (req, res) => {
+    const { id_usuario, session_id } = getIdentificador(req);
+    const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
+
+    if (!itens || itens.length === 0) {
+        return res.redirect('/carrinho');
+    }
+
+    const carrinho = itens.map(function(i) {
+        return {
+            ...i,
+            id:            i.id_produto,
+            preco:         parseFloat(i.preco)         || 0,
+            precoDesconto: i.preco_desconto != null ? parseFloat(i.preco_desconto) : null
+        };
+    });
+
+    res.render('pages/finalizar-compra', {
+        carrinho,
+        mensagemErro: req.query.erro ? decodeURIComponent(req.query.erro) : null
+    });
+});
+
+
+// POST /finalizar-compra — processa o pedido
+router.post('/finalizar-compra', requireLogin, blockAdmin,
+    body('cep').notEmpty().withMessage('CEP obrigatório!')
+        .matches(/^\d{5}-?\d{3}$/).withMessage('CEP inválido!'),
+    body('rua').notEmpty().isLength({ min: 3, max: 150 }).withMessage('Rua obrigatória!'),
+    body('numero').notEmpty().withMessage('Número obrigatório!'),
+    body('bairro').notEmpty().isLength({ min: 2, max: 80 }).withMessage('Bairro obrigatório!'),
+    body('cidade').notEmpty().isLength({ min: 2, max: 80 }).withMessage('Cidade obrigatória!'),
+    body('estado').notEmpty().isLength({ min: 2, max: 2 }).withMessage('Estado obrigatório!'),
+    body('forma_pagamento').notEmpty()
+        .isIn(['cartao_credito', 'cartao_debito', 'pix', 'boleto'])
+        .withMessage('Forma de pagamento inválida!'),
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const msg = encodeURIComponent(errors.array()[0].msg);
+            return res.redirect('/finalizar-compra?erro=' + msg);
+        }
+
+        const { id_usuario, session_id } = getIdentificador(req);
+        const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
+
+        if (!itens || itens.length === 0) {
+            return res.redirect('/carrinho');
+        }
+
+        // normaliza itens
+        const itensMapeados = itens.map(function(i) {
+            return {
+                id_produto:    i.id_produto,
+                preco:         parseFloat(i.preco)         || 0,
+                precoDesconto: i.preco_desconto != null ? parseFloat(i.preco_desconto) : null,
+                quantidade:    parseInt(i.quantidade)       || 1
+            };
+        });
+
+        // valor total vem do form (já com possíveis descontos PIX/boleto e frete)
+        const valor_total = parseFloat(req.body.total_pedido) || itensMapeados.reduce(function(acc, i) {
+            var p = (i.precoDesconto && i.precoDesconto > 0) ? i.precoDesconto : i.preco;
+            return acc + p * i.quantidade;
+        }, 0);
+
+        // cria pedido
+        const pedidoResult = await pedidosModel.create(id_usuario, itensMapeados, valor_total);
+        if (pedidoResult.erro) {
+            return res.redirect('/finalizar-compra?erro=' + encodeURIComponent('Erro ao criar pedido. Tente novamente.'));
+        }
+
+        // cria pagamento
+        const pagResult = await pedidosModel.createPagamento(
+            pedidoResult.id_pedido,
+            req.body.forma_pagamento,
+            valor_total
+        );
+
+        // cria entrega
+        if (!pagResult.erro) {
+            await pedidosModel.createEntrega(pagResult.id_pagamento, '+Saúde Entregas');
+        }
+
+        // limpa carrinho
+        if (id_usuario) {
+            await carrinhoModel.findByIdentificador(id_usuario, null);
+            // remove todos os itens do carrinho do usuário
+            const pool = require('../config/pool_conexoes');
+            await pool.query('DELETE FROM carrinho WHERE id_usuario = ?', [id_usuario]);
+        } else {
+            await carrinhoModel.limparPorSession(session_id);
+        }
+
+        // monta rótulo legível para forma de pagamento
+        const formasLabel = {
+            cartao_credito: 'Cartão de Crédito',
+            cartao_debito:  'Cartão de Débito',
+            pix:            'PIX',
+            boleto:         'Boleto Bancário'
+        };
+
+        // monta endereço resumido
+        const { rua, numero, complemento, bairro, cidade, estado, cep } = req.body;
+        const endereco = [
+            rua + ', ' + numero + (complemento ? ' ' + complemento : ''),
+            bairro + ' — ' + cidade + '/' + estado,
+            'CEP: ' + cep
+        ].join(' | ');
+
+        // busca itens do pedido para exibir na confirmação
+        const pedidoCompleto = await pedidosModel.findById(pedidoResult.id_pedido);
+
+        res.render('pages/pedido-confirmado', {
+            id_pedido:           pedidoResult.id_pedido,
+            valor_total:         valor_total,
+            itens:               pedidoCompleto ? pedidoCompleto.itens : itensMapeados,
+            endereco,
+            forma_pagamento_label: formasLabel[req.body.forma_pagamento] || req.body.forma_pagamento
+        });
     }
 );
 
