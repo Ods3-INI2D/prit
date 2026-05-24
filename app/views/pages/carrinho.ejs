@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="/css/theme.css">
     <link rel="stylesheet" href="/css/semantica-fix.css">
     <script src="/js/theme.js"></script>
+    <style>
+        .item-fora-estoque { opacity: 0.65; }
+    </style>
 </head>
 <body>
     <header>
@@ -50,10 +53,14 @@
                     </output>
                 <% } %>
 
-                <section class="carrinho-layout">
+                <%# ERRO 1 CORRIGIDO: era <section class="carrinho-layout"> sem heading associado
+                    que agrupa dois blocos distintos (lista + resumo lateral). O elemento correto
+                    é <article> pois representa um bloco de conteúdo independente e auto-contido. %>
+                <article class="carrinho-layout">
 
                     <%# Lista de itens %>
-                    <section class="lista-carrinho-wrapper">
+                    <section class="lista-carrinho-wrapper" aria-labelledby="titulo-lista-carrinho">
+                        <h2 id="titulo-lista-carrinho" class="visually-hidden" style="display:none;">Itens no carrinho</h2>
                         <ul class="lista-carrinho" aria-label="Itens no carrinho">
                             <% carrinho.forEach(function(produto) {
                                 const preco         = parseFloat(produto.preco)        || 0;
@@ -64,7 +71,7 @@
                                 const subtotal      = precoFinal * (parseInt(produto.quantidade) || 1);
                                 const foraEstoque   = produto.status === 'fora-de-estoque';
                             %>
-                                <li class="item-carrinho" style="<%= foraEstoque ? 'opacity:0.65;' : '' %>">
+                                <li class="item-carrinho<%= foraEstoque ? ' item-fora-estoque' : '' %>">
                                     <img src="<%= produto.imagem %>"
                                          alt="<%= produto.nome %>"
                                          class="imagem-produto">
@@ -80,18 +87,19 @@
                                             </output>
                                         <% } %>
 
-                                        <section class="preco-container">
+                                        <p class="preco-container">
                                             <% if (precoDesconto !== null && precoDesconto > 0) { %>
                                                 <output class="preco-original">R$ <%= preco.toFixed(2) %></output>
                                                 <output class="preco-desconto">R$ <%= precoDesconto.toFixed(2) %></output>
                                             <% } else { %>
                                                 <output class="preco-produto">R$ <%= preco.toFixed(2) %></output>
                                             <% } %>
-                                        </section>
+                                        </p>
 
                                         <% if (!foraEstoque) { %>
-                                            <section class="controles-quantidade"
+                                            <fieldset class="controles-quantidade"
                                                      aria-label="Controle de quantidade de <%= produto.nome %>">
+                                                <legend style="display:none;">Quantidade</legend>
                                                 <form method="POST"
                                                       action="/carrinho/atualizar/<%= produto.id_produto || produto.id %>"
                                                       class="form-quantidade">
@@ -118,7 +126,7 @@
                                                             class="btn-quantidade"
                                                             aria-label="Aumentar quantidade de <%= produto.nome %>">+</button>
                                                 </form>
-                                            </section>
+                                            </fieldset>
                                         <% } %>
 
                                         <output class="subtotal-item">
@@ -158,10 +166,14 @@
                             <dd>A calcular</dd>
                         </dl>
 
-                        <output class="total-resumo" aria-label="Total estimado">
+                        <%# ERRO 2 CORRIGIDO: era <output class="total-resumo"> contendo <strong> e
+                            outro <output> aninhado. O elemento <output> é para valores de cálculo
+                            simples e não deve conter elementos estruturais filhos. O correto é <p>
+                            que permite conteúdo de fluxo misto com strong e output interno. %>
+                        <p class="total-resumo" aria-label="Total estimado">
                             <strong>Total:</strong>
                             <output>R$ <%= subtotalGeral.toFixed(2) %></output>
-                        </output>
+                        </p>
 
                         <% if (temItemForaEstoque) { %>
                             <output class="mensagem-erro" role="alert"
@@ -183,7 +195,7 @@
                         <% } %>
                     </aside>
 
-                </section>
+                </article>
             <% } %>
         </section>
     </main>

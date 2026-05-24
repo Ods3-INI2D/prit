@@ -54,10 +54,13 @@
                 </output>
             <% } %>
 
-            <section class="checkout-layout">
+            <%# ERRO 1 CORRIGIDO: era <section class="checkout-layout"> sem heading associado
+                agrupando formulário e aside lateral. Sendo um bloco auto-contido com dois
+                sub-blocos complementares, o elemento correto é <article>. %>
+            <article class="checkout-layout">
 
                 <%# ── Formulário principal ── %>
-                <article class="checkout-formulario">
+                <section class="checkout-formulario" aria-labelledby="titulo-checkout">
                     <form method="POST"
                           action="/finalizar-compra"
                           id="form-checkout"
@@ -107,7 +110,13 @@
                                 </label>
                             </fieldset>
 
-                            <section class="campos-linha">
+                            <%# ERRO 2 CORRIGIDO: era <section class="campos-linha"> sem heading
+                                agrupando dois fieldsets lado a lado por layout. O elemento correto
+                                é <fieldset> com <legend> oculta, pois agrupa campos relacionados
+                                de um mesmo formulário (número e complemento do endereço). %>
+                            <fieldset class="campos-linha">
+                                <legend style="display:none;">Número e complemento</legend>
+
                                 <fieldset class="campo-checkout">
                                     <legend class="label-checkout">
                                         Número
@@ -132,7 +141,7 @@
                                                autocomplete="address-line2">
                                     </label>
                                 </fieldset>
-                            </section>
+                            </fieldset>
 
                             <fieldset class="campo-checkout">
                                 <legend class="label-checkout">
@@ -148,7 +157,13 @@
                                 </label>
                             </fieldset>
 
-                            <section class="campos-linha">
+                            <%# ERRO 3 CORRIGIDO: era <section class="campos-linha"> sem heading
+                                agrupando cidade e estado por layout. Mesmo raciocínio do erro 2:
+                                o correto é <fieldset> com <legend> oculta pois agrupa campos
+                                relacionados de localização dentro do formulário. %>
+                            <fieldset class="campos-linha">
+                                <legend style="display:none;">Cidade e estado</legend>
+
                                 <fieldset class="campo-checkout">
                                     <legend class="label-checkout">
                                         Cidade
@@ -205,7 +220,7 @@
                                         </select>
                                     </label>
                                 </fieldset>
-                            </section>
+                            </fieldset>
                         </section>
 
                         <%# ── Forma de pagamento ── %>
@@ -313,7 +328,13 @@
                                         </label>
                                     </fieldset>
 
-                                    <section class="campos-linha">
+                                    <%# ERRO 4 CORRIGIDO: era <section class="campos-linha"> sem
+                                        heading agrupando validade e CVV por layout. O correto é
+                                        <fieldset> com <legend> oculta pois agrupa campos de dados
+                                        do cartão relacionados dentro do mesmo formulário. %>
+                                    <fieldset class="campos-linha">
+                                        <legend style="display:none;">Validade e CVV</legend>
+
                                         <fieldset class="campo-checkout">
                                             <legend class="label-checkout">
                                                 Validade
@@ -345,7 +366,7 @@
                                                        inputmode="numeric">
                                             </label>
                                         </fieldset>
-                                    </section>
+                                    </fieldset>
 
                                     <fieldset class="campo-checkout"
                                               id="campo-parcelas"
@@ -385,10 +406,10 @@
                         </button>
 
                     </form>
-                </article>
+                </section>
 
                 <%# ── Resumo lateral ── %>
-                <aside class="resumo-checkout" aria-labelledby="titulo-resumo">
+                <aside class="resumo-checkout" aria-labelledby="titulo-resumo" id="resumo-lateral" data-total="<%= totalFinal.toFixed(2) %>">
                     <h2 class="resumo-titulo" id="titulo-resumo">Resumo do Pedido</h2>
 
                     <%
@@ -408,10 +429,10 @@
                                 <img src="<%= item.imagem %>"
                                      alt="<%= item.nome %>"
                                      class="resumo-item-imagem">
-                                <section class="resumo-item-info">
+                                <p class="resumo-item-info">
                                     <output class="resumo-item-nome"><%= item.nome %></output>
                                     <output class="resumo-item-qtd">Qtd: <%= qtd %></output>
-                                </section>
+                                </p>
                                 <output class="resumo-item-preco">
                                     R$ <%= subtItem.toFixed(2) %>
                                 </output>
@@ -419,31 +440,32 @@
                         <% }); %>
                     </ul>
 
-                    <section class="resumo-totais">
-                        <dl class="resumo-linha">
-                            <dt><strong>Subtotal</strong></dt>
-                            <dd>R$ <%= totalFinal.toFixed(2) %></dd>
-                        </dl>
+                    <%# ERRO 5 CORRIGIDO: era <section class="resumo-totais"> sem heading
+                        contendo múltiplos <dl class="resumo-linha"> separados — cada um com
+                        apenas um par dt/dd, o que é semânticamente errado pois uma <dl> deve
+                        conter todos os pares relacionados. O correto é uma única <dl> com todos
+                        os pares dt/dd agrupados dentro dela. %>
+                    <dl class="resumo-totais">
+                        <dt><strong>Subtotal</strong></dt>
+                        <dd>R$ <%= totalFinal.toFixed(2) %></dd>
 
-                        <dl class="resumo-linha">
-                            <dt><strong>Frete</strong></dt>
-                            <dd id="valor-frete">A calcular</dd>
-                        </dl>
+                        <dt><strong>Frete</strong></dt>
+                        <dd id="valor-frete">A calcular</dd>
 
-                        <dl class="resumo-linha" id="linha-desconto-pix" style="display:none;">
-                            <dt><strong>Desconto PIX (5%)</strong></dt>
-                            <dd id="valor-desconto-pix" style="color:#4da6ff;">
-                                - R$ <%= (totalFinal * 0.05).toFixed(2) %>
-                            </dd>
-                        </dl>
+                        <%# ERRO 6 CORRIGIDO: os pares de desconto PIX e boleto eram <dl> separadas
+                            com apenas um par dt/dd cada. Agora estão como pares dt/dd dentro da
+                            mesma <dl> pai, com visibilidade controlada via JS nos elementos
+                            individuais, que é o uso correto de lista de definição. %>
+                        <dt id="dt-desconto-pix" style="display:none;"><strong>Desconto PIX (5%)</strong></dt>
+                        <dd id="valor-desconto-pix" style="display:none;color:#4da6ff;">
+                            - R$ <%= (totalFinal * 0.05).toFixed(2) %>
+                        </dd>
 
-                        <dl class="resumo-linha" id="linha-desconto-boleto" style="display:none;">
-                            <dt><strong>Desconto Boleto (3%)</strong></dt>
-                            <dd id="valor-desconto-boleto" style="color:#4da6ff;">
-                                - R$ <%= (totalFinal * 0.03).toFixed(2) %>
-                            </dd>
-                        </dl>
-                    </section>
+                        <dt id="dt-desconto-boleto" style="display:none;"><strong>Desconto Boleto (3%)</strong></dt>
+                        <dd id="valor-desconto-boleto" style="display:none;color:#4da6ff;">
+                            - R$ <%= (totalFinal * 0.03).toFixed(2) %>
+                        </dd>
+                    </dl>
 
                     <output class="resumo-total" aria-live="polite" aria-label="Total do pedido">
                         <strong>Total:</strong>
@@ -470,7 +492,7 @@
                     </output>
                 </aside>
 
-            </section>
+            </article>
         </section>
     </main>
 
@@ -480,7 +502,7 @@
     (function() {
         'use strict';
 
-        var totalBase = <%= totalFinal.toFixed(2) %>;
+        var totalBase = parseFloat(document.getElementById('resumo-lateral').getAttribute('data-total')) || 0;
 
         /* ── Máscara CEP ── */
         var inputCep = document.getElementById('cep');
@@ -552,30 +574,34 @@
             var forma       = document.querySelector('input[name="forma_pagamento"]:checked');
             var totalEl     = document.getElementById('valor-total-checkout');
             var inputTotal  = document.getElementById('input-total-pedido');
-            var linhaPix    = document.getElementById('linha-desconto-pix');
-            var linhaBoleto = document.getElementById('linha-desconto-boleto');
+            var dtPix       = document.getElementById('dt-desconto-pix');
+            var ddPix       = document.getElementById('valor-desconto-pix');
+            var dtBoleto    = document.getElementById('dt-desconto-boleto');
+            var ddBoleto    = document.getElementById('valor-desconto-boleto');
             if (!totalEl) return;
 
             var frete    = window._freteAtual || 0;
             var desconto = 0;
             var formaVal = forma ? forma.value : '';
 
-            if (linhaPix)    linhaPix.style.display    = 'none';
-            if (linhaBoleto) linhaBoleto.style.display = 'none';
+            if (dtPix)    dtPix.style.display    = 'none';
+            if (ddPix)    ddPix.style.display    = 'none';
+            if (dtBoleto) dtBoleto.style.display = 'none';
+            if (ddBoleto) ddBoleto.style.display = 'none';
 
             if (formaVal === 'pix') {
                 desconto = totalBase * 0.05;
-                if (linhaPix) {
-                    linhaPix.style.display = 'flex';
-                    var elD = document.getElementById('valor-desconto-pix');
-                    if (elD) elD.textContent = '- R$ ' + desconto.toFixed(2);
+                if (dtPix && ddPix) {
+                    dtPix.style.display = '';
+                    ddPix.style.display = '';
+                    ddPix.textContent = '- R$ ' + desconto.toFixed(2);
                 }
             } else if (formaVal === 'boleto') {
                 desconto = totalBase * 0.03;
-                if (linhaBoleto) {
-                    linhaBoleto.style.display = 'flex';
-                    var elDB = document.getElementById('valor-desconto-boleto');
-                    if (elDB) elDB.textContent = '- R$ ' + desconto.toFixed(2);
+                if (dtBoleto && ddBoleto) {
+                    dtBoleto.style.display = '';
+                    ddBoleto.style.display = '';
+                    ddBoleto.textContent = '- R$ ' + desconto.toFixed(2);
                 }
             }
 
