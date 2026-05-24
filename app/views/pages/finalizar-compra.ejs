@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/css/checkout.css">
     <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/semantica-fix.css">
     <script src="/js/theme.js"></script>
 </head>
 <body>
@@ -30,16 +31,18 @@
 
             <h1 class="titulo-checkout">Finalizar Compra</h1>
 
+            <%# Barra de progresso %>
             <ol class="checkout-steps" aria-label="Etapas do checkout">
-                <li class="step concluido" aria-label="Carrinho, concluído">
+                <li class="step concluido" aria-label="Etapa 1 — Carrinho, concluída">
                     <output class="step-numero" aria-hidden="true">✓</output>
                     <output class="step-label">Carrinho</output>
                 </li>
-                <li class="step ativo" aria-current="step" aria-label="Dados e pagamento, etapa atual">
+                <li class="step ativo" aria-current="step"
+                    aria-label="Etapa 2 — Dados e Pagamento, etapa atual">
                     <output class="step-numero" aria-hidden="true">2</output>
                     <output class="step-label">Dados e Pagamento</output>
                 </li>
-                <li class="step" aria-label="Confirmação, próxima etapa">
+                <li class="step" aria-label="Etapa 3 — Confirmação, próxima etapa">
                     <output class="step-numero" aria-hidden="true">3</output>
                     <output class="step-label">Confirmação</output>
                 </li>
@@ -53,7 +56,7 @@
 
             <section class="checkout-layout">
 
-                <%# Formulário principal %>
+                <%# ── Formulário principal ── %>
                 <article class="checkout-formulario">
                     <form method="POST"
                           action="/finalizar-compra"
@@ -61,13 +64,17 @@
                           novalidate
                           aria-label="Formulário de finalização de compra">
 
-                        <%# Endereço %>
-                        <section class="checkout-form-section" aria-labelledby="titulo-endereco">
-                            <h2 class="secao-titulo" id="titulo-endereco">Endereço de Entrega</h2>
+                        <%# ── Endereço de entrega ── %>
+                        <section class="checkout-form-section"
+                                 aria-labelledby="titulo-endereco">
+                            <h2 class="secao-titulo" id="titulo-endereco">
+                                Endereço de Entrega
+                            </h2>
 
                             <fieldset class="campo-checkout">
                                 <legend class="label-checkout">
-                                    CEP <output class="obrigatorio" aria-hidden="true">*</output>
+                                    CEP
+                                    <output class="obrigatorio" aria-hidden="true">*</output>
                                 </legend>
                                 <label for="cep">
                                     <input type="text" id="cep" name="cep"
@@ -76,13 +83,19 @@
                                            maxlength="9"
                                            required aria-required="true"
                                            autocomplete="postal-code"
-                                           inputmode="numeric">
+                                           inputmode="numeric"
+                                           aria-describedby="cep-dica">
                                 </label>
+                                <output id="cep-dica" class="info-campo"
+                                        aria-live="polite">
+                                    Digite o CEP para preencher o endereço automaticamente.
+                                </output>
                             </fieldset>
 
                             <fieldset class="campo-checkout">
                                 <legend class="label-checkout">
-                                    Rua / Logradouro <output class="obrigatorio" aria-hidden="true">*</output>
+                                    Rua / Logradouro
+                                    <output class="obrigatorio" aria-hidden="true">*</output>
                                 </legend>
                                 <label for="rua">
                                     <input type="text" id="rua" name="rua"
@@ -97,7 +110,8 @@
                             <section class="campos-linha">
                                 <fieldset class="campo-checkout">
                                     <legend class="label-checkout">
-                                        Número <output class="obrigatorio" aria-hidden="true">*</output>
+                                        Número
+                                        <output class="obrigatorio" aria-hidden="true">*</output>
                                     </legend>
                                     <label for="numero">
                                         <input type="text" id="numero" name="numero"
@@ -122,7 +136,8 @@
 
                             <fieldset class="campo-checkout">
                                 <legend class="label-checkout">
-                                    Bairro <output class="obrigatorio" aria-hidden="true">*</output>
+                                    Bairro
+                                    <output class="obrigatorio" aria-hidden="true">*</output>
                                 </legend>
                                 <label for="bairro">
                                     <input type="text" id="bairro" name="bairro"
@@ -136,7 +151,8 @@
                             <section class="campos-linha">
                                 <fieldset class="campo-checkout">
                                     <legend class="label-checkout">
-                                        Cidade <output class="obrigatorio" aria-hidden="true">*</output>
+                                        Cidade
+                                        <output class="obrigatorio" aria-hidden="true">*</output>
                                     </legend>
                                     <label for="cidade">
                                         <input type="text" id="cidade" name="cidade"
@@ -150,7 +166,8 @@
 
                                 <fieldset class="campo-checkout">
                                     <legend class="label-checkout">
-                                        Estado <output class="obrigatorio" aria-hidden="true">*</output>
+                                        Estado
+                                        <output class="obrigatorio" aria-hidden="true">*</output>
                                     </legend>
                                     <label for="estado">
                                         <select id="estado" name="estado"
@@ -191,9 +208,12 @@
                             </section>
                         </section>
 
-                        <%# Pagamento %>
-                        <section class="checkout-form-section" aria-labelledby="titulo-pagamento">
-                            <h2 class="secao-titulo" id="titulo-pagamento">Forma de Pagamento</h2>
+                        <%# ── Forma de pagamento ── %>
+                        <section class="checkout-form-section"
+                                 aria-labelledby="titulo-pagamento">
+                            <h2 class="secao-titulo" id="titulo-pagamento">
+                                Forma de Pagamento
+                            </h2>
 
                             <fieldset>
                                 <legend class="label-checkout">
@@ -201,56 +221,75 @@
                                     <output class="obrigatorio" aria-hidden="true">*</output>
                                 </legend>
 
-                                <section class="formas-pagamento" role="radiogroup"
+                                <section class="formas-pagamento"
+                                         role="radiogroup"
                                          aria-labelledby="titulo-pagamento">
 
                                     <label class="opcao-pagamento">
                                         <input type="radio" name="forma_pagamento"
-                                               value="cartao_credito" id="pag-cartao-credito" required>
+                                               value="cartao_credito"
+                                               id="pag-cartao-credito"
+                                               required>
                                         <section class="pagamento-info">
                                             <output class="pagamento-nome">Cartão de Crédito</output>
-                                            <output class="pagamento-descricao">Visa, Mastercard, Elo, Amex — parcelamento disponível</output>
+                                            <output class="pagamento-descricao">
+                                                Visa, Mastercard, Elo, Amex — parcelamento disponível
+                                            </output>
                                         </section>
                                     </label>
 
                                     <label class="opcao-pagamento">
                                         <input type="radio" name="forma_pagamento"
-                                               value="cartao_debito" id="pag-cartao-debito">
+                                               value="cartao_debito"
+                                               id="pag-cartao-debito">
                                         <section class="pagamento-info">
                                             <output class="pagamento-nome">Cartão de Débito</output>
-                                            <output class="pagamento-descricao">Pagamento à vista no débito</output>
+                                            <output class="pagamento-descricao">
+                                                Pagamento à vista no débito
+                                            </output>
                                         </section>
                                     </label>
 
                                     <label class="opcao-pagamento">
                                         <input type="radio" name="forma_pagamento"
-                                               value="pix" id="pag-pix">
+                                               value="pix"
+                                               id="pag-pix">
                                         <section class="pagamento-info">
                                             <output class="pagamento-nome">PIX</output>
-                                            <output class="pagamento-descricao">Aprovação imediata — desconto de 5%</output>
+                                            <output class="pagamento-descricao">
+                                                Aprovação imediata — desconto de 5%
+                                            </output>
                                         </section>
                                     </label>
 
                                     <label class="opcao-pagamento">
                                         <input type="radio" name="forma_pagamento"
-                                               value="boleto" id="pag-boleto">
+                                               value="boleto"
+                                               id="pag-boleto">
                                         <section class="pagamento-info">
                                             <output class="pagamento-nome">Boleto Bancário</output>
-                                            <output class="pagamento-descricao">Vencimento em 3 dias úteis — desconto de 3%</output>
+                                            <output class="pagamento-descricao">
+                                                Vencimento em 3 dias úteis — desconto de 3%
+                                            </output>
                                         </section>
                                     </label>
 
                                 </section>
 
                                 <%# Campos do cartão — exibidos via JS %>
-                                <section class="campos-cartao" id="campos-cartao" aria-live="polite">
+                                <section class="campos-cartao"
+                                         id="campos-cartao"
+                                         aria-live="polite"
+                                         aria-label="Dados do cartão">
 
                                     <fieldset class="campo-checkout">
                                         <legend class="label-checkout">
-                                            Número do Cartão <output class="obrigatorio" aria-hidden="true">*</output>
+                                            Número do Cartão
+                                            <output class="obrigatorio" aria-hidden="true">*</output>
                                         </legend>
                                         <label for="numero-cartao">
-                                            <input type="text" id="numero-cartao" name="numero_cartao"
+                                            <input type="text" id="numero-cartao"
+                                                   name="numero_cartao"
                                                    class="input-checkout"
                                                    placeholder="0000 0000 0000 0000"
                                                    maxlength="19"
@@ -261,10 +300,12 @@
 
                                     <fieldset class="campo-checkout">
                                         <legend class="label-checkout">
-                                            Nome no Cartão <output class="obrigatorio" aria-hidden="true">*</output>
+                                            Nome no Cartão
+                                            <output class="obrigatorio" aria-hidden="true">*</output>
                                         </legend>
                                         <label for="nome-cartao">
-                                            <input type="text" id="nome-cartao" name="nome_cartao"
+                                            <input type="text" id="nome-cartao"
+                                                   name="nome_cartao"
                                                    class="input-checkout"
                                                    placeholder="Como está impresso no cartão"
                                                    maxlength="60"
@@ -275,10 +316,12 @@
                                     <section class="campos-linha">
                                         <fieldset class="campo-checkout">
                                             <legend class="label-checkout">
-                                                Validade <output class="obrigatorio" aria-hidden="true">*</output>
+                                                Validade
+                                                <output class="obrigatorio" aria-hidden="true">*</output>
                                             </legend>
                                             <label for="validade-cartao">
-                                                <input type="text" id="validade-cartao" name="validade_cartao"
+                                                <input type="text" id="validade-cartao"
+                                                       name="validade_cartao"
                                                        class="input-checkout"
                                                        placeholder="MM/AA"
                                                        maxlength="5"
@@ -289,10 +332,12 @@
 
                                         <fieldset class="campo-checkout">
                                             <legend class="label-checkout">
-                                                CVV <output class="obrigatorio" aria-hidden="true">*</output>
+                                                CVV
+                                                <output class="obrigatorio" aria-hidden="true">*</output>
                                             </legend>
                                             <label for="cvv-cartao">
-                                                <input type="text" id="cvv-cartao" name="cvv_cartao"
+                                                <input type="text" id="cvv-cartao"
+                                                       name="cvv_cartao"
                                                        class="input-checkout"
                                                        placeholder="000"
                                                        maxlength="4"
@@ -302,10 +347,13 @@
                                         </fieldset>
                                     </section>
 
-                                    <fieldset class="campo-checkout" id="campo-parcelas" style="display:none;">
+                                    <fieldset class="campo-checkout"
+                                              id="campo-parcelas"
+                                              style="display:none;">
                                         <legend class="label-checkout">Parcelamento</legend>
                                         <label for="parcelas">
-                                            <select id="parcelas" name="parcelas" class="select-checkout">
+                                            <select id="parcelas" name="parcelas"
+                                                    class="select-checkout">
                                                 <%
                                                     var totalBase = carrinho.reduce(function(acc, item) {
                                                         var p = (item.precoDesconto && item.precoDesconto > 0)
@@ -327,7 +375,7 @@
                             </fieldset>
                         </section>
 
-                        <%# Botão mobile — visível em telas pequenas via JS %>
+                        <%# Botão mobile — visível apenas em telas pequenas (via JS) %>
                         <button type="submit"
                                 class="btn-finalizar-pedido"
                                 id="btn-finalizar-mobile"
@@ -339,7 +387,7 @@
                     </form>
                 </article>
 
-                <%# Resumo lateral %>
+                <%# ── Resumo lateral ── %>
                 <aside class="resumo-checkout" aria-labelledby="titulo-resumo">
                     <h2 class="resumo-titulo" id="titulo-resumo">Resumo do Pedido</h2>
 
@@ -352,7 +400,8 @@
                             var precoDesc   = (item.precoDesconto && item.precoDesconto > 0)
                                               ? parseFloat(item.precoDesconto) : null;
                             var precoFinal  = precoDesc !== null ? precoDesc : preco;
-                            var subtItem    = precoFinal * (parseInt(item.quantidade) || 1);
+                            var qtd         = parseInt(item.quantidade) || 1;
+                            var subtItem    = precoFinal * qtd;
                             totalFinal     += subtItem;
                         %>
                             <li class="resumo-item">
@@ -361,39 +410,49 @@
                                      class="resumo-item-imagem">
                                 <section class="resumo-item-info">
                                     <output class="resumo-item-nome"><%= item.nome %></output>
-                                    <output class="resumo-item-qtd">Qtd: <%= item.quantidade %></output>
+                                    <output class="resumo-item-qtd">Qtd: <%= qtd %></output>
                                 </section>
-                                <output class="resumo-item-preco">R$ <%= subtItem.toFixed(2) %></output>
+                                <output class="resumo-item-preco">
+                                    R$ <%= subtItem.toFixed(2) %>
+                                </output>
                             </li>
                         <% }); %>
                     </ul>
 
                     <section class="resumo-totais">
-                        <output class="resumo-linha">
-                            <strong>Subtotal:</strong>
-                            <output>R$ <%= totalFinal.toFixed(2) %></output>
-                        </output>
-                        <output class="resumo-linha">
-                            <strong>Frete:</strong>
-                            <output id="valor-frete">A calcular</output>
-                        </output>
-                        <output class="resumo-linha" id="linha-desconto-pix" style="display:none; color:#4da6ff;">
-                            <strong>Desconto PIX (5%):</strong>
-                            <output id="valor-desconto-pix">- R$ <%= (totalFinal * 0.05).toFixed(2) %></output>
-                        </output>
-                        <output class="resumo-linha" id="linha-desconto-boleto" style="display:none; color:#4da6ff;">
-                            <strong>Desconto Boleto (3%):</strong>
-                            <output id="valor-desconto-boleto">- R$ <%= (totalFinal * 0.03).toFixed(2) %></output>
-                        </output>
+                        <dl class="resumo-linha">
+                            <dt><strong>Subtotal</strong></dt>
+                            <dd>R$ <%= totalFinal.toFixed(2) %></dd>
+                        </dl>
+
+                        <dl class="resumo-linha">
+                            <dt><strong>Frete</strong></dt>
+                            <dd id="valor-frete">A calcular</dd>
+                        </dl>
+
+                        <dl class="resumo-linha" id="linha-desconto-pix" style="display:none;">
+                            <dt><strong>Desconto PIX (5%)</strong></dt>
+                            <dd id="valor-desconto-pix" style="color:#4da6ff;">
+                                - R$ <%= (totalFinal * 0.05).toFixed(2) %>
+                            </dd>
+                        </dl>
+
+                        <dl class="resumo-linha" id="linha-desconto-boleto" style="display:none;">
+                            <dt><strong>Desconto Boleto (3%)</strong></dt>
+                            <dd id="valor-desconto-boleto" style="color:#4da6ff;">
+                                - R$ <%= (totalFinal * 0.03).toFixed(2) %>
+                            </dd>
+                        </dl>
                     </section>
 
-                    <output class="resumo-total">
+                    <output class="resumo-total" aria-live="polite" aria-label="Total do pedido">
                         <strong>Total:</strong>
                         <output id="valor-total-checkout">R$ <%= totalFinal.toFixed(2) %></output>
                     </output>
 
-                    <%# Campo oculto com o total calculado pelo servidor — protegido no POST %>
-                    <input type="hidden" name="total_pedido"
+                    <%# Campo oculto — total calculado no servidor (o valor aqui é só display) %>
+                    <input type="hidden"
+                           name="total_pedido"
                            id="input-total-pedido"
                            value="<%= totalFinal.toFixed(2) %>"
                            form="form-checkout">
@@ -407,7 +466,7 @@
                     </button>
 
                     <output class="info-seguranca" aria-label="Informação de segurança">
-                        Compra 100% segura e protegida
+                        🔒 Compra 100% segura e protegida
                     </output>
                 </aside>
 
@@ -423,6 +482,7 @@
 
         var totalBase = <%= totalFinal.toFixed(2) %>;
 
+        /* ── Máscara CEP ── */
         var inputCep = document.getElementById('cep');
         if (inputCep) {
             inputCep.addEventListener('input', function() {
@@ -436,43 +496,58 @@
             });
         }
 
+        /* ── Busca ViaCEP ── */
         function buscarCep(cep) {
+            var dica = document.getElementById('cep-dica');
+            if (dica) dica.textContent = 'Buscando endereço...';
+
             fetch('https://viacep.com.br/ws/' + cep + '/json/')
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
-                    if (!data.erro) {
-                        var rua    = document.getElementById('rua');
-                        var bairro = document.getElementById('bairro');
-                        var cidade = document.getElementById('cidade');
-                        var estado = document.getElementById('estado');
-                        if (rua    && data.logradouro) rua.value    = data.logradouro;
-                        if (bairro && data.bairro)     bairro.value = data.bairro;
-                        if (cidade && data.localidade) cidade.value = data.localidade;
-                        if (estado && data.uf)         estado.value = data.uf;
-                        calcularFrete(cep);
+                    if (data.erro) {
+                        if (dica) dica.textContent = 'CEP não encontrado. Preencha o endereço manualmente.';
+                        return;
                     }
+                    var campos = {
+                        rua:    data.logradouro,
+                        bairro: data.bairro,
+                        cidade: data.localidade,
+                        estado: data.uf
+                    };
+                    Object.keys(campos).forEach(function(id) {
+                        var el = document.getElementById(id);
+                        if (el && campos[id]) el.value = campos[id];
+                    });
+                    if (dica) dica.textContent = 'Endereço preenchido automaticamente. Confirme os dados.';
+                    calcularFrete(cep);
                 })
-                .catch(function() {});
+                .catch(function() {
+                    if (dica) dica.textContent = 'Não foi possível buscar o CEP. Preencha manualmente.';
+                });
         }
 
+        /* ── Cálculo de frete (espelha a lógica do servidor) ── */
         function calcularFrete(cep) {
-            var valorFreteEl = document.getElementById('valor-frete');
-            if (!valorFreteEl) return;
-
             var prefixo = parseInt(cep.substring(0, 5));
             var frete   = 19.90;
-            if (prefixo >= 1000  && prefixo <= 19999) frete = 9.90;
+
+            if      (prefixo >= 1000  && prefixo <= 19999) frete = 9.90;
             else if (prefixo >= 20000 && prefixo <= 28999) frete = 12.90;
             else if (prefixo >= 30000 && prefixo <= 39999) frete = 14.90;
 
             if (totalBase >= 150) frete = 0;
 
             window._freteAtual = frete;
-            atualizarTotais();
 
-            valorFreteEl.textContent = frete === 0 ? 'Grátis' : 'R$ ' + frete.toFixed(2);
+            var valorFreteEl = document.getElementById('valor-frete');
+            if (valorFreteEl) {
+                valorFreteEl.textContent = frete === 0 ? 'Grátis 🎉' : 'R$ ' + frete.toFixed(2);
+            }
+
+            atualizarTotais();
         }
 
+        /* ── Atualiza totais no resumo lateral ── */
         function atualizarTotais() {
             var forma       = document.querySelector('input[name="forma_pagamento"]:checked');
             var totalEl     = document.getElementById('valor-total-checkout');
@@ -482,7 +557,6 @@
             if (!totalEl) return;
 
             var frete    = window._freteAtual || 0;
-            var base     = totalBase + frete;
             var desconto = 0;
             var formaVal = forma ? forma.value : '';
 
@@ -505,13 +579,14 @@
                 }
             }
 
-            var total = base - desconto;
+            var total = totalBase + frete - desconto;
             totalEl.textContent = 'R$ ' + total.toFixed(2);
             if (inputTotal) inputTotal.value = total.toFixed(2);
         }
 
-        var radios        = document.querySelectorAll('input[name="forma_pagamento"]');
-        var camposCartao  = document.getElementById('campos-cartao');
+        /* ── Troca de forma de pagamento ── */
+        var radios       = document.querySelectorAll('input[name="forma_pagamento"]');
+        var camposCartao = document.getElementById('campos-cartao');
         var campoParcelas = document.getElementById('campo-parcelas');
 
         radios.forEach(function(radio) {
@@ -521,7 +596,8 @@
                     if (val === 'cartao_credito' || val === 'cartao_debito') {
                         camposCartao.classList.add('visivel');
                         if (campoParcelas) {
-                            campoParcelas.style.display = val === 'cartao_credito' ? 'block' : 'none';
+                            campoParcelas.style.display =
+                                val === 'cartao_credito' ? 'block' : 'none';
                         }
                     } else {
                         camposCartao.classList.remove('visivel');
@@ -531,6 +607,7 @@
             });
         });
 
+        /* ── Máscaras do cartão ── */
         var inputCartao = document.getElementById('numero-cartao');
         if (inputCartao) {
             inputCartao.addEventListener('input', function() {
@@ -556,6 +633,7 @@
             });
         }
 
+        /* ── Responsividade do botão de submit ── */
         function ajustarBotaoMobile() {
             var btnMobile  = document.getElementById('btn-finalizar-mobile');
             var btnDesktop = document.getElementById('btn-finalizar-desktop');
@@ -568,40 +646,47 @@
                 btnDesktop.style.display = 'block';
             }
         }
-
         ajustarBotaoMobile();
         window.addEventListener('resize', ajustarBotaoMobile);
 
+        /* ── Validação client-side antes de submeter ── */
         var form = document.getElementById('form-checkout');
         if (form) {
             form.addEventListener('submit', function(e) {
+
+                /* valida forma de pagamento */
                 var forma = document.querySelector('input[name="forma_pagamento"]:checked');
                 if (!forma) {
                     e.preventDefault();
                     alert('Selecione uma forma de pagamento para continuar.');
+                    document.getElementById('titulo-pagamento').scrollIntoView({ behavior: 'smooth' });
                     return;
                 }
 
-                var camposObrigatorios = ['cep', 'rua', 'numero', 'bairro', 'cidade', 'estado'];
+                /* valida campos obrigatórios de endereço */
+                var obrigatorios = ['cep', 'rua', 'numero', 'bairro', 'cidade', 'estado'];
                 var invalido = false;
-                camposObrigatorios.forEach(function(id) {
+                obrigatorios.forEach(function(id) {
                     var el = document.getElementById(id);
                     if (el && !el.value.trim()) {
                         el.style.borderColor = '#d93025';
+                        el.setAttribute('aria-invalid', 'true');
                         invalido = true;
                     } else if (el) {
                         el.style.borderColor = '';
+                        el.removeAttribute('aria-invalid');
                     }
                 });
 
                 if (invalido) {
                     e.preventDefault();
-                    alert('Preencha todos os campos obrigatórios de entrega.');
+                    alert('Preencha todos os campos obrigatórios do endereço.');
+                    document.getElementById('titulo-endereco').scrollIntoView({ behavior: 'smooth' });
                     return;
                 }
 
-                var btns = document.querySelectorAll('.btn-finalizar-pedido');
-                btns.forEach(function(btn) {
+                /* desabilita botões para evitar duplo envio */
+                document.querySelectorAll('.btn-finalizar-pedido').forEach(function(btn) {
                     btn.disabled    = true;
                     btn.textContent = 'Processando...';
                 });

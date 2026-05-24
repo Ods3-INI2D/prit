@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrinho</title>
+    <title>Carrinho - +Saúde</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/grid.css">
     <link rel="stylesheet" href="/css/menu.css">
     <link rel="stylesheet" href="/css/carrinho.css">
     <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/semantica-fix.css">
     <script src="/js/theme.js"></script>
 </head>
 <body>
@@ -31,7 +32,7 @@
 
                 <%
                     let temItemForaEstoque = false;
-                    let total = 0;
+                    let subtotalGeral = 0;
                     carrinho.forEach(function(produto) {
                         if (produto.status === 'fora-de-estoque') temItemForaEstoque = true;
                         const preco         = parseFloat(produto.preco)        || 0;
@@ -39,7 +40,7 @@
                                               ? parseFloat(produto.precoDesconto) : null;
                         const precoFinal    = (precoDesconto !== null && precoDesconto > 0)
                                               ? precoDesconto : preco;
-                        total += precoFinal * (parseInt(produto.quantidade) || 1);
+                        subtotalGeral += precoFinal * (parseInt(produto.quantidade) || 1);
                     });
                 %>
 
@@ -50,8 +51,10 @@
                 <% } %>
 
                 <section class="carrinho-layout">
+
+                    <%# Lista de itens %>
                     <section class="lista-carrinho-wrapper">
-                        <ul class="lista-carrinho">
+                        <ul class="lista-carrinho" aria-label="Itens no carrinho">
                             <% carrinho.forEach(function(produto) {
                                 const preco         = parseFloat(produto.preco)        || 0;
                                 const precoDesconto = produto.precoDesconto != null
@@ -62,14 +65,17 @@
                                 const foraEstoque   = produto.status === 'fora-de-estoque';
                             %>
                                 <li class="item-carrinho" style="<%= foraEstoque ? 'opacity:0.65;' : '' %>">
-                                    <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="imagem-produto">
+                                    <img src="<%= produto.imagem %>"
+                                         alt="<%= produto.nome %>"
+                                         class="imagem-produto">
 
                                     <article class="info-produto">
                                         <h2 class="nome-produto"><%= produto.nome %></h2>
                                         <output class="categoria-produto"><%= produto.categoria %></output>
 
                                         <% if (foraEstoque) { %>
-                                            <output class="mensagem-fora-estoque" role="alert" style="font-size:0.85rem; padding:0.5rem 0.75rem; margin-bottom:0.5rem;">
+                                            <output class="mensagem-fora-estoque" role="alert"
+                                                    style="font-size:0.85rem;padding:0.5rem 0.75rem;margin-bottom:0.5rem;">
                                                 Produto fora de estoque
                                             </output>
                                         <% } %>
@@ -84,36 +90,55 @@
                                         </section>
 
                                         <% if (!foraEstoque) { %>
-                                            <section class="controles-quantidade">
+                                            <section class="controles-quantidade"
+                                                     aria-label="Controle de quantidade de <%= produto.nome %>">
                                                 <form method="POST"
                                                       action="/carrinho/atualizar/<%= produto.id_produto || produto.id %>"
                                                       class="form-quantidade">
-                                                    <input type="hidden" name="quantidade" value="<%= (parseInt(produto.quantidade) || 1) - 1 %>">
-                                                    <button type="submit" class="btn-quantidade" aria-label="Diminuir quantidade de <%= produto.nome %>">−</button>
+                                                    <input type="hidden"
+                                                           name="quantidade"
+                                                           value="<%= (parseInt(produto.quantidade) || 1) - 1 %>">
+                                                    <button type="submit"
+                                                            class="btn-quantidade"
+                                                            aria-label="Diminuir quantidade de <%= produto.nome %>">−</button>
                                                 </form>
 
-                                                <output class="quantidade-atual" aria-label="Quantidade atual"><%= produto.quantidade %></output>
+                                                <output class="quantidade-atual"
+                                                        aria-label="Quantidade atual: <%= produto.quantidade %>">
+                                                    <%= produto.quantidade %>
+                                                </output>
 
                                                 <form method="POST"
                                                       action="/carrinho/atualizar/<%= produto.id_produto || produto.id %>"
                                                       class="form-quantidade">
-                                                    <input type="hidden" name="quantidade" value="<%= (parseInt(produto.quantidade) || 1) + 1 %>">
-                                                    <button type="submit" class="btn-quantidade" aria-label="Aumentar quantidade de <%= produto.nome %>">+</button>
+                                                    <input type="hidden"
+                                                           name="quantidade"
+                                                           value="<%= (parseInt(produto.quantidade) || 1) + 1 %>">
+                                                    <button type="submit"
+                                                            class="btn-quantidade"
+                                                            aria-label="Aumentar quantidade de <%= produto.nome %>">+</button>
                                                 </form>
                                             </section>
                                         <% } %>
 
-                                        <output class="subtotal-item">Subtotal: R$ <%= subtotal.toFixed(2) %></output>
+                                        <output class="subtotal-item">
+                                            Subtotal: R$ <%= subtotal.toFixed(2) %>
+                                        </output>
                                     </article>
 
-                                    <nav class="acoes-item" aria-label="Ações de <%= produto.nome %>">
+                                    <nav class="acoes-item"
+                                         aria-label="Ações para <%= produto.nome %>">
                                         <% if (usuarioLogado && !foraEstoque) { %>
                                             <a href="/produto/<%= produto.id_produto || produto.id %>#avaliar"
                                                class="btn-avaliar">Avaliar Produto</a>
                                         <% } %>
-                                        <form method="POST" action="/carrinho/remover/<%= produto.id_produto || produto.id %>">
-                                            <button type="submit" class="btn-remover"
-                                                    aria-label="Remover <%= produto.nome %> do carrinho">Remover</button>
+                                        <form method="POST"
+                                              action="/carrinho/remover/<%= produto.id_produto || produto.id %>">
+                                            <button type="submit"
+                                                    class="btn-remover"
+                                                    aria-label="Remover <%= produto.nome %> do carrinho">
+                                                Remover
+                                            </button>
                                         </form>
                                     </nav>
                                 </li>
@@ -121,43 +146,43 @@
                         </ul>
                     </section>
 
-                    <aside class="resumo-carrinho">
-                        <h2 class="titulo-resumo">Resumo do Pedido</h2>
+                    <%# Resumo do pedido %>
+                    <aside class="resumo-carrinho" aria-labelledby="titulo-resumo-carrinho">
+                        <h2 class="titulo-resumo" id="titulo-resumo-carrinho">Resumo do Pedido</h2>
 
-                        <section class="linhas-resumo">
-                            <output class="linha-resumo">
-                                <strong>Subtotal:</strong>
-                                <output>R$ <%= total.toFixed(2) %></output>
-                            </output>
-                            <output class="linha-resumo">
-                                <strong>Frete:</strong>
-                                <output>A calcular</output>
-                            </output>
-                        </section>
+                        <dl class="linhas-resumo">
+                            <dt><strong>Subtotal</strong></dt>
+                            <dd>R$ <%= subtotalGeral.toFixed(2) %></dd>
 
-                        <output class="total-resumo">
+                            <dt><strong>Frete</strong></dt>
+                            <dd>A calcular</dd>
+                        </dl>
+
+                        <output class="total-resumo" aria-label="Total estimado">
                             <strong>Total:</strong>
-                            <output>R$ <%= total.toFixed(2) %></output>
+                            <output>R$ <%= subtotalGeral.toFixed(2) %></output>
                         </output>
 
                         <% if (temItemForaEstoque) { %>
-                            <output class="mensagem-erro" role="alert" style="margin-bottom:1rem; display:block; text-align:center; font-size:0.9rem;">
+                            <output class="mensagem-erro" role="alert"
+                                    style="margin-bottom:1rem;display:block;text-align:center;font-size:0.9rem;">
                                 Remova os itens fora de estoque para finalizar.
                             </output>
                         <% } else if (usuarioLogado) { %>
                             <a href="/finalizar-compra"
                                class="btn-finalizar"
-                               style="text-decoration:none; display:block; text-align:center;">
+                               aria-label="Ir para finalizar compra">
                                 Finalizar Compra
                             </a>
                         <% } else { %>
                             <a href="/login?redirect=/finalizar-compra"
                                class="btn-finalizar"
-                               style="text-decoration:none; display:block; text-align:center;">
+                               aria-label="Fazer login para finalizar compra">
                                 Fazer Login para Finalizar
                             </a>
                         <% } %>
                     </aside>
+
                 </section>
             <% } %>
         </section>

@@ -1,0 +1,82 @@
+/* ── Correções semânticas: dl/dt/dd no resumo do carrinho e checkout ── */
+
+/* Carrinho — resumo lateral */
+.resumo-carrinho dl.linhas-resumo {
+    margin-bottom: 1rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 0.5rem;
+    align-items: baseline;
+}
+
+.resumo-carrinho dl.linhas-resumo dt {
+    font-size: 1.25rem;
+    color: #d9d9d9;
+    font-weight: 500;
+}
+
+.resumo-carrinho dl.linhas-resumo dd {
+    font-size: 1.25rem;
+    color: #d9d9d9;
+    text-align: right;
+    margin-left: 0;
+}
+
+/* Checkout — resumo lateral (dl nas linhas de total) */
+.resumo-totais dl.resumo-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #d9d9d9;
+    margin-bottom: 0.5rem;
+}
+
+.resumo-totais dl.resumo-linha dt {
+    font-weight: 500;
+}
+
+.resumo-totais dl.resumo-linha dd {
+    margin-left: 0;
+    text-align: right;
+}
+
+/* aside do carrinho — garante mesmos estilos do .resumo-carrinho */
+.carrinho-layout > aside.resumo-carrinho {
+    background-color: #2a2a2a;
+    padding: 2.5rem;
+    border-radius: 1.09375rem;
+    box-shadow: 0 0.1875rem 0.875rem rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+}
+
+/* btn-finalizar como link (tag <a>) */
+a.btn-finalizar {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+    padding: 1.5rem 0;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 0.78125rem;
+    font-size: 1.375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+a.btn-finalizar:hover {
+    background-color: #0056b3;
+    transform: translateY(-0.125rem);
+}
+
+/* Checkout: dl no resumo lateral */
+@media (min-width: 901px) {
+    .resumo-carrinho dl.linhas-resumo dt,
+    .resumo-carrinho dl.linhas-resumo dd {
+        font-size: 1.375rem;
+    }
+}
