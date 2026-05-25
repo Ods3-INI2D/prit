@@ -114,22 +114,47 @@ const pedidosModel = {
     // busca pedidos com itens, pagamento, entrega e dados do usuario
     findByUsuarioComDetalhes: async (id_usuario) => {
         try {
-            // 1. pedidos + pagamento + dados do usuario + endereço da entrega
+            // 1. pedidos + pagamento + dados do usuario
+            // A entrega é buscada via subquery para garantir que o endereco
+            // seja recuperado mesmo quando o JOIN aninhado retornaria NULL
             const [pedidosRaw] = await pool.query(
-                `SELECT p.*,
-                        u.ddd,
-                        u.tel,
-                        pg.id_pagamento,
-                        pg.forma,
-                        pg.valor        AS valor_pag,
-                        pg.status       AS status_pag,
-                        e.codigo_rastreio AS endereco_entrega,
-                        e.transportadora  AS transportadora_entrega,
-                        e.status          AS status_entrega
+                `SELECT
+                    p.id_pedido,
+                    p.id_usuario,
+                    p.data_pedido,
+                    p.valor_total,
+                    p.status,
+                    p.criado_em,
+                    u.ddd,
+                    u.tel,
+                    pg.id_pagamento,
+                    pg.forma,
+                    pg.valor        AS valor_pag,
+                    pg.status       AS status_pag,
+                    (
+                        SELECT e.codigo_rastreio
+                        FROM entregas e
+                        WHERE e.id_pagamento = pg.id_pagamento
+                        ORDER BY e.id_entrega DESC
+                        LIMIT 1
+                    )               AS endereco_entrega,
+                    (
+                        SELECT e.transportadora
+                        FROM entregas e
+                        WHERE e.id_pagamento = pg.id_pagamento
+                        ORDER BY e.id_entrega DESC
+                        LIMIT 1
+                    )               AS transportadora_entrega,
+                    (
+                        SELECT e.status
+                        FROM entregas e
+                        WHERE e.id_pagamento = pg.id_pagamento
+                        ORDER BY e.id_entrega DESC
+                        LIMIT 1
+                    )               AS status_entrega
                  FROM pedidos p
-                 JOIN usuarios u ON u.id_usuario = p.id_usuario
+                 JOIN usuarios u   ON u.id_usuario  = p.id_usuario
                  LEFT JOIN pagamentos pg ON pg.id_pedido = p.id_pedido
-                 LEFT JOIN entregas   e  ON e.id_pagamento = pg.id_pagamento
                  WHERE p.id_usuario = ?
                  ORDER BY p.criado_em DESC`,
                 [id_usuario]
@@ -155,21 +180,21 @@ const pedidosModel = {
                     );
 
                     return {
-                        id_pedido:   p.id_pedido,
-                        id_usuario:  p.id_usuario,
-                        data_pedido: p.data_pedido,
-                        valor_total: p.valor_total,
-                        status:      p.status,
-                        criado_em:   p.criado_em,
+                        id_pedido:      p.id_pedido,
+                        id_usuario:     p.id_usuario,
+                        data_pedido:    p.data_pedido,
+                        valor_total:    p.valor_total,
+                        status:         p.status,
+                        criado_em:      p.criado_em,
                         // telefone do usuario
-                        ddd:         p.ddd  || null,
-                        tel:         p.tel  || null,
-                        // endereco salvo na entrega
-                        endereco:    p.endereco_entrega    || null,
+                        ddd:            p.ddd  || null,
+                        tel:            p.tel  || null,
+                        // endereco salvo na entrega (codigo_rastreio)
+                        endereco:       p.endereco_entrega    || null,
                         transportadora: p.transportadora_entrega || null,
-                        status_entrega: p.status_entrega   || null,
-                        itens:       itens || [],
-                        pagamento:   p.id_pagamento ? {
+                        status_entrega: p.status_entrega      || null,
+                        itens:          itens || [],
+                        pagamento:      p.id_pagamento ? {
                             id_pagamento: p.id_pagamento,
                             forma:        p.forma,
                             valor:        p.valor_pag,
