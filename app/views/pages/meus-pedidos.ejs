@@ -90,6 +90,16 @@
                             : '—';
 
                         var valorTotal = parseFloat(pedido.valor_total) || 0;
+
+                        // telefone formatado
+                        var telefoneFormatado = null;
+                        if (pedido.ddd && pedido.tel) {
+                            var telNum = pedido.tel.replace(/\D/g, '');
+                            telefoneFormatado = '(' + pedido.ddd + ') ' +
+                                (telNum.length === 9
+                                    ? telNum.slice(0, 5) + '-' + telNum.slice(5)
+                                    : telNum.slice(0, 4) + '-' + telNum.slice(4));
+                        }
                     %>
 
                     <%# ── Card individual do pedido ───────────────────── %>
@@ -118,6 +128,63 @@
                                 </output>
                             </aside>
                         </header>
+
+                        <%# ── Endereço e telefone do pedido ──────────── %>
+                        <% if (pedido.endereco || telefoneFormatado) { %>
+                            <aside class="pedido-pagamento"
+                                   aria-label="Dados de contato e entrega do pedido #<%= pedido.id_pedido %>">
+                                <h3 class="titulo-pagamento">Dados de Entrega e Contato</h3>
+
+                                <dl class="pagamento-detalhes">
+                                    <% if (telefoneFormatado) { %>
+                                        <dt>Telefone</dt>
+                                        <dd>
+                                            <address>
+                                                <a href="tel:+55<%= pedido.ddd %><%= pedido.tel.replace(/\D/g,'') %>"
+                                                   style="color:inherit;text-decoration:none;">
+                                                    <%= telefoneFormatado %>
+                                                </a>
+                                            </address>
+                                        </dd>
+                                    <% } %>
+
+                                    <% if (pedido.endereco) { %>
+                                        <dt>Endereço de Entrega</dt>
+                                        <dd>
+                                            <address style="font-style:normal;">
+                                                <%= pedido.endereco %>
+                                            </address>
+                                        </dd>
+                                    <% } else { %>
+                                        <dt>Endereço de Entrega</dt>
+                                        <dd>
+                                            <output style="color:#888;font-style:italic;">
+                                                Endereço não registrado
+                                            </output>
+                                        </dd>
+                                    <% } %>
+
+                                    <% if (pedido.transportadora) { %>
+                                        <dt>Transportadora</dt>
+                                        <dd><output><%= pedido.transportadora %></output></dd>
+                                    <% } %>
+
+                                    <% if (pedido.status_entrega) { %>
+                                        <dt>Status da Entrega</dt>
+                                        <dd>
+                                            <output><%=
+                                                ({
+                                                    aguardando:  'Aguardando',
+                                                    em_transito: 'Em Trânsito',
+                                                    entregue:    'Entregue',
+                                                    cancelado:   'Cancelado'
+                                                })[pedido.status_entrega] || pedido.status_entrega
+                                            %></output>
+                                        </dd>
+                                    <% } %>
+                                </dl>
+                            </aside>
+                        <% } %>
 
                         <%# Seção de itens do pedido %>
                         <% if (pedido.itens && pedido.itens.length > 0) { %>

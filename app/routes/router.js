@@ -550,7 +550,19 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             valor_total
         );
         if (!pagResult.erro) {
-            await pedidosModel.createEntrega(pagResult.id_pagamento, '+Saúde Entregas');
+            // monta endereço completo para persistir na entrega
+            const { rua, numero, complemento, bairro, cidade, estado, cep } = req.body;
+            const enderecoFormatado = [
+                rua + ', ' + numero + (complemento ? ' ' + complemento : ''),
+                bairro + ' — ' + cidade + '/' + estado,
+                'CEP: ' + cep
+            ].join(' | ');
+
+            await pedidosModel.createEntrega(
+                pagResult.id_pagamento,
+                '+Saúde Entregas',
+                enderecoFormatado
+            );
         }
 
         // Limpa carrinho

@@ -52,13 +52,13 @@ const pedidosModel = {
         }
     },
 
-    // cria registro de entrega
-    createEntrega: async (id_pagamento, transportadora) => {
+    // cria registro de entrega — armazena endereço em codigo_rastreio e transportadora
+    createEntrega: async (id_pagamento, transportadora, endereco) => {
         try {
             const [result] = await pool.query(
-                `INSERT INTO entregas (id_pagamento, transportadora, status)
-                 VALUES (?, ?, 'aguardando')`,
-                [id_pagamento, transportadora]
+                `INSERT INTO entregas (id_pagamento, transportadora, codigo_rastreio, status)
+                 VALUES (?, ?, ?, 'aguardando')`,
+                [id_pagamento, transportadora, endereco || null]
             );
             return { id_entrega: result.insertId };
         } catch (erro) {
@@ -111,18 +111,25 @@ const pedidosModel = {
         }
     },
 
-    // busca pedidos com itens e pagamento de um usuário
+    // busca pedidos com itens, pagamento, entrega e dados do usuario
     findByUsuarioComDetalhes: async (id_usuario) => {
         try {
-            // 1. Busca todos os pedidos do usuário com dados de pagamento
+            // 1. pedidos + pagamento + dados do usuario + endereço da entrega
             const [pedidosRaw] = await pool.query(
                 `SELECT p.*,
+                        u.ddd,
+                        u.tel,
                         pg.id_pagamento,
                         pg.forma,
-                        pg.valor  AS valor_pag,
-                        pg.status AS status_pag
+                        pg.valor        AS valor_pag,
+                        pg.status       AS status_pag,
+                        e.codigo_rastreio AS endereco_entrega,
+                        e.transportadora  AS transportadora_entrega,
+                        e.status          AS status_entrega
                  FROM pedidos p
+                 JOIN usuarios u ON u.id_usuario = p.id_usuario
                  LEFT JOIN pagamentos pg ON pg.id_pedido = p.id_pedido
+                 LEFT JOIN entregas   e  ON e.id_pagamento = pg.id_pagamento
                  WHERE p.id_usuario = ?
                  ORDER BY p.criado_em DESC`,
                 [id_usuario]
@@ -130,7 +137,7 @@ const pedidosModel = {
 
             if (!pedidosRaw || pedidosRaw.length === 0) return [];
 
-            // 2. Para cada pedido, busca os itens com dados do produto
+            // 2. itens de cada pedido
             const pedidos = await Promise.all(
                 pedidosRaw.map(async (p) => {
                     const [itens] = await pool.query(
@@ -154,6 +161,13 @@ const pedidosModel = {
                         valor_total: p.valor_total,
                         status:      p.status,
                         criado_em:   p.criado_em,
+                        // telefone do usuario
+                        ddd:         p.ddd  || null,
+                        tel:         p.tel  || null,
+                        // endereco salvo na entrega
+                        endereco:    p.endereco_entrega    || null,
+                        transportadora: p.transportadora_entrega || null,
+                        status_entrega: p.status_entrega   || null,
                         itens:       itens || [],
                         pagamento:   p.id_pagamento ? {
                             id_pagamento: p.id_pagamento,
