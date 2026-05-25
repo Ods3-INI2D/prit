@@ -67,11 +67,11 @@ const pedidosModel = {
         }
     },
 
-    // busca pedidos de um usuário
+    // busca pedidos de um usuário (simples)
     findByUsuario: async (id_usuario) => {
         try {
             const [linhas] = await pool.query(
-                `SELECT p.*, 
+                `SELECT p.*,
                         COUNT(ip.id_item) AS total_itens
                  FROM pedidos p
                  LEFT JOIN itens_pedido ip ON ip.id_pedido = p.id_pedido
@@ -109,15 +109,18 @@ const pedidosModel = {
             console.error('findById pedido erro:', erro);
             return null;
         }
-    }
-};
-// busca pedidos com itens e pagamento de um usuário
-  findByUsuarioComDetalhes: async (id_usuario) => {
-      try {
-        // 1. Busca todos os pedidos do usuário
+    },
+
+    // busca pedidos com itens e pagamento de um usuário
+    findByUsuarioComDetalhes: async (id_usuario) => {
+        try {
+            // 1. Busca todos os pedidos do usuário com dados de pagamento
             const [pedidosRaw] = await pool.query(
                 `SELECT p.*,
-                        pg.id_pagamento, pg.forma, pg.valor AS valor_pag, pg.status AS status_pag
+                        pg.id_pagamento,
+                        pg.forma,
+                        pg.valor  AS valor_pag,
+                        pg.status AS status_pag
                  FROM pedidos p
                  LEFT JOIN pagamentos pg ON pg.id_pedido = p.id_pedido
                  WHERE p.id_usuario = ?
@@ -131,8 +134,12 @@ const pedidosModel = {
             const pedidos = await Promise.all(
                 pedidosRaw.map(async (p) => {
                     const [itens] = await pool.query(
-                        `SELECT ip.id_item, ip.id_produto, ip.qtd, ip.preco_unit,
-                                pr.nome, pr.imagem
+                        `SELECT ip.id_item,
+                                ip.id_produto,
+                                ip.qtd,
+                                ip.preco_unit,
+                                pr.nome,
+                                pr.imagem
                          FROM itens_pedido ip
                          JOIN produtos pr ON pr.id_produto = ip.id_produto
                          WHERE ip.id_pedido = ?
@@ -163,5 +170,7 @@ const pedidosModel = {
             console.error('findByUsuarioComDetalhes erro:', erro);
             return [];
         }
-},
+    }
+};
+
 module.exports = { pedidosModel };
