@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - +Saúde</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/grid.css">
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/checkout.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/semantica-fix.css">
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <header>
+        <%- include('../partial/grid.ejs') %>
+    </header>
+
+    <main>
+        <article class="checkout-container">
+
+            <nav class="navegacao" aria-label="Navegação de retorno">
+                <a href="/carrinho" class="voltar">
+                    <img src="/imagens/setae.svg" alt="" aria-hidden="true" class="seta-voltar">
+                    <output>Voltar ao Carrinho</output>
+                </a>
+            </nav>
+
+            <h1 class="titulo-checkout">Finalizar Compra</h1>
+
+            <%# Barra de progresso %>
+            <ol class="checkout-steps" aria-label="Etapas do checkout">
+                <li class="step concluido" aria-label="Etapa 1: Carrinho, concluída">
+                    <output class="step-numero" aria-hidden="true">✓</output>
+                    <output class="step-label">Carrinho</output>
+                </li>
+                <li class="step ativo" aria-current="step"
+                    aria-label="Etapa 2: Dados e Pagamento, etapa atual">
+                    <output class="step-numero" aria-hidden="true">2</output>
+                    <output class="step-label">Dados e Pagamento</output>
+                </li>
+                <li class="step" aria-label="Etapa 3: Confirmação, próxima etapa">
+                    <output class="step-numero" aria-hidden="true">3</output>
+                    <output class="step-label">Confirmação</output>
+                </li>
+            </ol>
+
+            <% if (typeof mensagemErro !== 'undefined' && mensagemErro) { %>
+                <output class="mensagem-erro" role="alert" aria-live="assertive">
+                    ⚠️ <%= mensagemErro %>
+                </output>
+            <% } %>
+
+            <section class="checkout-layout">
+
+                <%# ── Formulário principal ── %>
+                <article class="checkout-formulario">
+                    <form method="POST"
+                          action="/finalizar-compra"
+                          id="form-checkout"
+                          novalidate
+                          aria-label="Formulário de finalização de compra">
+
+                        <%# ── Endereço de entrega ── %>
+                        <section class="checkout-form-section"
+                                 aria-labelledby="titulo-endereco">
+                            <h2 class="secao-titulo" id="titulo-endereco">
+                                Endereço de Entrega
+                            </h2>
+
+                            <fieldset class="campo-checkout">
+                                <legend class="label-checkout">
+                                    CEP
+                                    <output class="obrigatorio" aria-hidden="true">*</output>
+                                </legend>
+                                <label for="cep">
+                                    <input type="text" id="cep" name="cep"
+                                           class="input-checkout"
+                                           placeholder="00000-000"
+                                           maxlength="9"
+                                           required aria-required="true"
+                                           autocomplete="postal-code"
+                                           inputmode="numeric"
+                                           aria-describedby="cep-dica">
+                                </label>
+                                <output id="cep-dica" class="info-campo" aria-live="polite">
+                                    Digite o CEP para preencher o endereço automaticamente.
+                                </output>
+                            </fieldset>
+
+                            <fieldset class="campo-checkout">
+                                <legend class="label-checkout">
+                                    Rua / Logradouro
+                                    <output class="obrigatorio" aria-hidden="true">*</output>
+                                </legend>
+                                <label for="rua">
+                                    <input type="text" id="rua" name="rua"
+                                           class="input-checkout"
+                                           placeholder="Nome da rua, avenida, etc."
+                                           maxlength="150"
+                                           required aria-required="true"
+                                           autocomplete="street-address">
+                                </label>
+                            </fieldset>
+
+                            <section class="campos-linha">
+                                <fieldset class="campo-checkout">
+                                    <legend class="label-checkout">
+                                        Número
+                                        <output class="obrigatorio" aria-hidden="true">*</output>
+                                    </legend>
+                                    <label for="numero">
+                                        <input type="text" id="numero" name="numero"
+                                               class="input-checkout"
+                                               placeholder="Ex: 123"
+                                               maxlength="10"
+                                               required aria-required="true">
+                                    </label>
+                                </fieldset>
+
+                                <fieldset class="campo-checkout">
+                                    <legend class="label-checkout">Complemento</legend>
+                                    <label for="complemento">
+                                        <input type="text" id="complemento" name="complemento"
+                                               class="input-checkout"
+                                               placeholder="Apto, bloco, etc."
+                                               maxlength="60"
+                                               autocomplete="address-line2">
+                                    </label>
+                                </fieldset>
+                            </section>
+
+                            <fieldset class="campo-checkout">
+                                <legend class="label-checkout">
+                                    Bairro
+                                    <output class="obrigatorio" aria-hidden="true">*</output>
+                                </legend>
+                                <label for="bairro">
+                                    <input type="text" id="bairro" name="bairro"
+                                           class="input-checkout"
+                                           placeholder="Seu bairro"
+                                           maxlength="80"
+                                           required aria-required="true">
+                                </label>
+                            </fieldset>
+
+                            <section class="campos-linha">
+                                <fieldset class="campo-checkout">
+                                    <legend class="label-checkout">
+                                        Cidade
+                                        <output class="obrigatorio" aria-hidden="true">*</output>
+                                    </legend>
+                                    <label for="cidade">
+                                        <input type="text" id="cidade" name="cidade"
+                                               class="input-checkout"
+                                               placeholder="Sua cidade"
+                                               maxlength="80"
+                                               required aria-required="true"
+                                               autocomplete="address-level2">
+                                    </label>
+                                </fieldset>
+
+                                <fieldset class="campo-checkout">
+                                    <legend class="label-checkout">
+                                        Estado
+                                        <output class="obrigatorio" aria-hidden="true">*</output>
+                                    </legend>
+                                    <label for="estado">
+                                        <select id="estado" name="estado"
+                                                class="select-checkout"
+                                                required aria-required="true"
+                                                autocomplete="address-level1">
+                                            <option value="">Selecione</option>
+                                            <option value="AC">AC</option>
+                                            <option value="AL">AL</option>
+                                            <option value="AP">AP</option>
+                                            <option value="AM">AM</option>
+                                            <option value="BA">BA</option>
+                                            <option value="CE">CE</option>
+                                            <option value="DF">DF</option>
+                                            <option value="ES">ES</option>
+                                            <option value="GO">GO</option>
+                                            <option value="MA">MA</option>
+                                            <option value="MT">MT</option>
+                                            <option value="MS">MS</option>
+                                            <option value="MG">MG</option>
+                                            <option value="PA">PA</option>
+                                            <option value="PB">PB</option>
+                                            <option value="PR">PR</option>
+                                            <option value="PE">PE</option>
+                                            <option value="PI">PI</option>
+                                            <option value="RJ">RJ</option>
+                                            <option value="RN">RN</option>
+                                            <option value="RS">RS</option>
+                                            <option value="RO">RO</option>
+                                            <option value="RR">RR</option>
+                                            <option value="SC">SC</option>
+                                            <option value="SP">SP</option>
+                                            <option value="SE">SE</option>
+                                            <option value="TO">TO</option>
+                                        </select>
+                                    </label>
+                                </fieldset>
+                            </section>
+                        </section>
+
+                        <%# ── Forma de pagamento ── %>
+                        <section class="checkout-form-section"
+                                 aria-labelledby="titulo-pagamento">
+                            <h2 class="secao-titulo" id="titulo-pagamento">
+                                Forma de Pagamento
+                            </h2>
+
+                            <fieldset>
+                                <legend class="label-checkout">
+                                    Selecione como deseja pagar
+                                    <output class="obrigatorio" aria-hidden="true">*</output>
+                                </legend>
+
+                                <ul class="formas-pagamento" role="list">
+
+                                    <li>
+                                        <label class="opcao-pagamento">
+                                            <input type="radio" name="forma_pagamento"
+                                                   value="cartao_credito"
+                                                   id="pag-cartao-credito"
+                                                   required>
+                                            <section class="pagamento-info">
+                                                <output class="pagamento-nome">Cartão de Crédito</output>
+                                                <output class="pagamento-descricao">
+                                                    Visa, Mastercard, Elo, Amex — parcelamento disponível
+                                                </output>
+                                            </section>
+                                        </label>
+                                    </li>
+
+                                    <li>
+                                        <label class="opcao-pagamento">
+                                            <input type="radio" name="forma_pagamento"
+                                                   value="cartao_debito"
+                                                   id="pag-cartao-debito">
+                                            <section class="pagamento-info">
+                                                <output class="pagamento-nome">Cartão de Débito</output>
+                                                <output class="pagamento-descricao">
+                                                    Pagamento à vista no débito
+                                                </output>
+                                            </section>
+                                        </label>
+                                    </li>
+
+                                    <li>
+                                        <label class="opcao-pagamento">
+                                            <input type="radio" name="forma_pagamento"
+                                                   value="pix"
+                                                   id="pag-pix">
+                                            <section class="pagamento-info">
+                                                <output class="pagamento-nome">PIX</output>
+                                                <output class="pagamento-descricao">
+                                                    Aprovação imediata — desconto de 5%
+                                                </output>
+                                            </section>
+                                        </label>
+                                    </li>
+
+                                    <li>
+                                        <label class="opcao-pagamento">
+                                            <input type="radio" name="forma_pagamento"
+                                                   value="boleto"
+                                                   id="pag-boleto">
+                                            <section class="pagamento-info">
+                                                <output class="pagamento-nome">Boleto Bancário</output>
+                                                <output class="pagamento-descricao">
+                                                    Vencimento em 3 dias úteis — desconto de 3%
+                                                </output>
+                                            </section>
+                                        </label>
+                                    </li>
+
+                                </ul>
+
+                                <%# Campos do cartão — exibidos via JS %>
+                                <section class="campos-cartao"
+                                         id="campos-cartao"
+                                         aria-live="polite"
+                                         aria-label="Dados do cartão">
+
+                                    <fieldset class="campo-checkout">
+                                        <legend class="label-checkout">
+                                            Número do Cartão
+                                            <output class="obrigatorio" aria-hidden="true">*</output>
+                                        </legend>
+                                        <label for="numero-cartao">
+                                            <input type="text" id="numero-cartao"
+                                                   name="numero_cartao"
+                                                   class="input-checkout"
+                                                   placeholder="0000 0000 0000 0000"
+                                                   maxlength="19"
+                                                   autocomplete="cc-number"
+                                                   inputmode="numeric">
+                                        </label>
+                                    </fieldset>
+
+                                    <fieldset class="campo-checkout">
+                                        <legend class="label-checkout">
+                                            Nome no Cartão
+                                            <output class="obrigatorio" aria-hidden="true">*</output>
+                                        </legend>
+                                        <label for="nome-cartao">
+                                            <input type="text" id="nome-cartao"
+                                                   name="nome_cartao"
+                                                   class="input-checkout"
+                                                   placeholder="Como está impresso no cartão"
+                                                   maxlength="60"
+                                                   autocomplete="cc-name">
+                                        </label>
+                                    </fieldset>
+
+                                    <section class="campos-linha">
+                                        <fieldset class="campo-checkout">
+                                            <legend class="label-checkout">
+                                                Validade
+                                                <output class="obrigatorio" aria-hidden="true">*</output>
+                                            </legend>
+                                            <label for="validade-cartao">
+                                                <input type="text" id="validade-cartao"
+                                                       name="validade_cartao"
+                                                       class="input-checkout"
+                                                       placeholder="MM/AA"
+                                                       maxlength="5"
+                                                       autocomplete="cc-exp"
+                                                       inputmode="numeric">
+                                            </label>
+                                        </fieldset>
+
+                                        <fieldset class="campo-checkout">
+                                            <legend class="label-checkout">
+                                                CVV
+                                                <output class="obrigatorio" aria-hidden="true">*</output>
+                                            </legend>
+                                            <label for="cvv-cartao">
+                                                <input type="text" id="cvv-cartao"
+                                                       name="cvv_cartao"
+                                                       class="input-checkout"
+                                                       placeholder="000"
+                                                       maxlength="4"
+                                                       autocomplete="cc-csc"
+                                                       inputmode="numeric">
+                                            </label>
+                                        </fieldset>
+                                    </section>
+
+                                    <fieldset class="campo-checkout"
+                                              id="campo-parcelas"
+                                              style="display:none;">
+                                        <legend class="label-checkout">Parcelamento</legend>
+                                        <label for="parcelas">
+                                            <select id="parcelas" name="parcelas"
+                                                    class="select-checkout">
+                                                <%
+                                                    var totalBase = carrinho.reduce(function(acc, item) {
+                                                        var p = (item.precoDesconto && item.precoDesconto > 0)
+                                                                    ? item.precoDesconto : item.preco;
+                                                        return acc + p * (item.quantidade || 1);
+                                                    }, 0);
+                                                    for (var p = 1; p <= 12; p++) {
+                                                %>
+                                                    <option value="<%= p %>">
+                                                        <%= p %>x de R$ <%= (totalBase / p).toFixed(2) %>
+                                                        <%= p === 1 ? '(à vista)' : '(sem juros)' %>
+                                                    </option>
+                                                <% } %>
+                                            </select>
+                                        </label>
+                                    </fieldset>
+
+                                </section>
+                            </fieldset>
+                        </section>
+
+                        <%# Botão mobile — exibido apenas em telas pequenas %>
+                        <button type="submit"
+                                class="btn-finalizar-pedido"
+                                id="btn-finalizar-mobile"
+                                style="display:none;"
+                                aria-label="Confirmar pedido">
+                            Confirmar Pedido
+                        </button>
+
+                    </form>
+                </article>
+
+                <%# ── Resumo lateral ── %>
+                <aside class="resumo-checkout" aria-labelledby="titulo-resumo">
+                    <h2 class="resumo-titulo" id="titulo-resumo">Resumo do Pedido</h2>
+
+                    <%
+                    var totalFinal = 0;
+                    %>
+                    <ul class="resumo-itens" aria-label="Itens do pedido">
+                        <% carrinho.forEach(function(item) {
+                            var preco      = parseFloat(item.preco) || 0;
+                            var precoDesc  = (item.precoDesconto && item.precoDesconto > 0)
+                                             ? parseFloat(item.precoDesconto) : null;
+                            var precoFinal = precoDesc !== null ? precoDesc : preco;
+                            var qtd        = parseInt(item.quantidade) || 1;
+                            var subtItem   = precoFinal * qtd;
+                            totalFinal    += subtItem;
+                        %>
+                            <li class="resumo-item">
+                                <img src="<%= item.imagem %>"
+                                     alt="<%= item.nome %>"
+                                     class="resumo-item-imagem">
+                                <section class="resumo-item-info">
+                                    <output class="resumo-item-nome"><%= item.nome %></output>
+                                    <output class="resumo-item-qtd">Qtd: <%= qtd %></output>
+                                </section>
+                                <output class="resumo-item-preco">
+                                    R$ <%= subtItem.toFixed(2) %>
+                                </output>
+                            </li>
+                        <% }); %>
+                    </ul>
+
+                    <section class="resumo-totais">
+                        <dl class="resumo-linha">
+                            <dt><strong>Subtotal</strong></dt>
+                            <dd>R$ <%= totalFinal.toFixed(2) %></dd>
+                        </dl>
+
+                        <dl class="resumo-linha">
+                            <dt><strong>Frete</strong></dt>
+                            <dd id="valor-frete">A calcular</dd>
+                        </dl>
+
+                        <dl class="resumo-linha" id="linha-desconto-pix" style="display:none;">
+                            <dt><strong>Desconto PIX (5%)</strong></dt>
+                            <dd id="valor-desconto-pix" style="color:#4da6ff;">
+                                - R$ <%= (totalFinal * 0.05).toFixed(2) %>
+                            </dd>
+                        </dl>
+
+                        <dl class="resumo-linha" id="linha-desconto-boleto" style="display:none;">
+                            <dt><strong>Desconto Boleto (3%)</strong></dt>
+                            <dd id="valor-desconto-boleto" style="color:#4da6ff;">
+                                - R$ <%= (totalFinal * 0.03).toFixed(2) %>
+                            </dd>
+                        </dl>
+                    </section>
+
+                    <output class="resumo-total" aria-live="polite" aria-label="Total do pedido">
+                        <strong>Total:</strong>
+                        <output id="valor-total-checkout">R$ <%= totalFinal.toFixed(2) %></output>
+                    </output>
+
+                    <input type="hidden"
+                           name="total_pedido"
+                           id="input-total-pedido"
+                           value="<%= totalFinal.toFixed(2) %>"
+                           form="form-checkout">
+
+                    <button type="submit"
+                            form="form-checkout"
+                            class="btn-finalizar-pedido"
+                            id="btn-finalizar-desktop"
+                            aria-label="Confirmar pedido com segurança">
+                        Confirmar Pedido
+                    </button>
+
+                    <output class="info-seguranca" aria-label="Informação de segurança">
+                        🔒 Compra 100% segura e protegida
+                    </output>
+                </aside>
+
+            </section>
+        </article>
+    </main>
+
+    <%- include('../partial/footer.ejs') %>
+
+    <script>
+    (function() {
+        'use strict';
+
+        var totalBase = <%= totalFinal.toFixed(2) %>;
+
+        /* ── Máscara CEP ── */
+        var inputCep = document.getElementById('cep');
+        if (inputCep) {
+            inputCep.addEventListener('input', function() {
+                var v = this.value.replace(/\D/g, '').slice(0, 8);
+                if (v.length > 5) v = v.replace(/(\d{5})(\d{1,3})/, '$1-$2');
+                this.value = v;
+            });
+            inputCep.addEventListener('blur', function() {
+                var cep = this.value.replace(/\D/g, '');
+                if (cep.length === 8) buscarCep(cep);
+            });
+        }
+
+        /* ── Busca ViaCEP ── */
+        function buscarCep(cep) {
+            var dica = document.getElementById('cep-dica');
+            if (dica) dica.textContent = 'Buscando endereço...';
+
+            fetch('https://viacep.com.br/ws/' + cep + '/json/')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.erro) {
+                        if (dica) dica.textContent = 'CEP não encontrado. Preencha o endereço manualmente.';
+                        return;
+                    }
+                    var campos = {
+                        rua:    data.logradouro,
+                        bairro: data.bairro,
+                        cidade: data.localidade,
+                        estado: data.uf
+                    };
+                    Object.keys(campos).forEach(function(id) {
+                        var el = document.getElementById(id);
+                        if (el && campos[id]) el.value = campos[id];
+                    });
+                    if (dica) dica.textContent = 'Endereço preenchido automaticamente. Confirme os dados.';
+                    calcularFrete(cep);
+                })
+                .catch(function() {
+                    if (dica) dica.textContent = 'Não foi possível buscar o CEP. Preencha manualmente.';
+                });
+        }
+
+        /* ── Cálculo de frete (espelha a lógica do servidor) ── */
+        function calcularFrete(cep) {
+            var prefixo = parseInt(cep.substring(0, 5));
+            var frete   = 19.90;
+
+            if      (prefixo >= 1000  && prefixo <= 19999) frete = 9.90;
+            else if (prefixo >= 20000 && prefixo <= 28999) frete = 12.90;
+            else if (prefixo >= 30000 && prefixo <= 39999) frete = 14.90;
+
+            if (totalBase >= 150) frete = 0;
+
+            window._freteAtual = frete;
+
+            var valorFreteEl = document.getElementById('valor-frete');
+            if (valorFreteEl) {
+                valorFreteEl.textContent = frete === 0 ? 'Grátis 🎉' : 'R$ ' + frete.toFixed(2);
+            }
+
+            atualizarTotais();
+        }
+
+        /* ── Atualiza totais no resumo lateral ── */
+        function atualizarTotais() {
+            var forma       = document.querySelector('input[name="forma_pagamento"]:checked');
+            var totalEl     = document.getElementById('valor-total-checkout');
+            var inputTotal  = document.getElementById('input-total-pedido');
+            var linhaPix    = document.getElementById('linha-desconto-pix');
+            var linhaBoleto = document.getElementById('linha-desconto-boleto');
+            if (!totalEl) return;
+
+            var frete    = window._freteAtual || 0;
+            var desconto = 0;
+            var formaVal = forma ? forma.value : '';
+
+            if (linhaPix)    linhaPix.style.display    = 'none';
+            if (linhaBoleto) linhaBoleto.style.display = 'none';
+
+            if (formaVal === 'pix') {
+                desconto = totalBase * 0.05;
+                if (linhaPix) {
+                    linhaPix.style.display = 'flex';
+                    var elD = document.getElementById('valor-desconto-pix');
+                    if (elD) elD.textContent = '- R$ ' + desconto.toFixed(2);
+                }
+            } else if (formaVal === 'boleto') {
+                desconto = totalBase * 0.03;
+                if (linhaBoleto) {
+                    linhaBoleto.style.display = 'flex';
+                    var elDB = document.getElementById('valor-desconto-boleto');
+                    if (elDB) elDB.textContent = '- R$ ' + desconto.toFixed(2);
+                }
+            }
+
+            var total = totalBase + frete - desconto;
+            totalEl.textContent = 'R$ ' + total.toFixed(2);
+            if (inputTotal) inputTotal.value = total.toFixed(2);
+        }
+
+        /* ── Troca de forma de pagamento ── */
+        var radios        = document.querySelectorAll('input[name="forma_pagamento"]');
+        var camposCartao  = document.getElementById('campos-cartao');
+        var campoParcelas = document.getElementById('campo-parcelas');
+
+        radios.forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                var val = this.value;
+                if (camposCartao) {
+                    if (val === 'cartao_credito' || val === 'cartao_debito') {
+                        camposCartao.classList.add('visivel');
+                        if (campoParcelas) {
+                            campoParcelas.style.display =
+                                val === 'cartao_credito' ? 'block' : 'none';
+                        }
+                    } else {
+                        camposCartao.classList.remove('visivel');
+                    }
+                }
+                atualizarTotais();
+            });
+        });
+
+        /* ── Máscaras do cartão ── */
+        var inputCartao = document.getElementById('numero-cartao');
+        if (inputCartao) {
+            inputCartao.addEventListener('input', function() {
+                var v = this.value.replace(/\D/g, '').slice(0, 16);
+                v = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+                this.value = v;
+            });
+        }
+
+        var inputValidade = document.getElementById('validade-cartao');
+        if (inputValidade) {
+            inputValidade.addEventListener('input', function() {
+                var v = this.value.replace(/\D/g, '').slice(0, 4);
+                if (v.length > 2) v = v.replace(/(\d{2})(\d{1,2})/, '$1/$2');
+                this.value = v;
+            });
+        }
+
+        var inputCvv = document.getElementById('cvv-cartao');
+        if (inputCvv) {
+            inputCvv.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '').slice(0, 4);
+            });
+        }
+
+        /* ── Botão mobile/desktop ── */
+        function ajustarBotao() {
+            var btnMobile  = document.getElementById('btn-finalizar-mobile');
+            var btnDesktop = document.getElementById('btn-finalizar-desktop');
+            if (!btnMobile || !btnDesktop) return;
+            if (window.innerWidth < 901) {
+                btnMobile.style.display  = 'block';
+                btnDesktop.style.display = 'none';
+            } else {
+                btnMobile.style.display  = 'none';
+                btnDesktop.style.display = 'block';
+            }
+        }
+        ajustarBotao();
+        window.addEventListener('resize', ajustarBotao);
+
+        /* ── Validação client-side ── */
+        var form = document.getElementById('form-checkout');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+
+                var forma = document.querySelector('input[name="forma_pagamento"]:checked');
+                if (!forma) {
+                    e.preventDefault();
+                    alert('Selecione uma forma de pagamento para continuar.');
+                    var titPag = document.getElementById('titulo-pagamento');
+                    if (titPag) titPag.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+
+                var obrigatorios = ['cep', 'rua', 'numero', 'bairro', 'cidade', 'estado'];
+                var invalido = false;
+                obrigatorios.forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el && !el.value.trim()) {
+                        el.style.borderColor = '#d93025';
+                        el.setAttribute('aria-invalid', 'true');
+                        invalido = true;
+                    } else if (el) {
+                        el.style.borderColor = '';
+                        el.removeAttribute('aria-invalid');
+                    }
+                });
+
+                if (invalido) {
+                    e.preventDefault();
+                    alert('Preencha todos os campos obrigatórios do endereço.');
+                    var titEnd = document.getElementById('titulo-endereco');
+                    if (titEnd) titEnd.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+
+                document.querySelectorAll('.btn-finalizar-pedido').forEach(function(btn) {
+                    btn.disabled    = true;
+                    btn.textContent = 'Processando...';
+                });
+            });
+        }
+
+    })();
+    </script>
+</body>
+</html>

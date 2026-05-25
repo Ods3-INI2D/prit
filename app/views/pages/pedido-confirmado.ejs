@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Confirmado - +Saúde</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/grid.css">
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/checkout.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/semantica-fix.css">
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <header>
+        <%- include('../partial/grid.ejs') %>
+    </header>
+
+    <main>
+        <article class="confirmacao-container">
+
+            <output class="icone-sucesso" role="img" aria-label="Pedido confirmado com sucesso">✅</output>
+
+            <h1 class="titulo-confirmacao">Pedido Confirmado!</h1>
+
+            <output class="subtitulo-confirmacao">
+                Obrigado pela sua compra! Seu pedido foi recebido com sucesso e
+                está sendo processado. Você receberá atualizações por e-mail.
+            </output>
+
+            <section class="numero-pedido" aria-label="Número do pedido">
+                <output class="numero-pedido-label">Número do seu pedido</output>
+                <output class="numero-pedido-valor">#<%= id_pedido %></output>
+            </section>
+
+            <section aria-labelledby="titulo-resumo-pedido">
+                <h2 id="titulo-resumo-pedido"
+                    style="font-size:1.1rem;font-weight:600;color:#4da6ff;margin-bottom:1rem;text-align:center;">
+                    Resumo da Compra
+                </h2>
+
+                <table style="width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:0.9rem;">
+                    <caption style="display:none;">Detalhes do pedido confirmado</caption>
+                    <thead>
+                        <tr style="border-bottom:0.0625rem solid #404040;">
+                            <th scope="col"
+                                style="text-align:left;padding:0.5rem 0;color:#888;font-weight:500;">
+                                Produto
+                            </th>
+                            <th scope="col"
+                                style="text-align:center;padding:0.5rem 0;color:#888;font-weight:500;">
+                                Qtd
+                            </th>
+                            <th scope="col"
+                                style="text-align:right;padding:0.5rem 0;color:#888;font-weight:500;">
+                                Valor
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% itens.forEach(function(item) {
+                            var precoUnit = parseFloat(item.preco_unit) || 0;
+                            var qtd       = parseInt(item.quantidade)   || 1;
+                            var subtotal  = precoUnit * qtd;
+                        %>
+                            <tr style="border-bottom:0.0625rem solid rgba(255,255,255,0.06);">
+                                <td style="padding:0.625rem 0;color:white;">
+                                    <%= item.nome %>
+                                </td>
+                                <td style="text-align:center;padding:0.625rem 0;color:#d9d9d9;">
+                                    <%= qtd %>
+                                </td>
+                                <td style="text-align:right;padding:0.625rem 0;color:#4da6ff;font-weight:600;">
+                                    R$ <%= subtotal.toFixed(2) %>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2"
+                                style="padding:0.75rem 0;font-weight:700;color:white;
+                                       border-top:0.0625rem solid #404040;">
+                                Total
+                            </td>
+                            <td style="text-align:right;padding:0.75rem 0;font-weight:700;
+                                       color:#4da6ff;font-size:1.05rem;
+                                       border-top:0.0625rem solid #404040;">
+                                R$ <%= parseFloat(valor_total).toFixed(2) %>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </section>
+
+            <section aria-labelledby="titulo-info-entrega"
+                     style="background-color:#2a2a2a;border-radius:0.625rem;
+                            padding:1.25rem;margin-bottom:1.75rem;text-align:left;">
+                <h2 id="titulo-info-entrega"
+                    style="font-size:1rem;font-weight:600;color:#4da6ff;margin-bottom:0.75rem;">
+                    Informações de Entrega
+                </h2>
+
+                <dl>
+                    <dt style="display:none;">Endereço</dt>
+                    <dd style="font-size:0.875rem;color:#d9d9d9;margin-bottom:0.4rem;">
+                        📍 <%= endereco %>
+                    </dd>
+
+                    <dt style="display:none;">Forma de Pagamento</dt>
+                    <dd style="font-size:0.875rem;color:#d9d9d9;margin-bottom:0.4rem;">
+                        💳 <%= forma_pagamento_label %>
+                    </dd>
+
+                    <dt style="display:none;">Prazo estimado</dt>
+                    <dd style="font-size:0.8125rem;color:#888;">
+                        🚚 Prazo estimado: 5 a 10 dias úteis após confirmação do pagamento
+                    </dd>
+                </dl>
+            </section>
+
+            <nav class="acoes-confirmacao" aria-label="Ações pós-compra">
+                <a href="/home" class="btn-voltar-home">Continuar Comprando</a>
+                <a href="/usuario"
+                   class="btn-voltar-home"
+                   style="background-color:#2a2a2a;border:0.125rem solid #4da6ff;color:#4da6ff;">
+                    Minha Conta
+                </a>
+            </nav>
+
+        </article>
+    </main>
+
+    <%- include('../partial/footer.ejs') %>
+</body>
+</html>
