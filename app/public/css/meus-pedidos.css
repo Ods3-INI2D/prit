@@ -1,0 +1,559 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    font-size: 16px;
+}
+
+body {
+    background-color: #1f1f1f;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+}
+
+main {
+    min-height: 60vh;
+    padding: 1.875rem 0 3rem;
+}
+
+/* ── Container principal ─────────────────────────── */
+.pedidos-container {
+    width: 90%;
+    max-width: 62rem;
+    margin: 0 auto;
+}
+
+/* ── Navegação ───────────────────────────────────── */
+.navegacao {
+    margin-bottom: 1.75rem;
+}
+
+.voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.voltar:hover {
+    color: #4da6ff;
+}
+
+.seta-voltar {
+    width: 1rem;
+    height: auto;
+}
+
+/* ── Título ──────────────────────────────────────── */
+.titulo-pedidos {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: white;
+    text-align: center;
+}
+
+/* ── Contador ────────────────────────────────────── */
+.contador-pedidos {
+    display: block;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 2rem;
+}
+
+/* ── Estado vazio / sem acesso ───────────────────── */
+.estado-vazio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 1rem;
+    gap: 1rem;
+}
+
+.icone-estado {
+    font-size: 3.5rem;
+    display: block;
+}
+
+.titulo-estado {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: white;
+}
+
+.descricao-estado {
+    font-size: 1rem;
+    color: #888;
+    max-width: 26rem;
+    line-height: 1.6;
+}
+
+/* ── Botões de ação ──────────────────────────────── */
+.btn-acao-principal {
+    display: inline-block;
+    padding: 0.875rem 2rem;
+    background-color: #163069;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.625rem;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-acao-principal:hover {
+    background-color: #0d1f42;
+    transform: translateY(-0.125rem);
+}
+
+.btn-acao-secundaria {
+    display: inline-block;
+    padding: 0.625rem 1.25rem;
+    background-color: transparent;
+    color: #4da6ff;
+    text-decoration: none;
+    border: 0.125rem solid #4da6ff;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-acao-secundaria:hover {
+    background-color: #4da6ff;
+    color: #1f1f1f;
+}
+
+/* ── Lista de pedidos ────────────────────────────── */
+.lista-pedidos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ── Card de pedido ──────────────────────────────── */
+.pedido-card {
+    background-color: #2a2a2a;
+    border-radius: 0.875rem;
+    overflow: hidden;
+    box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.3);
+    border: 0.0625rem solid rgba(255, 255, 255, 0.06);
+    transition: box-shadow 0.3s ease;
+}
+
+.pedido-card:hover {
+    box-shadow: 0 0.25rem 1.25rem rgba(77, 166, 255, 0.1);
+}
+
+/* ── Cabeçalho do card ───────────────────────────── */
+.pedido-cabecalho {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem 1.25rem 1rem;
+    border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.08);
+}
+
+.pedido-identificacao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.pedido-numero {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: white;
+}
+
+.pedido-numero output {
+    color: #4da6ff;
+}
+
+.pedido-data {
+    font-size: 0.8125rem;
+    color: #888;
+    display: block;
+}
+
+.pedido-resumo-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.pedido-valor-total {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: white;
+}
+
+/* ── Status badges ───────────────────────────────── */
+.pedido-status {
+    display: inline-block;
+    padding: 0.3rem 0.875rem;
+    border-radius: 2rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.status-pendente  { background-color: rgba(255, 193,  7, 0.15); color: #ffc107; border: 0.0625rem solid #ffc107; }
+.status-aprovado  { background-color: rgba(77,  166, 255, 0.15); color: #4da6ff; border: 0.0625rem solid #4da6ff; }
+.status-enviado   { background-color: rgba(138, 43,  226, 0.15); color: #ba68c8; border: 0.0625rem solid #ba68c8; }
+.status-entregue  { background-color: rgba(76,  175,  80, 0.15); color: #81c784; border: 0.0625rem solid #81c784; }
+.status-cancelado { background-color: rgba(217, 48,   37, 0.15); color: #ff6b6b; border: 0.0625rem solid #d93025; }
+
+/* ── Seção de itens ──────────────────────────────── */
+.pedido-itens {
+    padding: 1.25rem;
+    border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.08);
+}
+
+.titulo-itens-pedido {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #4da6ff;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.qtd-itens {
+    font-size: 0.8125rem;
+    color: #888;
+    font-weight: 400;
+}
+
+.lista-itens-pedido {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+}
+
+/* ── Item individual ─────────────────────────────── */
+.item-pedido {
+    display: flex;
+    gap: 0.875rem;
+    align-items: flex-start;
+    padding: 0.875rem;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 0.5rem;
+    border: 0.0625rem solid rgba(255, 255, 255, 0.05);
+}
+
+.item-imagem-container {
+    flex-shrink: 0;
+    margin: 0;
+}
+
+.item-imagem {
+    width: 4rem;
+    height: 4rem;
+    object-fit: cover;
+    border-radius: 0.375rem;
+    display: block;
+}
+
+.item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.item-nome {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.item-link {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.item-link:hover {
+    color: #4da6ff;
+}
+
+/* ── DL de detalhes do item ──────────────────────── */
+.item-detalhes {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.2rem 0.75rem;
+    font-size: 0.8125rem;
+}
+
+.item-detalhes dt {
+    color: #888;
+    font-weight: 500;
+}
+
+.item-detalhes dd {
+    color: #d9d9d9;
+    margin: 0;
+}
+
+.item-subtotal {
+    color: #4da6ff;
+    font-weight: 600;
+}
+
+/* ── Rodapé do card ──────────────────────────────── */
+.pedido-rodape {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── DL de totais do pedido ──────────────────────── */
+.pedido-totais {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9375rem;
+}
+
+.pedido-totais dt {
+    color: #d9d9d9;
+    font-weight: 500;
+}
+
+.pedido-totais dd {
+    margin: 0;
+}
+
+.valor-destaque {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: white;
+}
+
+.pedido-acoes {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* ── Bloco de pagamento ──────────────────────────── */
+.pedido-pagamento {
+    padding: 1rem 1.25rem;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.titulo-pagamento {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #888;
+    margin-bottom: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pagamento-detalhes {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 1rem;
+    font-size: 0.875rem;
+}
+
+.pagamento-detalhes dt {
+    color: #888;
+    font-weight: 500;
+}
+
+.pagamento-detalhes dd {
+    margin: 0;
+    color: #d9d9d9;
+}
+
+.status-pagamento {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.status-pag-pendente  { background-color: rgba(255, 193,  7, 0.12); color: #ffc107; }
+.status-pag-aprovado  { background-color: rgba(76,  175, 80, 0.12); color: #81c784; }
+.status-pag-cancelado { background-color: rgba(217, 48,  37, 0.12); color: #ff6b6b; }
+
+/* ── Sem itens ───────────────────────────────────── */
+.sem-itens-pedido {
+    display: block;
+    padding: 1.25rem;
+    color: #888;
+    font-size: 0.875rem;
+    text-align: center;
+    font-style: italic;
+}
+
+/* ── Mensagens ───────────────────────────────────── */
+.mensagem-erro {
+    display: block;
+    padding: 1rem;
+    border-radius: 0.625rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    background-color: rgba(217, 48, 37, 0.15);
+    border: 0.125rem solid #d93025;
+    color: #ff6b6b;
+}
+
+/* ── Responsividade — Desktop ────────────────────── */
+@media (min-width: 901px) {
+
+    main {
+        padding: 2.5rem 0 4rem;
+    }
+
+    .titulo-pedidos {
+        font-size: 2.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .contador-pedidos {
+        font-size: 1rem;
+        margin-bottom: 2.5rem;
+    }
+
+    /* Cabeçalho do card em linha */
+    .pedido-cabecalho {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 1.75rem 1.25rem;
+    }
+
+    .pedido-identificacao {
+        gap: 0.3rem;
+    }
+
+    .pedido-numero {
+        font-size: 1.125rem;
+    }
+
+    .pedido-data {
+        font-size: 0.875rem;
+    }
+
+    .pedido-resumo-topo {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.5rem;
+    }
+
+    .pedido-valor-total {
+        font-size: 1.25rem;
+    }
+
+    /* Itens */
+    .pedido-itens {
+        padding: 1.5rem 1.75rem;
+    }
+
+    .titulo-itens-pedido {
+        font-size: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .lista-itens-pedido {
+        gap: 1rem;
+    }
+
+    .item-pedido {
+        padding: 1rem 1.25rem;
+        gap: 1.25rem;
+    }
+
+    .item-imagem {
+        width: 5rem;
+        height: 5rem;
+    }
+
+    .item-nome {
+        font-size: 1rem;
+        margin-bottom: 0.625rem;
+    }
+
+    .item-detalhes {
+        font-size: 0.875rem;
+        gap: 0.25rem 1rem;
+    }
+
+    /* Rodapé */
+    .pedido-rodape {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.75rem;
+    }
+
+    .pedido-totais {
+        font-size: 1rem;
+        gap: 1rem;
+    }
+
+    .valor-destaque {
+        font-size: 1.25rem;
+    }
+
+    /* Pagamento */
+    .pedido-pagamento {
+        padding: 1rem 1.75rem;
+    }
+
+    .pagamento-detalhes {
+        font-size: 0.9375rem;
+        gap: 0.3rem 1.25rem;
+    }
+
+    /* Estado vazio */
+    .titulo-estado {
+        font-size: 1.625rem;
+    }
+
+    .descricao-estado {
+        font-size: 1.125rem;
+    }
+
+    .btn-acao-principal {
+        font-size: 1.0625rem;
+        padding: 1rem 2.5rem;
+    }
+}

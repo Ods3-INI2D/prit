@@ -340,6 +340,24 @@ router.post('/usuario/atualizar-campo', requireLogin,
         res.redirect('/usuario?sucesso=' + encodeURIComponent(labels[campo] + ' atualizado com sucesso!'));
     }
 );
+// ── Meus Pedidos ──────────────────────────────────────────────
+router.get('/meus-pedidos', requireLogin, blockAdmin, async (req, res) => {
+    try {
+        const pedidos = await pedidosModel.findByUsuarioComDetalhes(req.session.idUsuario);
+        res.render('pages/meus-pedidos', {
+            pedidos,
+            usuario:       res.locals.usuario,
+            mensagemErro:  null
+        });
+    } catch (err) {
+        console.error('Erro ao carregar meus pedidos:', err);
+        res.render('pages/meus-pedidos', {
+            pedidos:      [],
+            usuario:      res.locals.usuario,
+            mensagemErro: 'Erro ao carregar seus pedidos. Tente novamente.'
+        });
+    }
+});
 
 // ── Produto ───────────────────────────────────────────────
 router.get('/produto/:id', async (req, res) => {

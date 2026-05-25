@@ -111,5 +111,57 @@ const pedidosModel = {
         }
     }
 };
+// busca pedidos com itens e pagamento de um usuário
+  findByUsuarioComDetalhes: async (id_usuario) => {
+      try {
+        // 1. Busca todos os pedidos do usuário
+            const [pedidosRaw] = await pool.query(
+                `SELECT p.*,
+                        pg.id_pagamento, pg.forma, pg.valor AS valor_pag, pg.status AS status_pag
+                 FROM pedidos p
+                 LEFT JOIN pagamentos pg ON pg.id_pedido = p.id_pedido
+                 WHERE p.id_usuario = ?
+                 ORDER BY p.criado_em DESC`,
+                [id_usuario]
+            );
 
+            if (!pedidosRaw || pedidosRaw.length === 0) return [];
+
+            // 2. Para cada pedido, busca os itens com dados do produto
+            const pedidos = await Promise.all(
+                pedidosRaw.map(async (p) => {
+                    const [itens] = await pool.query(
+                        `SELECT ip.id_item, ip.id_produto, ip.qtd, ip.preco_unit,
+                                pr.nome, pr.imagem
+                         FROM itens_pedido ip
+                         JOIN produtos pr ON pr.id_produto = ip.id_produto
+                         WHERE ip.id_pedido = ?
+                         ORDER BY ip.id_item`,
+                        [p.id_pedido]
+                    );
+
+                    return {
+                        id_pedido:   p.id_pedido,
+                        id_usuario:  p.id_usuario,
+                        data_pedido: p.data_pedido,
+                        valor_total: p.valor_total,
+                        status:      p.status,
+                        criado_em:   p.criado_em,
+                        itens:       itens || [],
+                        pagamento:   p.id_pagamento ? {
+                            id_pagamento: p.id_pagamento,
+                            forma:        p.forma,
+                            valor:        p.valor_pag,
+                            status:       p.status_pag
+                        } : null
+                    };
+                })
+            );
+
+            return pedidos;
+        } catch (erro) {
+            console.error('findByUsuarioComDetalhes erro:', erro);
+            return [];
+        }
+},
 module.exports = { pedidosModel };
