@@ -143,9 +143,8 @@ const pedidosModel = {
                 );
                 const pag = (pagRows && pagRows.length > 0) ? pagRows[0] : null;
 
-                // Entrega — busca sempre via JOIN pagamentos->entregas pelo id_pedido
-                // Isso garante que o endereço seja encontrado independentemente
-                // de como o objeto pag foi carregado
+                // Entrega — busca via LEFT JOIN para garantir que nulos não quebrem a consulta
+                // codigo_rastreio armazena o endereço completo formatado
                 let enderecoEntrega = null;
                 let transportadora  = null;
                 let statusEntrega   = null;
@@ -153,7 +152,7 @@ const pedidosModel = {
                 const [entRows] = await pool.query(
                     `SELECT e.codigo_rastreio, e.transportadora, e.status
                      FROM entregas e
-                     INNER JOIN pagamentos pg ON pg.id_pagamento = e.id_pagamento
+                     LEFT JOIN pagamentos pg ON pg.id_pagamento = e.id_pagamento
                      WHERE pg.id_pedido = ?
                      ORDER BY e.id_entrega DESC
                      LIMIT 1`,
@@ -161,10 +160,26 @@ const pedidosModel = {
                 );
 
                 if (entRows && entRows.length > 0) {
-                    // codigo_rastreio armazena o endereço completo formatado
-                    enderecoEntrega = entRows[0].codigo_rastreio || null;
-                    transportadora  = entRows[0].transportadora  || null;
-                    statusEntrega   = entRows[0].status          || null;
+                    enderecoEntrega = entRows[0].codigo_rastreio  || null;
+                    transportadora  = entRows[0].transportadora   || null;
+                    statusEntrega   = entRows[0].status           || null;
+                }
+
+                // Fallback: busca direta pelo id_pagamento caso o JOIN acima não retorne
+                if (!enderecoEntrega && pag && pag.id_pagamento) {
+                    const [entDireto] = await pool.query(
+                        `SELECT codigo_rastreio, transportadora, status
+                         FROM entregas
+                         WHERE id_pagamento = ?
+                         ORDER BY id_entrega DESC
+                         LIMIT 1`,
+                        [pag.id_pagamento]
+                    );
+                    if (entDireto && entDireto.length > 0) {
+                        enderecoEntrega = entDireto[0].codigo_rastreio || null;
+                        transportadora  = entDireto[0].transportadora  || null;
+                        statusEntrega   = entDireto[0].status          || null;
+                    }
                 }
 
                 // Itens do pedido
