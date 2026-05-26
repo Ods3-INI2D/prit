@@ -132,7 +132,7 @@ const pedidosModel = {
             for (let i = 0; i < pedidosRaw.length; i++) {
                 const p = pedidosRaw[i];
 
-                // Pagamento
+                // Pagamento — o mais recente vinculado ao pedido
                 const [pagRows] = await pool.query(
                     `SELECT id_pagamento, forma, valor, status
                      FROM pagamentos
@@ -143,26 +143,28 @@ const pedidosModel = {
                 );
                 const pag = (pagRows && pagRows.length > 0) ? pagRows[0] : null;
 
-                // Entrega — buscada pelo id_pagamento quando existir
-                let enderecoEntrega    = null;
-                let transportadora     = null;
-                let statusEntrega      = null;
+                // Entrega — busca sempre via JOIN pagamentos->entregas pelo id_pedido
+                // Isso garante que o endereço seja encontrado independentemente
+                // de como o objeto pag foi carregado
+                let enderecoEntrega = null;
+                let transportadora  = null;
+                let statusEntrega   = null;
 
-                if (pag && pag.id_pagamento) {
-                    const [entRows] = await pool.query(
-                        `SELECT codigo_rastreio, transportadora, status
-                         FROM entregas
-                         WHERE id_pagamento = ?
-                         ORDER BY id_entrega DESC
-                         LIMIT 1`,
-                        [pag.id_pagamento]
-                    );
+                const [entRows] = await pool.query(
+                    `SELECT e.codigo_rastreio, e.transportadora, e.status
+                     FROM entregas e
+                     INNER JOIN pagamentos pg ON pg.id_pagamento = e.id_pagamento
+                     WHERE pg.id_pedido = ?
+                     ORDER BY e.id_entrega DESC
+                     LIMIT 1`,
+                    [p.id_pedido]
+                );
 
-                    if (entRows && entRows.length > 0) {
-                        enderecoEntrega = entRows[0].codigo_rastreio  || null;
-                        transportadora  = entRows[0].transportadora   || null;
-                        statusEntrega   = entRows[0].status           || null;
-                    }
+                if (entRows && entRows.length > 0) {
+                    // codigo_rastreio armazena o endereço completo formatado
+                    enderecoEntrega = entRows[0].codigo_rastreio || null;
+                    transportadora  = entRows[0].transportadora  || null;
+                    statusEntrega   = entRows[0].status          || null;
                 }
 
                 // Itens do pedido
