@@ -91,7 +91,7 @@
 
                         var valorTotal = parseFloat(pedido.valor_total) || 0;
 
-                        // telefone formatado
+                        // Telefone formatado
                         var telefoneFormatado = null;
                         if (pedido.ddd && pedido.tel) {
                             var telNum = String(pedido.tel).replace(/\D/g, '');
@@ -101,7 +101,7 @@
                                     : telNum.slice(0, 4) + '-' + telNum.slice(4));
                         }
 
-                        // endereco vem do campo codigo_rastreio da tabela entregas
+                        // Endereço vem do campo codigo_rastreio da tabela entregas
                         var enderecoEntrega = pedido.endereco || null;
                     %>
 

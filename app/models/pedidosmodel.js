@@ -108,7 +108,7 @@ const pedidosModel = {
 
     findByUsuarioComDetalhes: async (id_usuario) => {
         try {
-            // 1. Busca apenas os pedidos do usuário
+            // 1. Busca os pedidos do usuário
             const [pedidosRaw] = await pool.query(
                 `SELECT id_pedido, id_usuario, data_pedido, valor_total, status, criado_em
                  FROM pedidos
@@ -119,7 +119,7 @@ const pedidosModel = {
 
             if (!pedidosRaw || pedidosRaw.length === 0) return [];
 
-            // 2. Busca dados do usuário separadamente
+            // 2. Busca dados do usuário
             const [usuarioRows] = await pool.query(
                 `SELECT ddd, tel FROM usuarios WHERE id_usuario = ?`,
                 [id_usuario]
@@ -128,68 +128,75 @@ const pedidosModel = {
 
             // 3. Para cada pedido, busca pagamento, entrega e itens
             const pedidos = [];
-            for (const p of pedidosRaw) {
+
+            for (let i = 0; i < pedidosRaw.length; i++) {
+                const p = pedidosRaw[i];
+
+                // Pagamento
                 const [pagRows] = await pool.query(
-        `SELECT id_pagamento, forma, valor, status
-         FROM pagamentos
-         WHERE id_pedido = ?
-         ORDER BY id_pagamento DESC
-         LIMIT 1`,
-        [p.id_pedido]
-    );
-    const pag = pagRows[0] || null;
+                    `SELECT id_pagamento, forma, valor, status
+                     FROM pagamentos
+                     WHERE id_pedido = ?
+                     ORDER BY id_pagamento DESC
+                     LIMIT 1`,
+                    [p.id_pedido]
+                );
+                const pag = (pagRows && pagRows.length > 0) ? pagRows[0] : null;
 
-    let endereco       = null;
-    let transportadora = null;
-    let status_entrega = null;
+                // Entrega — buscada pelo id_pagamento quando existir
+                let enderecoEntrega    = null;
+                let transportadora     = null;
+                let statusEntrega      = null;
 
-    if (pag && pag.id_pagamento) {
-        const [entRows] = await pool.query(
-            `SELECT codigo_rastreio, transportadora, status
-             FROM entregas
-             WHERE id_pagamento = ?
-             ORDER BY id_entrega DESC
-             LIMIT 1`,
-            [pag.id_pagamento]
-        );
-        if (entRows && entRows.length > 0) {
-            endereco       = entRows[0].codigo_rastreio || null;
-            transportadora = entRows[0].transportadora   || null;
-            status_entrega = entRows[0].status            || null;
-        }
-    }
+                if (pag && pag.id_pagamento) {
+                    const [entRows] = await pool.query(
+                        `SELECT codigo_rastreio, transportadora, status
+                         FROM entregas
+                         WHERE id_pagamento = ?
+                         ORDER BY id_entrega DESC
+                         LIMIT 1`,
+                        [pag.id_pagamento]
+                    );
 
-    const [itens] = await pool.query(
-        `SELECT ip.id_item, ip.id_produto, ip.qtd, ip.preco_unit,
-                pr.nome, pr.imagem
-         FROM itens_pedido ip
-         JOIN produtos pr ON pr.id_produto = ip.id_produto
-         WHERE ip.id_pedido = ?
-         ORDER BY ip.id_item`,
-        [p.id_pedido]
-    );
+                    if (entRows && entRows.length > 0) {
+                        enderecoEntrega = entRows[0].codigo_rastreio  || null;
+                        transportadora  = entRows[0].transportadora   || null;
+                        statusEntrega   = entRows[0].status           || null;
+                    }
+                }
 
-    pedidos.push({
-        id_pedido:      p.id_pedido,
-        id_usuario:     p.id_usuario,
-        data_pedido:    p.data_pedido,
-        valor_total:    p.valor_total,
-        status:         p.status,
-        criado_em:      p.criado_em,
-        ddd:            usuarioDados.ddd || null,
-        tel:            usuarioDados.tel || null,
-        endereco,
-        transportadora,
-        status_entrega,
-        itens: itens || [],
-        pagamento: pag ? {
-            id_pagamento: pag.id_pagamento,
-            forma:        pag.forma,
-            valor:        pag.valor,
-            status:       pag.status
-        } : null
-    });
-};
+                // Itens do pedido
+                const [itens] = await pool.query(
+                    `SELECT ip.id_item, ip.id_produto, ip.qtd, ip.preco_unit,
+                            pr.nome, pr.imagem
+                     FROM itens_pedido ip
+                     JOIN produtos pr ON pr.id_produto = ip.id_produto
+                     WHERE ip.id_pedido = ?
+                     ORDER BY ip.id_item`,
+                    [p.id_pedido]
+                );
+
+                pedidos.push({
+                    id_pedido:      p.id_pedido,
+                    id_usuario:     p.id_usuario,
+                    data_pedido:    p.data_pedido,
+                    valor_total:    p.valor_total,
+                    status:         p.status,
+                    criado_em:      p.criado_em,
+                    ddd:            usuarioDados.ddd || null,
+                    tel:            usuarioDados.tel || null,
+                    endereco:       enderecoEntrega,
+                    transportadora: transportadora,
+                    status_entrega: statusEntrega,
+                    itens:          itens || [],
+                    pagamento: pag ? {
+                        id_pagamento: pag.id_pagamento,
+                        forma:        pag.forma,
+                        valor:        pag.valor,
+                        status:       pag.status
+                    } : null
+                });
+            }
 
             return pedidos;
         } catch (erro) {
