@@ -144,8 +144,7 @@ const pedidosModel = {
                 const pag = (pagRows && pagRows.length > 0) ? pagRows[0] : null;
 
                 // Entrega — codigo_rastreio armazena o endereço completo formatado.
-                // Busca diretamente pelo id_pagamento do pedido, sem JOIN,
-                // para evitar qualquer ambiguidade de alias ou resultado vazio.
+                // Busca diretamente pelo id_pagamento, sem JOIN.
                 let enderecoEntrega = null;
                 let transportadora  = null;
                 let statusEntrega   = null;
