@@ -114,9 +114,7 @@ const pedidosModel = {
     // busca pedidos com itens, pagamento, entrega e dados do usuario
     findByUsuarioComDetalhes: async (id_usuario) => {
         try {
-            // Busca pedidos com pagamento e entrega usando LEFT JOINs explícitos.
-            // A entrega é vinculada ao pagamento; usamos MAX(e.id_entrega) para
-            // garantir que pegamos sempre o registro mais recente por pedido.
+            // Passo 1: busca todos os pedidos com pagamento do usuário
             const [pedidosRaw] = await pool.query(
                 `SELECT
                     p.id_pedido,
@@ -129,21 +127,11 @@ const pedidosModel = {
                     u.tel,
                     pg.id_pagamento,
                     pg.forma,
-                    pg.valor         AS valor_pag,
-                    pg.status        AS status_pag,
-                    e.codigo_rastreio AS endereco_entrega,
-                    e.transportadora  AS transportadora_entrega,
-                    e.status          AS status_entrega
+                    pg.valor  AS valor_pag,
+                    pg.status AS status_pag
                  FROM pedidos p
-                 JOIN usuarios u ON u.id_usuario = p.id_usuario
+                 JOIN usuarios u   ON u.id_usuario = p.id_usuario
                  LEFT JOIN pagamentos pg ON pg.id_pedido = p.id_pedido
-                 LEFT JOIN entregas e
-                        ON e.id_pagamento = pg.id_pagamento
-                       AND e.id_entrega = (
-                               SELECT MAX(e2.id_entrega)
-                               FROM entregas e2
-                               WHERE e2.id_pagamento = pg.id_pagamento
-                           )
                  WHERE p.id_usuario = ?
                  ORDER BY p.criado_em DESC`,
                 [id_usuario]
@@ -151,9 +139,33 @@ const pedidosModel = {
 
             if (!pedidosRaw || pedidosRaw.length === 0) return [];
 
-            // Busca os itens de cada pedido
+            // Passo 2: para cada pedido, busca entrega e itens separadamente
+            // Isso evita qualquer ambiguidade de JOIN e garante os dados corretos
             const pedidos = await Promise.all(
                 pedidosRaw.map(async (p) => {
+
+                    // Busca a entrega mais recente vinculada ao pagamento
+                    let endereco       = null;
+                    let transportadora = null;
+                    let status_entrega = null;
+
+                    if (p.id_pagamento) {
+                        const [entregaRows] = await pool.query(
+                            `SELECT codigo_rastreio, transportadora, status
+                             FROM entregas
+                             WHERE id_pagamento = ?
+                             ORDER BY id_entrega DESC
+                             LIMIT 1`,
+                            [p.id_pagamento]
+                        );
+                        if (entregaRows && entregaRows.length > 0) {
+                            endereco       = entregaRows[0].codigo_rastreio || null;
+                            transportadora = entregaRows[0].transportadora   || null;
+                            status_entrega = entregaRows[0].status            || null;
+                        }
+                    }
+
+                    // Busca os itens do pedido
                     const [itens] = await pool.query(
                         `SELECT ip.id_item,
                                 ip.id_produto,
@@ -175,15 +187,13 @@ const pedidosModel = {
                         valor_total:    p.valor_total,
                         status:         p.status,
                         criado_em:      p.criado_em,
-                        // telefone do usuario
                         ddd:            p.ddd  || null,
                         tel:            p.tel  || null,
-                        // endereco salvo em codigo_rastreio da tabela entregas
-                        endereco:       p.endereco_entrega      || null,
-                        transportadora: p.transportadora_entrega || null,
-                        status_entrega: p.status_entrega         || null,
-                        itens:          itens || [],
-                        pagamento:      p.id_pagamento ? {
+                        endereco,
+                        transportadora,
+                        status_entrega,
+                        itens:  itens || [],
+                        pagamento: p.id_pagamento ? {
                             id_pagamento: p.id_pagamento,
                             forma:        p.forma,
                             valor:        p.valor_pag,
