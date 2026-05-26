@@ -2,7 +2,6 @@ const pool = require('../config/pool_conexoes');
 
 const pedidosModel = {
 
-    // cria um pedido completo com itens
     create: async (id_usuario, itens, valor_total) => {
         const conn = await pool.getConnection();
         try {
@@ -37,7 +36,6 @@ const pedidosModel = {
         }
     },
 
-    // cria registro de pagamento
     createPagamento: async (id_pedido, forma, valor) => {
         try {
             const [result] = await pool.query(
@@ -52,7 +50,6 @@ const pedidosModel = {
         }
     },
 
-    // cria registro de entrega — armazena endereço em codigo_rastreio
     createEntrega: async (id_pagamento, transportadora, endereco) => {
         try {
             const [result] = await pool.query(
@@ -67,7 +64,6 @@ const pedidosModel = {
         }
     },
 
-    // busca pedidos de um usuário (simples)
     findByUsuario: async (id_usuario) => {
         try {
             const [linhas] = await pool.query(
@@ -87,7 +83,6 @@ const pedidosModel = {
         }
     },
 
-    // busca pedido por id com itens
     findById: async (id_pedido) => {
         try {
             const [pedidos] = await pool.query(
@@ -111,68 +106,66 @@ const pedidosModel = {
         }
     },
 
-    // busca pedidos com itens, pagamento, entrega e dados do usuario
     findByUsuarioComDetalhes: async (id_usuario) => {
         try {
-            // Passo 1: busca todos os pedidos com pagamento do usuário
+            // 1. Busca apenas os pedidos do usuário
             const [pedidosRaw] = await pool.query(
-                `SELECT
-                    p.id_pedido,
-                    p.id_usuario,
-                    p.data_pedido,
-                    p.valor_total,
-                    p.status,
-                    p.criado_em,
-                    u.ddd,
-                    u.tel,
-                    pg.id_pagamento,
-                    pg.forma,
-                    pg.valor  AS valor_pag,
-                    pg.status AS status_pag
-                 FROM pedidos p
-                 JOIN usuarios u   ON u.id_usuario = p.id_usuario
-                 LEFT JOIN pagamentos pg ON pg.id_pedido = p.id_pedido
-                 WHERE p.id_usuario = ?
-                 ORDER BY p.criado_em DESC`,
+                `SELECT id_pedido, id_usuario, data_pedido, valor_total, status, criado_em
+                 FROM pedidos
+                 WHERE id_usuario = ?
+                 ORDER BY criado_em DESC`,
                 [id_usuario]
             );
 
             if (!pedidosRaw || pedidosRaw.length === 0) return [];
 
-            // Passo 2: para cada pedido, busca entrega e itens separadamente
-            // Isso evita qualquer ambiguidade de JOIN e garante os dados corretos
+            // 2. Busca dados do usuário separadamente
+            const [usuarioRows] = await pool.query(
+                `SELECT ddd, tel FROM usuarios WHERE id_usuario = ?`,
+                [id_usuario]
+            );
+            const usuarioDados = usuarioRows[0] || {};
+
+            // 3. Para cada pedido, busca pagamento, entrega e itens
             const pedidos = await Promise.all(
                 pedidosRaw.map(async (p) => {
 
-                    // Busca a entrega mais recente vinculada ao pagamento
+                    // Pagamento
+                    const [pagRows] = await pool.query(
+                        `SELECT id_pagamento, forma, valor, status
+                         FROM pagamentos
+                         WHERE id_pedido = ?
+                         ORDER BY id_pagamento DESC
+                         LIMIT 1`,
+                        [p.id_pedido]
+                    );
+                    const pag = pagRows[0] || null;
+
+                    // Entrega
                     let endereco       = null;
                     let transportadora = null;
                     let status_entrega = null;
 
-                    if (p.id_pagamento) {
-                        const [entregaRows] = await pool.query(
+                    if (pag && pag.id_pagamento) {
+                        const [entRows] = await pool.query(
                             `SELECT codigo_rastreio, transportadora, status
                              FROM entregas
                              WHERE id_pagamento = ?
                              ORDER BY id_entrega DESC
                              LIMIT 1`,
-                            [p.id_pagamento]
+                            [pag.id_pagamento]
                         );
-                        if (entregaRows && entregaRows.length > 0) {
-                            endereco       = entregaRows[0].codigo_rastreio || null;
-                            transportadora = entregaRows[0].transportadora   || null;
-                            status_entrega = entregaRows[0].status            || null;
+                        if (entRows && entRows.length > 0) {
+                            endereco       = entRows[0].codigo_rastreio || null;
+                            transportadora = entRows[0].transportadora   || null;
+                            status_entrega = entRows[0].status            || null;
                         }
                     }
 
-                    // Busca os itens do pedido
+                    // Itens
                     const [itens] = await pool.query(
-                        `SELECT ip.id_item,
-                                ip.id_produto,
-                                ip.qtd,
-                                ip.preco_unit,
-                                pr.nome,
-                                pr.imagem
+                        `SELECT ip.id_item, ip.id_produto, ip.qtd, ip.preco_unit,
+                                pr.nome, pr.imagem
                          FROM itens_pedido ip
                          JOIN produtos pr ON pr.id_produto = ip.id_produto
                          WHERE ip.id_pedido = ?
@@ -187,17 +180,17 @@ const pedidosModel = {
                         valor_total:    p.valor_total,
                         status:         p.status,
                         criado_em:      p.criado_em,
-                        ddd:            p.ddd  || null,
-                        tel:            p.tel  || null,
+                        ddd:            usuarioDados.ddd || null,
+                        tel:            usuarioDados.tel || null,
                         endereco,
                         transportadora,
                         status_entrega,
-                        itens:  itens || [],
-                        pagamento: p.id_pagamento ? {
-                            id_pagamento: p.id_pagamento,
-                            forma:        p.forma,
-                            valor:        p.valor_pag,
-                            status:       p.status_pag
+                        itens: itens || [],
+                        pagamento: pag ? {
+                            id_pagamento: pag.id_pagamento,
+                            forma:        pag.forma,
+                            valor:        pag.valor,
+                            status:       pag.status
                         } : null
                     };
                 })
