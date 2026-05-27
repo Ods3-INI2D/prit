@@ -36,6 +36,23 @@
                 </output>
             <% } %>
 
+            <%# ── Mensagens de erro vindas via query string (ex: comprar-novamente) ── %>
+            <%
+                var errosQuery = {
+                    pedido_nao_encontrado:  'Pedido não encontrado ou sem permissão de acesso.',
+                    pedido_sem_itens:       'Este pedido não possui itens que possam ser adicionados ao carrinho.',
+                    erro_comprar_novamente: 'Ocorreu um erro ao tentar repetir o pedido. Tente novamente.'
+                };
+                var erroQuery = typeof query !== 'undefined' && query && query.erro
+                    ? errosQuery[query.erro] || null
+                    : null;
+            %>
+            <% if (erroQuery) { %>
+                <output class="mensagem-erro" role="alert" aria-live="assertive">
+                    ⚠️ <%= erroQuery %>
+                </output>
+            <% } %>
+
             <%# ── Usuário não logado ──────────────────────────────────── %>
             <% if (!usuario) { %>
                 <article class="estado-vazio">
@@ -273,16 +290,32 @@
                                 </dd>
                             </dl>
 
+                            <%#
+                                ── Ações do pedido ──────────────────────────────────────────
+                                "Avaliar Produtos" leva ao carrinho (onde o botão já existe).
+                                "Comprar Novamente" submete um formulário POST que copia os
+                                itens do pedido para o carrinho e redireciona para /carrinho.
+                                Usamos <form> com method="POST" para que a ação seja segura
+                                (não indexável por bots, não repetível por refresh acidental)
+                                e semanticamente correta (é uma ação que altera estado).
+                            %>
                             <nav class="pedido-acoes"
                                  aria-label="Ações do pedido #<%= pedido.id_pedido %>">
+
                                 <% if (pedido.status === 'entregue') { %>
                                     <a href="/carrinho" class="btn-acao-secundaria">
                                         Avaliar Produtos
                                     </a>
                                 <% } %>
-                                <a href="/home" class="btn-acao-secundaria">
-                                    Comprar Novamente
-                                </a>
+
+                                <form method="POST"
+                                      action="/meus-pedidos/<%= pedido.id_pedido %>/comprar-novamente"
+                                      aria-label="Repetir pedido #<%= pedido.id_pedido %>">
+                                    <button type="submit" class="btn-acao-secundaria">
+                                        Comprar Novamente
+                                    </button>
+                                </form>
+
                             </nav>
                         </footer>
 

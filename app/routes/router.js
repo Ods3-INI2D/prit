@@ -358,6 +358,46 @@ router.get('/meus-pedidos', requireLogin, blockAdmin, async (req, res) => {
         });
     }
 });
+router.post('/meus-pedidos/:id/comprar-novamente', requireLogin, blockAdmin, async (req, res) => {
+    try {
+        const idPedido  = parseInt(req.params.id);
+        const idUsuario = req.session.idUsuario;
+ 
+        // Busca o pedido e valida que pertence ao usuário logado
+        const pedido = await pedidosModel.findById(idPedido);
+ 
+        if (!pedido || pedido.id_usuario !== idUsuario) {
+            return res.redirect('/meus-pedidos?erro=pedido_nao_encontrado');
+        }
+ 
+        if (!pedido.itens || pedido.itens.length === 0) {
+            return res.redirect('/meus-pedidos?erro=pedido_sem_itens');
+        }
+ 
+        const { session_id } = getIdentificador(req);
+ 
+        // Adiciona cada item ao carrinho (addProduto soma caso já exista)
+        for (const item of pedido.itens) {
+            const produto = await produtosModel.findById(item.id_produto);
+ 
+            // Só adiciona produtos que ainda existem e estão em estoque
+            if (produto && produto.status === 'em-estoque') {
+                await carrinhoModel.addProduto(
+                    item.id_produto,
+                    idUsuario,
+                    session_id,
+                    parseInt(item.qtd) || 1
+                );
+            }
+        }
+ 
+        res.redirect('/carrinho');
+    } catch (err) {
+        console.error('Erro em comprar-novamente:', err);
+        res.redirect('/meus-pedidos?erro=erro_comprar_novamente');
+    }
+});
+
 
 // ── Produto ───────────────────────────────────────────────
 router.get('/produto/:id', async (req, res) => {
