@@ -116,7 +116,23 @@
                         </select>
                     </label>
                 </fieldset>
-
+                <fieldset>
+                    <legend class="label-titulo">Faixa Etária Recomendada</legend>
+                    <label for="faixa-etaria">
+                        <select id="faixa-etaria" name="faixa_etaria">
+                            <option value="">Todas as idades</option>
+                            <option value="40+" <%= produto.faixa_etaria === '40+' ? 'selected' : '' %>>A partir de 40 anos</option>
+                            <option value="45+" <%= produto.faixa_etaria === '45+' ? 'selected' : '' %>>A partir de 45 anos</option>
+                            <option value="50+" <%= produto.faixa_etaria === '50+' ? 'selected' : '' %>>A partir de 50 anos</option>
+                            <option value="55+" <%= produto.faixa_etaria === '55+' ? 'selected' : '' %>>A partir de 55 anos</option>
+                            <option value="60+" <%= produto.faixa_etaria === '60+' ? 'selected' : '' %>>A partir de 60 anos</option>
+                            <option value="65+" <%= produto.faixa_etaria === '65+' ? 'selected' : '' %>>A partir de 65 anos</option>
+                            <option value="70+" <%= produto.faixa_etaria === '70+' ? 'selected' : '' %>>A partir de 70 anos</option>
+                            <option value="75+" <%= produto.faixa_etaria === '75+' ? 'selected' : '' %>>A partir de 75 anos</option>
+                            <option value="80+" <%= produto.faixa_etaria === '80+' ? 'selected' : '' %>>80 anos ou mais</option>
+                        </select>
+                    </label>
+                </fieldset>
                 <fieldset class="campo-imagem">
                     <legend class="label-titulo">Imagem Atual</legend>
                     <figure class="preview-container">

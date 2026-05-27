@@ -835,7 +835,8 @@ router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
                 preco,
                 preco_desconto: precoDesc,
                 imagem:         imagemPath,
-                status:         req.body.status || 'em-estoque'
+                status:         req.body.status || 'em-estoque',
+                faixa_etaria: req.body.faixa_etaria || null
             }, ids_categorias);
 
             if (result && result.errno) return res.redirect('/admin?erro=adicionar_produto');
@@ -888,6 +889,7 @@ router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
                                 ? parseFloat(req.body.precoDesconto) || null
                                 : null,
                 imagem:         imagemPath,
+                faixa_etaria: req.body.faixa_etaria || produto.faixa_etaria || null,
                 status:         req.body.status || produto.status
             }, ids_categorias);
 
