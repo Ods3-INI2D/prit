@@ -284,6 +284,9 @@
                                         <time class="usuario-info" datetime="<%= usuario.nasc %>">
                                             Nascimento: <%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %>
                                         </time>
+                                        <output class="usuario-info">
+                                            Pedidos realizados: <%= usuario.total_pedidos %>
+                                        </output>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do usuário <%= usuario.email %>">
                                         <form method="POST" action="/admin/excluir-usuario/<%= encodeURIComponent(usuario.email) %>" class="form-inline">

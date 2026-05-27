@@ -774,6 +774,12 @@ router.get('/admin', requireAdmin, async (req, res) => {
     const banners    = await bannersModel.findAll();
     const categorias = await produtosModel.findAllCategorias();
 
+    const usuariosComPedidos = await Promise.all(
+    (Array.isArray(usuarios) ? usuarios : []).map(async (u) => {
+        const pedidos = await pedidosModel.findByUsuario(u.id_usuario);
+        return { ...u, total_pedidos: pedidos.length };
+    }));
+
     const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
         ...p,
         id:            p.id_produto,
@@ -784,7 +790,7 @@ router.get('/admin', requireAdmin, async (req, res) => {
     res.render('pages/admin', {
         produtos:         produtosNorm,
         totalProdutos:    produtosNorm.length,
-        usuarios:         Array.isArray(usuarios)   ? usuarios   : [],
+        usuarios:         Array.isArray(usuariosComPedidos)   ? usuariosComPedidos   : [],
         banners:          Array.isArray(banners)    ? banners    : [],
         categorias:       Array.isArray(categorias) ? categorias : [],
         erro:             req.query.erro    || null,
