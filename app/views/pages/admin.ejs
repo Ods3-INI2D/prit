@@ -287,6 +287,9 @@
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do usuário <%= usuario.email %>">
                                         <form method="POST" action="/admin/excluir-usuario/<%= encodeURIComponent(usuario.email) %>" class="form-inline">
+                                            <a href="/admin/usuario/<%= encodeURIComponent(usuario.email) %>"
+                                                class="btn-editar"
+                                                aria-label="Ver conta de <%= usuario.email %>">Ver Conta</a>
                                             <button class="btn-excluir" type="submit"
                                                     onclick="return confirm('Tem certeza que deseja excluir este usuário?')"
                                                     aria-label="Excluir usuário <%= usuario.email %>">Excluir</button>

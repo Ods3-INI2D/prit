@@ -794,6 +794,19 @@ router.get('/admin', requireAdmin, async (req, res) => {
     });
 });
 
+router.get('/admin/usuario/:email', requireAdmin, async (req, res) => {
+    const email = decodeURIComponent(req.params.email);
+    const usuario = await usuariosModel.findByEmail(email);
+    if (!usuario) return res.redirect('/admin?erro=excluir_usuario');
+
+    const pedidos = await pedidosModel.findByUsuarioComDetalhes(usuario.id_usuario);
+
+    res.render('pages/admin-usuario', {
+        usuario,
+        pedidos: pedidos || []
+    });
+});
+
 router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
     uploadProduto.single('imagem')(req, res, async (err) => {
         if (err) {
