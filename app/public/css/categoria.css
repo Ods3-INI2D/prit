@@ -153,6 +153,13 @@ main {
     margin-top: 0.125rem;
 }
 
+.faixa-etaria-home {
+    font-size: 0.6875rem;
+    color: #4da6ff;
+    padding: 0.25rem 0.625rem 0.5rem;
+    display: block;
+}
+
 /* preços */
 .preco-container-home {
     display: flex;
@@ -291,6 +298,11 @@ main {
         font-size: 0.95rem;
         padding: 0.35rem 1rem 1rem;
         text-align: left;
+    }
+
+    .faixa-etaria-home{
+        font-size: 0.85rem;
+        padding: 0rem 1rem 1rem;
     }
 
     .percentual-home {
