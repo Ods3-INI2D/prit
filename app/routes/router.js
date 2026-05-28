@@ -89,7 +89,8 @@ const MSGS_SUCESSO = {
     banner_criado:      'Banner criado com sucesso!',
     banner_excluido:    'Banner excluído com sucesso!',
     categoria_criada:   'Categoria criada com sucesso!',
-    categoria_excluida: 'Categoria excluída com sucesso!'
+    categoria_excluida: 'Categoria excluída com sucesso!',
+    categoria_editada: 'Faixa etária da categoria atualizada com sucesso!'
 };
 
 const MSGS_ERRO = {
@@ -107,6 +108,7 @@ const MSGS_ERRO = {
     categoria_ja_existe:     'Já existe uma categoria com esse nome!',
     criar_categoria:         'Erro ao criar categoria!',
     excluir_categoria:       'Erro ao excluir categoria! Pode haver produtos vinculados.',
+    editar_categoria: 'Erro ao atualizar faixa etária da categoria!',
     imagem_obrigatoria:      'A imagem do banner é obrigatória!'
 };
 
@@ -936,7 +938,8 @@ router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
         const existe = await produtosModel.findCategoriaPorNome(nome);
         if (existe)  return res.redirect('/admin?erro=categoria_ja_existe&tab=categorias');
 
-        const result = await produtosModel.createCategoria(nome);
+        const faixaEtaria = (req.body.faixa_etaria_categoria || '').trim() || null;
+        const result = await produtosModel.createCategoria(nome, faixaEtaria);
         if (!result || result.erro || result.errno || !result.insertId || result.insertId <= 0) {
             console.error('Erro ao criar categoria:', result);
             return res.redirect('/admin?erro=criar_categoria&tab=categorias');
@@ -955,6 +958,17 @@ router.post('/admin/excluir-categoria/:id', requireAdmin, async (req, res) => {
     } catch (err) {
         console.error(err);
         res.redirect('/admin?erro=excluir_categoria&tab=categorias');
+    }
+});
+
+router.post('/admin/atualizar-faixa-categoria/:id', requireAdmin, async (req, res) => {
+    try {
+        const faixa = (req.body.faixa_etaria || '').trim() || null;
+        await produtosModel.updateCategoria(req.params.id, faixa);
+        res.redirect('/admin?sucesso=categoria_editada&tab=categorias');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/admin?erro=editar_categoria&tab=categorias');
     }
 });
 
