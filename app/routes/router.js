@@ -66,13 +66,13 @@ const uploadBanner = multer({
     storage: storageBanner,
     limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
-        const ext = path.extname(file.originalname).toLowerCase();
-        if (/\.(jpeg|jpg|png|webp)$/.test(ext)) {
-            cb(null, true);
-        } else {
-            cb(new Error('Apenas imagens são permitidas!'));
-        }
-    }
+    const ext  = path.extname(file.originalname).toLowerCase();
+    const mime = file.mimetype;
+    if (ext === '.svg' && (mime === 'image/svg+xml' || mime === 'image/svg')) {
+        cb(null, true);
+    } else {
+        cb(new Error('Apenas imagens no formato SVG são permitidas!'));
+    }}
 });
 
 // constantes admin

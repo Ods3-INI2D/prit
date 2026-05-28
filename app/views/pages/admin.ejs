@@ -355,10 +355,10 @@
                                 <legend><strong class="label-titulo">Imagem do Banner <output style="color:#ff6b6b">*</output></strong></legend>
                                 <label for="imagem-novo-banner" class="label-arquivo">
                                     <input type="file" id="imagem-novo-banner" name="imagem"
-                                           accept="image/jpeg,image/jpg,image/png,image/webp"
+                                           accept="image/svg+xml"
                                            required aria-required="true"
                                            aria-describedby="imagem-novo-info">
-                                    <output id="imagem-novo-info" class="info-arquivo">Formatos: JPG, PNG, WEBP (máx. 5MB). Recomendado: proporção 16:9.</output>
+                                    <output id="imagem-novo-info" class="info-arquivo">Formato aceito: SVG (máx. 5MB). Recomendado: proporção 16:9.</output>
                                 </label>
                                 <output id="preview-novo-banner" class="preview-container" role="status" aria-live="polite"></output>
                             </fieldset>
@@ -446,10 +446,10 @@
                     <legend><strong class="label-titulo">Nova Imagem (opcional)</strong></legend>
                     <label for="imagem-banner" class="label-arquivo">
                         <input type="file" id="imagem-banner" name="imagem"
-                               accept="image/jpeg,image/jpg,image/png,image/webp"
+                               accept="image/svg+xml"
                                aria-describedby="banner-info">
                         <output id="banner-info" class="info-arquivo">
-                            Formatos: JPG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
+                            Formato aceito: SVG (máx. 5MB). Deixe em branco para manter a imagem atual.
                         </output>
                     </label>
                     <output id="preview-banner" class="preview-container" role="status" aria-live="polite"></output>
@@ -497,7 +497,7 @@
                 ativarTab(tabParam);
             }
 
-            // preview da imagem — aceita SVG para produtos e JPG/PNG/WEBP para banners
+            // preview da imagem — aceita SVG para produtos e banners
             function setupPreview(inputId, previewId, infoId, tiposAceitos) {
                 var input   = document.getElementById(inputId);
                 var preview = document.getElementById(previewId);
@@ -534,8 +534,8 @@
 
             // imagens apenas svg
             setupPreview('imagem-add',        'preview-imagem-add',  'imagem-add-info',  ['image/svg+xml']);
-            setupPreview('imagem-novo-banner', 'preview-novo-banner', 'imagem-novo-info', ['image/jpeg', 'image/png', 'image/webp']);
-            setupPreview('imagem-banner',      'preview-banner',      'banner-info',      ['image/jpeg', 'image/png', 'image/webp']);
+            setupPreview('imagem-novo-banner', 'preview-novo-banner', 'imagem-novo-info', ['image/svg+xml']);
+            setupPreview('imagem-banner',      'preview-banner',      'banner-info',      ['image/svg+xml']);
 
             // ediçao de banner
             var modal        = document.getElementById('modal-banner');
