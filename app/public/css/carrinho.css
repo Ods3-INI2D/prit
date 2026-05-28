@@ -462,4 +462,12 @@ main {
         font-size: 1.5rem;
         order: 1;
     }
+
+    .nome-produto {
+        font-size: 1.2rem;
+    }
+
+    .categoria-produto {
+        font-size: 1rem;
+    }
 }

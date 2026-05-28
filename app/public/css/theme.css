@@ -37,13 +37,13 @@
     --info-text: #4da6ff;
     
     /* Imagens tema escuro */
-    --img-carrinho: url('/imagens/carrinho-branco.png');
-    --img-lupa: url('/imagens/lupa-branca.png');
-    --img-user: url('/imagens/user-branco.png');
-    --img-user-menu: url('/imagens/user-branco.png');
-    --img-logo: url('/imagens/logo-branco.png');
-    --img-estrela: url('/imagens/estrela-branca.png');
-    --img-estrela-vazia: url('/imagens/estrela-branca-vazia.png');
+    --img-carrinho: url('/imagens/carrinho-branco.svg');
+    --img-lupa: url('/imagens/lupa-branca.svg');
+    --img-user: url('/imagens/user-branco.svg');
+    --img-user-menu: url('/imagens/user-branco.svg');
+    --img-logo: url('/imagens/logo-branco.svg');
+    --img-estrela: url('/imagens/estrela-branca.svg');
+    --img-estrela-vazia: url('/imagens/estrela-branca-vazia.svg');
 }
 
 [data-theme="light"] {
@@ -85,13 +85,8 @@
     --info-text: #1557b0;
     
     /* Imagens por tema - TEMA CLARO */
-    --img-carrinho: url('/imagens/carrinho-preto.png');
-    --img-lupa: url('/imagens/lupa-preta.png');
-    --img-user: url('/imagens/user-preto.png');
-    --img-user-menu: url('/imagens/user-preto.png');
-    --img-logo: url('/imagens/logo-preto.png');
-    --img-estrela: url('/imagens/estrela-preta.png');
-    --img-estrela-vazia: url('/imagens/estrela-preta-vazia.png');
+    --img-estrela: url('/imagens/estrela-preta.svg');
+    --img-estrela-vazia: url('/imagens/estrela-preta-vazia.svg');
 }
 
 .cart {
@@ -116,15 +111,15 @@
 }
 
 /* estrelas */
-.estrela-home[src*="estr.png"],
-.estrela[src*="estr.png"],
-.estrela-pequena[src*="estr.png"] {
+.estrela-home[src*="estr.svg"],
+.estrela[src*="estr.svg"],
+.estrela-pequena[src*="estr.svg"] {
     content: var(--img-estrela);
 }
 
-.estrela-home[src*="estrv.png"],
-.estrela[src*="estrv.png"],
-.estrela-pequena[src*="estrv.png"] {
+.estrela-home[src*="estrv.svg"],
+.estrela[src*="estrv.svg"],
+.estrela-pequena[src*="estrv.svg"] {
     content: var(--img-estrela-vazia);
 }
 
@@ -148,7 +143,7 @@ header {
 
 /* linhas hamburger */
 .hamburger hr {
-    background-color: var(--text-primary);
+    background-color: #ffffff;
 }
 
 .opcoes {
