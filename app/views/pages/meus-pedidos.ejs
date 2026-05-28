@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Pedidos - +Saúde</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/grid.css">
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/meus-pedidos.css">
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <header>
+        <%- include('../partial/grid.ejs') %>
+    </header>
+
+    <main>
+        <section class="pedidos-container">
+
+            <nav class="navegacao" aria-label="Navegação de retorno">
+                <a href="/usuario" class="voltar">
+                    <img src="/imagens/setae.svg" alt="Ícone de seta" class="seta-voltar">
+                    <output>Minha Conta</output>
+                </a>
+            </nav>
+
+            <h1 class="titulo-pedidos">Meus Pedidos</h1>
+
+            <% if (typeof mensagemErro !== 'undefined' && mensagemErro) { %>
+                <output class="mensagem-erro" role="alert" aria-live="assertive">
+                    ⚠️ <%= mensagemErro %>
+                </output>
+            <% } %>
+
+            <%# ── Mensagens de erro vindas via query string (ex: comprar-novamente) ── %>
+            <%
+                var errosQuery = {
+                    pedido_nao_encontrado:  'Pedido não encontrado ou sem permissão de acesso.',
+                    pedido_sem_itens:       'Este pedido não possui itens que possam ser adicionados ao carrinho.',
+                    erro_comprar_novamente: 'Ocorreu um erro ao tentar repetir o pedido. Tente novamente.'
+                };
+                var erroQuery = typeof query !== 'undefined' && query && query.erro
+                    ? errosQuery[query.erro] || null
+                    : null;
+            %>
+            <% if (erroQuery) { %>
+                <output class="mensagem-erro" role="alert" aria-live="assertive">
+                    ⚠️ <%= erroQuery %>
+                </output>
+            <% } %>
+
+            <%# ── Usuário não logado ──────────────────────────────────── %>
+            <% if (!usuario) { %>
+                <article class="estado-vazio">
+                    <output class="icone-estado" role="img" aria-label="Cadeado indicando acesso restrito">🔒</output>
+                    <h2 class="titulo-estado">Acesso Restrito</h2>
+                    <p class="descricao-estado">
+                        Você precisa estar logado para visualizar seus pedidos.
+                    </p>
+                    <a href="/login?redirect=/meus-pedidos" class="btn-acao-principal">
+                        Fazer Login
+                    </a>
+                </article>
+
+            <%# ── Nenhum pedido encontrado ────────────────────────────── %>
+            <% } else if (!pedidos || pedidos.length === 0) { %>
+                <article class="estado-vazio">
+                    <output class="icone-estado" role="img" aria-label="Ícone de caixa">📦</output>
+                    <h2 class="titulo-estado">Nenhum pedido encontrado</h2>
+                    <p class="descricao-estado">
+                        Você ainda não realizou nenhuma compra. Explore nossa loja e encontre
+                        produtos incríveis para a sua saúde e bem-estar!
+                    </p>
+                    <a href="/home" class="btn-acao-principal">Explorar Produtos</a>
+                </article>
+
+            <%# ── Lista de pedidos ────────────────────────────────────── %>
+            <% } else { %>
+
+                <output class="contador-pedidos" role="status" aria-live="polite">
+                    <%= pedidos.length %> pedido<%= pedidos.length !== 1 ? 's' : '' %> encontrado<%= pedidos.length !== 1 ? 's' : '' %>
+                </output>
+
+                <ol class="lista-pedidos" aria-label="Lista de pedidos realizados">
+                    <% pedidos.forEach(function(pedido) {
+
+                        var statusLabel = {
+                            pendente:  'Pendente',
+                            aprovado:  'Aprovado',
+                            enviado:   'Enviado',
+                            entregue:  'Entregue',
+                            cancelado: 'Cancelado'
+                        }[pedido.status] || pedido.status;
+
+                        var statusClasse = 'status-' + (pedido.status || 'pendente');
+
+                        var dataPedido = pedido.criado_em
+                            ? new Date(pedido.criado_em).toLocaleDateString('pt-BR', {
+                                day:   '2-digit',
+                                month: 'long',
+                                year:  'numeric'
+                              })
+                            : '—';
+
+                        var valorTotal = parseFloat(pedido.valor_total) || 0;
+
+                        // Telefone formatado
+                        var telefoneFormatado = null;
+                        if (pedido.ddd && pedido.tel) {
+                            var telNum = String(pedido.tel).replace(/\D/g, '');
+                            telefoneFormatado = '(' + pedido.ddd + ') ' +
+                                (telNum.length === 9
+                                    ? telNum.slice(0, 5) + '-' + telNum.slice(5)
+                                    : telNum.slice(0, 4) + '-' + telNum.slice(4));
+                        }
+
+                        // Endereço armazenado em codigo_rastreio via createEntrega
+                        var enderecoEntrega = pedido.endereco || null;
+                    %>
+
+                    <%# ── Card individual do pedido ───────────────────── %>
+                    <li class="pedido-card">
+
+                        <%# Cabeçalho do card %>
+                        <header class="pedido-cabecalho">
+                            <section class="pedido-identificacao">
+                                <h2 class="pedido-numero">
+                                    Pedido <output>#<%= pedido.id_pedido %></output>
+                                </h2>
+                                <time class="pedido-data"
+                                      datetime="<%= pedido.criado_em ? new Date(pedido.criado_em).toISOString() : '' %>">
+                                    <%= dataPedido %>
+                                </time>
+                            </section>
+
+                            <aside class="pedido-resumo-topo">
+                                <output class="pedido-status <%= statusClasse %>"
+                                        aria-label="Status: <%= statusLabel %>">
+                                    <%= statusLabel %>
+                                </output>
+                                <output class="pedido-valor-total"
+                                        aria-label="Valor total: R$ <%= valorTotal.toFixed(2) %>">
+                                    R$&nbsp;<%= valorTotal.toFixed(2) %>
+                                </output>
+                            </aside>
+                        </header>
+
+                        <%# ── Dados de entrega e contato ─────────────── %>
+                        <aside class="pedido-pagamento"
+                               aria-label="Dados de entrega e contato do pedido #<%= pedido.id_pedido %>">
+                            <h3 class="titulo-pagamento">Dados de Entrega e Contato</h3>
+
+                            <dl class="pagamento-detalhes">
+
+                                <%# Telefone %>
+                                <dt>Telefone</dt>
+                                <% if (telefoneFormatado) { %>
+                                    <dd>
+                                        <address>
+                                            <a href="tel:+55<%= pedido.ddd %><%= String(pedido.tel).replace(/\D/g,'') %>"
+                                               style="color:inherit;text-decoration:none;">
+                                                <%= telefoneFormatado %>
+                                            </a>
+                                        </address>
+                                    </dd>
+                                <% } else { %>
+                                    <dd>
+                                        <output style="color:#888;font-style:italic;">
+                                            Telefone não registrado
+                                        </output>
+                                    </dd>
+                                <% } %>
+
+                                <%# Endereço de Entrega %>
+                                <dt>Endereço de Entrega</dt>
+                                <% if (enderecoEntrega) { %>
+                                    <dd>
+                                        <address style="font-style:normal;">
+                                            <%= enderecoEntrega %>
+                                        </address>
+                                    </dd>
+                                <% } else { %>
+                                    <dd>
+                                        <output style="color:#888;font-style:italic;">
+                                            Endereço não registrado para este pedido
+                                        </output>
+                                    </dd>
+                                <% } %>
+
+                                <%# Transportadora %>
+                                <% if (pedido.transportadora) { %>
+                                    <dt>Transportadora</dt>
+                                    <dd><output><%= pedido.transportadora %></output></dd>
+                                <% } %>
+
+                                <%# Status da entrega %>
+                                <% if (pedido.status_entrega) { %>
+                                    <dt>Status da Entrega</dt>
+                                    <dd>
+                                        <output><%=
+                                            ({
+                                                aguardando:  'Aguardando',
+                                                em_transito: 'Em Trânsito',
+                                                entregue:    'Entregue',
+                                                cancelado:   'Cancelado'
+                                            })[pedido.status_entrega] || pedido.status_entrega
+                                        %></output>
+                                    </dd>
+                                <% } %>
+
+                            </dl>
+                        </aside>
+
+                        <%# Seção de itens do pedido %>
+                        <% if (pedido.itens && pedido.itens.length > 0) { %>
+                            <section class="pedido-itens"
+                                     aria-labelledby="titulo-itens-<%= pedido.id_pedido %>">
+                                <h3 id="titulo-itens-<%= pedido.id_pedido %>"
+                                    class="titulo-itens-pedido">
+                                    Itens do Pedido
+                                    <output class="qtd-itens">
+                                        (<%= pedido.itens.length %> item<%= pedido.itens.length !== 1 ? 's' : '' %>)
+                                    </output>
+                                </h3>
+
+                                <ul class="lista-itens-pedido"
+                                    aria-label="Itens do pedido #<%= pedido.id_pedido %>">
+                                    <% pedido.itens.forEach(function(item) {
+                                        var precoUnit = parseFloat(item.preco_unit) || 0;
+                                        var qtd       = parseInt(item.qtd)          || 1;
+                                        var subtotal  = precoUnit * qtd;
+                                    %>
+                                        <li class="item-pedido">
+
+                                            <figure class="item-imagem-container">
+                                                <img src="<%= item.imagem || '/imagens/foto.jpg' %>"
+                                                     alt="<%= item.nome %>"
+                                                     class="item-imagem"
+                                                     loading="lazy">
+                                            </figure>
+
+                                            <article class="item-info">
+                                                <h4 class="item-nome">
+                                                    <a href="/produto/<%= item.id_produto %>"
+                                                       class="item-link">
+                                                        <%= item.nome %>
+                                                    </a>
+                                                </h4>
+
+                                                <dl class="item-detalhes">
+                                                    <dt>Quantidade</dt>
+                                                    <dd><output><%= qtd %></output></dd>
+
+                                                    <dt>Preço unitário</dt>
+                                                    <dd>
+                                                        <output>R$&nbsp;<%= precoUnit.toFixed(2) %></output>
+                                                    </dd>
+
+                                                    <dt>Subtotal</dt>
+                                                    <dd>
+                                                        <output class="item-subtotal">
+                                                            R$&nbsp;<%= subtotal.toFixed(2) %>
+                                                        </output>
+                                                    </dd>
+                                                </dl>
+                                            </article>
+
+                                        </li>
+                                    <% }); %>
+                                </ul>
+                            </section>
+                        <% } else { %>
+                            <output class="sem-itens-pedido">
+                                Detalhes dos itens não disponíveis.
+                            </output>
+                        <% } %>
+
+                        <%# Rodapé do card: total + ações %>
+                        <footer class="pedido-rodape">
+                            <dl class="pedido-totais">
+                                <dt>Total do Pedido</dt>
+                                <dd>
+                                    <strong class="valor-destaque">
+                                        R$&nbsp;<%= valorTotal.toFixed(2) %>
+                                    </strong>
+                                </dd>
+                            </dl>
+
+                            <%#
+                                ── Ações do pedido ──────────────────────────────────────────
+                                "Avaliar Produtos" leva ao carrinho (onde o botão já existe).
+                                "Comprar Novamente" submete um formulário POST que copia os
+                                itens do pedido para o carrinho e redireciona para /carrinho.
+                                Usamos <form> com method="POST" para que a ação seja segura
+                                (não indexável por bots, não repetível por refresh acidental)
+                                e semanticamente correta (é uma ação que altera estado).
+                            %>
+                            <nav class="pedido-acoes"
+                                 aria-label="Ações do pedido #<%= pedido.id_pedido %>">
+
+                                <% if (pedido.status === 'entregue') { %>
+                                    <a href="/carrinho" class="btn-acao-secundaria">
+                                        Avaliar Produtos
+                                    </a>
+                                <% } %>
+
+                                <form method="POST"
+                                      action="/meus-pedidos/<%= pedido.id_pedido %>/comprar-novamente"
+                                      aria-label="Repetir pedido #<%= pedido.id_pedido %>">
+                                    <button type="submit" class="btn-acao-secundaria">
+                                        Comprar Novamente
+                                    </button>
+                                </form>
+
+                            </nav>
+                        </footer>
+
+                        <%# Bloco de pagamento (quando existir) %>
+                        <% if (pedido.pagamento) { %>
+                            <aside class="pedido-pagamento"
+                                   aria-label="Informações de pagamento do pedido #<%= pedido.id_pedido %>">
+                                <h3 class="titulo-pagamento">Pagamento</h3>
+
+                                <dl class="pagamento-detalhes">
+                                    <% if (pedido.pagamento.forma) { %>
+                                        <dt>Forma</dt>
+                                        <dd>
+                                            <output><%=
+                                                ({
+                                                    cartao_credito: 'Cartão de Crédito',
+                                                    cartao_debito:  'Cartão de Débito',
+                                                    pix:            'PIX',
+                                                    boleto:         'Boleto Bancário'
+                                                })[pedido.pagamento.forma] || pedido.pagamento.forma
+                                            %></output>
+                                        </dd>
+                                    <% } %>
+
+                                    <% if (pedido.pagamento.valor) { %>
+                                        <dt>Valor pago</dt>
+                                        <dd>
+                                            <output>
+                                                R$&nbsp;<%= parseFloat(pedido.pagamento.valor).toFixed(2) %>
+                                            </output>
+                                        </dd>
+                                    <% } %>
+
+                                    <% if (pedido.pagamento.status) { %>
+                                        <dt>Status do pagamento</dt>
+                                        <dd>
+                                            <output class="status-pagamento status-pag-<%= pedido.pagamento.status %>">
+                                                <%=
+                                                    pedido.pagamento.status.charAt(0).toUpperCase() +
+                                                    pedido.pagamento.status.slice(1)
+                                                %>
+                                            </output>
+                                        </dd>
+                                    <% } %>
+                                </dl>
+                            </aside>
+                        <% } %>
+
+                    </li>
+                    <% }); %>
+                </ol>
+
+            <% } %>
+
+        </section>
+    </main>
+
+    <%- include('../partial/footer.ejs') %>
+</body>
+</html>

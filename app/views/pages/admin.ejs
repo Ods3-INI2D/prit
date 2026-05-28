@@ -151,7 +151,23 @@
                                 </select>
                             </label>
                         </fieldset>
-
+                        <fieldset>
+                            <legend class="label-titulo">Faixa Etária Recomendada</legend>
+                            <label for="faixa-etaria-add">
+                                <select id="faixa-etaria-add" name="faixa_etaria">
+                                    <option value="">Todas as idades</option>
+                                    <option value="40+">A partir de 40 anos</option>
+                                    <option value="45+">A partir de 45 anos</option>
+                                    <option value="50+">A partir de 50 anos</option>
+                                    <option value="55+">A partir de 55 anos</option>
+                                    <option value="60+">A partir de 60 anos</option>
+                                    <option value="65+">A partir de 65 anos</option>
+                                    <option value="70+">A partir de 70 anos</option>
+                                    <option value="75+">A partir de 75 anos</option>
+                                    <option value="80+">80 anos ou mais</option>
+                                </select>
+                            </label>
+                        </fieldset>
                         <fieldset class="campo-imagem">
                             <legend><strong class="label-titulo">Imagem do Produto</strong></legend>
                             <label for="imagem-add" class="label-arquivo">
@@ -284,9 +300,15 @@
                                         <time class="usuario-info" datetime="<%= usuario.nasc %>">
                                             Nascimento: <%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %>
                                         </time>
+                                        <output class="usuario-info">
+                                            Pedidos realizados: <%= usuario.total_pedidos %>
+                                        </output>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do usuário <%= usuario.email %>">
                                         <form method="POST" action="/admin/excluir-usuario/<%= encodeURIComponent(usuario.email) %>" class="form-inline">
+                                            <a href="/admin/usuario/<%= encodeURIComponent(usuario.email) %>"
+                                                class="btn-editar"
+                                                aria-label="Ver conta de <%= usuario.email %>">Ver Conta</a>
                                             <button class="btn-excluir" type="submit"
                                                     onclick="return confirm('Tem certeza que deseja excluir este usuário?')"
                                                     aria-label="Excluir usuário <%= usuario.email %>">Excluir</button>
@@ -333,10 +355,10 @@
                                 <legend><strong class="label-titulo">Imagem do Banner <output style="color:#ff6b6b">*</output></strong></legend>
                                 <label for="imagem-novo-banner" class="label-arquivo">
                                     <input type="file" id="imagem-novo-banner" name="imagem"
-                                           accept="image/jpeg,image/jpg,image/png,image/webp"
+                                           accept="image/svg+xml"
                                            required aria-required="true"
                                            aria-describedby="imagem-novo-info">
-                                    <output id="imagem-novo-info" class="info-arquivo">Formatos: JPG, PNG, WEBP (máx. 5MB). Recomendado: proporção 16:9.</output>
+                                    <output id="imagem-novo-info" class="info-arquivo">Formato aceito: SVG (máx. 5MB). Recomendado: proporção 16:9.</output>
                                 </label>
                                 <output id="preview-novo-banner" class="preview-container" role="status" aria-live="polite"></output>
                             </fieldset>
@@ -424,10 +446,10 @@
                     <legend><strong class="label-titulo">Nova Imagem (opcional)</strong></legend>
                     <label for="imagem-banner" class="label-arquivo">
                         <input type="file" id="imagem-banner" name="imagem"
-                               accept="image/jpeg,image/jpg,image/png,image/webp"
+                               accept="image/svg+xml"
                                aria-describedby="banner-info">
                         <output id="banner-info" class="info-arquivo">
-                            Formatos: JPG, PNG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
+                            Formato aceito: SVG (máx. 5MB). Deixe em branco para manter a imagem atual.
                         </output>
                     </label>
                     <output id="preview-banner" class="preview-container" role="status" aria-live="polite"></output>
@@ -475,7 +497,7 @@
                 ativarTab(tabParam);
             }
 
-            // preview da imagem — aceita SVG para produtos e JPG/PNG/WEBP para banners
+            // preview da imagem — aceita SVG para produtos e banners
             function setupPreview(inputId, previewId, infoId, tiposAceitos) {
                 var input   = document.getElementById(inputId);
                 var preview = document.getElementById(previewId);
@@ -510,10 +532,10 @@
                 });
             }
 
-            // produto aceita apenas SVG; banners aceitam JPG/PNG/WEBP
+            // imagens apenas svg
             setupPreview('imagem-add',        'preview-imagem-add',  'imagem-add-info',  ['image/svg+xml']);
-            setupPreview('imagem-novo-banner', 'preview-novo-banner', 'imagem-novo-info', ['image/jpeg', 'image/png', 'image/webp']);
-            setupPreview('imagem-banner',      'preview-banner',      'banner-info',      ['image/jpeg', 'image/png', 'image/webp']);
+            setupPreview('imagem-novo-banner', 'preview-novo-banner', 'imagem-novo-info', ['image/svg+xml']);
+            setupPreview('imagem-banner',      'preview-banner',      'banner-info',      ['image/svg+xml']);
 
             // ediçao de banner
             var modal        = document.getElementById('modal-banner');

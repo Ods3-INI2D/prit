@@ -31,7 +31,6 @@
 
             <h1 class="titulo-checkout">Finalizar Compra</h1>
 
-            <%# Barra de progresso %>
             <ol class="checkout-steps" aria-label="Etapas do checkout">
                 <li class="step concluido" aria-label="Etapa 1: Carrinho, concluída">
                     <output class="step-numero" aria-hidden="true">✓</output>
@@ -56,7 +55,6 @@
 
             <section class="checkout-layout">
 
-                <%# ── Formulário principal ── %>
                 <article class="checkout-formulario">
                     <form method="POST"
                           action="/finalizar-compra"
@@ -64,7 +62,6 @@
                           novalidate
                           aria-label="Formulário de finalização de compra">
 
-                        <%# ── Endereço de entrega ── %>
                         <section class="checkout-form-section"
                                  aria-labelledby="titulo-endereco">
                             <h2 class="secao-titulo" id="titulo-endereco">
@@ -207,7 +204,6 @@
                             </section>
                         </section>
 
-                        <%# ── Forma de pagamento ── %>
                         <section class="checkout-form-section"
                                  aria-labelledby="titulo-pagamento">
                             <h2 class="secao-titulo" id="titulo-pagamento">
@@ -281,7 +277,6 @@
 
                                 </ul>
 
-                                <%# Campos do cartão — exibidos via JS %>
                                 <section class="campos-cartao"
                                          id="campos-cartao"
                                          aria-live="polite"
@@ -352,6 +347,15 @@
                                         </fieldset>
                                     </section>
 
+                                    <%
+                                        var totalParcelamento = carrinho.reduce(function(acc, item) {
+                                            var p = (item.precoDesconto && item.precoDesconto > 0)
+                                                        ? parseFloat(item.precoDesconto)
+                                                        : parseFloat(item.preco) || 0;
+                                            return acc + p * (parseInt(item.quantidade) || 1);
+                                        }, 0);
+                                    %>
+
                                     <fieldset class="campo-checkout"
                                               id="campo-parcelas"
                                               style="display:none;">
@@ -359,16 +363,9 @@
                                         <label for="parcelas">
                                             <select id="parcelas" name="parcelas"
                                                     class="select-checkout">
-                                                <%
-                                                    var totalBase = carrinho.reduce(function(acc, item) {
-                                                        var p = (item.precoDesconto && item.precoDesconto > 0)
-                                                                    ? item.precoDesconto : item.preco;
-                                                        return acc + p * (item.quantidade || 1);
-                                                    }, 0);
-                                                    for (var p = 1; p <= 12; p++) {
-                                                %>
+                                                <% for (var p = 1; p <= 12; p++) { %>
                                                     <option value="<%= p %>">
-                                                        <%= p %>x de R$ <%= (totalBase / p).toFixed(2) %>
+                                                        <%= p %>x de R$ <%= (totalParcelamento / p).toFixed(2) %>
                                                         <%= p === 1 ? '(à vista)' : '(sem juros)' %>
                                                     </option>
                                                 <% } %>
@@ -380,7 +377,6 @@
                             </fieldset>
                         </section>
 
-                        <%# Botão mobile — exibido apenas em telas pequenas %>
                         <button type="submit"
                                 class="btn-finalizar-pedido"
                                 id="btn-finalizar-mobile"
@@ -392,13 +388,21 @@
                     </form>
                 </article>
 
-                <%# ── Resumo lateral ── %>
+                <%
+                    var totalFinal = 0;
+                    carrinho.forEach(function(item) {
+                        var preco      = parseFloat(item.preco) || 0;
+                        var precoDesc  = (item.precoDesconto && item.precoDesconto > 0)
+                                         ? parseFloat(item.precoDesconto) : null;
+                        var precoFinal = precoDesc !== null ? precoDesc : preco;
+                        var qtd        = parseInt(item.quantidade) || 1;
+                        totalFinal    += precoFinal * qtd;
+                    });
+                %>
+
                 <aside class="resumo-checkout" aria-labelledby="titulo-resumo">
                     <h2 class="resumo-titulo" id="titulo-resumo">Resumo do Pedido</h2>
 
-                    <%
-                    var totalFinal = 0;
-                    %>
                     <ul class="resumo-itens" aria-label="Itens do pedido">
                         <% carrinho.forEach(function(item) {
                             var preco      = parseFloat(item.preco) || 0;
@@ -407,7 +411,6 @@
                             var precoFinal = precoDesc !== null ? precoDesc : preco;
                             var qtd        = parseInt(item.quantidade) || 1;
                             var subtItem   = precoFinal * qtd;
-                            totalFinal    += subtItem;
                         %>
                             <li class="resumo-item">
                                 <img src="<%= item.imagem %>"
@@ -459,6 +462,7 @@
                            name="total_pedido"
                            id="input-total-pedido"
                            value="<%= totalFinal.toFixed(2) %>"
+                           data-total="<%= totalFinal.toFixed(2) %>"
                            form="form-checkout">
 
                     <button type="submit"
@@ -484,9 +488,8 @@
     (function() {
         'use strict';
 
-        var totalBase = <%= totalFinal.toFixed(2) %>;
+        var totalBase = parseFloat(document.getElementById('input-total-pedido').getAttribute('data-total')) || 0;
 
-        /* ── Máscara CEP ── */
         var inputCep = document.getElementById('cep');
         if (inputCep) {
             inputCep.addEventListener('input', function() {
@@ -500,7 +503,6 @@
             });
         }
 
-        /* ── Busca ViaCEP ── */
         function buscarCep(cep) {
             var dica = document.getElementById('cep-dica');
             if (dica) dica.textContent = 'Buscando endereço...';
@@ -530,7 +532,6 @@
                 });
         }
 
-        /* ── Cálculo de frete (espelha a lógica do servidor) ── */
         function calcularFrete(cep) {
             var prefixo = parseInt(cep.substring(0, 5));
             var frete   = 19.90;
@@ -551,7 +552,6 @@
             atualizarTotais();
         }
 
-        /* ── Atualiza totais no resumo lateral ── */
         function atualizarTotais() {
             var forma       = document.querySelector('input[name="forma_pagamento"]:checked');
             var totalEl     = document.getElementById('valor-total-checkout');
@@ -588,7 +588,6 @@
             if (inputTotal) inputTotal.value = total.toFixed(2);
         }
 
-        /* ── Troca de forma de pagamento ── */
         var radios        = document.querySelectorAll('input[name="forma_pagamento"]');
         var camposCartao  = document.getElementById('campos-cartao');
         var campoParcelas = document.getElementById('campo-parcelas');
@@ -611,7 +610,6 @@
             });
         });
 
-        /* ── Máscaras do cartão ── */
         var inputCartao = document.getElementById('numero-cartao');
         if (inputCartao) {
             inputCartao.addEventListener('input', function() {
@@ -637,7 +635,6 @@
             });
         }
 
-        /* ── Botão mobile/desktop ── */
         function ajustarBotao() {
             var btnMobile  = document.getElementById('btn-finalizar-mobile');
             var btnDesktop = document.getElementById('btn-finalizar-desktop');
@@ -653,7 +650,6 @@
         ajustarBotao();
         window.addEventListener('resize', ajustarBotao);
 
-        /* ── Validação client-side ── */
         var form = document.getElementById('form-checkout');
         if (form) {
             form.addEventListener('submit', function(e) {

@@ -149,15 +149,16 @@ const produtosModel = {
             await conn.beginTransaction();
 
             const [result] = await conn.query(
-                `INSERT INTO produtos (nome, descricao, preco, preco_desconto, imagem, status)
-                 VALUES (?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO produtos (nome, descricao, preco, preco_desconto, imagem, status, faixa_etaria)
+                 VALUES (?, ?, ?, ?, ?, ?, ?)`,
                 [
                     dados.nome,
                     dados.descricao || '',
                     dados.preco || 0,
                     dados.preco_desconto || null,
                     dados.imagem || '/imagens/foto.jpg',
-                    dados.status || 'em-estoque'
+                    dados.status || 'em-estoque',
+                    dados.faixa_etaria || null
                 ]
             );
             const id_produto = result.insertId;
@@ -189,7 +190,7 @@ const produtosModel = {
             const [result] = await conn.query(
                 `UPDATE produtos SET
                     nome = ?, descricao = ?, preco = ?, preco_desconto = ?,
-                    imagem = ?, status = ?
+                    imagem = ?, status = ?, faixa_etaria = ?
                  WHERE id_produto = ?`,
                 [
                     dados.nome,
@@ -198,6 +199,7 @@ const produtosModel = {
                     dados.preco_desconto || null,
                     dados.imagem,
                     dados.status || 'em-estoque',
+                    dados.faixa_etaria || null,
                     id
                 ]
             );

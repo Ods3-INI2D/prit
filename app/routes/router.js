@@ -66,13 +66,13 @@ const uploadBanner = multer({
     storage: storageBanner,
     limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
-        const ext = path.extname(file.originalname).toLowerCase();
-        if (/\.(jpeg|jpg|png|webp)$/.test(ext)) {
-            cb(null, true);
-        } else {
-            cb(new Error('Apenas imagens são permitidas!'));
-        }
-    }
+    const ext  = path.extname(file.originalname).toLowerCase();
+    const mime = file.mimetype;
+    if (ext === '.svg' && (mime === 'image/svg+xml' || mime === 'image/svg')) {
+        cb(null, true);
+    } else {
+        cb(new Error('Apenas imagens no formato SVG são permitidas!'));
+    }}
 });
 
 // constantes admin
@@ -340,6 +340,64 @@ router.post('/usuario/atualizar-campo', requireLogin,
         res.redirect('/usuario?sucesso=' + encodeURIComponent(labels[campo] + ' atualizado com sucesso!'));
     }
 );
+// ── Meus Pedidos ──────────────────────────────────────────────
+router.get('/meus-pedidos', requireLogin, blockAdmin, async (req, res) => {
+    try {
+        const pedidos = await pedidosModel.findByUsuarioComDetalhes(req.session.idUsuario);
+        res.render('pages/meus-pedidos', {
+            pedidos,
+            usuario:       res.locals.usuario,
+            mensagemErro:  null
+        });
+    } catch (err) {
+        console.error('Erro ao carregar meus pedidos:', err);
+        res.render('pages/meus-pedidos', {
+            pedidos:      [],
+            usuario:      res.locals.usuario,
+            mensagemErro: 'Erro ao carregar seus pedidos. Tente novamente.'
+        });
+    }
+});
+router.post('/meus-pedidos/:id/comprar-novamente', requireLogin, blockAdmin, async (req, res) => {
+    try {
+        const idPedido  = parseInt(req.params.id);
+        const idUsuario = req.session.idUsuario;
+ 
+        // Busca o pedido e valida que pertence ao usuário logado
+        const pedido = await pedidosModel.findById(idPedido);
+ 
+        if (!pedido || pedido.id_usuario !== idUsuario) {
+            return res.redirect('/meus-pedidos?erro=pedido_nao_encontrado');
+        }
+ 
+        if (!pedido.itens || pedido.itens.length === 0) {
+            return res.redirect('/meus-pedidos?erro=pedido_sem_itens');
+        }
+ 
+        const { session_id } = getIdentificador(req);
+ 
+        // Adiciona cada item ao carrinho (addProduto soma caso já exista)
+        for (const item of pedido.itens) {
+            const produto = await produtosModel.findById(item.id_produto);
+ 
+            // Só adiciona produtos que ainda existem e estão em estoque
+            if (produto && produto.status === 'em-estoque') {
+                await carrinhoModel.addProduto(
+                    item.id_produto,
+                    idUsuario,
+                    session_id,
+                    parseInt(item.qtd) || 1
+                );
+            }
+        }
+ 
+        res.redirect('/carrinho');
+    } catch (err) {
+        console.error('Erro em comprar-novamente:', err);
+        res.redirect('/meus-pedidos?erro=erro_comprar_novamente');
+    }
+});
+
 
 // ── Produto ───────────────────────────────────────────────
 router.get('/produto/:id', async (req, res) => {
@@ -532,7 +590,19 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             valor_total
         );
         if (!pagResult.erro) {
-            await pedidosModel.createEntrega(pagResult.id_pagamento, '+Saúde Entregas');
+            // monta endereço completo para persistir na entrega
+            const { rua, numero, complemento, bairro, cidade, estado, cep } = req.body;
+            const enderecoFormatado = [
+                rua + ', ' + numero + (complemento ? ' ' + complemento : ''),
+                bairro + ' — ' + cidade + '/' + estado,
+                'CEP: ' + cep
+            ].join(' | ');
+
+            await pedidosModel.createEntrega(
+                pagResult.id_pagamento,
+                '+Saúde Entregas',
+                enderecoFormatado
+            );
         }
 
         // Limpa carrinho
@@ -704,6 +774,12 @@ router.get('/admin', requireAdmin, async (req, res) => {
     const banners    = await bannersModel.findAll();
     const categorias = await produtosModel.findAllCategorias();
 
+    const usuariosComPedidos = await Promise.all(
+    (Array.isArray(usuarios) ? usuarios : []).map(async (u) => {
+        const pedidos = await pedidosModel.findByUsuario(u.id_usuario);
+        return { ...u, total_pedidos: pedidos.length };
+    }));
+
     const produtosNorm = (Array.isArray(produtos) ? produtos : []).map(p => ({
         ...p,
         id:            p.id_produto,
@@ -714,13 +790,26 @@ router.get('/admin', requireAdmin, async (req, res) => {
     res.render('pages/admin', {
         produtos:         produtosNorm,
         totalProdutos:    produtosNorm.length,
-        usuarios:         Array.isArray(usuarios)   ? usuarios   : [],
+        usuarios:         Array.isArray(usuariosComPedidos)   ? usuariosComPedidos   : [],
         banners:          Array.isArray(banners)    ? banners    : [],
         categorias:       Array.isArray(categorias) ? categorias : [],
         erro:             req.query.erro    || null,
         sucesso:          req.query.sucesso || null,
         mensagensSucesso: MSGS_SUCESSO,
         mensagensErro:    MSGS_ERRO
+    });
+});
+
+router.get('/admin/usuario/:email', requireAdmin, async (req, res) => {
+    const email = decodeURIComponent(req.params.email);
+    const usuario = await usuariosModel.findByEmail(email);
+    if (!usuario) return res.redirect('/admin?erro=excluir_usuario');
+
+    const pedidos = await pedidosModel.findByUsuarioComDetalhes(usuario.id_usuario);
+
+    res.render('pages/admin-usuario', {
+        usuario,
+        pedidos: pedidos || []
     });
 });
 
@@ -746,7 +835,8 @@ router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
                 preco,
                 preco_desconto: precoDesc,
                 imagem:         imagemPath,
-                status:         req.body.status || 'em-estoque'
+                status:         req.body.status || 'em-estoque',
+                faixa_etaria: req.body.faixa_etaria || null
             }, ids_categorias);
 
             if (result && result.errno) return res.redirect('/admin?erro=adicionar_produto');
@@ -799,6 +889,7 @@ router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
                                 ? parseFloat(req.body.precoDesconto) || null
                                 : null,
                 imagem:         imagemPath,
+                faixa_etaria: req.body.faixa_etaria || produto.faixa_etaria || null,
                 status:         req.body.status || produto.status
             }, ids_categorias);
 

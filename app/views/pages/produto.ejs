@@ -33,6 +33,10 @@
                 <h1 class="nome-produto"><%= produto.nome %></h1>
                 
                 <output class="categoria-produto"><%= produto.categoria %></output>
+
+                <% if (produto.faixa_etaria) { %>
+                    <output class="faixa-etaria-produto">Recomendado para: <%= produto.faixa_etaria %></output>
+                <% } %>
                 
                 <% if(produto.precoDesconto) { %>
                     <section class="preco-container com-desconto">

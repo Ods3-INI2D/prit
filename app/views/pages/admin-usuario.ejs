@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conta de <%= usuario.nome %> - Admin</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/admin-extended.css">
+    <link rel="stylesheet" href="/css/meus-pedidos.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <header>
+        <img src="/imagens/logo.svg" alt="Logotipo da Farmácia" class="logo">
+        <h1 class="titulo">Conta do Usuário</h1>
+    </header>
+
+    <main>
+        <nav aria-label="Navegação de retorno" style="margin-bottom:1.5rem;">
+            <a href="/admin?tab=usuarios" class="link-footer">← Voltar ao Painel</a>
+        </nav>
+
+        <%# ── Dados da conta ── %>
+        <section aria-labelledby="titulo-dados-usuario">
+            <h2 id="titulo-dados-usuario" class="subtitulo">Dados da Conta</h2>
+
+            <article class="card-stats" style="display:flex;flex-direction:column;gap:.6rem;">
+                <dl>
+                    <dt class="stat-titulo">Nome</dt>
+                    <dd><output><%= usuario.nome %></output></dd>
+
+                    <dt class="stat-titulo" style="margin-top:.75rem;">E-mail</dt>
+                    <dd><output><%= usuario.email %></output></dd>
+
+                    <dt class="stat-titulo" style="margin-top:.75rem;">CPF</dt>
+                    <dd><output><%= usuario.cpf %></output></dd>
+
+                    <dt class="stat-titulo" style="margin-top:.75rem;">Telefone</dt>
+                    <dd>
+                        <output>
+                            <% if (usuario.ddd && usuario.tel) { %>
+                                (<%= usuario.ddd %>) <%= usuario.tel %>
+                            <% } else { %>
+                                Não cadastrado
+                            <% } %>
+                        </output>
+                    </dd>
+
+                    <dt class="stat-titulo" style="margin-top:.75rem;">Data de Nascimento</dt>
+                    <dd>
+                        <time datetime="<%= usuario.nasc %>">
+                            <%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %>
+                        </time>
+                    </dd>
+
+                    <dt class="stat-titulo" style="margin-top:.75rem;">Membro desde</dt>
+                    <dd>
+                        <time datetime="<%= usuario.criado_em %>">
+                            <%= new Date(usuario.criado_em).toLocaleDateString('pt-BR') %>
+                        </time>
+                    </dd>
+                </dl>
+            </article>
+        </section>
+
+        <%# ── Pedidos do usuário ── %>
+        <section aria-labelledby="titulo-pedidos-usuario" style="margin-top:2rem;">
+            <h2 id="titulo-pedidos-usuario" class="subtitulo">
+                Pedidos
+                <output style="font-size:1rem;color:#888;font-weight:400;">
+                    (<%= pedidos.length %> encontrado<%= pedidos.length !== 1 ? 's' : '' %>)
+                </output>
+            </h2>
+
+            <% if (!pedidos || pedidos.length === 0) { %>
+                <output class="mensagem-vazia">Este usuário ainda não realizou nenhum pedido.</output>
+
+            <% } else { %>
+                <ol class="lista-pedidos" aria-label="Pedidos do usuário <%= usuario.nome %>">
+                    <% pedidos.forEach(function(pedido) {
+                        var statusLabel = {
+                            pendente:  'Pendente',
+                            aprovado:  'Aprovado',
+                            enviado:   'Enviado',
+                            entregue:  'Entregue',
+                            cancelado: 'Cancelado'
+                        }[pedido.status] || pedido.status;
+
+                        var statusClasse = 'status-' + (pedido.status || 'pendente');
+
+                        var dataPedido = pedido.criado_em
+                            ? new Date(pedido.criado_em).toLocaleDateString('pt-BR', {
+                                day: '2-digit', month: 'long', year: 'numeric'
+                              })
+                            : '—';
+
+                        var valorTotal = parseFloat(pedido.valor_total) || 0;
+                        var enderecoEntrega = pedido.endereco || null;
+                    %>
+                    <li class="pedido-card">
+
+                        <header class="pedido-cabecalho">
+                            <section class="pedido-identificacao">
+                                <h3 class="pedido-numero">
+                                    Pedido <output>#<%= pedido.id_pedido %></output>
+                                </h3>
+                                <time class="pedido-data"
+                                      datetime="<%= pedido.criado_em ? new Date(pedido.criado_em).toISOString() : '' %>">
+                                    <%= dataPedido %>
+                                </time>
+                            </section>
+                            <aside class="pedido-resumo-topo">
+                                <output class="pedido-status <%= statusClasse %>"
+                                        aria-label="Status: <%= statusLabel %>">
+                                    <%= statusLabel %>
+                                </output>
+                                <output class="pedido-valor-total">
+                                    R$&nbsp;<%= valorTotal.toFixed(2) %>
+                                </output>
+                            </aside>
+                        </header>
+
+                        <%# Itens %>
+                        <% if (pedido.itens && pedido.itens.length > 0) { %>
+                            <section class="pedido-itens"
+                                     aria-labelledby="titulo-itens-<%= pedido.id_pedido %>">
+                                <h4 id="titulo-itens-<%= pedido.id_pedido %>"
+                                    class="titulo-itens-pedido">
+                                    Itens
+                                    <output class="qtd-itens">
+                                        (<%= pedido.itens.length %>)
+                                    </output>
+                                </h4>
+                                <ul class="lista-itens-pedido"
+                                    aria-label="Itens do pedido #<%= pedido.id_pedido %>">
+                                    <% pedido.itens.forEach(function(item) {
+                                        var precoUnit = parseFloat(item.preco_unit) || 0;
+                                        var qtd       = parseInt(item.qtd)          || 1;
+                                        var subtotal  = precoUnit * qtd;
+                                    %>
+                                        <li class="item-pedido">
+                                            <figure class="item-imagem-container">
+                                                <img src="<%= item.imagem || '/imagens/foto.jpg' %>"
+                                                     alt="<%= item.nome %>"
+                                                     class="item-imagem"
+                                                     loading="lazy">
+                                            </figure>
+                                            <article class="item-info">
+                                                <h5 class="item-nome">
+                                                    <a href="/produto/<%= item.id_produto %>"
+                                                       class="item-link"
+                                                       target="_blank">
+                                                        <%= item.nome %>
+                                                    </a>
+                                                </h5>
+                                                <dl class="item-detalhes">
+                                                    <dt>Quantidade</dt>
+                                                    <dd><output><%= qtd %></output></dd>
+                                                    <dt>Preço unitário</dt>
+                                                    <dd><output>R$&nbsp;<%= precoUnit.toFixed(2) %></output></dd>
+                                                    <dt>Subtotal</dt>
+                                                    <dd><output class="item-subtotal">R$&nbsp;<%= subtotal.toFixed(2) %></output></dd>
+                                                </dl>
+                                            </article>
+                                        </li>
+                                    <% }); %>
+                                </ul>
+                            </section>
+                        <% } %>
+
+                        <%# Entrega %>
+                        <% if (enderecoEntrega || pedido.pagamento) { %>
+                            <aside class="pedido-pagamento"
+                                   aria-label="Dados de entrega e pagamento do pedido #<%= pedido.id_pedido %>">
+                                <h4 class="titulo-pagamento">Entrega e Pagamento</h4>
+                                <dl class="pagamento-detalhes">
+                                    <% if (enderecoEntrega) { %>
+                                        <dt>Endereço</dt>
+                                        <dd><address style="font-style:normal;"><%= enderecoEntrega %></address></dd>
+                                    <% } %>
+                                    <% if (pedido.pagamento && pedido.pagamento.forma) { %>
+                                        <dt>Forma de Pagamento</dt>
+                                        <dd><output><%=
+                                            ({
+                                                cartao_credito: 'Cartão de Crédito',
+                                                cartao_debito:  'Cartão de Débito',
+                                                pix:            'PIX',
+                                                boleto:         'Boleto Bancário'
+                                            })[pedido.pagamento.forma] || pedido.pagamento.forma
+                                        %></output></dd>
+                                    <% } %>
+                                    <% if (pedido.pagamento && pedido.pagamento.status) { %>
+                                        <dt>Status do Pagamento</dt>
+                                        <dd>
+                                            <output class="status-pagamento status-pag-<%= pedido.pagamento.status %>">
+                                                <%= pedido.pagamento.status.charAt(0).toUpperCase() + pedido.pagamento.status.slice(1) %>
+                                            </output>
+                                        </dd>
+                                    <% } %>
+                                </dl>
+                            </aside>
+                        <% } %>
+
+                        <%# Total %>
+                        <footer class="pedido-rodape">
+                            <dl class="pedido-totais">
+                                <dt>Total do Pedido</dt>
+                                <dd><strong class="valor-destaque">R$&nbsp;<%= valorTotal.toFixed(2) %></strong></dd>
+                            </dl>
+                        </footer>
+
+                    </li>
+                    <% }); %>
+                </ol>
+            <% } %>
+        </section>
+    </main>
+
+    <footer>
+        <nav aria-label="Navegação do rodapé"
+             style="display:flex;justify-content:space-between;align-items:center;
+                    flex-wrap:wrap;gap:1rem;padding:1rem 2%;">
+            <a href="/admin?tab=usuarios" class="link-footer">Voltar ao Painel</a>
+            <a href="/logout" class="link-footer" style="color:#ff6b6b;font-weight:600;">
+                Sair da Conta de Administrador
+            </a>
+        </nav>
+    </footer>
+</body>
+</html>
