@@ -151,6 +151,7 @@
                                 </select>
                             </label>
                         </fieldset>
+
                         <fieldset>
                             <legend class="label-titulo">Faixa Etária Recomendada</legend>
                             <label for="faixa-etaria-add">
@@ -168,6 +169,18 @@
                                 </select>
                             </label>
                         </fieldset>
+
+                        <fieldset>
+                            <legend class="label-titulo">Público-Alvo (Sexo)</legend>
+                            <label for="sexo-add">
+                                <select id="sexo-add" name="sexo">
+                                    <option value="masculino">Masculino</option>
+                                    <option value="feminino">Feminino</option>
+                                    <option value="todos">N/A</option>
+                                </select>
+                            </label>
+                        </fieldset>
+
                         <fieldset class="campo-imagem">
                             <legend><strong class="label-titulo">Imagem do Produto</strong></legend>
                             <label for="imagem-add" class="label-arquivo">
@@ -264,6 +277,16 @@
                                     </select>
                                 </label>
                             </fieldset>
+                            <fieldset>
+                                <legend class="label-titulo">Público-Alvo (Sexo) da Categoria</legend>
+                                <label for="sexo_categoria">
+                                    <select id="sexo_categoria" name="sexo_categoria">
+                                        <option value="masculino">Masculino</option>
+                                        <option value="feminino">Feminino</option>
+                                        <option value="todos">N/A</option>
+                                    </select>
+                                </label>
+                            </fieldset>
                             <button type="submit" class="btn-adicionar">Criar Categoria</button>
                         </form>
                     </section>
@@ -278,6 +301,9 @@
                                             <figcaption class="usuario-info">Slug: /categoria/<%= cat.slug %></figcaption>
                                             <output class="usuario-info">
                                                 Faixa etária: <%= cat.faixa_etaria || 'Todas as idades' %>
+                                            </output>
+                                            <output class="usuario-info">
+                                                Público: <%= cat.sexo || 'Todos' %>
                                             </output>
                                         </figure>
                                     </article>
@@ -310,6 +336,16 @@
                                                     aria-label="Salvar faixa etária de <%= cat.nome %>">
                                                     Salvar
                                                 </button>
+                                        </fieldset>
+                                        <fieldset>
+                                            <legend class="label-titulo">Público-Alvo (Sexo) da Categoria</legend>
+                                            <label for="sexo_categoria">
+                                                <select id="sexo_categoria" name="sexo_categoria">
+                                                    <option value="masculino">Masculino</option>
+                                                    <option value="feminino">Feminino</option>
+                                                    <option value="todos">N/A</option>
+                                                </select>
+                                            </label>
                                         </fieldset>
                                     </form>
                                     <a href="/categoria/<%= cat.slug %>" class="btn-editar" target="_blank"

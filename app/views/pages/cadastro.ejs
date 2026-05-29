@@ -15,8 +15,8 @@
 </head>
 <body>
     <%
-    var cssErro = { nome:"", nasc:"", cpf:"", ddd:"", tel:"", email:"", senhan:"", csenha:"" };
-    var msgErro = { nome:"", nasc:"", cpf:"", ddd:"", tel:"", email:"", senhan:"", csenha:"" };
+    var cssErro = { nome:"", nasc:"", cpf:"", ddd:"", tel:"", email:"", senhan:"", csenha:"", sexo:""};
+    var msgErro = { nome:"", nasc:"", cpf:"", ddd:"", tel:"", email:"", senhan:"", csenha:"", sexo:""};
 
     if (erros) {
         listaErros.errors.forEach(function(itemErro) {
@@ -28,6 +28,7 @@
             if (itemErro.path === 'email')  { cssErro.email  = 'error'; msgErro.email  = itemErro.msg; }
             if (itemErro.path === 'senhan') { cssErro.senhan = 'error'; msgErro.senhan = itemErro.msg; }
             if (itemErro.path === 'csenha') { cssErro.csenha = 'error'; msgErro.csenha = itemErro.msg; }
+            if (itemErro.path === 'sexo') { cssErro.sexo = 'error'; msgErro.sexo = itemErro.msg; }
         });
     }
     %>
@@ -156,6 +157,33 @@
                             <output class="error-message" id="tel-error" role="alert" aria-live="polite"></output>
                         <% } %>
                     </section>
+                </fieldset>
+                
+                <fieldset>
+                    <legend><h2>Sexo</h2></legend>
+                    <label for="sexo-masc">
+                        <input type="radio" id="sexo-masc" name="sexo" value="masculino"
+                            required aria-required="true"
+                            <%= valores.sexo === 'masculino' ? 'checked' : '' %>>
+                        Masculino
+                    </label>
+                    <label for="sexo-fem">
+                        <input type="radio" id="sexo-fem" name="sexo" value="feminino"
+                            <%= valores.sexo === 'feminino' ? 'checked' : '' %>>
+                        Feminino
+                    </label>
+                    <label for="sexo-nd">
+                        <input type="radio" id="sexo-nd" name="sexo" value="prefiro-nao-dizer"
+                            <%= valores.sexo === 'prefiro-nao-dizer' ? 'checked' : '' %>>
+                        Prefiro Não Dizer
+                    </label>
+                    <% if (msgErro.sexo) { %>
+                        <output class="error-message" id="sexo-error" role="alert" aria-live="polite" style="display:block">
+                            <%= msgErro.sexo %>
+                        </output>
+                    <% } else { %>
+                        <output class="error-message" id="sexo-error" role="alert" aria-live="polite"></output>
+                    <% } %>
                 </fieldset>
 
                 <fieldset>

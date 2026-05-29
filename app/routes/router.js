@@ -221,6 +221,8 @@ router.post('/cadastro',
         if (v !== req.body.senhan) throw new Error('As senhas não conferem!');
         return true;
     }),
+    body('sexo').notEmpty().withMessage('Sexo é obrigatório!')
+        .isIn(['masculino','feminino','prefiro-nao-dizer']).withMessage('Sexo inválido!'),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -338,7 +340,7 @@ router.post('/usuario/atualizar-campo', requireLogin,
             return res.redirect('/usuario?erro=' + encodeURIComponent('Telefone inválido!'));
 
         await usuariosModel.updateCampo(req.session.usuarioEmail, campo, valor);
-        const labels = { nome: 'Nome', nasc: 'Data de nascimento', cpf: 'CPF', ddd: 'DDD', tel: 'Telefone' };
+        const labels = { nome: 'Nome', nasc: 'Data de nascimento', cpf: 'CPF', ddd: 'DDD', tel: 'Telefone', sexo: 'Sexo' };
         res.redirect('/usuario?sucesso=' + encodeURIComponent(labels[campo] + ' atualizado com sucesso!'));
     }
 );
@@ -838,7 +840,8 @@ router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
                 preco_desconto: precoDesc,
                 imagem:         imagemPath,
                 status:         req.body.status || 'em-estoque',
-                faixa_etaria: req.body.faixa_etaria || null
+                faixa_etaria: req.body.faixa_etaria || null,
+                sexo: req.body.sexo || null
             }, ids_categorias);
 
             if (result && result.errno) return res.redirect('/admin?erro=adicionar_produto');
@@ -892,6 +895,7 @@ router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
                                 : null,
                 imagem:         imagemPath,
                 faixa_etaria: req.body.faixa_etaria || produto.faixa_etaria || null,
+                sexo: req.body.sexo || produto.sexo || null,
                 status:         req.body.status || produto.status
             }, ids_categorias);
 
@@ -939,7 +943,9 @@ router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
         if (existe)  return res.redirect('/admin?erro=categoria_ja_existe&tab=categorias');
 
         const faixaEtaria = (req.body.faixa_etaria_categoria || '').trim() || null;
-        const result = await produtosModel.createCategoria(nome, faixaEtaria);
+
+        const sexo = (req.body.sexo_categoria || '').trim() || null;
+        const result = await produtosModel.createCategoria(nome, faixaEtaria, sexo);
         if (!result || result.erro || result.errno || !result.insertId || result.insertId <= 0) {
             console.error('Erro ao criar categoria:', result);
             return res.redirect('/admin?erro=criar_categoria&tab=categorias');
@@ -964,7 +970,8 @@ router.post('/admin/excluir-categoria/:id', requireAdmin, async (req, res) => {
 router.post('/admin/atualizar-faixa-categoria/:id', requireAdmin, async (req, res) => {
     try {
         const faixa = (req.body.faixa_etaria || '').trim() || null;
-        await produtosModel.updateCategoria(req.params.id, faixa);
+        const sexo  = (req.body.sexo        || '').trim() || null;
+        await produtosModel.updateCategoria(req.params.id, faixa, sexo);
         res.redirect('/admin?sucesso=categoria_editada&tab=categorias');
     } catch (err) {
         console.error(err);

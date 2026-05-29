@@ -47,8 +47,9 @@ const usuariosModel = {
         */
         try {
             const [result] = await pool.query(
-                'INSERT INTO usuarios (nome, nasc, cpf, ddd, tel, email, senhan) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                [dados.nome, dados.nasc, dados.cpf, dados.ddd, dados.tel, dados.email, dados.senhan]
+                'INSERT INTO usuarios (nome, nasc, cpf, ddd, tel, email, senhan, sexo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                [dados.nome, dados.nasc, dados.cpf, dados.ddd, dados.tel, dados.email, dados.senhan, dados.sexo || null]
+
             );
             return result;
         } catch (erro) {
@@ -58,7 +59,7 @@ const usuariosModel = {
 
     // atualiza um campo especifico 
     updateCampo: async (email, campo, valor) => {
-        const camposPermitidos = ['nome', 'nasc', 'cpf', 'ddd', 'tel'];
+        const camposPermitidos = ['nome', 'nasc', 'cpf', 'ddd', 'tel', 'sexo'];
         if (!camposPermitidos.includes(campo)) return null;
         try {
             const [result] = await pool.query(

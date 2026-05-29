@@ -56,6 +56,14 @@
                         </time>
                     </dd>
 
+                    <dt class="stat-titulo" style="margin-top:.75rem;">Sexo</dt>
+                    <dd>
+                        <output><%=
+                            ({ masculino: 'Masculino', feminino: 'Feminino', 'prefiro-nao-dizer': 'Prefiro Não Dizer' })[usuario.sexo]
+                            || 'Não informado'
+                        %></output>
+                    </dd>
+
                     <dt class="stat-titulo" style="margin-top:.75rem;">Membro desde</dt>
                     <dd>
                         <time datetime="<%= usuario.criado_em %>">

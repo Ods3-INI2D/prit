@@ -149,8 +149,8 @@ const produtosModel = {
             await conn.beginTransaction();
 
             const [result] = await conn.query(
-                `INSERT INTO produtos (nome, descricao, preco, preco_desconto, imagem, status, faixa_etaria)
-                 VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO produtos (nome, descricao, preco, preco_desconto, imagem, status, faixa_etaria, sexo)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     dados.nome,
                     dados.descricao || '',
@@ -158,7 +158,8 @@ const produtosModel = {
                     dados.preco_desconto || null,
                     dados.imagem || '/imagens/foto.jpg',
                     dados.status || 'em-estoque',
-                    dados.faixa_etaria || null
+                    dados.faixa_etaria || null,
+                    dados.sexo || null
                 ]
             );
             const id_produto = result.insertId;
@@ -190,7 +191,7 @@ const produtosModel = {
             const [result] = await conn.query(
                 `UPDATE produtos SET
                     nome = ?, descricao = ?, preco = ?, preco_desconto = ?,
-                    imagem = ?, status = ?, faixa_etaria = ?
+                    imagem = ?, status = ?, faixa_etaria = ?, sexo = ?
                  WHERE id_produto = ?`,
                 [
                     dados.nome,
@@ -200,6 +201,7 @@ const produtosModel = {
                     dados.imagem,
                     dados.status || 'em-estoque',
                     dados.faixa_etaria || null,
+                    dados.sexo || null,
                     id
                 ]
             );
@@ -313,7 +315,7 @@ const produtosModel = {
     },
 
     // criar categoria
-    createCategoria: async (nome, faixaEtaria = null) => {
+    createCategoria: async (nome, faixaEtaria = null, sexo = null) => {
         try {
             const slugBase = nome
                 .toLowerCase()
@@ -338,8 +340,8 @@ const produtosModel = {
                 tentativas++;
             }
             const [result] = await pool.query(
-                'INSERT INTO categorias (nome, slug, faixa_etaria) VALUES (?, ?, ?)',
-                [nome, slug, faixaEtaria || null]
+                'INSERT INTO categorias (nome, slug, faixa_etaria, sexo) VALUES (?, ?, ?, ?)',
+                [nome, slug, faixaEtaria || null, sexo || null]
             );
             if (!result || result.affectedRows === 0) {
                 return { erro: true, mensagem: 'Categoria já existe ou não foi possível criar.' };
@@ -368,8 +370,8 @@ const produtosModel = {
     updateCategoria: async (id, faixa_etaria) => {
         try {
             const [result] = await pool.query(
-                'UPDATE categorias SET faixa_etaria = ? WHERE id_categoria = ?',
-                [faixa_etaria || null, id]
+                'UPDATE categorias SET faixa_etaria = ?, sexo = ? WHERE id_categoria = ?',
+                [faixa_etaria || null, sexo || null, id]
             );
             return result;
         } catch (erro) {

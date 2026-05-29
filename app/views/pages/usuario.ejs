@@ -234,6 +234,16 @@
 
                     <article class="campo-info">
                         <section class="campo-info-principal" style="padding: 1rem 0;">
+                            <h3 class="label-info">Sexo</h3>
+                            <output class="valor-info"><%=
+                                ({ masculino: 'Masculino', feminino: 'Feminino', 'prefiro-nao-dizer': 'Prefiro Não Dizer' })[usuario.sexo]
+                                || 'Não informado'
+                            %></output>
+                        </section>
+                    </article>
+
+                    <article class="campo-info">
+                        <section class="campo-info-principal" style="padding: 1rem 0;">
                             <h3 class="label-info">E-mail</h3>
                             <output class="valor-info"><%= usuario.email %></output>
                         </section>
