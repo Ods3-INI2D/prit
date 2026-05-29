@@ -84,6 +84,7 @@
     --info-border: #1a73e8;
     --info-text: #1557b0;
     
+    
     /* Imagens por tema - TEMA CLARO */
     --img-estrela: url('/imagens/estrela-preta.svg');
     --img-estrela-vazia: url('/imagens/estrela-preta-vazia.svg');
@@ -362,8 +363,8 @@ fieldset legend h3 {
 }
 
 .resumo-carrinho {
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
 }
 
 input[type="text"],
@@ -451,7 +452,6 @@ h1, h2, h3, h4, h5, h6 {
 .nome-produto,
 .titulo-form-avaliacao,
 .titulo-outros,
-.titulo-resumo,
 .nome-produto-bloco,
 .subtitulo-form,
 .subtitulo-intro,
@@ -460,6 +460,9 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
 }
 
+.titulo-resumo {
+    color: var(--bg-primary);
+}
 .usuario-email,
 .nome-descricao {
     color: var(--accent-primary);
@@ -627,7 +630,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .total-resumo {
-    color: var(--text-primary);
+    color: var(--bg-primary);
 }
 
 .checkbox-label {
@@ -807,6 +810,38 @@ output a:hover {
     color: #999999 !important;
 }
 
+[data-theme="light"] .btn-adicionar,
+[data-theme="light"] .btn-comprar,
+[data-theme="light"] .btn-enviar,
+[data-theme="light"] .btn-salvar,
+[data-theme="light"] .btn-calcular,
+[data-theme="light"] .btn-enviar-avaliacao,
+[data-theme="light"] .btn-continuar,
+[data-theme="light"] .btn-voltar-home,
+[data-theme="light"] .btn-login,
+[data-theme="light"] .btn-avaliar,
+[data-theme="light"] .btn-finalizar,
+[data-theme="light"] .btn-finalizar-pedido,
+[data-theme="light"] #btn,
+[data-theme="light"] #btn-login,
+[data-theme="light"] .btn-acao-principal,
+[data-theme="light"] .btn-quantidade {
+    color: #ffffff !important;
+}
+
+[data-theme="light"] .btn-editar {
+    color: #ffffff !important;
+}
+
+[data-theme="light"] .mensagem-aviso {
+    color: #7a5c00 !important;
+    background-color: rgba(255, 193, 7, 0.2);
+    border-color: #f9ab00;
+}
+
+[data-theme="light"] .total-resumo output {
+    color: var(--accent-primary);
+}
 
 @media (min-width: 901px) {
     .theme-toggle {

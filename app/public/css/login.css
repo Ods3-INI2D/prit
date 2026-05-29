@@ -26,12 +26,15 @@ header {
     width: 100%;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+    padding: 5rem;
 }
 
 img.icon {
     width: 40%;
     max-width: 200px;
     height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
 /* main*/

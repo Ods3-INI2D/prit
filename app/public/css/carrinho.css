@@ -347,6 +347,7 @@ main {
 
     .lista-carrinho-wrapper {
         flex: 3;
+        min-width: 0;
     }
 
     .resumo-carrinho {
