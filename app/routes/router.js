@@ -18,6 +18,9 @@ const { pedidosModel   } = require('../models/pedidosmodel');
 // validacoes
 var { valCPF, valDDD, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
 
+//algoritimo
+const { ordenarPorRelevancia } = require('../helpers/personalizacao');
+
 // sessao
 router.use(session({
     secret: process.env.SESSION_SECRET || 'chave-secreta-farmacia-super-segura-2024',
@@ -293,6 +296,12 @@ router.get('/home', async (req, res) => {
     const banners    = await bannersModel.findAll();
     const categorias = await produtosModel.findAllCategorias();
 
+    // Busca dados completos do usuário logado (necessário para nasc e sexo)
+    let usuarioCompleto = null;
+    if (req.session.usuarioEmail && !req.session.isAdmin) {
+        usuarioCompleto = await usuariosModel.findByEmail(req.session.usuarioEmail);
+    }
+
     const produtosNormalizados = (Array.isArray(produtos) ? produtos : []).map(p => ({
         ...p,
         id:            p.id_produto,
@@ -301,7 +310,18 @@ router.get('/home', async (req, res) => {
         avaliacoes:    []
     }));
 
-    res.render('pages/home', { produtos: produtosNormalizados, banners, categorias });
+    // Ordena produtos e categorias por relevância para o usuário atual
+    const produtosOrdenados   = ordenarPorRelevancia(produtosNormalizados, usuarioCompleto);
+    const categoriasOrdenadas = ordenarPorRelevancia(
+        Array.isArray(categorias) ? categorias : [],
+        usuarioCompleto
+    );
+
+    res.render('pages/home', {
+        produtos:   produtosOrdenados,
+        banners,
+        categorias: categoriasOrdenadas
+    });
 });
 
 // ── Usuário ───────────────────────────────────────────────
@@ -670,6 +690,19 @@ router.get('/categoria/:slug', async (req, res) => {
         precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
     }));
 
+    // Ordena produtos da categoria por relevância
+    let usuarioCompleto = null;
+    if (req.session.usuarioEmail && !req.session.isAdmin) {
+        usuarioCompleto = await usuariosModel.findByEmail(req.session.usuarioEmail);
+    }
+    const produtosOrdenadosCategoria = ordenarPorRelevancia(produtosNorm, usuarioCompleto);
+
+    res.render('pages/categoria', {
+        categoria: nomeExibicao,
+        slug,
+        produtos: produtosOrdenadosCategoria
+    });
+
     res.render('pages/categoria', { categoria: nomeExibicao, slug, produtos: produtosNorm });
 });
 
@@ -686,6 +719,17 @@ router.get('/busca', async (req, res) => {
         preco:         parseFloat(p.preco) || 0,
         precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
     }));
+
+    let usuarioCompleto = null;
+    if (req.session.usuarioEmail && !req.session.isAdmin) {
+        usuarioCompleto = await usuariosModel.findByEmail(req.session.usuarioEmail);
+    }
+    const produtosOrdenadosBusca = ordenarPorRelevancia(produtosNorm, usuarioCompleto);
+
+    res.render('pages/busca', {
+        termo,
+        produtos: produtosOrdenadosBusca
+    });
 
     res.render('pages/busca', { termo, produtos: produtosNorm });
 });
