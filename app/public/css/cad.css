@@ -27,12 +27,15 @@ header {
     width: 100%;
     border-bottom-left-radius: 0.71875rem;
     border-bottom-right-radius: 0.71875rem;
+    padding: 5rem;
 }
 
 img.icon {
     width: 38%;
     max-width: 11.25rem;
     height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
 /* main & login module */

@@ -47,7 +47,7 @@
 </head>
 <body>
     <header>
-        <img src="/imagens/logo.svg" alt="Logotipo da Farmácia" class="logo">
+        <img src="/imagens/logo-branco.svg" alt="Logotipo da Farmácia" class="logo">
         <h1 class="titulo">Painel Administrativo</h1>
     </header>
  
@@ -247,6 +247,23 @@
                                            required aria-required="true" minlength="2" maxlength="60">
                                 </label>
                             </fieldset>
+                            <fieldset>
+                                <legend class="label-titulo">Faixa Etária da Categoria (opcional)</legend>
+                                <label for="faixa_etaria_categoria">
+                                    <select id="faixa_etaria_categoria" name="faixa_etaria_categoria">
+                                        <option value="">Todas as idades</option>
+                                        <option value="40+">A partir de 40 anos</option>
+                                        <option value="45+">A partir de 45 anos</option>
+                                        <option value="50+">A partir de 50 anos</option>
+                                        <option value="55+">A partir de 55 anos</option>
+                                        <option value="60+">A partir de 60 anos</option>
+                                        <option value="65+">A partir de 65 anos</option>
+                                        <option value="70+">A partir de 70 anos</option>
+                                        <option value="75+">A partir de 75 anos</option>
+                                        <option value="80+">80 anos ou mais</option>
+                                    </select>
+                                </label>
+                            </fieldset>
                             <button type="submit" class="btn-adicionar">Criar Categoria</button>
                         </form>
                     </section>
@@ -259,15 +276,48 @@
                                         <figure>
                                             <h3 class="usuario-email"><%= cat.nome %></h3>
                                             <figcaption class="usuario-info">Slug: /categoria/<%= cat.slug %></figcaption>
+                                            <output class="usuario-info">
+                                                Faixa etária: <%= cat.faixa_etaria || 'Todas as idades' %>
+                                            </output>
                                         </figure>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações da categoria <%= cat.nome %>">
-                                        <a href="/categoria/<%= cat.slug %>" class="btn-editar" target="_blank"
-                                           aria-label="Ver página da categoria <%= cat.nome %>">Ver Página</a>
+                                        <form method="POST"
+                                            action="/admin/atualizar-faixa-categoria/<%= cat.id_categoria %>"
+                                            aria-label="Atualizar faixa etária de <%= cat.nome %>">
+                                        <fieldset style="border:none;padding:0;display:flex;gap:.5rem;align-items:center;">
+                                            <legend style="display:none;">Faixa etária</legend>
+                                            <label for="faixa-cat-<%= cat.id_categoria %>" style="display:none;">
+                                                Faixa etária de <%= cat.nome %>
+                                            </label>
+                                                <select id="faixa-cat-<%= cat.id_categoria %>"
+                                                    name="faixa_etaria"
+                                                    style="padding:.4rem .6rem;border-radius:.4rem;
+                                                        background:#383838;color:white;border:2px solid #555;
+                                                        font-family:inherit;font-size:.85rem;cursor:pointer;">
+                                                    <option value=""  <%= !cat.faixa_etaria ? 'selected' : '' %>>Todas as idades</option>
+                                                    <option value="40+" <%= cat.faixa_etaria === '40+' ? 'selected' : '' %>>40+</option>
+                                                    <option value="45+" <%= cat.faixa_etaria === '45+' ? 'selected' : '' %>>45+</option>
+                                                    <option value="50+" <%= cat.faixa_etaria === '50+' ? 'selected' : '' %>>50+</option>
+                                                    <option value="55+" <%= cat.faixa_etaria === '55+' ? 'selected' : '' %>>55+</option>
+                                                    <option value="60+" <%= cat.faixa_etaria === '60+' ? 'selected' : '' %>>60+</option>
+                                                    <option value="65+" <%= cat.faixa_etaria === '65+' ? 'selected' : '' %>>65+</option>
+                                                    <option value="70+" <%= cat.faixa_etaria === '70+' ? 'selected' : '' %>>70+</option>
+                                                    <option value="75+" <%= cat.faixa_etaria === '75+' ? 'selected' : '' %>>75+</option>
+                                                    <option value="80+" <%= cat.faixa_etaria === '80+' ? 'selected' : '' %>>80+</option>
+                                                </select>
+                                                <button type="submit" class="btn-editar"
+                                                    aria-label="Salvar faixa etária de <%= cat.nome %>">
+                                                    Salvar
+                                                </button>
+                                        </fieldset>
+                                    </form>
+                                    <a href="/categoria/<%= cat.slug %>" class="btn-editar" target="_blank"
+                                        aria-label="Ver página da categoria <%= cat.nome %>">Ver Página</a>
                                         <form method="POST" action="/admin/excluir-categoria/<%= cat.id_categoria %>" class="form-inline">
                                             <button class="btn-excluir" type="submit"
-                                                    onclick="return confirm('Excluir categoria \'<%= cat.nome %>\'? Produtos vinculados perderão esta categoria.')"
-                                                    aria-label="Excluir categoria <%= cat.nome %>">Excluir</button>
+                                                onclick="return confirm('Excluir categoria \'<%= cat.nome %>\'? Produtos vinculados perderão esta categoria.')"
+                                                aria-label="Excluir categoria <%= cat.nome %>">Excluir</button>
                                         </form>
                                     </nav>
                                 </li>

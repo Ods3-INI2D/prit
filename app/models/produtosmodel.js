@@ -313,7 +313,7 @@ const produtosModel = {
     },
 
     // criar categoria
-    createCategoria: async (nome) => {
+    createCategoria: async (nome, faixaEtaria = null) => {
         try {
             const slugBase = nome
                 .toLowerCase()
@@ -338,8 +338,8 @@ const produtosModel = {
                 tentativas++;
             }
             const [result] = await pool.query(
-                'INSERT INTO categorias (nome, slug) VALUES (?, ?)',
-                [nome, slug]
+                'INSERT INTO categorias (nome, slug, faixa_etaria) VALUES (?, ?, ?)',
+                [nome, slug, faixaEtaria || null]
             );
             if (!result || result.affectedRows === 0) {
                 return { erro: true, mensagem: 'Categoria já existe ou não foi possível criar.' };
@@ -361,6 +361,19 @@ const produtosModel = {
             return result;
         } catch (erro) {
             console.error('deleteCategoria erro:', erro);
+            return erro;
+        }
+    },
+
+    updateCategoria: async (id, faixa_etaria) => {
+        try {
+            const [result] = await pool.query(
+                'UPDATE categorias SET faixa_etaria = ? WHERE id_categoria = ?',
+                [faixa_etaria || null, id]
+            );
+            return result;
+        } catch (erro) {
+            console.error('updateCategoria erro:', erro);
             return erro;
         }
     },
