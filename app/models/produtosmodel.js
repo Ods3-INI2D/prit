@@ -228,15 +228,13 @@ const produtosModel = {
     // exclusao fisica admin
     delete: async (id) => {
         try {
+            await pool.query('DELETE FROM itens_pedido WHERE id_produto = ?', [id]);
             await pool.query('DELETE FROM carrinho WHERE id_produto = ?', [id]);
-            const [result] = await pool.query(
-                'DELETE FROM produtos WHERE id_produto = ?',
-                [id]
-            );
+            const [result] = await pool.query('DELETE FROM produtos WHERE id_produto = ?', [id]);
             return result;
         } catch (erro) {
-            console.error('delete produto erro:', erro);
-            return erro;
+        console.error('delete produto erro:', erro);
+        return erro;
         }
     },
 
@@ -357,10 +355,8 @@ const produtosModel = {
 
     deleteCategoria: async (id) => {
         try {
-            const [result] = await pool.query(
-                'DELETE FROM categorias WHERE id_categoria = ?',
-                [id]
-            );
+            await pool.query('DELETE FROM produto_categorias WHERE id_categoria = ?', [id]);
+            const [result] = await pool.query('DELETE FROM categorias WHERE id_categoria = ?', [id]);
             return result;
         } catch (erro) {
             console.error('deleteCategoria erro:', erro);
