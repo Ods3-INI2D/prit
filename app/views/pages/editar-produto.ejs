@@ -155,10 +155,10 @@
                     <legend class="label-titulo">Nova Imagem SVG (opcional)</legend>
                     <label for="imagem" class="label-arquivo">
                         <input type="file" id="imagem" name="imagem"
-                               accept="image/svg+xml"
-                               aria-describedby="imagem-info">
+                            accept="image/svg+xml,image/png,image/jpeg,image/webp"
+                            aria-describedby="imagem-info">
                         <output id="imagem-info" class="info-arquivo">
-                            Formato aceito: SVG (máx. 5MB). Deixe em branco para manter a imagem atual.
+                            Formatos aceitos: SVG, PNG, JPG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
                         </output>
                     </label>
                     <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></output>
@@ -202,11 +202,11 @@
                         infoArquivo.style.color = '#d93025';
                         previewContainer.innerHTML = ''; inputImagem.value = ''; return;
                     }
-                    if (arquivo.type !== 'image/svg+xml') {
-                        infoArquivo.textContent = 'Erro: Formato não suportado. Use apenas SVG';
+                    if (!['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp'].includes(arquivo.type)) {
+                        infoArquivo.textContent = 'Erro: Formato não suportado. Use SVG, PNG, JPG ou WEBP';
                         infoArquivo.style.color = '#d93025';
                         previewContainer.innerHTML = ''; inputImagem.value = ''; return;
-                    }
+                    } 
                     var reader = new FileReader();
                     reader.onload = function(ev) {
                         var fig = document.createElement('figure');

@@ -29,7 +29,7 @@ router.use(session({
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// multer produtos — aceita apenas SVG
+// multer produtos
 const storageProduto = multer.diskStorage({
     destination: (req, file, cb) => {
         const dir = path.join(__dirname, '../public/imagens/produtos');
@@ -44,14 +44,15 @@ const uploadProduto = multer({
     storage: storageProduto,
     limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
-        const ext  = path.extname(file.originalname).toLowerCase();
-        const mime = file.mimetype;
-        if (ext === '.svg' && (mime === 'image/svg+xml' || mime === 'image/svg')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Apenas imagens no formato SVG são permitidas!'));
-        }
-    }
+    const ext  = path.extname(file.originalname).toLowerCase();
+    const mime = file.mimetype;
+    const extsPermitidas  = ['.svg', '.png', '.jpg', '.jpeg', '.webp'];
+    const mimesPermitidos = ['image/svg+xml', 'image/svg', 'image/png', 'image/jpeg', 'image/webp'];
+    if (extsPermitidas.includes(ext) && mimesPermitidos.includes(mime)) {
+        cb(null, true);
+    } else {
+        cb(new Error('Apenas imagens SVG, PNG, JPG ou WEBP são permitidas!'));
+    }}
 });
 
 // multer banners
@@ -71,10 +72,12 @@ const uploadBanner = multer({
     fileFilter: (req, file, cb) => {
     const ext  = path.extname(file.originalname).toLowerCase();
     const mime = file.mimetype;
-    if (ext === '.svg' && (mime === 'image/svg+xml' || mime === 'image/svg')) {
+    const extsPermitidas  = ['.svg', '.png', '.jpg', '.jpeg', '.webp'];
+    const mimesPermitidos = ['image/svg+xml', 'image/svg', 'image/png', 'image/jpeg', 'image/webp'];
+    if (extsPermitidas.includes(ext) && mimesPermitidos.includes(mime)) {
         cb(null, true);
     } else {
-        cb(new Error('Apenas imagens no formato SVG são permitidas!'));
+        cb(new Error('Apenas imagens SVG, PNG, JPG ou WEBP são permitidas!'));
     }}
 });
 
