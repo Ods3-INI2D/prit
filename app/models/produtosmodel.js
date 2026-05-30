@@ -228,6 +228,7 @@ const produtosModel = {
     // exclusao fisica admin
     delete: async (id) => {
         try {
+            await pool.query('DELETE FROM carrinho WHERE id_produto = ?', [id]);
             const [result] = await pool.query(
                 'DELETE FROM produtos WHERE id_produto = ?',
                 [id]
