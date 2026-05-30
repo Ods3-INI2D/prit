@@ -497,11 +497,20 @@
     </main>
  
     <footer>
-        <nav aria-label="Navegação do rodapé" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;padding:1rem 2%;">
-            <a href="/home" class="link-footer">Voltar ao Site</a>
-            <a href="/logout" class="link-footer" style="color:#ff6b6b;font-weight:600;">Sair da Conta de Administrador</a>
-        </nav>
-    </footer>
+    <nav aria-label="Navegação do rodapé"
+         style="display:flex;justify-content:space-between;align-items:center;
+                flex-wrap:wrap;gap:1rem;padding:1rem 2%;">
+        <a href="/home" class="btn-adicionar"
+           style="width:auto;padding:.75rem 1.5rem;text-decoration:none;display:inline-block;">
+            Voltar ao Site
+        </a>
+        <a href="/logout" class="btn-excluir"
+           style="padding:.75rem 1.5rem;text-decoration:none;display:inline-block;
+                  border-radius:.45rem;font-weight:600;color:white;">
+            Sair da Conta de Administrador
+        </a>
+    </nav>
+</footer>
 
     <%# Modal de edição de banner %>
     <aside id="modal-banner" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
