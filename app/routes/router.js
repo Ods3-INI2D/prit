@@ -700,12 +700,6 @@ router.get('/categoria/:slug', async (req, res) => {
     }
     const produtosOrdenadosCategoria = ordenarPorRelevancia(produtosNorm, usuarioCompleto);
 
-    res.render('pages/categoria', {
-        categoria: nomeExibicao,
-        slug,
-        produtos: produtosOrdenadosCategoria
-    });
-
     res.render('pages/categoria', { categoria: nomeExibicao, slug, produtos: produtosNorm });
 });
 
@@ -728,11 +722,6 @@ router.get('/busca', async (req, res) => {
         usuarioCompleto = await usuariosModel.findByEmail(req.session.usuarioEmail);
     }
     const produtosOrdenadosBusca = ordenarPorRelevancia(produtosNorm, usuarioCompleto);
-
-    res.render('pages/busca', {
-        termo,
-        produtos: produtosOrdenadosBusca
-    });
 
     res.render('pages/busca', { termo, produtos: produtosNorm });
 });

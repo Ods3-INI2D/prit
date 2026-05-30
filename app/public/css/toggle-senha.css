@@ -1,7 +1,8 @@
 .campo-senha {
     position: relative;
     width: 100%;
-    display: block;
+    display: flex;
+    align-items: center;
 }
 
 .campo-senha input {
@@ -60,6 +61,11 @@
 
 .btn-toggle-senha:hover::before {
     filter: brightness(1.2);
+}
+
+.campo-senha input {
+    flex: 1;
+    margin-bottom: 0;
 }
 
 /*responsividade para desktops*/
