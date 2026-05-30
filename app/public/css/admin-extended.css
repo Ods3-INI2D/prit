@@ -306,9 +306,19 @@
         font-size: 0.95rem;
     }
 
+    .acoes-usuario .btn-editar,
+    .acoes-usuario .btn-excluir {
+        flex: 0;
+        min-width: auto;
+        white-space: nowrap;
+        padding: 0.55rem 0.9rem;
+        font-size: 0.9rem;
+    }
+    
     .acoes-usuario {
         flex-shrink: 0;
-        gap: 0.8rem;
+        align-items: center;
+        flex-wrap: nowrap;
     }
 
     /* layout para produtos em linha */
