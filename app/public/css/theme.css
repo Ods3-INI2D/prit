@@ -88,6 +88,7 @@
     /* Imagens por tema - TEMA CLARO */
     --img-estrela: url('/imagens/estrela-preta.svg');
     --img-estrela-vazia: url('/imagens/estrela-preta-vazia.svg');
+    --img-user-menu: url('/imagens/user-preto.svg');
 }
 
 .cart {

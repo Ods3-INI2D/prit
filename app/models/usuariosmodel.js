@@ -76,21 +76,28 @@ const usuariosModel = {
     delete: async (email) => {
         try {
             const [usuario] = await pool.query(
-                'SELECT id_usuario FROM usuarios WHERE email = ?',
-                [email]
-        );
-        if (usuario[0]) {
-            await pool.query(
-                'DELETE FROM carrinho WHERE id_usuario = ?',
-                [usuario[0].id_usuario]
+            'SELECT id_usuario FROM usuarios WHERE email = ?', [email]
             );
-        }
-        const [result] = await pool.query(
-            'DELETE FROM usuarios WHERE email = ?',
-            [email]
-        );
-        return result;
-    }     catch (erro) {
+            if (usuario[0]) {
+                const id = usuario[0].id_usuario;
+                await pool.query('DELETE FROM carrinho WHERE id_usuario = ?', [id]);
+            // Remove pedidos e itens em cascata (via FK CASCADE no banco)
+            // Se não tiver CASCADE, fazer manualmente:
+                const [pedidos] = await pool.query('SELECT id_pedido FROM pedidos WHERE id_usuario = ?', [id]);
+                for (const p of pedidos) {
+                    const [pags] = await pool.query('SELECT id_pagamento FROM pagamentos WHERE id_pedido = ?', [p.id_pedido]);
+                    for (const pag of pags) {
+                        await pool.query('DELETE FROM entregas WHERE id_pagamento = ?', [pag.id_pagamento]);
+                    }
+                    await pool.query('DELETE FROM pagamentos WHERE id_pedido = ?', [p.id_pedido]);
+                    await pool.query('DELETE FROM itens_pedido WHERE id_pedido = ?', [p.id_pedido]);
+                }
+                await pool.query('DELETE FROM pedidos WHERE id_usuario = ?', [id]);
+                await pool.query('DELETE FROM avaliacoes WHERE id_usuario = ?', [id]);
+            }
+            const [result] = await pool.query('DELETE FROM usuarios WHERE email = ?', [email]);
+            return result;
+        } catch (erro) {
             return erro;
         }
     }
