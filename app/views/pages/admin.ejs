@@ -151,6 +151,7 @@
                                 </select>
                             </label>
                         </fieldset>
+
                         <fieldset>
                             <legend class="label-titulo">Faixa Etária Recomendada</legend>
                             <label for="faixa-etaria-add">
@@ -168,13 +169,25 @@
                                 </select>
                             </label>
                         </fieldset>
+
+                        <fieldset>
+                            <legend class="label-titulo">Público-Alvo (Sexo)</legend>
+                            <label for="sexo-add">
+                                <select id="sexo-add" name="sexo">
+                                    <option value="masculino">Masculino</option>
+                                    <option value="feminino">Feminino</option>
+                                    <option value="todos">N/A</option>
+                                </select>
+                            </label>
+                        </fieldset>
+
                         <fieldset class="campo-imagem">
                             <legend><strong class="label-titulo">Imagem do Produto</strong></legend>
                             <label for="imagem-add" class="label-arquivo">
                                 <input type="file" id="imagem-add" name="imagem"
-                                       accept="image/svg+xml"
-                                       aria-describedby="imagem-add-info">
-                                <output id="imagem-add-info" class="info-arquivo">Formato aceito: SVG (máx. 5MB)</output>
+                                    accept="image/svg+xml,image/png,image/jpeg,image/webp"
+                                    aria-describedby="imagem-add-info">
+                                <output id="imagem-add-info" class="info-arquivo">Formatos aceitos: SVG, PNG, JPG, WEBP (máx. 5MB)</output>
                             </label>
                             <output id="preview-imagem-add" class="preview-container" role="status" aria-live="polite"></output>
                         </fieldset>
@@ -264,6 +277,16 @@
                                     </select>
                                 </label>
                             </fieldset>
+                            <fieldset>
+                                <legend class="label-titulo">Público-Alvo (Sexo) da Categoria</legend>
+                                <label for="sexo_categoria">
+                                    <select id="sexo_categoria" name="sexo_categoria">
+                                        <option value="masculino">Masculino</option>
+                                        <option value="feminino">Feminino</option>
+                                        <option value="todos">N/A</option>
+                                    </select>
+                                </label>
+                            </fieldset>
                             <button type="submit" class="btn-adicionar">Criar Categoria</button>
                         </form>
                     </section>
@@ -278,6 +301,9 @@
                                             <figcaption class="usuario-info">Slug: /categoria/<%= cat.slug %></figcaption>
                                             <output class="usuario-info">
                                                 Faixa etária: <%= cat.faixa_etaria || 'Todas as idades' %>
+                                            </output>
+                                            <output class="usuario-info">
+                                                Público: <%= cat.sexo || 'Todos' %>
                                             </output>
                                         </figure>
                                     </article>
@@ -310,6 +336,16 @@
                                                     aria-label="Salvar faixa etária de <%= cat.nome %>">
                                                     Salvar
                                                 </button>
+                                        </fieldset>
+                                        <fieldset>
+                                            <legend class="label-titulo">Público-Alvo (Sexo) da Categoria</legend>
+                                            <label for="sexo_categoria">
+                                                <select id="sexo_categoria" name="sexo_categoria">
+                                                    <option value="masculino">Masculino</option>
+                                                    <option value="feminino">Feminino</option>
+                                                    <option value="todos">N/A</option>
+                                                </select>
+                                            </label>
                                         </fieldset>
                                     </form>
                                     <a href="/categoria/<%= cat.slug %>" class="btn-editar" target="_blank"
@@ -405,10 +441,10 @@
                                 <legend><strong class="label-titulo">Imagem do Banner <output style="color:#ff6b6b">*</output></strong></legend>
                                 <label for="imagem-novo-banner" class="label-arquivo">
                                     <input type="file" id="imagem-novo-banner" name="imagem"
-                                           accept="image/svg+xml"
-                                           required aria-required="true"
-                                           aria-describedby="imagem-novo-info">
-                                    <output id="imagem-novo-info" class="info-arquivo">Formato aceito: SVG (máx. 5MB). Recomendado: proporção 16:9.</output>
+                                        accept="image/svg+xml,image/png,image/jpeg,image/webp"
+                                        required aria-required="true"
+                                        aria-describedby="imagem-novo-info">
+                                    <output id="imagem-novo-info" class="info-arquivo">Formatos aceitos: SVG, PNG, JPG, WEBP (máx. 5MB). Recomendado: proporção 16:9.</output>
                                 </label>
                                 <output id="preview-novo-banner" class="preview-container" role="status" aria-live="polite"></output>
                             </fieldset>
@@ -496,10 +532,10 @@
                     <legend><strong class="label-titulo">Nova Imagem (opcional)</strong></legend>
                     <label for="imagem-banner" class="label-arquivo">
                         <input type="file" id="imagem-banner" name="imagem"
-                               accept="image/svg+xml"
-                               aria-describedby="banner-info">
+                            accept="image/svg+xml,image/png,image/jpeg,image/webp"
+                            aria-describedby="banner-info">
                         <output id="banner-info" class="info-arquivo">
-                            Formato aceito: SVG (máx. 5MB). Deixe em branco para manter a imagem atual.
+                            Formatos aceitos: SVG, PNG, JPG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
                         </output>
                     </label>
                     <output id="preview-banner" class="preview-container" role="status" aria-live="polite"></output>
@@ -547,7 +583,7 @@
                 ativarTab(tabParam);
             }
 
-            // preview da imagem — aceita SVG para produtos e banners
+            // preview da imagem
             function setupPreview(inputId, previewId, infoId, tiposAceitos) {
                 var input   = document.getElementById(inputId);
                 var preview = document.getElementById(previewId);
@@ -582,11 +618,9 @@
                 });
             }
 
-            // imagens apenas svg
-            setupPreview('imagem-add',        'preview-imagem-add',  'imagem-add-info',  ['image/svg+xml']);
-            setupPreview('imagem-novo-banner', 'preview-novo-banner', 'imagem-novo-info', ['image/svg+xml']);
-            setupPreview('imagem-banner',      'preview-banner',      'banner-info',      ['image/svg+xml']);
-
+            setupPreview('imagem-add',        'preview-imagem-add',  'imagem-add-info',  ['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp']);
+            setupPreview('imagem-novo-banner', 'preview-novo-banner', 'imagem-novo-info', ['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp']);
+            setupPreview('imagem-banner',      'preview-banner',      'banner-info',      ['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp']);
             // ediçao de banner
             var modal        = document.getElementById('modal-banner');
             var form         = document.getElementById('form-editar-banner');

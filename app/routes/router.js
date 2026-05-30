@@ -18,6 +18,9 @@ const { pedidosModel   } = require('../models/pedidosmodel');
 // validacoes
 var { valCPF, valDDD, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
 
+//algoritimo
+const { ordenarPorRelevancia } = require('../helpers/personalizacao');
+
 // sessao
 router.use(session({
     secret: process.env.SESSION_SECRET || 'chave-secreta-farmacia-super-segura-2024',
@@ -26,7 +29,7 @@ router.use(session({
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// multer produtos — aceita apenas SVG
+// multer produtos
 const storageProduto = multer.diskStorage({
     destination: (req, file, cb) => {
         const dir = path.join(__dirname, '../public/imagens/produtos');
@@ -41,14 +44,15 @@ const uploadProduto = multer({
     storage: storageProduto,
     limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
-        const ext  = path.extname(file.originalname).toLowerCase();
-        const mime = file.mimetype;
-        if (ext === '.svg' && (mime === 'image/svg+xml' || mime === 'image/svg')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Apenas imagens no formato SVG são permitidas!'));
-        }
-    }
+    const ext  = path.extname(file.originalname).toLowerCase();
+    const mime = file.mimetype;
+    const extsPermitidas  = ['.svg', '.png', '.jpg', '.jpeg', '.webp'];
+    const mimesPermitidos = ['image/svg+xml', 'image/svg', 'image/png', 'image/jpeg', 'image/webp'];
+    if (extsPermitidas.includes(ext) && mimesPermitidos.includes(mime)) {
+        cb(null, true);
+    } else {
+        cb(new Error('Apenas imagens SVG, PNG, JPG ou WEBP são permitidas!'));
+    }}
 });
 
 // multer banners
@@ -68,10 +72,12 @@ const uploadBanner = multer({
     fileFilter: (req, file, cb) => {
     const ext  = path.extname(file.originalname).toLowerCase();
     const mime = file.mimetype;
-    if (ext === '.svg' && (mime === 'image/svg+xml' || mime === 'image/svg')) {
+    const extsPermitidas  = ['.svg', '.png', '.jpg', '.jpeg', '.webp'];
+    const mimesPermitidos = ['image/svg+xml', 'image/svg', 'image/png', 'image/jpeg', 'image/webp'];
+    if (extsPermitidas.includes(ext) && mimesPermitidos.includes(mime)) {
         cb(null, true);
     } else {
-        cb(new Error('Apenas imagens no formato SVG são permitidas!'));
+        cb(new Error('Apenas imagens SVG, PNG, JPG ou WEBP são permitidas!'));
     }}
 });
 
@@ -221,6 +227,8 @@ router.post('/cadastro',
         if (v !== req.body.senhan) throw new Error('As senhas não conferem!');
         return true;
     }),
+    body('sexo').notEmpty().withMessage('Sexo é obrigatório!')
+        .isIn(['masculino','feminino','prefiro-nao-dizer']).withMessage('Sexo inválido!'),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -291,6 +299,12 @@ router.get('/home', async (req, res) => {
     const banners    = await bannersModel.findAll();
     const categorias = await produtosModel.findAllCategorias();
 
+    // Busca dados completos do usuário logado (necessário para nasc e sexo)
+    let usuarioCompleto = null;
+    if (req.session.usuarioEmail && !req.session.isAdmin) {
+        usuarioCompleto = await usuariosModel.findByEmail(req.session.usuarioEmail);
+    }
+
     const produtosNormalizados = (Array.isArray(produtos) ? produtos : []).map(p => ({
         ...p,
         id:            p.id_produto,
@@ -299,7 +313,18 @@ router.get('/home', async (req, res) => {
         avaliacoes:    []
     }));
 
-    res.render('pages/home', { produtos: produtosNormalizados, banners, categorias });
+    // Ordena produtos e categorias por relevância para o usuário atual
+    const produtosOrdenados   = ordenarPorRelevancia(produtosNormalizados, usuarioCompleto);
+    const categoriasOrdenadas = ordenarPorRelevancia(
+        Array.isArray(categorias) ? categorias : [],
+        usuarioCompleto
+    );
+
+    res.render('pages/home', {
+        produtos:   produtosOrdenados,
+        banners,
+        categorias: categoriasOrdenadas
+    });
 });
 
 // ── Usuário ───────────────────────────────────────────────
@@ -338,7 +363,7 @@ router.post('/usuario/atualizar-campo', requireLogin,
             return res.redirect('/usuario?erro=' + encodeURIComponent('Telefone inválido!'));
 
         await usuariosModel.updateCampo(req.session.usuarioEmail, campo, valor);
-        const labels = { nome: 'Nome', nasc: 'Data de nascimento', cpf: 'CPF', ddd: 'DDD', tel: 'Telefone' };
+        const labels = { nome: 'Nome', nasc: 'Data de nascimento', cpf: 'CPF', ddd: 'DDD', tel: 'Telefone', sexo: 'Sexo' };
         res.redirect('/usuario?sucesso=' + encodeURIComponent(labels[campo] + ' atualizado com sucesso!'));
     }
 );
@@ -668,6 +693,19 @@ router.get('/categoria/:slug', async (req, res) => {
         precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
     }));
 
+    // Ordena produtos da categoria por relevância
+    let usuarioCompleto = null;
+    if (req.session.usuarioEmail && !req.session.isAdmin) {
+        usuarioCompleto = await usuariosModel.findByEmail(req.session.usuarioEmail);
+    }
+    const produtosOrdenadosCategoria = ordenarPorRelevancia(produtosNorm, usuarioCompleto);
+
+    res.render('pages/categoria', {
+        categoria: nomeExibicao,
+        slug,
+        produtos: produtosOrdenadosCategoria
+    });
+
     res.render('pages/categoria', { categoria: nomeExibicao, slug, produtos: produtosNorm });
 });
 
@@ -684,6 +722,17 @@ router.get('/busca', async (req, res) => {
         preco:         parseFloat(p.preco) || 0,
         precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
     }));
+
+    let usuarioCompleto = null;
+    if (req.session.usuarioEmail && !req.session.isAdmin) {
+        usuarioCompleto = await usuariosModel.findByEmail(req.session.usuarioEmail);
+    }
+    const produtosOrdenadosBusca = ordenarPorRelevancia(produtosNorm, usuarioCompleto);
+
+    res.render('pages/busca', {
+        termo,
+        produtos: produtosOrdenadosBusca
+    });
 
     res.render('pages/busca', { termo, produtos: produtosNorm });
 });
@@ -838,7 +887,8 @@ router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
                 preco_desconto: precoDesc,
                 imagem:         imagemPath,
                 status:         req.body.status || 'em-estoque',
-                faixa_etaria: req.body.faixa_etaria || null
+                faixa_etaria: req.body.faixa_etaria || null,
+                sexo: req.body.sexo || null
             }, ids_categorias);
 
             if (result && result.errno) return res.redirect('/admin?erro=adicionar_produto');
@@ -892,6 +942,7 @@ router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
                                 : null,
                 imagem:         imagemPath,
                 faixa_etaria: req.body.faixa_etaria || produto.faixa_etaria || null,
+                sexo: req.body.sexo || produto.sexo || null,
                 status:         req.body.status || produto.status
             }, ids_categorias);
 
@@ -939,7 +990,9 @@ router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
         if (existe)  return res.redirect('/admin?erro=categoria_ja_existe&tab=categorias');
 
         const faixaEtaria = (req.body.faixa_etaria_categoria || '').trim() || null;
-        const result = await produtosModel.createCategoria(nome, faixaEtaria);
+
+        const sexo = (req.body.sexo_categoria || '').trim() || null;
+        const result = await produtosModel.createCategoria(nome, faixaEtaria, sexo);
         if (!result || result.erro || result.errno || !result.insertId || result.insertId <= 0) {
             console.error('Erro ao criar categoria:', result);
             return res.redirect('/admin?erro=criar_categoria&tab=categorias');
@@ -964,7 +1017,8 @@ router.post('/admin/excluir-categoria/:id', requireAdmin, async (req, res) => {
 router.post('/admin/atualizar-faixa-categoria/:id', requireAdmin, async (req, res) => {
     try {
         const faixa = (req.body.faixa_etaria || '').trim() || null;
-        await produtosModel.updateCategoria(req.params.id, faixa);
+        const sexo  = (req.body.sexo        || '').trim() || null;
+        await produtosModel.updateCategoria(req.params.id, faixa, sexo);
         res.redirect('/admin?sucesso=categoria_editada&tab=categorias');
     } catch (err) {
         console.error(err);
