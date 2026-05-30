@@ -75,12 +75,22 @@ const usuariosModel = {
     // remove usuario admin
     delete: async (email) => {
         try {
-            const [result] = await pool.query(
-                'DELETE FROM usuarios WHERE email = ?',
+            const [usuario] = await pool.query(
+                'SELECT id_usuario FROM usuarios WHERE email = ?',
                 [email]
+        );
+        if (usuario[0]) {
+            await pool.query(
+                'DELETE FROM carrinho WHERE id_usuario = ?',
+                [usuario[0].id_usuario]
             );
-            return result;
-        } catch (erro) {
+        }
+        const [result] = await pool.query(
+            'DELETE FROM usuarios WHERE email = ?',
+            [email]
+        );
+        return result;
+    }     catch (erro) {
             return erro;
         }
     }

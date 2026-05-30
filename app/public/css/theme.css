@@ -363,8 +363,8 @@ fieldset legend h3 {
 }
 
 .resumo-carrinho {
-    background-color: var(--text-primary);
-    color: var(--bg-primary);
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
 }
 
 input[type="text"],
@@ -461,8 +461,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .titulo-resumo {
-    color: var(--bg-primary);
+    color: var(--text-primary);
 }
+
 .usuario-email,
 .nome-descricao {
     color: var(--accent-primary);
