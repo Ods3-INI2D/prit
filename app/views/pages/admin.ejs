@@ -280,7 +280,7 @@
                             <fieldset>
                                 <legend class="label-titulo">Público-Alvo (Sexo) da Categoria</legend>
                                 <label for="sexo_categoria">
-                                    <select id="sexo_categoria" name="sexo_categoria">
+                                    <select id="sexo-nova-categoria" name="sexo_categoria">
                                         <option value="masculino">Masculino</option>
                                         <option value="feminino">Feminino</option>
                                         <option value="todos">N/A</option>
@@ -340,10 +340,10 @@
                                         <fieldset>
                                             <legend class="label-titulo">Público-Alvo (Sexo) da Categoria</legend>
                                             <label for="sexo_categoria">
-                                                <select id="sexo_categoria" name="sexo_categoria">
-                                                    <option value="masculino">Masculino</option>
-                                                    <option value="feminino">Feminino</option>
-                                                    <option value="todos">N/A</option>
+                                                <select id="sexo_cat_<%= cat.id_categoria %>" name="sexo">
+                                                    <option value="masculino" <%= cat.sexo === 'masculino' ? 'selected' : '' %>>Masculino</option>
+                                                    <option value="feminino"  <%= cat.sexo === 'feminino'  ? 'selected' : '' %>>Feminino</option>
+                                                    <option value="todos"     <%= (!cat.sexo || cat.sexo === 'todos') ? 'selected' : '' %>>N/A</option>
                                                 </select>
                                             </label>
                                         </fieldset>

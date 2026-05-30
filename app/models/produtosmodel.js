@@ -364,7 +364,7 @@ const produtosModel = {
         }
     },
 
-    updateCategoria: async (id, faixa_etaria) => {
+    updateCategoria: async (id, faixa_etaria, sexo) => {
         try {
             const [result] = await pool.query(
                 'UPDATE categorias SET faixa_etaria = ?, sexo = ? WHERE id_categoria = ?',
