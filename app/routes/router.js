@@ -18,8 +18,12 @@ const { pedidosModel   } = require('../models/pedidosmodel');
 // validacoes
 var { valCPF, valDDD, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
 
-//algoritimo
+// algoritmo de personalizacao
 const { ordenarPorRelevancia } = require('../helpers/personalizacao');
+
+// cloudinary
+const cloudinary = require('../config/cloudinary');
+const streamifier = require('streamifier');
 
 // sessao
 router.use(session({
@@ -29,21 +33,9 @@ router.use(session({
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// multer produtos
-const storageProduto = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const dir = path.join(__dirname, '../public/imagens/produtos');
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-        cb(null, dir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, 'produto-' + Date.now() + '-' + Math.round(Math.random() * 1e9) + path.extname(file.originalname));
-    }
-});
-const uploadProduto = multer({
-    storage: storageProduto,
-    limits: { fileSize: 5 * 1024 * 1024 },
-    fileFilter: (req, file, cb) => {
+// ── Multer: memória (sem disco) ───────────────────────────────────────────────
+
+const fileFilter = (req, file, cb) => {
     const ext  = path.extname(file.originalname).toLowerCase();
     const mime = file.mimetype;
     const extsPermitidas  = ['.svg', '.png', '.jpg', '.jpeg', '.webp'];
@@ -52,34 +44,56 @@ const uploadProduto = multer({
         cb(null, true);
     } else {
         cb(new Error('Apenas imagens SVG, PNG, JPG ou WEBP são permitidas!'));
-    }}
+    }
+};
+
+const uploadProduto = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter
 });
 
-// multer banners
-const storageBanner = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const dir = path.join(__dirname, '../public/imagens');
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-        cb(null, dir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, 'banner-' + Date.now() + '-' + Math.round(Math.random() * 1e9) + path.extname(file.originalname));
-    }
-});
 const uploadBanner = multer({
-    storage: storageBanner,
+    storage: multer.memoryStorage(),
     limits: { fileSize: 5 * 1024 * 1024 },
-    fileFilter: (req, file, cb) => {
-    const ext  = path.extname(file.originalname).toLowerCase();
-    const mime = file.mimetype;
-    const extsPermitidas  = ['.svg', '.png', '.jpg', '.jpeg', '.webp'];
-    const mimesPermitidos = ['image/svg+xml', 'image/svg', 'image/png', 'image/jpeg', 'image/webp'];
-    if (extsPermitidas.includes(ext) && mimesPermitidos.includes(mime)) {
-        cb(null, true);
-    } else {
-        cb(new Error('Apenas imagens SVG, PNG, JPG ou WEBP são permitidas!'));
-    }}
+    fileFilter
 });
+
+// ── Helper: faz upload do buffer para o Cloudinary ───────────────────────────
+
+function uploadBufferToCloudinary(buffer, folder) {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder },
+            (error, result) => {
+                if (error) reject(error);
+                else resolve(result.secure_url);
+            }
+        );
+        streamifier.createReadStream(buffer).pipe(stream);
+    });
+}
+
+// ── Helper: apaga imagem do Cloudinary pela URL pública ──────────────────────
+// Extrai o public_id a partir da URL segura do Cloudinary.
+// Exemplo: https://res.cloudinary.com/<cloud>/image/upload/v123/<folder>/<id>.jpg
+//          → "<folder>/<id>"
+
+function deleteCloudinaryImage(url) {
+    if (!url || !url.includes('cloudinary.com')) return Promise.resolve();
+    try {
+        // Remove a extensão e tudo antes do primeiro segmento após /upload/
+        const parts  = url.split('/upload/');
+        if (parts.length < 2) return Promise.resolve();
+        // Remove versionamento opcional (v1234567890/)
+        const withoutVersion = parts[1].replace(/^v\d+\//, '');
+        // Remove extensão
+        const publicId = withoutVersion.replace(/\.[^/.]+$/, '');
+        return cloudinary.uploader.destroy(publicId);
+    } catch (_) {
+        return Promise.resolve();
+    }
+}
 
 // constantes admin
 const ADMIN_EMAIL    = process.env.EMAIL_USER || 'maisaudeods3@gmail.com';
@@ -299,7 +313,6 @@ router.get('/home', async (req, res) => {
     const banners    = await bannersModel.findAll();
     const categorias = await produtosModel.findAllCategorias();
 
-    // Busca dados completos do usuário logado (necessário para nasc e sexo)
     let usuarioCompleto = null;
     if (req.session.usuarioEmail && !req.session.isAdmin) {
         usuarioCompleto = await usuariosModel.findByEmail(req.session.usuarioEmail);
@@ -313,7 +326,6 @@ router.get('/home', async (req, res) => {
         avaliacoes:    []
     }));
 
-    // Ordena produtos e categorias por relevância para o usuário atual
     const produtosOrdenados   = ordenarPorRelevancia(produtosNormalizados, usuarioCompleto);
     const categoriasOrdenadas = ordenarPorRelevancia(
         Array.isArray(categorias) ? categorias : [],
@@ -367,7 +379,8 @@ router.post('/usuario/atualizar-campo', requireLogin,
         res.redirect('/usuario?sucesso=' + encodeURIComponent(labels[campo] + ' atualizado com sucesso!'));
     }
 );
-// ── Meus Pedidos ──────────────────────────────────────────────
+
+// ── Meus Pedidos ──────────────────────────────────────────
 router.get('/meus-pedidos', requireLogin, blockAdmin, async (req, res) => {
     try {
         const pedidos = await pedidosModel.findByUsuarioComDetalhes(req.session.idUsuario);
@@ -385,29 +398,27 @@ router.get('/meus-pedidos', requireLogin, blockAdmin, async (req, res) => {
         });
     }
 });
+
 router.post('/meus-pedidos/:id/comprar-novamente', requireLogin, blockAdmin, async (req, res) => {
     try {
         const idPedido  = parseInt(req.params.id);
         const idUsuario = req.session.idUsuario;
- 
-        // Busca o pedido e valida que pertence ao usuário logado
+
         const pedido = await pedidosModel.findById(idPedido);
- 
+
         if (!pedido || pedido.id_usuario !== idUsuario) {
             return res.redirect('/meus-pedidos?erro=pedido_nao_encontrado');
         }
- 
+
         if (!pedido.itens || pedido.itens.length === 0) {
             return res.redirect('/meus-pedidos?erro=pedido_sem_itens');
         }
- 
+
         const { session_id } = getIdentificador(req);
- 
-        // Adiciona cada item ao carrinho (addProduto soma caso já exista)
+
         for (const item of pedido.itens) {
             const produto = await produtosModel.findById(item.id_produto);
- 
-            // Só adiciona produtos que ainda existem e estão em estoque
+
             if (produto && produto.status === 'em-estoque') {
                 await carrinhoModel.addProduto(
                     item.id_produto,
@@ -417,14 +428,13 @@ router.post('/meus-pedidos/:id/comprar-novamente', requireLogin, blockAdmin, asy
                 );
             }
         }
- 
+
         res.redirect('/carrinho');
     } catch (err) {
         console.error('Erro em comprar-novamente:', err);
         res.redirect('/meus-pedidos?erro=erro_comprar_novamente');
     }
 });
-
 
 // ── Produto ───────────────────────────────────────────────
 router.get('/produto/:id', async (req, res) => {
@@ -561,7 +571,6 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             return res.redirect('/carrinho');
         }
 
-        // Rejeita itens fora de estoque
         const temForaEstoque = itens.some(function(i) {
             return i.status === 'fora-de-estoque';
         });
@@ -570,7 +579,6 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
                 encodeURIComponent('Remova os itens fora de estoque antes de finalizar.'));
         }
 
-        // Normaliza itens
         const itensMapeados = itens.map(function(i) {
             return {
                 id_produto:    i.id_produto,
@@ -580,7 +588,6 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             };
         });
 
-        // Calcula total no SERVIDOR
         var subtotal = itensMapeados.reduce(function(acc, i) {
             var p = (i.precoDesconto && i.precoDesconto > 0) ? i.precoDesconto : i.preco;
             return acc + p * i.quantidade;
@@ -590,7 +597,6 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
         if (req.body.forma_pagamento === 'pix')    desconto = subtotal * 0.05;
         if (req.body.forma_pagamento === 'boleto') desconto = subtotal * 0.03;
 
-        // Frete simulado
         var cepNumeros = (req.body.cep || '').replace(/\D/g, '');
         var frete = 19.90;
         if (cepNumeros.length === 8) {
@@ -603,21 +609,18 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
 
         const valor_total = parseFloat((subtotal + frete - desconto).toFixed(2));
 
-        // Cria pedido
         const pedidoResult = await pedidosModel.create(id_usuario, itensMapeados, valor_total);
         if (pedidoResult.erro) {
             return res.redirect('/finalizar-compra?erro=' +
                 encodeURIComponent('Erro ao criar pedido. Tente novamente.'));
         }
 
-        // Cria pagamento e entrega
         const pagResult = await pedidosModel.createPagamento(
             pedidoResult.id_pedido,
             req.body.forma_pagamento,
             valor_total
         );
         if (!pagResult.erro) {
-            // monta endereço completo para persistir na entrega
             const { rua, numero, complemento, bairro, cidade, estado, cep } = req.body;
             const enderecoFormatado = [
                 rua + ', ' + numero + (complemento ? ' ' + complemento : ''),
@@ -632,7 +635,6 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             );
         }
 
-        // Limpa carrinho
         const pool = require('../config/pool_conexoes');
         if (id_usuario) {
             await pool.query('DELETE FROM carrinho WHERE id_usuario = ?', [id_usuario]);
@@ -693,12 +695,11 @@ router.get('/categoria/:slug', async (req, res) => {
         precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
     }));
 
-    // Ordena produtos da categoria por relevância
     let usuarioCompleto = null;
     if (req.session.usuarioEmail && !req.session.isAdmin) {
         usuarioCompleto = await usuariosModel.findByEmail(req.session.usuarioEmail);
     }
-    const produtosOrdenadosCategoria = ordenarPorRelevancia(produtosNorm, usuarioCompleto);
+    ordenarPorRelevancia(produtosNorm, usuarioCompleto);
 
     res.render('pages/categoria', { categoria: nomeExibicao, slug, produtos: produtosNorm });
 });
@@ -721,7 +722,7 @@ router.get('/busca', async (req, res) => {
     if (req.session.usuarioEmail && !req.session.isAdmin) {
         usuarioCompleto = await usuariosModel.findByEmail(req.session.usuarioEmail);
     }
-    const produtosOrdenadosBusca = ordenarPorRelevancia(produtosNorm, usuarioCompleto);
+    ordenarPorRelevancia(produtosNorm, usuarioCompleto);
 
     res.render('pages/busca', { termo, produtos: produtosNorm });
 });
@@ -772,14 +773,20 @@ router.get('/admin/usuario/:email', requireAdmin, async (req, res) => {
     });
 });
 
-router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
+// ── Admin: adicionar produto (com Cloudinary) ─────────────
+router.post('/admin/adicionar-produto', requireAdmin, (req, res) => {
     uploadProduto.single('imagem')(req, res, async (err) => {
         if (err) {
             console.error('Multer erro produto:', err);
             return res.redirect('/admin?erro=adicionar_produto');
         }
         try {
-            const imagemPath    = req.file ? '/imagens/produtos/' + req.file.filename : '/imagens/foto.jpg';
+            // Faz upload para o Cloudinary se um arquivo foi enviado
+            let imagemUrl = '/imagens/foto.jpg';
+            if (req.file) {
+                imagemUrl = await uploadBufferToCloudinary(req.file.buffer, 'mais-saude/produtos');
+            }
+
             const preco         = parseFloat(req.body.preco) || 0;
             const precoDesc     = req.body.precoDesconto && String(req.body.precoDesconto).trim() !== ''
                                   ? parseFloat(req.body.precoDesconto) || null
@@ -793,21 +800,22 @@ router.post('/admin/adicionar-produto', requireAdmin, (req, res, next) => {
                 descricao:      (req.body.descricao || '').trim(),
                 preco,
                 preco_desconto: precoDesc,
-                imagem:         imagemPath,
+                imagem:         imagemUrl,
                 status:         req.body.status || 'em-estoque',
-                faixa_etaria: req.body.faixa_etaria || null,
-                sexo: req.body.sexo || null
+                faixa_etaria:   req.body.faixa_etaria || null,
+                sexo:           req.body.sexo || null
             }, ids_categorias);
 
             if (result && result.errno) return res.redirect('/admin?erro=adicionar_produto');
             res.redirect('/admin?sucesso=produto_adicionado');
         } catch (err) {
-            console.error(err);
+            console.error('Erro ao adicionar produto:', err);
             res.redirect('/admin?erro=adicionar_produto');
         }
     });
 });
 
+// ── Admin: página de edição de produto ───────────────────
 router.get('/admin/editar-produto/:id', requireAdmin, async (req, res) => {
     const produto    = await produtosModel.findById(req.params.id);
     if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
@@ -822,6 +830,7 @@ router.get('/admin/editar-produto/:id', requireAdmin, async (req, res) => {
     });
 });
 
+// ── Admin: salvar edição de produto (com Cloudinary) ─────
 router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
     uploadProduto.single('imagem')(req, res, async (err) => {
         if (err) return res.redirect('/admin?erro=editar_produto');
@@ -829,13 +838,13 @@ router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
             const produto = await produtosModel.findById(req.params.id);
             if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
 
-            let imagemPath = produto.imagem;
+            let imagemUrl = produto.imagem;
+
+            // Se veio um novo arquivo, faz upload e apaga o anterior no Cloudinary
             if (req.file) {
-                imagemPath = '/imagens/produtos/' + req.file.filename;
-                if (produto.imagem && produto.imagem !== '/imagens/foto.jpg') {
-                    const old = path.join(__dirname, '../public', produto.imagem);
-                    if (fs.existsSync(old)) fs.unlinkSync(old);
-                }
+                imagemUrl = await uploadBufferToCloudinary(req.file.buffer, 'mais-saude/produtos');
+                // Apaga a imagem antiga apenas se era uma URL do Cloudinary
+                await deleteCloudinaryImage(produto.imagem);
             }
 
             const ids_categorias = parseCategorias(req.body);
@@ -848,33 +857,34 @@ router.post('/admin/editar-produto/:id', requireAdmin, (req, res) => {
                 preco_desconto: req.body.precoDesconto && String(req.body.precoDesconto).trim() !== ''
                                 ? parseFloat(req.body.precoDesconto) || null
                                 : null,
-                imagem:         imagemPath,
-                faixa_etaria: req.body.faixa_etaria || produto.faixa_etaria || null,
-                sexo: req.body.sexo || produto.sexo || null,
+                imagem:         imagemUrl,
+                faixa_etaria:   req.body.faixa_etaria || produto.faixa_etaria || null,
+                sexo:           req.body.sexo || produto.sexo || null,
                 status:         req.body.status || produto.status
             }, ids_categorias);
 
             if (result && result.errno) return res.redirect('/admin?erro=editar_produto');
             res.redirect('/admin?sucesso=produto_editado');
         } catch (err) {
-            console.error(err);
+            console.error('Erro ao editar produto:', err);
             res.redirect('/admin?erro=editar_produto');
         }
     });
 });
 
+// ── Admin: excluir produto (com Cloudinary) ───────────────
 router.post('/admin/excluir-produto/:id', requireAdmin, async (req, res) => {
     try {
         const produto = await produtosModel.findById(req.params.id);
         if (!produto) return res.redirect('/admin?erro=produto_nao_encontrado');
-        if (produto.imagem && produto.imagem !== '/imagens/foto.jpg') {
-            const imgPath = path.join(__dirname, '../public', produto.imagem);
-            if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
-        }
+
+        // Apaga imagem do Cloudinary (ignora imagens locais de fallback)
+        await deleteCloudinaryImage(produto.imagem);
+
         await produtosModel.delete(req.params.id);
         res.redirect('/admin?sucesso=produto_excluido');
     } catch (err) {
-        console.error(err);
+        console.error('Erro ao excluir produto:', err);
         res.redirect('/admin?erro=excluir_produto');
     }
 });
@@ -898,8 +908,8 @@ router.post('/admin/criar-categoria', requireAdmin, async (req, res) => {
         if (existe)  return res.redirect('/admin?erro=categoria_ja_existe&tab=categorias');
 
         const faixaEtaria = (req.body.faixa_etaria_categoria || '').trim() || null;
+        const sexo        = (req.body.sexo_categoria         || '').trim() || null;
 
-        const sexo = (req.body.sexo_categoria || '').trim() || null;
         const result = await produtosModel.createCategoria(nome, faixaEtaria, sexo);
         if (!result || result.erro || result.errno || !result.insertId || result.insertId <= 0) {
             console.error('Erro ao criar categoria:', result);
@@ -925,7 +935,7 @@ router.post('/admin/excluir-categoria/:id', requireAdmin, async (req, res) => {
 router.post('/admin/atualizar-faixa-categoria/:id', requireAdmin, async (req, res) => {
     try {
         const faixa = (req.body.faixa_etaria || '').trim() || null;
-        const sexo  = (req.body.sexo        || '').trim() || null;
+        const sexo  = (req.body.sexo         || '').trim() || null;
         await produtosModel.updateCategoria(req.params.id, faixa, sexo);
         res.redirect('/admin?sucesso=categoria_editada&tab=categorias');
     } catch (err) {
@@ -934,27 +944,30 @@ router.post('/admin/atualizar-faixa-categoria/:id', requireAdmin, async (req, re
     }
 });
 
+// ── Admin: criar banner (com Cloudinary) ─────────────────
 router.post('/admin/criar-banner', requireAdmin, (req, res) => {
     uploadBanner.single('imagem')(req, res, async (err) => {
         if (err) return res.redirect('/admin?erro=criar_banner&tab=banners');
         try {
             if (!req.file) return res.redirect('/admin?erro=imagem_obrigatoria&tab=banners');
 
-            const imagemPath = '/imagens/' + req.file.filename;
-            const legenda    = (req.body.legenda || '').trim() || 'Novo Banner';
-            let   link       = (req.body.link    || '/home').trim();
+            const imagemUrl = await uploadBufferToCloudinary(req.file.buffer, 'mais-saude/banners');
+
+            const legenda = (req.body.legenda || '').trim() || 'Novo Banner';
+            let   link    = (req.body.link    || '/home').trim();
             if (!link.startsWith('/')) link = '/' + link;
 
-            const result = await bannersModel.create({ imagem: imagemPath, legenda, link });
+            const result = await bannersModel.create({ imagem: imagemUrl, legenda, link });
             if (result && result.errno) return res.redirect('/admin?erro=criar_banner&tab=banners');
             res.redirect('/admin?sucesso=banner_criado&tab=banners');
         } catch (e) {
-            console.error(e);
+            console.error('Erro ao criar banner:', e);
             res.redirect('/admin?erro=criar_banner&tab=banners');
         }
     });
 });
 
+// ── Admin: editar banner (com Cloudinary) ────────────────
 router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
     uploadBanner.single('imagem')(req, res, async (err) => {
         if (err) return res.redirect('/admin?erro=editar_banner&tab=banners');
@@ -963,44 +976,40 @@ router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
             const banner   = await bannersModel.findById(bannerId);
             if (!banner) return res.redirect('/admin?erro=banner_nao_encontrado&tab=banners');
 
-            let imagemPath = banner.imagem;
+            let imagemUrl = banner.imagem;
+
+            // Se veio um novo arquivo, faz upload e apaga o anterior no Cloudinary
             if (req.file) {
-                imagemPath = '/imagens/' + req.file.filename;
-                const originais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
-                if (!originais.includes(banner.imagem)) {
-                    const old = path.join(__dirname, '../public', banner.imagem);
-                    if (fs.existsSync(old)) { try { fs.unlinkSync(old); } catch(_) {} }
-                }
+                imagemUrl = await uploadBufferToCloudinary(req.file.buffer, 'mais-saude/banners');
+                await deleteCloudinaryImage(banner.imagem);
             }
 
             let legenda = (req.body.legenda || '').trim() || banner.legenda;
             let link    = (req.body.link    || '/home').trim();
             if (!link.startsWith('/')) link = '/' + link;
 
-            await bannersModel.update(bannerId, { imagem: imagemPath, legenda, link });
+            await bannersModel.update(bannerId, { imagem: imagemUrl, legenda, link });
             res.redirect('/admin?sucesso=banner_editado&tab=banners');
         } catch (e) {
-            console.error(e);
+            console.error('Erro ao editar banner:', e);
             res.redirect('/admin?erro=editar_banner&tab=banners');
         }
     });
 });
 
+// ── Admin: excluir banner (com Cloudinary) ────────────────
 router.post('/admin/excluir-banner/:id', requireAdmin, async (req, res) => {
     try {
         const banner = await bannersModel.findById(parseInt(req.params.id));
         if (!banner) return res.redirect('/admin?erro=banner_nao_encontrado&tab=banners');
 
-        const originais = ['/imagens/1.png', '/imagens/2.png', '/imagens/3.png'];
-        if (!originais.includes(banner.imagem)) {
-            const imgPath = path.join(__dirname, '../public', banner.imagem);
-            if (fs.existsSync(imgPath)) { try { fs.unlinkSync(imgPath); } catch(_) {} }
-        }
+        // Apaga imagem do Cloudinary (ignora URLs locais de fallback)
+        await deleteCloudinaryImage(banner.imagem);
 
         await bannersModel.delete(parseInt(req.params.id));
         res.redirect('/admin?sucesso=banner_excluido&tab=banners');
     } catch (err) {
-        console.error(err);
+        console.error('Erro ao excluir banner:', err);
         res.redirect('/admin?erro=excluir_banner&tab=banners');
     }
 });
