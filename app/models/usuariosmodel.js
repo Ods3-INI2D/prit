@@ -1,8 +1,8 @@
 const pool = require('../config/pool_conexoes');
+const { hashSenha } = require('../helpers/auth');
 
 const usuariosModel = {
 
-    // busca todos os usuarios
     findAll: async () => {
         try {
             const [linhas] = await pool.query(
@@ -14,7 +14,6 @@ const usuariosModel = {
         }
     },
 
-    // busca por email
     findByEmail: async (email) => {
         try {
             const [linhas] = await pool.query(
@@ -27,7 +26,6 @@ const usuariosModel = {
         }
     },
 
-    // busca por id
     findById: async (id) => {
         try {
             const [linhas] = await pool.query(
@@ -40,24 +38,24 @@ const usuariosModel = {
         }
     },
 
-    // cadastro
     create: async (dados) => {
         /*
-            dados: { nome, nasc, cpf, ddd, tel, email, senhan }
+            dados: { nome, nasc, cpf, ddd, tel, email, senhan, sexo }
         */
         try {
+            const senhaHasheada = await hashSenha(dados.senhan);
+            
             const [result] = await pool.query(
                 'INSERT INTO usuarios (nome, nasc, cpf, ddd, tel, email, senhan, sexo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                [dados.nome, dados.nasc, dados.cpf, dados.ddd, dados.tel, dados.email, dados.senhan, dados.sexo || null]
-
+                [dados.nome, dados.nasc, dados.cpf, dados.ddd, dados.tel, dados.email, senhaHasheada, dados.sexo || null]
             );
             return result;
         } catch (erro) {
+            console.error('Erro ao criar usuário:', erro);
             return erro;
         }
     },
 
-    // atualiza um campo especifico 
     updateCampo: async (email, campo, valor) => {
         const camposPermitidos = ['nome', 'nasc', 'cpf', 'ddd', 'tel', 'sexo'];
         if (!camposPermitidos.includes(campo)) return null;
@@ -81,8 +79,6 @@ const usuariosModel = {
             if (usuario[0]) {
                 const id = usuario[0].id_usuario;
                 await pool.query('DELETE FROM carrinho WHERE id_usuario = ?', [id]);
-            // Remove pedidos e itens em cascata (via FK CASCADE no banco)
-            // Se não tiver CASCADE, fazer manualmente:
                 const [pedidos] = await pool.query('SELECT id_pedido FROM pedidos WHERE id_usuario = ?', [id]);
                 for (const p of pedidos) {
                     const [pags] = await pool.query('SELECT id_pagamento FROM pagamentos WHERE id_pedido = ?', [p.id_pedido]);
