@@ -25,6 +25,23 @@ const { ordenarPorRelevancia } = require('../helpers/personalizacao');
 const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
 
+// Multer upload de foto de perfil 
+const uploadFoto = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        const ext  = path.extname(file.originalname).toLowerCase();
+        const mime = file.mimetype;
+        const extsPermitidas  = ['.svg', '.png', '.jpg', '.jpeg', '.webp'];
+        const mimesPermitidos = ['image/svg+xml', 'image/svg', 'image/png', 'image/jpeg', 'image/webp'];
+        if (extsPermitidas.includes(ext) && mimesPermitidos.includes(mime)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Apenas imagens SVG, PNG, JPG ou WEBP são permitidas!'));
+        }
+    }
+});
+
 // sessao
 router.use(session({
     secret: process.env.SESSION_SECRET || 'chave-secreta-farmacia-super-segura-2024',
@@ -203,9 +220,7 @@ function parseCategorias(body) {
         .filter(n => Number.isFinite(n) && n > 0);
 }
 
-// ============================================================
 // ROTAS
-// ============================================================
 
 router.get('/', (req, res) => res.redirect('/home'));
 
@@ -249,11 +264,16 @@ router.post('/cadastro',
             return res.render('pages/cadastro', { erros: true, valores: req.body, listaErros: errors });
         }
         await usuariosModel.create(req.body);
+        req.session.notificacao = {
+            titulo: "Cadastro Realizado!",
+            mensagem: `Bem-vindo, ${req.body.nome}! Faça login para continuar.`,
+            tipo: "success"
+        };
         res.redirect('/login');
     }
 );
 
-// ── Login ─────────────────────────────────────────────────
+// ── Login
 router.get('/login', (req, res) => {
     const erroAdmin = req.query.erro === 'admin'
         ? 'Acesso negado. Apenas administradores podem acessar esta área.'
@@ -279,6 +299,11 @@ router.post('/login',
         if (req.body.email === ADMIN_EMAIL && req.body.senha === ADMIN_PASSWORD) {
             req.session.usuarioEmail = ADMIN_EMAIL;
             req.session.isAdmin      = true;
+            req.session.notificacao = {
+                titulo: "Bem-vindo!",
+                mensagem: `Login realizado com sucesso, Administrador!`,
+                tipo: "success"
+        };
             return res.redirect('/admin');
         }
 
@@ -288,6 +313,11 @@ router.post('/login',
             req.session.usuarioEmail = usuario.email;
             req.session.idUsuario    = usuario.id_usuario;
             req.session.isAdmin      = false;
+            req.session.notificacao = {
+                titulo: "Bem-vindo!",
+                mensagem: `Login realizado com sucesso, ${usuario.nome}!`,
+                tipo: "success"
+        };
             const redirectUrl = req.body.redirect || '/home';
             return res.redirect(redirectUrl);
         }
@@ -299,7 +329,7 @@ router.post('/login',
     }
 );
 
-// ── Logout ────────────────────────────────────────────────
+// ── Logout 
 router.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) console.error('Erro ao destruir sessão:', err);
@@ -307,7 +337,7 @@ router.get('/logout', (req, res) => {
     });
 });
 
-// ── Home ──────────────────────────────────────────────────
+// ── Home 
 router.get('/home', async (req, res) => {
     const produtos   = await produtosModel.findAll();
     const banners    = await bannersModel.findAll();
@@ -316,6 +346,11 @@ router.get('/home', async (req, res) => {
     let usuarioCompleto = null;
     if (req.session.usuarioEmail && !req.session.isAdmin) {
         usuarioCompleto = await usuariosModel.findByEmail(req.session.usuarioEmail);
+    }
+
+    const notificacao = req.session.notificacao || null;
+    if (req.session.notificacao) {
+        delete req.session.notificacao;
     }
 
     const produtosNormalizados = (Array.isArray(produtos) ? produtos : []).map(p => ({
@@ -335,20 +370,29 @@ router.get('/home', async (req, res) => {
     res.render('pages/home', {
         produtos:   produtosOrdenados,
         banners,
-        categorias: categoriasOrdenadas
+        categorias: categoriasOrdenadas,
+        notificacao: notificacao
     });
 });
 
-// ── Usuário ───────────────────────────────────────────────
+// ── Usuário 
 router.get('/usuario', async (req, res) => {
     if (!req.session.usuarioEmail) {
-        return res.render('pages/usuario', { usuario: null, mensagemSucesso: null, mensagemErro: null });
+        return res.render('pages/usuario', { usuario: null, mensagemSucesso: null, mensagemErro: null, notificacao: null });
     }
     const usuario = await usuariosModel.findByEmail(req.session.usuarioEmail);
+    
+    // Capturar notificação da sessão (se existir)
+    const notificacao = req.session.notificacao || null;
+    if (req.session.notificacao) {
+        delete req.session.notificacao;
+    }
+    
     res.render('pages/usuario', {
         usuario,
         mensagemSucesso: req.query.sucesso ? decodeURIComponent(req.query.sucesso) : null,
-        mensagemErro:    req.query.erro    ? decodeURIComponent(req.query.erro)    : null
+        mensagemErro:    req.query.erro    ? decodeURIComponent(req.query.erro)    : null,
+        notificacao: notificacao
     });
 });
 
@@ -380,7 +424,38 @@ router.post('/usuario/atualizar-campo', requireLogin,
     }
 );
 
-// ── Meus Pedidos ──────────────────────────────────────────
+// ── Atualizar Foto de Perfil 
+router.post('/usuario/atualizar-foto', requireLogin, (req, res) => {
+    uploadFoto.single('foto')(req, res, async (err) => {
+        if (err) {
+            return res.redirect('/usuario?erro=' + encodeURIComponent('Erro ao fazer upload da foto!'));
+        }
+        try {
+            if (!req.file) {
+                return res.redirect('/usuario?erro=' + encodeURIComponent('Selecione uma imagem!'));
+            }
+
+            let fotoUrl = null;
+            if (req.file) {
+                fotoUrl = await uploadBufferToCloudinary(req.file.buffer, 'mais-saude/perfil');
+            }
+
+            // Adiciona 'foto_perfil' à lista de campos permitidos
+            await usuariosModel.updateCampo(req.session.usuarioEmail, 'foto_perfil', fotoUrl);
+            
+            req.session.notificacao = {
+                titulo: "Foto Atualizada!",
+                mensagem: "Sua foto de perfil foi atualizada com sucesso!",
+                tipo: "success"
+            };
+            res.redirect('/usuario');
+        } catch (err) {
+            console.error('Erro ao atualizar foto:', err);
+            res.redirect('/usuario?erro=' + encodeURIComponent('Erro ao atualizar foto!'));
+        }
+    });
+});
+// ── Meus Pedidos 
 router.get('/meus-pedidos', requireLogin, blockAdmin, async (req, res) => {
     try {
         const pedidos = await pedidosModel.findByUsuarioComDetalhes(req.session.idUsuario);

@@ -1,0 +1,122 @@
+.secao-foto-perfil {
+    margin: 2rem auto;
+    max-width: 900px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: #f8f9fa;
+}
+
+body.dark-mode .secao-foto-perfil {
+    background-color: #121821;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.secao-foto-perfil header {
+    background: linear-gradient(135deg, #0f71c9, #0d5ea7);
+    padding: 12px 20px;
+    text-align: center;
+}
+
+body.dark-mode .secao-foto-perfil header {
+    background: linear-gradient(135deg, #0b5ba3, #084a7e);
+}
+
+.titulo-foto {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+.figura-foto {
+    margin: 0;
+    padding: 28px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background-color: #f8f9fa;
+}
+
+body.dark-mode .figura-foto {
+    background-color: #121821;
+}
+
+.foto-perfil {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #007bff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: block;
+}
+
+.foto-perfil-placeholder {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 4rem;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: 4px solid #0056b3;
+}
+
+.iniciais {
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+.caption-foto {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+
+body.dark-mode .caption-foto {
+    color: #b7bec9;
+}
+
+/* Campo de foto na lista de edições */
+.campo-info-foto {
+    border-top: 2px solid #e9ecef;
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+body.dark-mode .campo-info-foto {
+    border-top-color: #333;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .secao-foto-perfil {
+        margin: 1.5rem auto;
+    }
+
+    .figura-foto {
+        padding: 20px 15px 18px;
+    }
+
+    .foto-perfil,
+    .foto-perfil-placeholder {
+        width: 140px;
+        height: 140px;
+    }
+
+    .foto-perfil-placeholder {
+        font-size: 3rem;
+    }
+
+    .titulo-foto {
+        font-size: 0.95rem;
+    }
+}

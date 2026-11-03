@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/estilo.css">
     <link rel="stylesheet" href="/css/cad.css">
     <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/notificacao.css">
     <link rel="stylesheet" href="/css/toggle-senha.css">
     <link rel="stylesheet" href="/css/validacao-frontend.css">
     <link rel="stylesheet" href="/css/theme.css">
@@ -24,6 +25,15 @@
             <article class="title-group">
                 <h1 class="tit">Login</h1>
             </article>
+            
+            <% if (typeof notificacao !== 'undefined' && notificacao) { %>
+                <section class="secao-notificacao notif-sucesso" role="status" aria-live="polite">
+                    <h2 class="notif-titulo"><%= notificacao.titulo %></h2>
+                    <output class="notif-mensagem">
+                        <%= notificacao.mensagem %>
+                    </output>
+                </section>
+            <% } %>
 
             <% if (erro) { %>
                 <article class="erro-login" role="alert">
