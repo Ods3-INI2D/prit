@@ -57,7 +57,7 @@ const usuariosModel = {
     },
 
     updateCampo: async (email, campo, valor) => {
-        const camposPermitidos = ['nome', 'nasc', 'cpf', 'ddd', 'tel', 'sexo'];
+        const camposPermitidos = ['nome', 'nasc', 'cpf', 'ddd', 'tel', 'sexo', 'foto_perfil'];
         if (!camposPermitidos.includes(campo)) return null;
         try {
             const [result] = await pool.query(

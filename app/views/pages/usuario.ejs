@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="/css/grid.css">
     <link rel="stylesheet" href="/css/menu.css">
     <link rel="stylesheet" href="/css/usuario.css">
+    <link rel="stylesheet" href="/css/notificacao.css">
+    <link rel="stylesheet" href="/css/foto-perfil.css">
     <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
@@ -21,6 +23,27 @@
     <main>
         <section class="perfil-container">
             <h1 class="titulo-perfil">Minha Conta</h1>
+
+            <% if(usuario) { %>
+                <section class="secao-foto-perfil">
+                    <header>
+                        <h2 class="titulo-foto">Foto de Perfil</h2>
+                    </header>
+                    <% if(usuario.foto_perfil) { %>
+                        <figure class="figura-foto">
+                            <img src="<%= usuario.foto_perfil %>" alt="Foto de perfil de <%= usuario.nome %>" class="foto-perfil">
+                            <figcaption class="caption-foto">Sua foto de perfil</figcaption>
+                        </figure>
+                    <% } else { %>
+                        <figure class="figura-foto">
+                            <output class="foto-perfil-placeholder" aria-label="Iniciais do seu nome">
+                                <span class="iniciais"><%= usuario.nome.charAt(0).toUpperCase() %></span>
+                            </output>
+                            <figcaption class="caption-foto">Sem foto de perfil</figcaption>
+                        </figure>
+                    <% } %>
+                </section>
+            <% } %>
 
             <% if(typeof mensagemSucesso !== 'undefined' && mensagemSucesso) { %>
                 <output class="mensagem-sucesso" role="status" aria-live="polite">
@@ -38,45 +61,43 @@
                 <article class="info-usuario">
                     <h2 class="subtitulo">Informações Pessoais</h2>
                     
-                    <article class="campo-info">
+                                        <article class="campo-info campo-info-foto">
                         <header class="campo-header" 
                                 role="button" 
                                 tabindex="0" 
                                 aria-expanded="false"
-                                aria-controls="editar-nome"
-                                data-campo="nome">
+                                aria-controls="editar-foto"
+                                data-campo="foto">
                             <section class="campo-info-principal">
-                                <h3 class="label-info">Nome</h3>
-                                <output class="valor-info" id="valor-nome"><%= usuario.nome %></output>
+                                <h3 class="label-info">Foto de Perfil</h3>
+                                <output class="valor-info">Clique para alterar</output>
                             </section>
                             <output class="seta-expansao" aria-hidden="true">›</output>
                         </header>
                         <form method="POST" 
-                              action="/usuario/atualizar-campo" 
+                              action="/usuario/atualizar-foto" 
+                              enctype="multipart/form-data"
                               class="form-edicao-campo" 
-                              id="editar-nome"
+                              id="editar-foto"
                               aria-hidden="true">
-                            <input type="hidden" name="campo" value="nome">
                             <fieldset>
-                                <legend>Editar Nome</legend>
-                                <label for="input-nome" class="label-form">
-                                    Novo Nome
-                                    <input type="text" 
-                                           id="input-nome" 
-                                           name="valor" 
-                                           value="<%= usuario.nome %>" 
-                                           placeholder="Digite seu nome"
-                                           minlength="3"
-                                           maxlength="50"
+                                <legend>Alterar Foto de Perfil</legend>
+                                <label for="input-foto" class="label-form">
+                                    Escolher Imagem (SVG, PNG, JPG, WEBP - máx. 5MB)
+                                    <input type="file" 
+                                           id="input-foto" 
+                                           name="foto" 
+                                           accept="image/svg+xml,image/png,image/jpeg,image/webp"
                                            required>
                                 </label>
                             </fieldset>
                             <nav class="acoes-campo">
-                                <button type="submit" class="btn-salvar-campo">Salvar</button>
-                                <button type="button" class="btn-cancelar-campo" data-campo="nome">Cancelar</button>
+                                <button type="submit" class="btn-salvar-campo">Enviar Foto</button>
+                                <button type="button" class="btn-cancelar-campo" data-campo="foto">Cancelar</button>
                             </nav>
                         </form>
                     </article>
+
 
                     <article class="campo-info">
                         <header class="campo-header" 

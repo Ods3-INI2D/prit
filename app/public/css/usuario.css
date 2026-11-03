@@ -48,6 +48,10 @@ main {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
+body.dark-mode .info-usuario {
+    background-color: #1a1a1a;
+}
+
 .subtitulo {
     font-size: 1.125rem;
     font-weight: 600;
@@ -148,7 +152,8 @@ main {
 
 .form-edicao-campo input[type="tel"],
 .form-edicao-campo input[type="text"],
-.form-edicao-campo input[type="date"] {
+.form-edicao-campo input[type="date"],
+.form-edicao-campo input[type="file"] {
     width: 100%;
     padding: 0.875rem 1rem;
     margin-bottom: 0.5rem;
@@ -163,7 +168,8 @@ main {
 
 .form-edicao-campo input[type="tel"]:focus,
 .form-edicao-campo input[type="text"]:focus,
-.form-edicao-campo input[type="date"]:focus {
+.form-edicao-campo input[type="date"]:focus,
+.form-edicao-campo input[type="file"]:focus {
     border-color: #4da6ff;
     outline: none;
     box-shadow: 0 0 0.5rem rgba(77, 166, 255, 0.4);
@@ -241,6 +247,10 @@ main {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
+body.dark-mode .menu-usuario {
+    background-color: #1a1a1a;
+}
+
 .lista-opcoes {
     list-style: none;
     padding: 0;
@@ -306,6 +316,20 @@ main {
     transform: translateY(-2px);
 }
 
+.secao-notificacao {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.notif-foto-usuario {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid inherit;
+}
 /* responsividade para desktops */
 @media (min-width: 901px) {
     .titulo-perfil {
@@ -336,7 +360,8 @@ main {
 
     .form-edicao-campo input[type="tel"],
     .form-edicao-campo input[type="text"],
-    .form-edicao-campo input[type="date"] {
+    .form-edicao-campo input[type="date"],
+    .form-edicao-campo input[type="file"] {
         padding: 0.875rem 1rem;
         font-size: 0.9375rem;
     }

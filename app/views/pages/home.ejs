@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/css/carousel.css">
     <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/notificacao.css">
     <script src="/js/theme.js"></script>
 </head>
 <body>
@@ -22,6 +23,13 @@
     </header>
 
     <main>
+        <% if (typeof notificacao !== 'undefined' && notificacao) { %>
+            <section class="secao-notificacao notif-<%= notificacao.tipo %>" role="status" aria-live="polite">
+                <h2 class="notif-titulo"><%= notificacao.titulo %></h2>
+                <p class="notif-mensagem"><%= notificacao.mensagem %></p>
+            </section>
+        <% } %>
+
         <section class="carousel-container" aria-label="Carrossel de destaques">
             <% if(banners && banners.length > 0) { %>
                 <% banners.forEach(function(banner, index) { %>
