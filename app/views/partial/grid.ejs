@@ -34,32 +34,6 @@
     </section>
 </nav>
 
-<nav class="desktop-navigation" aria-label="Navegação principal">
-    <div class="desktop-nav-links">
-        <% if (typeof categoriasMenu !== 'undefined' && categoriasMenu && categoriasMenu.length > 0) { %>
-            <% categoriasMenu.forEach(function(cat) { %>
-                <a class="desktop-nav-link" href="/categoria/<%= cat.slug %>"><%= cat.nome %></a>
-            <% }); %>
-        <% } else { %>
-            <a class="desktop-nav-link" href="/home">Nenhuma categoria cadastrada</a>
-        <% } %>
-    </div>
-
-    <div class="desktop-nav-actions">
-        <span class="desktop-nav-greeting">
-            <%= usuario ? 'Olá, ' + usuario.nome + '!' : 'Olá, Visitante!' %>
-        </span>
-        <a class="desktop-nav-link desktop-account-link"
-           href="<%= isAdmin ? '/admin' : (usuario ? '/usuario' : '/login') %>">
-            <%= usuario ? (isAdmin ? 'Gerenciar o Site' : 'Minha Conta') : 'Fazer Login' %>
-        </a>
-        <button class="theme-toggle" aria-label="Alternar tema" type="button">
-            <img src="/imagens/lua-branca.svg" alt="Ícone de tema" class="theme-icon">
-            <span class="theme-text">Tema Claro</span>
-        </button>
-    </div>
-</nav>
-
 <nav class="opcoes" id="menuhamburger">
     <img src="/imagens/plogo.svg" class="plogo" alt="Logo da Farmácia">
     <img src="/imagens/user-branco.svg" class="user" alt="Ícone do usuário">
@@ -110,8 +84,9 @@
                                 type="button">
                             <img src="/imagens/lua-branca.svg" 
                                  alt="Ícone de tema" 
-                                 class="theme-icon">
-                            <span class="theme-text">Tema Claro</span>
+                                 class="theme-icon"
+                                 id="theme-icon">
+                            <output class="theme-text">Tema Claro</output>
                         </button>
                     </li>
                 </ul>
