@@ -34,6 +34,42 @@
     </section>
 </nav>
 
+<nav class="desktop-navigation" aria-label="Navegação principal">
+    <ul class="desktop-nav-links">
+        <% if (typeof categoriasMenu !== 'undefined' && categoriasMenu && categoriasMenu.length > 0) { %>
+            <% categoriasMenu.forEach(function(cat) { %>
+                <li>
+                    <a class="desktop-nav-link" href="/categoria/<%= cat.slug %>">
+                        <%= cat.nome %>
+                    </a>
+                </li>
+            <% }); %>
+        <% } else { %>
+            <li>
+                <a class="desktop-nav-link" href="/home">Nenhuma categoria cadastrada</a>
+            </li>
+        <% } %>
+    </ul>
+
+    <ul class="desktop-nav-actions">
+        <li class="desktop-nav-greeting">
+            <%= usuario ? 'Olá, ' + usuario.nome + '!' : 'Olá, Visitante!' %>
+        </li>
+        <li>
+            <a class="desktop-nav-link desktop-account-link"
+               href="<%= isAdmin ? '/admin' : (usuario ? '/usuario' : '/login') %>">
+                <%= usuario ? (isAdmin ? 'Gerenciar o Site' : 'Minha Conta') : 'Fazer Login' %>
+            </a>
+        </li>
+        <li>
+            <button class="theme-toggle" aria-label="Alternar tema" type="button">
+                <img src="/imagens/lua-branca.svg" alt="Ícone de tema" class="theme-icon">
+                <span class="theme-text">Tema Claro</span>
+            </button>
+        </li>
+    </ul>
+</nav>
+
 <nav class="opcoes" id="menuhamburger">
     <img src="/imagens/plogo.svg" class="plogo" alt="Logo da Farmácia">
     <img src="/imagens/user-branco.svg" class="user" alt="Ícone do usuário">
@@ -82,11 +118,10 @@
                         <button class="theme-toggle" 
                                 aria-label="Alternar tema"
                                 type="button">
-                            <img src="/imagens/lua-branca.svg" 
-                                 alt="Ícone de tema" 
-                                 class="theme-icon"
-                                 id="theme-icon">
-                            <output class="theme-text">Tema Claro</output>
+                            <img src="/imagens/lua-branca.svg"
+                                 alt="Ícone de tema"
+                                 class="theme-icon">
+                            <span class="theme-text">Tema Claro</span>
                         </button>
                     </li>
                 </ul>
