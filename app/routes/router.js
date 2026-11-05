@@ -7,6 +7,11 @@ var path       = require('path');
 var fs         = require('fs');
 var nodemailer = require('nodemailer');
 require('dotenv').config();
+const {
+    criarPreferencia,
+    buscarPagamento,
+    validarAssinaturaWebhook
+} = require('../services/mercadopago');
 
 // models mysql
 const { usuariosModel  } = require('../models/usuariosmodel');
@@ -598,6 +603,61 @@ router.post('/carrinho/remover/:id', blockAdmin, async (req, res) => {
 });
 
 // ── Finalizar Compra ──────────────────────────────────────
+router.post('/webhooks/mercadopago', async (req, res) => {
+    if (req.body && req.body.type && req.body.type !== 'payment') {
+        return res.sendStatus(200);
+    }
+
+    const segredo = process.env.MP_WEBHOOK_SECRET;
+    if (!segredo) {
+        console.error('Webhook do Mercado Pago recebido sem MP_WEBHOOK_SECRET configurado.');
+        return res.sendStatus(503);
+    }
+
+    const idPagamento = req.query['data.id'] ||
+        (req.body && req.body.data && req.body.data.id);
+    const requestId = req.get('x-request-id');
+    const assinatura = req.get('x-signature');
+    if (!validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo)) {
+        return res.sendStatus(401);
+    }
+
+    try {
+        const pagamentoMP = await buscarPagamento(idPagamento);
+        const idPedido = Number(pagamentoMP.external_reference);
+        if (!Number.isSafeInteger(idPedido) || idPedido <= 0) {
+            return res.sendStatus(400);
+        }
+
+        const pedido = await pedidosModel.findById(idPedido);
+        const pagamentoLocal = await pedidosModel.findPagamentoByPedido(idPedido);
+        const valorPago = Math.round(Number(pagamentoMP.transaction_amount) * 100);
+        const valorPedido = pedido ? Math.round(Number(pedido.valor_total) * 100) : NaN;
+        if (!pedido || !pagamentoLocal ||
+            pagamentoMP.currency_id !== 'BRL' ||
+            valorPago !== valorPedido ||
+            valorPago !== Math.round(Number(pagamentoLocal.valor) * 100)) {
+            console.error('Webhook do Mercado Pago não corresponde a um pedido válido.');
+            return res.sendStatus(422);
+        }
+
+        const statusPedido = pagamentoMP.status === 'approved'
+            ? 'aprovado'
+            : ['cancelled', 'refunded', 'charged_back', 'rejected'].includes(pagamentoMP.status)
+                ? 'cancelado'
+                : 'pendente';
+        const atualizado = await pedidosModel.atualizarStatusPagamento(
+            idPedido,
+            pagamentoMP.status,
+            statusPedido
+        );
+        return res.sendStatus(atualizado ? 200 : 404);
+    } catch (erro) {
+        console.error('Erro ao processar webhook do Mercado Pago:', erro.message);
+        return res.sendStatus(500);
+    }
+});
+
 router.get('/finalizar-compra', requireLogin, blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
     const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
@@ -695,19 +755,35 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             req.body.forma_pagamento,
             valor_total
         );
-        if (!pagResult.erro) {
-            const { rua, numero, complemento, bairro, cidade, estado, cep } = req.body;
-            const enderecoFormatado = [
-                rua + ', ' + numero + (complemento ? ' ' + complemento : ''),
-                bairro + ' — ' + cidade + '/' + estado,
-                'CEP: ' + cep
-            ].join(' | ');
+        if (pagResult.erro) {
+            return res.redirect('/finalizar-compra?erro=' +
+                encodeURIComponent('Não foi possível registrar o pagamento. Tente novamente.'));
+        }
+        const { rua, numero, complemento, bairro, cidade, estado, cep } = req.body;
+        const enderecoFormatado = [
+            rua + ', ' + numero + (complemento ? ' ' + complemento : ''),
+            bairro + ' — ' + cidade + '/' + estado,
+            'CEP: ' + cep
+        ].join(' | ');
 
-            await pedidosModel.createEntrega(
-                pagResult.id_pagamento,
-                '+Saúde Entregas',
-                enderecoFormatado
-            );
+        await pedidosModel.createEntrega(
+            pagResult.id_pagamento,
+            '+Saúde Entregas',
+            enderecoFormatado
+        );
+
+        let checkoutUrl;
+        try {
+            checkoutUrl = await criarPreferencia({
+                idPedido: pedidoResult.id_pedido,
+                valorTotal: valor_total,
+                formaPagamento: req.body.forma_pagamento,
+                email: req.session.usuarioEmail
+            });
+        } catch (erro) {
+            console.error('Erro ao criar checkout do Mercado Pago:', erro.message);
+            return res.redirect('/finalizar-compra?erro=' +
+                encodeURIComponent('Não foi possível iniciar o pagamento. Verifique a configuração do Mercado Pago e tente novamente.'));
         }
 
         const pool = require('../config/pool_conexoes');
@@ -717,31 +793,40 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             await carrinhoModel.limparPorSession(session_id);
         }
 
-        const formasLabel = {
-            cartao_credito: 'Cartão de Crédito',
-            cartao_debito:  'Cartão de Débito',
-            pix:            'PIX',
-            boleto:         'Boleto Bancário'
-        };
-
-        const { rua, numero, complemento, bairro, cidade, estado, cep } = req.body;
-        const endereco = [
-            rua + ', ' + numero + (complemento ? ' ' + complemento : ''),
-            bairro + ' — ' + cidade + '/' + estado,
-            'CEP: ' + cep
-        ].join(' | ');
-
-        const pedidoCompleto = await pedidosModel.findById(pedidoResult.id_pedido);
-
-        res.render('pages/pedido-confirmado', {
-            id_pedido:             pedidoResult.id_pedido,
-            valor_total,
-            itens:                 pedidoCompleto ? pedidoCompleto.itens : itensMapeados,
-            endereco,
-            forma_pagamento_label: formasLabel[req.body.forma_pagamento] || req.body.forma_pagamento
-        });
+        return res.redirect(checkoutUrl);
     }
 );
+
+router.get('/pagamento/resultado', requireLogin, blockAdmin, async (req, res) => {
+    const idPedido = Number(req.query.pedido);
+    if (!Number.isSafeInteger(idPedido) || idPedido <= 0) {
+        return res.redirect('/meus-pedidos');
+    }
+
+    const pedido = await pedidosModel.findById(idPedido);
+    if (!pedido || Number(pedido.id_usuario) !== Number(req.session.idUsuario)) {
+        return res.sendStatus(404);
+    }
+
+    const pagamento = await pedidosModel.findPagamentoByPedido(idPedido);
+    const endereco = pagamento
+        ? await pedidosModel.findEnderecoByPagamento(pagamento.id_pagamento)
+        : null;
+    const formasLabel = {
+        cartao_credito: 'Cartão de Crédito',
+        cartao_debito: 'Cartão de Débito',
+        pix: 'PIX',
+        boleto: 'Boleto Bancário'
+    };
+    res.render('pages/pedido-confirmado', {
+        id_pedido: idPedido,
+        valor_total: pedido.valor_total,
+        itens: pedido.itens,
+        endereco: endereco || 'Endereço de entrega informado no pedido',
+        forma_pagamento_label: formasLabel[pagamento && pagamento.forma] || 'Mercado Pago',
+        status_pedido: pedido.status
+    });
+});
 
 // ── Categoria ─────────────────────────────────────────────
 router.get('/categoria/:slug', async (req, res) => {

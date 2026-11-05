@@ -15,6 +15,10 @@
     <script src="/js/theme.js"></script>
 </head>
 <body>
+    <%
+        var pedidoAprovado = status_pedido === 'aprovado';
+        var pedidoCancelado = status_pedido === 'cancelado';
+    %>
     <header>
         <%- include('../partial/grid.ejs') %>
     </header>
@@ -22,13 +26,22 @@
     <main>
         <article class="confirmacao-container">
 
-            <output class="icone-sucesso" role="img" aria-label="Pedido confirmado com sucesso">✅</output>
+            <output class="icone-sucesso" role="img" aria-label="<%= pedidoAprovado ? 'Pagamento aprovado' : pedidoCancelado ? 'Pagamento não aprovado' : 'Pagamento pendente' %>">
+                <%= pedidoAprovado ? '✅' : pedidoCancelado ? '⚠️' : '⏳' %>
+            </output>
 
-            <h1 class="titulo-confirmacao">Pedido Confirmado!</h1>
+            <h1 class="titulo-confirmacao">
+                <%= pedidoAprovado ? 'Pagamento aprovado!' : pedidoCancelado ? 'Pagamento não aprovado' : 'Aguardando pagamento' %>
+            </h1>
 
             <output class="subtitulo-confirmacao">
-                Obrigado pela sua compra! Seu pedido foi recebido com sucesso e
-                está sendo processado. Você receberá atualizações por e-mail.
+                <% if (pedidoAprovado) { %>
+                    Obrigado pela sua compra! Seu pedido está sendo processado.
+                <% } else if (pedidoCancelado) { %>
+                    O pagamento não foi aprovado. Consulte as opções disponíveis na sua conta.
+                <% } else { %>
+                    Seu pedido foi criado. A confirmação será atualizada após o Mercado Pago processar o pagamento.
+                <% } %>
             </output>
 
             <section class="numero-pedido" aria-label="Número do pedido">
