@@ -7,6 +7,19 @@ const TIPOS_PAGAMENTO = {
     boleto: 'ticket'
 };
 
+const TODOS_TIPOS_PAGAMENTO = [
+    'account_money',
+    'ticket',
+    'bank_transfer',
+    'atm',
+    'credit_card',
+    'debit_card',
+    'prepaid_card',
+    'digital_wallet',
+    'voucher_card',
+    'crypto_transfer'
+];
+
 function getAppUrl() {
     const appUrl = process.env.APP_URL;
     if (!appUrl) {
@@ -42,10 +55,16 @@ async function requestMercadoPago(path, options = {}) {
             (data.message ? ': ' + data.message : '')
         );
     }
+
     return data;
 }
 
-async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email }) {
+async function criarPreferencia({
+    idPedido,
+    valorTotal,
+    formaPagamento,
+    email
+}) {
     const tipoPermitido = TIPOS_PAGAMENTO[formaPagamento];
     if (!tipoPermitido) {
         throw new Error('Forma de pagamento inválida.');
@@ -60,7 +79,6 @@ async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email })
     const urlResultado = new URL('/pagamento/resultado', appUrl);
     urlResultado.searchParams.set('pedido', String(idPedido));
 
-    const todosTipos = Object.values(TIPOS_PAGAMENTO);
     const preference = await requestMercadoPago('/checkout/preferences', {
         method: 'POST',
         body: JSON.stringify({
@@ -74,7 +92,7 @@ async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email })
             }],
             payer: email ? { email } : undefined,
             payment_methods: {
-                excluded_payment_types: todosTipos
+                excluded_payment_types: TODOS_TIPOS_PAGAMENTO
                     .filter(tipo => tipo !== tipoPermitido)
                     .map(id => ({ id }))
             },
@@ -88,21 +106,39 @@ async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email })
         })
     });
 
-const usaCredenciaisDeTeste = process.env.MP_ACCESS_TOKEN.startsWith('TEST-');
-const checkoutUrl = usaCredenciaisDeTeste
-    ? preference.sandbox_init_point
-    : preference.init_point;    if (!checkoutUrl) {
-        throw new Error('Mercado Pago não retornou o endereço do checkout.');
+    const usaCredenciaisDeTeste =
+        process.env.MP_ACCESS_TOKEN.startsWith('TEST-');
+
+    const checkoutUrl = usaCredenciaisDeTeste
+        ? preference.sandbox_init_point
+        : preference.init_point;
+
+    if (!checkoutUrl) {
+        throw new Error(
+            usaCredenciaisDeTeste
+                ? 'Mercado Pago não retornou o endereço de checkout de teste.'
+                : 'Mercado Pago não retornou o endereço do checkout.'
+        );
     }
+
     return checkoutUrl;
 }
 
 async function buscarPagamento(idPagamento) {
-    return requestMercadoPago('/v1/payments/' + encodeURIComponent(idPagamento));
+    return requestMercadoPago(
+        '/v1/payments/' + encodeURIComponent(idPagamento)
+    );
 }
 
-function validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo) {
-    if (!idPagamento || !requestId || !assinatura || !segredo) return false;
+function validarAssinaturaWebhook(
+    idPagamento,
+    requestId,
+    assinatura,
+    segredo
+) {
+    if (!idPagamento || !requestId || !assinatura || !segredo) {
+        return false;
+    }
 
     const partes = Object.fromEntries(
         assinatura.split(',').map(parte => {
@@ -110,7 +146,10 @@ function validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo) {
             return [chave, valor];
         })
     );
-    if (!partes.ts || !/^[a-f\d]{64}$/i.test(partes.v1 || '')) return false;
+
+    if (!partes.ts || !/^[a-f\d]{64}$/i.test(partes.v1 || '')) {
+        return false;
+    }
 
     const manifesto = [
         'id:' + String(idPagamento).toLowerCase(),
@@ -118,14 +157,19 @@ function validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo) {
         'ts:' + partes.ts,
         ''
     ].join(';');
+
     const assinaturaEsperada = crypto
         .createHmac('sha256', segredo)
         .update(manifesto)
         .digest();
+
     const assinaturaRecebida = Buffer.from(partes.v1, 'hex');
 
     return assinaturaEsperada.length === assinaturaRecebida.length &&
-        crypto.timingSafeEqual(assinaturaEsperada, assinaturaRecebida);
+        crypto.timingSafeEqual(
+            assinaturaEsperada,
+            assinaturaRecebida
+        );
 }
 
 module.exports = {
