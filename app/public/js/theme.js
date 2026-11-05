@@ -96,22 +96,25 @@
         });
     }
 
-    function updateThemeButton(theme) {
-        const themeIcon = document.getElementById('theme-icon');
-        const themeText = document.querySelector('.theme-text');
-        
-        if (themeIcon && themeText) {
-            if (theme === 'light') {
-                themeIcon.src = imagens.light.lua;
-                themeIcon.alt = 'Ícone de tema escuro';
-                themeText.textContent = 'Tema Escuro';
-            } else {
-                themeIcon.src = imagens.dark.lua;
-                themeIcon.alt = 'Ícone de tema claro';
-                themeText.textContent = 'Tema Claro';
-            }
-        }
+function updateThemeButton(theme) {
+    const themeIcons = document.querySelectorAll('.theme-icon');
+    const themeTexts = document.querySelectorAll('.theme-text');
+
+    if (themeIcons.length && themeTexts.length) {
+        const icon = theme === 'light' ? imagens.light.lua : imagens.dark.lua;
+        const iconAlt = theme === 'light' ? 'Ícone de tema escuro' : 'Ícone de tema claro';
+        const text = theme === 'light' ? 'Tema Escuro' : 'Tema Claro';
+
+        themeIcons.forEach(function(themeIcon) {
+            themeIcon.src = icon;
+            themeIcon.alt = iconAlt;
+        });
+
+        themeTexts.forEach(function(themeText) {
+            themeText.textContent = text;
+        });
     }
+}
 
     function toggleTheme() {
         const currentTheme = htmlElement.getAttribute('data-theme');
@@ -129,10 +132,10 @@
         updateThemeButton(currentTheme);
         updateImages(currentTheme);
 
-        const themeToggle = document.querySelector('.theme-toggle');
-        if (themeToggle) {
+        const themeToggles = document.querySelectorAll('.theme-toggle');
+        themeToggles.forEach(function(themeToggle) {
             themeToggle.addEventListener('click', toggleTheme);
-        }
+        });
 
         const observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
