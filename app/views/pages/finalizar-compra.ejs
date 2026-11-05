@@ -227,7 +227,7 @@
                                             <section class="pagamento-info">
                                                 <output class="pagamento-nome">Cartão de Crédito</output>
                                                 <output class="pagamento-descricao">
-                                                    Visa, Mastercard, Elo, Amex — parcelamento disponível
+                                                    Você informará os dados do cartão com segurança no Mercado Pago
                                                 </output>
                                             </section>
                                         </label>
@@ -277,103 +277,10 @@
 
                                 </ul>
 
-                                <section class="campos-cartao"
-                                         id="campos-cartao"
-                                         aria-live="polite"
-                                         aria-label="Dados do cartão">
-
-                                    <fieldset class="campo-checkout">
-                                        <legend class="label-checkout">
-                                            Número do Cartão
-                                            <output class="obrigatorio" aria-hidden="true">*</output>
-                                        </legend>
-                                        <label for="numero-cartao">
-                                            <input type="text" id="numero-cartao"
-                                                   name="numero_cartao"
-                                                   class="input-checkout"
-                                                   placeholder="0000 0000 0000 0000"
-                                                   maxlength="19"
-                                                   autocomplete="cc-number"
-                                                   inputmode="numeric">
-                                        </label>
-                                    </fieldset>
-
-                                    <fieldset class="campo-checkout">
-                                        <legend class="label-checkout">
-                                            Nome no Cartão
-                                            <output class="obrigatorio" aria-hidden="true">*</output>
-                                        </legend>
-                                        <label for="nome-cartao">
-                                            <input type="text" id="nome-cartao"
-                                                   name="nome_cartao"
-                                                   class="input-checkout"
-                                                   placeholder="Como está impresso no cartão"
-                                                   maxlength="60"
-                                                   autocomplete="cc-name">
-                                        </label>
-                                    </fieldset>
-
-                                    <section class="campos-linha">
-                                        <fieldset class="campo-checkout">
-                                            <legend class="label-checkout">
-                                                Validade
-                                                <output class="obrigatorio" aria-hidden="true">*</output>
-                                            </legend>
-                                            <label for="validade-cartao">
-                                                <input type="text" id="validade-cartao"
-                                                       name="validade_cartao"
-                                                       class="input-checkout"
-                                                       placeholder="MM/AA"
-                                                       maxlength="5"
-                                                       autocomplete="cc-exp"
-                                                       inputmode="numeric">
-                                            </label>
-                                        </fieldset>
-
-                                        <fieldset class="campo-checkout">
-                                            <legend class="label-checkout">
-                                                CVV
-                                                <output class="obrigatorio" aria-hidden="true">*</output>
-                                            </legend>
-                                            <label for="cvv-cartao">
-                                                <input type="text" id="cvv-cartao"
-                                                       name="cvv_cartao"
-                                                       class="input-checkout"
-                                                       placeholder="000"
-                                                       maxlength="4"
-                                                       autocomplete="cc-csc"
-                                                       inputmode="numeric">
-                                            </label>
-                                        </fieldset>
-                                    </section>
-
-                                    <%
-                                        var totalParcelamento = carrinho.reduce(function(acc, item) {
-                                            var p = (item.precoDesconto && item.precoDesconto > 0)
-                                                        ? parseFloat(item.precoDesconto)
-                                                        : parseFloat(item.preco) || 0;
-                                            return acc + p * (parseInt(item.quantidade) || 1);
-                                        }, 0);
-                                    %>
-
-                                    <fieldset class="campo-checkout"
-                                              id="campo-parcelas"
-                                              style="display:none;">
-                                        <legend class="label-checkout">Parcelamento</legend>
-                                        <label for="parcelas">
-                                            <select id="parcelas" name="parcelas"
-                                                    class="select-checkout">
-                                                <% for (var p = 1; p <= 12; p++) { %>
-                                                    <option value="<%= p %>">
-                                                        <%= p %>x de R$ <%= (totalParcelamento / p).toFixed(2) %>
-                                                        <%= p === 1 ? '(à vista)' : '(sem juros)' %>
-                                                    </option>
-                                                <% } %>
-                                            </select>
-                                        </label>
-                                    </fieldset>
-
-                                </section>
+                                <p class="info-campo" aria-live="polite">
+                                    O pagamento será concluído em ambiente seguro do Mercado Pago.
+                                    Os dados do cartão não são coletados nem armazenados por este site.
+                                </p>
                             </fieldset>
                         </section>
 
@@ -588,52 +495,10 @@
             if (inputTotal) inputTotal.value = total.toFixed(2);
         }
 
-        var radios        = document.querySelectorAll('input[name="forma_pagamento"]');
-        var camposCartao  = document.getElementById('campos-cartao');
-        var campoParcelas = document.getElementById('campo-parcelas');
-
+        var radios = document.querySelectorAll('input[name="forma_pagamento"]');
         radios.forEach(function(radio) {
-            radio.addEventListener('change', function() {
-                var val = this.value;
-                if (camposCartao) {
-                    if (val === 'cartao_credito' || val === 'cartao_debito') {
-                        camposCartao.classList.add('visivel');
-                        if (campoParcelas) {
-                            campoParcelas.style.display =
-                                val === 'cartao_credito' ? 'block' : 'none';
-                        }
-                    } else {
-                        camposCartao.classList.remove('visivel');
-                    }
-                }
-                atualizarTotais();
-            });
+            radio.addEventListener('change', atualizarTotais);
         });
-
-        var inputCartao = document.getElementById('numero-cartao');
-        if (inputCartao) {
-            inputCartao.addEventListener('input', function() {
-                var v = this.value.replace(/\D/g, '').slice(0, 16);
-                v = v.replace(/(\d{4})(?=\d)/g, '$1 ');
-                this.value = v;
-            });
-        }
-
-        var inputValidade = document.getElementById('validade-cartao');
-        if (inputValidade) {
-            inputValidade.addEventListener('input', function() {
-                var v = this.value.replace(/\D/g, '').slice(0, 4);
-                if (v.length > 2) v = v.replace(/(\d{2})(\d{1,2})/, '$1/$2');
-                this.value = v;
-            });
-        }
-
-        var inputCvv = document.getElementById('cvv-cartao');
-        if (inputCvv) {
-            inputCvv.addEventListener('input', function() {
-                this.value = this.value.replace(/\D/g, '').slice(0, 4);
-            });
-        }
 
         function ajustarBotao() {
             var btnMobile  = document.getElementById('btn-finalizar-mobile');

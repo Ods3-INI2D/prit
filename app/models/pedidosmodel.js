@@ -50,6 +50,66 @@ const pedidosModel = {
         }
     },
 
+    findPagamentoByPedido: async (id_pedido) => {
+        const [pagamentos] = await pool.query(
+            `SELECT id_pagamento, id_pedido, forma, valor, status
+             FROM pagamentos
+             WHERE id_pedido = ?
+             ORDER BY id_pagamento DESC
+             LIMIT 1`,
+            [id_pedido]
+        );
+        return pagamentos[0] || null;
+    },
+
+    findEnderecoByPagamento: async (id_pagamento) => {
+        const [entregas] = await pool.query(
+            `SELECT codigo_rastreio
+             FROM entregas
+             WHERE id_pagamento = ?
+             ORDER BY id_entrega DESC
+             LIMIT 1`,
+            [id_pagamento]
+        );
+        return entregas[0] ? entregas[0].codigo_rastreio : null;
+    },
+
+    atualizarStatusPagamento: async (id_pedido, statusPagamento, statusPedido) => {
+        const conn = await pool.getConnection();
+        try {
+            await conn.beginTransaction();
+            const [pagamentos] = await conn.query(
+                `SELECT id_pagamento
+                 FROM pagamentos
+                 WHERE id_pedido = ?
+                 ORDER BY id_pagamento DESC
+                 LIMIT 1
+                 FOR UPDATE`,
+                [id_pedido]
+            );
+            if (!pagamentos[0]) {
+                await conn.rollback();
+                return false;
+            }
+
+            await conn.query(
+                'UPDATE pagamentos SET status = ? WHERE id_pagamento = ?',
+                [statusPagamento, pagamentos[0].id_pagamento]
+            );
+            await conn.query(
+                'UPDATE pedidos SET status = ? WHERE id_pedido = ?',
+                [statusPedido, id_pedido]
+            );
+            await conn.commit();
+            return true;
+        } catch (erro) {
+            await conn.rollback();
+            throw erro;
+        } finally {
+            conn.release();
+        }
+    },
+
     createEntrega: async (id_pagamento, transportadora, endereco) => {
         try {
             const [result] = await pool.query(
