@@ -1,0 +1,138 @@
+.teste-pix-container {
+    width: min(92%, 38rem);
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.2);
+}
+
+.teste-pix-container h1 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    line-height: 1.3;
+    text-align: center;
+}
+
+.teste-pix-introducao,
+.teste-pix-aviso {
+    margin-bottom: 1rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.teste-pix-aviso {
+    padding: 0.75rem;
+    border: 1px solid var(--warning-border);
+    border-radius: 0.5rem;
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+.teste-pix-botao {
+    display: block;
+    width: 100%;
+    min-height: 2.75rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: var(--btn-primary-bg);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.teste-pix-botao:hover {
+    background: var(--btn-primary-hover);
+}
+
+.teste-pix-botao:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.teste-pix-botao.secundario {
+    margin-top: 0.75rem;
+}
+
+.teste-pix-status,
+.teste-pix-copia-status {
+    display: block;
+    margin-top: 1rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.teste-pix-erro {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border: 1px solid var(--error-border);
+    border-radius: 0.5rem;
+    background: var(--error-bg);
+    color: var(--error-text);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.teste-pix-resultado {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.teste-pix-resultado[hidden],
+.teste-pix-qr[hidden],
+.teste-pix-erro[hidden] {
+    display: none;
+}
+
+.teste-pix-resultado h2 {
+    margin-bottom: 0.75rem;
+    color: var(--accent-primary);
+    font-size: 1.2rem;
+}
+
+.teste-pix-resultado > p {
+    margin-bottom: 1rem;
+    overflow-wrap: anywhere;
+}
+
+.teste-pix-qr {
+    display: block;
+    width: min(100%, 18rem);
+    height: auto;
+    margin: 1rem auto;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background: #fff;
+}
+
+.teste-pix-resultado label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.teste-pix-resultado textarea {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font: inherit;
+    overflow-wrap: anywhere;
+    resize: vertical;
+}
+
+@media (min-width: 901px) {
+    .teste-pix-container {
+        margin-top: 3rem;
+        padding: 2rem;
+    }
+}

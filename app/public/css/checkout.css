@@ -497,9 +497,20 @@ main {
 }
 
 .mensagem-erro {
+    display: block;
+    width: 100%;
+    max-width: 100%;
     background-color: rgba(217, 48, 37, 0.15);
     border: 0.125rem solid #d93025;
     color: #ff6b6b;
+    padding: 0.875rem 1rem;
+    margin: 0 auto 1.5rem;
+    border-radius: 0.625rem;
+    text-align: left;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 
 /* página de pedido confirmado */
