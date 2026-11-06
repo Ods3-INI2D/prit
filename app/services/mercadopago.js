@@ -8,7 +8,6 @@ const TIPOS_PAGAMENTO = {
 };
 
 const TODOS_TIPOS_PAGAMENTO = [
-    'account_money',
     'ticket',
     'bank_transfer',
     'atm',
@@ -19,6 +18,10 @@ const TODOS_TIPOS_PAGAMENTO = [
     'voucher_card',
     'crypto_transfer'
 ];
+
+function usandoCredenciaisDeTeste() {
+    return process.env.MP_ENVIRONMENT === 'test';
+}
 
 function getAppUrl() {
     const appUrl = process.env.APP_URL;
@@ -55,16 +58,10 @@ async function requestMercadoPago(path, options = {}) {
             (data.message ? ': ' + data.message : '')
         );
     }
-
     return data;
 }
 
-async function criarPreferencia({
-    idPedido,
-    valorTotal,
-    formaPagamento,
-    email
-}) {
+async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email }) {
     const tipoPermitido = TIPOS_PAGAMENTO[formaPagamento];
     if (!tipoPermitido) {
         throw new Error('Forma de pagamento inválida.');
@@ -106,16 +103,14 @@ async function criarPreferencia({
         })
     });
 
-    const usaCredenciaisDeTeste =
-        process.env.MP_ACCESS_TOKEN.startsWith('TEST-');
-
-    const checkoutUrl = usaCredenciaisDeTeste
+    const checkoutDeTeste = usandoCredenciaisDeTeste();
+    const checkoutUrl = checkoutDeTeste
         ? preference.sandbox_init_point
         : preference.init_point;
 
     if (!checkoutUrl) {
         throw new Error(
-            usaCredenciaisDeTeste
+            checkoutDeTeste
                 ? 'Mercado Pago não retornou o endereço de checkout de teste.'
                 : 'Mercado Pago não retornou o endereço do checkout.'
         );
@@ -124,18 +119,76 @@ async function criarPreferencia({
     return checkoutUrl;
 }
 
+async function criarPagamentoPix({ idPedido, valorTotal, email, cpf }) {
+    const valor = Number(valorTotal);
+    if (!Number.isFinite(valor) || valor <= 0) {
+        throw new Error('Valor de pagamento inválido.');
+    }
+
+    const accessToken = process.env.MP_ACCESS_TOKEN;
+    if (!accessToken) {
+        throw new Error('MP_ACCESS_TOKEN não configurado.');
+    }
+
+    const pagamentoDeTeste = usandoCredenciaisDeTeste();
+    const emailPagador = pagamentoDeTeste
+        ? process.env.MP_TEST_PAYER_EMAIL
+        : email;
+    const cpfPagador = (pagamentoDeTeste
+        ? process.env.MP_TEST_PAYER_CPF
+        : cpf || '').replace(/\D/g, '');
+
+    if (!emailPagador || !/^\d{11}$/.test(cpfPagador)) {
+        throw new Error(pagamentoDeTeste
+            ? 'Configure MP_TEST_PAYER_EMAIL e MP_TEST_PAYER_CPF com os dados do comprador de teste.'
+            : 'O cadastro do cliente precisa ter um CPF válido para pagar com PIX.');
+    }
+
+    const appUrl = getAppUrl();
+    const pagamento = await requestMercadoPago('/v1/payments', {
+        method: 'POST',
+        headers: {
+            'X-Idempotency-Key': crypto.randomUUID()
+        },
+        body: JSON.stringify({
+            transaction_amount: Number(valor.toFixed(2)),
+            description: 'Pedido #' + idPedido,
+            payment_method_id: 'pix',
+            external_reference: String(idPedido),
+            notification_url: appUrl + '/webhooks/mercadopago',
+            payer: {
+                email: emailPagador,
+                identification: {
+                    type: 'CPF',
+                    number: cpfPagador
+                }
+            }
+        })
+    });
+
+    const dadosPix = pagamento.point_of_interaction &&
+        pagamento.point_of_interaction.transaction_data;
+
+    if (!pagamento.id || !dadosPix || !dadosPix.qr_code || !dadosPix.qr_code_base64) {
+        throw new Error('Mercado Pago não retornou os dados do QR Code PIX.');
+    }
+
+    return {
+        id: pagamento.id,
+        status: pagamento.status || 'pending',
+        qrCode: dadosPix.qr_code,
+        qrCodeBase64: dadosPix.qr_code_base64,
+        ticketUrl: dadosPix.ticket_url || null
+    };
+}
+
 async function buscarPagamento(idPagamento) {
     return requestMercadoPago(
         '/v1/payments/' + encodeURIComponent(idPagamento)
     );
 }
 
-function validarAssinaturaWebhook(
-    idPagamento,
-    requestId,
-    assinatura,
-    segredo
-) {
+function validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo) {
     if (!idPagamento || !requestId || !assinatura || !segredo) {
         return false;
     }
@@ -166,14 +219,12 @@ function validarAssinaturaWebhook(
     const assinaturaRecebida = Buffer.from(partes.v1, 'hex');
 
     return assinaturaEsperada.length === assinaturaRecebida.length &&
-        crypto.timingSafeEqual(
-            assinaturaEsperada,
-            assinaturaRecebida
-        );
+        crypto.timingSafeEqual(assinaturaEsperada, assinaturaRecebida);
 }
 
 module.exports = {
     criarPreferencia,
+    criarPagamentoPix,
     buscarPagamento,
     validarAssinaturaWebhook
 };

@@ -112,11 +112,15 @@ CREATE TABLE IF NOT EXISTS `carrinho` (
 
 -- tabela de pagamentos
 CREATE TABLE IF NOT EXISTS `pagamentos` (
-    `id_pagamento` INT            NOT NULL AUTO_INCREMENT,
-    `id_pedido`    INT            NOT NULL,
-    `forma`        VARCHAR(50),
-    `valor`        DECIMAL(10,2),
-    `status`       VARCHAR(30),
+    `id_pagamento`       INT            NOT NULL AUTO_INCREMENT,
+    `id_pedido`          INT            NOT NULL,
+    `forma`              VARCHAR(50),
+    `valor`              DECIMAL(10,2),
+    `status`             VARCHAR(30),
+    `mp_payment_id`      VARCHAR(100),
+    `pix_qr_code`        TEXT,
+    `pix_qr_code_base64` MEDIUMTEXT,
+    `pix_ticket_url`     TEXT,
     PRIMARY KEY (`id_pagamento`),
     FOREIGN KEY (`id_pedido`) REFERENCES `pedidos`(`id_pedido`) ON UPDATE CASCADE ON DELETE CASCADE
 );

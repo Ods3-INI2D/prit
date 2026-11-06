@@ -52,7 +52,8 @@ const pedidosModel = {
 
     findPagamentoByPedido: async (id_pedido) => {
         const [pagamentos] = await pool.query(
-            `SELECT id_pagamento, id_pedido, forma, valor, status
+            `SELECT id_pagamento, id_pedido, forma, valor, status,
+                    mp_payment_id, pix_qr_code, pix_qr_code_base64, pix_ticket_url
              FROM pagamentos
              WHERE id_pedido = ?
              ORDER BY id_pagamento DESC
@@ -60,6 +61,32 @@ const pedidosModel = {
             [id_pedido]
         );
         return pagamentos[0] || null;
+    },
+
+    atualizarDadosPix: async (id_pedido, pagamentoPix) => {
+        const [result] = await pool.query(
+            `UPDATE pagamentos
+             SET mp_payment_id = ?, pix_qr_code = ?,
+                 pix_qr_code_base64 = ?, pix_ticket_url = ?, status = ?
+             WHERE id_pagamento = (
+                 SELECT id_pagamento FROM (
+                     SELECT id_pagamento
+                     FROM pagamentos
+                     WHERE id_pedido = ?
+                     ORDER BY id_pagamento DESC
+                     LIMIT 1
+                 ) AS pagamento_pedido
+             )`,
+            [
+                String(pagamentoPix.id),
+                pagamentoPix.qrCode,
+                pagamentoPix.qrCodeBase64,
+                pagamentoPix.ticketUrl,
+                pagamentoPix.status,
+                id_pedido
+            ]
+        );
+        return result.affectedRows === 1;
     },
 
     findEnderecoByPagamento: async (id_pagamento) => {

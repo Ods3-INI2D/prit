@@ -49,6 +49,42 @@
                 <output class="numero-pedido-valor">#<%= id_pedido %></output>
             </section>
 
+            <% if (forma_pagamento_label === 'PIX' && pix_qr_code && status_pedido === 'pendente') { %>
+                <section aria-labelledby="titulo-pagamento-pix"
+                         style="background-color:#2a2a2a;border-radius:0.625rem;padding:1.25rem;margin-bottom:1.75rem;">
+                    <h2 id="titulo-pagamento-pix"
+                        style="font-size:1rem;font-weight:600;color:#4da6ff;margin-bottom:0.75rem;">
+                        Pague com PIX
+                    </h2>
+                    <p style="font-size:0.9rem;color:#d9d9d9;margin-bottom:1rem;">
+                        Escaneie o QR Code no aplicativo do seu banco ou copie o código PIX.
+                    </p>
+                    <% if (pix_qr_code_base64) { %>
+                        <img src="data:image/png;base64,<%= pix_qr_code_base64 %>"
+                             alt="QR Code PIX do pedido"
+                             style="display:block;width: min(100%, 16rem);height:auto;margin:0 auto 1rem;background:#fff;padding:0.5rem;border-radius:0.5rem;">
+                    <% } %>
+                    <label for="codigo-pix"
+                           style="display:block;font-size:0.875rem;color:#d9d9d9;margin-bottom:0.5rem;">
+                        PIX copia e cola
+                    </label>
+                    <textarea id="codigo-pix" readonly rows="4"
+                              style="display:block;width:100%;box-sizing:border-box;margin-bottom:0.75rem;"><%= pix_qr_code %></textarea>
+                    <button type="button" id="copiar-pix"
+                            style="padding:0.7rem 1rem;border:0;border-radius:0.4rem;background:#1683ff;color:#fff;cursor:pointer;">
+                        Copiar código PIX
+                    </button>
+                    <output id="mensagem-copia-pix" aria-live="polite"></output>
+                    <% if (pix_ticket_url) { %>
+                        <p style="margin-top:0.75rem;">
+                            <a href="<%= pix_ticket_url %>" target="_blank" rel="noopener noreferrer">
+                                Abrir pagamento PIX no Mercado Pago
+                            </a>
+                        </p>
+                    <% } %>
+                </section>
+            <% } %>
+
             <section aria-labelledby="titulo-resumo-pedido">
                 <h2 id="titulo-resumo-pedido"
                     style="font-size:1.1rem;font-weight:600;color:#4da6ff;margin-bottom:1rem;text-align:center;">
@@ -148,5 +184,29 @@
     </main>
 
     <%- include('../partial/footer.ejs') %>
+    <script>
+        (function() {
+            var botao = document.getElementById('copiar-pix');
+            var codigo = document.getElementById('codigo-pix');
+            var mensagem = document.getElementById('mensagem-copia-pix');
+            if (!botao || !codigo || !mensagem) return;
+
+            botao.addEventListener('click', function() {
+                codigo.select();
+                codigo.setSelectionRange(0, codigo.value.length);
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(codigo.value).then(function() {
+                        mensagem.textContent = 'Código PIX copiado.';
+                    }).catch(function() {
+                        mensagem.textContent = 'Não foi possível copiar. Selecione e copie o código manualmente.';
+                    });
+                    return;
+                }
+                mensagem.textContent = document.execCommand('copy')
+                    ? 'Código PIX copiado.'
+                    : 'Não foi possível copiar. Selecione e copie o código manualmente.';
+            });
+        })();
+    </script>
 </body>
 </html>

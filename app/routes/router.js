@@ -9,6 +9,7 @@ var nodemailer = require('nodemailer');
 require('dotenv').config();
 const {
     criarPreferencia,
+    criarPagamentoPix,
     buscarPagamento,
     validarAssinaturaWebhook
 } = require('../services/mercadopago');
@@ -773,13 +774,34 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
         );
 
         let checkoutUrl;
+        let pagamentoPix;
         try {
-            checkoutUrl = await criarPreferencia({
-                idPedido: pedidoResult.id_pedido,
-                valorTotal: valor_total,
-                formaPagamento: req.body.forma_pagamento,
-                email: req.session.usuarioEmail
-            });
+            if (req.body.forma_pagamento === 'pix') {
+                const usuario = await usuariosModel.findByEmail(req.session.usuarioEmail);
+                if (!usuario) {
+                    throw new Error('Não foi possível localizar o cadastro do cliente.');
+                }
+                pagamentoPix = await criarPagamentoPix({
+                    idPedido: pedidoResult.id_pedido,
+                    valorTotal: valor_total,
+                    email: usuario.email,
+                    cpf: usuario.cpf
+                });
+                const dadosSalvos = await pedidosModel.atualizarDadosPix(
+                    pedidoResult.id_pedido,
+                    pagamentoPix
+                );
+                if (!dadosSalvos) {
+                    throw new Error('Não foi possível salvar os dados do PIX no pedido.');
+                }
+            } else {
+                checkoutUrl = await criarPreferencia({
+                    idPedido: pedidoResult.id_pedido,
+                    valorTotal: valor_total,
+                    formaPagamento: req.body.forma_pagamento,
+                    email: req.session.usuarioEmail
+                });
+            }
         } catch (erro) {
             console.error('Erro ao criar checkout do Mercado Pago:', erro.message);
             return res.redirect('/finalizar-compra?erro=' +
@@ -793,6 +815,10 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             await carrinhoModel.limparPorSession(session_id);
         }
 
+        if (pagamentoPix) {
+            return res.redirect('/pagamento/resultado?pedido=' +
+                encodeURIComponent(pedidoResult.id_pedido));
+        }
         return res.redirect(checkoutUrl);
     }
 );
@@ -824,7 +850,10 @@ router.get('/pagamento/resultado', requireLogin, blockAdmin, async (req, res) =>
         itens: pedido.itens,
         endereco: endereco || 'Endereço de entrega informado no pedido',
         forma_pagamento_label: formasLabel[pagamento && pagamento.forma] || 'Mercado Pago',
-        status_pedido: pedido.status
+        status_pedido: pedido.status,
+        pix_qr_code: pagamento && pagamento.pix_qr_code,
+        pix_qr_code_base64: pagamento && pagamento.pix_qr_code_base64,
+        pix_ticket_url: pagamento && pagamento.pix_ticket_url
     });
 });
 
