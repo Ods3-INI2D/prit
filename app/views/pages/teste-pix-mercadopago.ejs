@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de PIX - +Saúde</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/grid.css">
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/semantica-fix.css">
+    <link rel="stylesheet" href="/css/teste-pix.css">
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <header>
+        <%- include('../partial/grid.ejs') %>
+    </header>
+
+    <main>
+        <article class="teste-pix-container">
+            <h1>Teste de PIX do Mercado Pago</h1>
+            <p class="teste-pix-introducao">
+                Gere um QR Code no ambiente de teste para conferir como ele aparece.
+                O Mercado Pago exige o valor fixo de R$ 50,00 para este teste.
+            </p>
+            <p class="teste-pix-aviso">
+                Este QR Code é de teste: não faça um pagamento real por ele.
+                O Mercado Pago atualiza o status automaticamente.
+            </p>
+
+            <button type="button" class="teste-pix-botao" id="gerar-pix">
+                Gerar QR Code de teste
+            </button>
+
+            <p class="teste-pix-status" id="status-pix" role="status" aria-live="polite">
+                Nenhum pedido de teste criado.
+            </p>
+            <p class="teste-pix-erro" id="erro-pix" role="alert" hidden></p>
+
+            <section class="teste-pix-resultado" id="resultado-pix"
+                     aria-labelledby="titulo-resultado-pix" hidden>
+                <h2 id="titulo-resultado-pix">PIX de teste — R$ 50,00</h2>
+                <p>Pedido: <output id="id-pedido-pix"></output></p>
+
+                <img id="imagem-qr-pix" class="teste-pix-qr"
+                     alt="QR Code PIX de teste" hidden>
+
+                <label for="codigo-pix-teste">Código PIX copia e cola</label>
+                <textarea id="codigo-pix-teste" rows="5" readonly></textarea>
+                <button type="button" class="teste-pix-botao secundario" id="copiar-pix">
+                    Copiar código PIX
+                </button>
+                <output class="teste-pix-copia-status" id="status-copia-pix"
+                        aria-live="polite"></output>
+            </section>
+        </article>
+    </main>
+
+    <script>
+        (function() {
+            var botaoGerar = document.getElementById('gerar-pix');
+            var status = document.getElementById('status-pix');
+            var erro = document.getElementById('erro-pix');
+            var resultado = document.getElementById('resultado-pix');
+            var idPedido = document.getElementById('id-pedido-pix');
+            var imagemQr = document.getElementById('imagem-qr-pix');
+            var codigoPix = document.getElementById('codigo-pix-teste');
+            var statusCopia = document.getElementById('status-copia-pix');
+            var pedidoAtual = null;
+            var temporizadorStatus = null;
+
+            function atualizarStatus(dados) {
+                if (dados.status === 'processed' || dados.status === 'approved' ||
+                    dados.payment_status === 'processed' ||
+                    dados.payment_status === 'approved') {
+                    status.textContent = 'PIX de teste aprovado automaticamente pelo Mercado Pago.';
+                    return true;
+                }
+
+                if (dados.status === 'cancelled' || dados.payment_status === 'cancelled') {
+                    status.textContent = 'O pedido PIX de teste foi cancelado.';
+                    return true;
+                }
+
+                status.textContent = 'Pedido criado; aguardando atualização automática do teste...';
+                return false;
+            }
+
+            async function consultarStatus() {
+                if (!pedidoAtual) return;
+
+                try {
+                    var resposta = await fetch(
+                        '/admin/teste-pix-mercadopago/' + encodeURIComponent(pedidoAtual)
+                    );
+                    var dados = await resposta.json();
+                    if (!resposta.ok) {
+                        throw new Error(dados.detalhe || dados.erro ||
+                            'Não foi possível consultar o status do teste.');
+                    }
+                    if (!atualizarStatus(dados)) {
+                        temporizadorStatus = window.setTimeout(consultarStatus, 3000);
+                    }
+                } catch (falha) {
+                    status.textContent = falha.message;
+                }
+            }
+
+            botaoGerar.addEventListener('click', async function() {
+                botaoGerar.disabled = true;
+                window.clearTimeout(temporizadorStatus);
+                erro.hidden = true;
+                resultado.hidden = true;
+                status.textContent = 'Criando pedido PIX de teste...';
+
+                try {
+                    var resposta = await fetch('/admin/teste-pix-mercadopago', {
+                        method: 'POST'
+                    });
+                    var dados = await resposta.json();
+                    if (!resposta.ok) {
+                        throw new Error(dados.detalhe || dados.erro ||
+                            'Não foi possível criar o pedido PIX de teste.');
+                    }
+
+                    pedidoAtual = dados.id;
+                    idPedido.textContent = dados.id;
+                    codigoPix.value = dados.qrCode || '';
+                    imagemQr.hidden = !dados.qrCodeBase64;
+                    if (dados.qrCodeBase64) {
+                        imagemQr.src = 'data:image/png;base64,' + dados.qrCodeBase64;
+                    }
+                    resultado.hidden = false;
+                    atualizarStatus({
+                        status: dados.status,
+                        payment_status: dados.paymentStatus
+                    });
+                    temporizadorStatus = window.setTimeout(consultarStatus, 3000);
+                } catch (falha) {
+                    erro.textContent = falha.message;
+                    erro.hidden = false;
+                    status.textContent = 'Não foi possível gerar o QR Code.';
+                } finally {
+                    botaoGerar.disabled = false;
+                }
+            });
+
+            document.getElementById('copiar-pix').addEventListener('click', async function() {
+                if (!codigoPix.value) {
+                    statusCopia.textContent = 'O Mercado Pago não retornou o código PIX.';
+                    return;
+                }
+
+                try {
+                    await navigator.clipboard.writeText(codigoPix.value);
+                    statusCopia.textContent = 'Código PIX copiado.';
+                } catch (falha) {
+                    codigoPix.focus();
+                    codigoPix.select();
+                    statusCopia.textContent =
+                        'Não foi possível copiar automaticamente. Selecione e copie o código.';
+                }
+            });
+        })();
+    </script>
+    <%- include('../partial/footer.ejs') %>

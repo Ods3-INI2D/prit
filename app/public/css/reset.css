@@ -30,6 +30,15 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+main {
+	flex: 1 0 auto;
+}
+body > footer {
+	margin-top: auto;
 }
 ol, ul {
 	list-style: none;

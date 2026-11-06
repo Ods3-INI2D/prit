@@ -107,7 +107,6 @@ async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email })
     const checkoutUrl = checkoutDeTeste
         ? preference.sandbox_init_point
         : preference.init_point;
-
     if (!checkoutUrl) {
         throw new Error(
             checkoutDeTeste
@@ -115,11 +114,16 @@ async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email })
                 : 'Mercado Pago não retornou o endereço do checkout.'
         );
     }
-
     return checkoutUrl;
 }
 
 async function criarPagamentoPix({ idPedido, valorTotal, email, cpf }) {
+    if (usandoCredenciaisDeTeste()) {
+        throw new Error(
+            'O teste de PIX do Mercado Pago deve ser feito pela rota de teste da API Orders, não pelo checkout de compra.'
+        );
+    }
+
     const valor = Number(valorTotal);
     if (!Number.isFinite(valor) || valor <= 0) {
         throw new Error('Valor de pagamento inválido.');
@@ -130,18 +134,11 @@ async function criarPagamentoPix({ idPedido, valorTotal, email, cpf }) {
         throw new Error('MP_ACCESS_TOKEN não configurado.');
     }
 
-    const pagamentoDeTeste = usandoCredenciaisDeTeste();
-    const emailPagador = pagamentoDeTeste
-        ? process.env.MP_TEST_PAYER_EMAIL
-        : email;
-    const cpfPagador = (pagamentoDeTeste
-        ? process.env.MP_TEST_PAYER_CPF
-        : cpf || '').replace(/\D/g, '');
+    const emailPagador = email;
+    const cpfPagador = (cpf || '').replace(/\D/g, '');
 
     if (!emailPagador || !/^\d{11}$/.test(cpfPagador)) {
-        throw new Error(pagamentoDeTeste
-            ? 'Configure MP_TEST_PAYER_EMAIL e MP_TEST_PAYER_CPF com os dados do comprador de teste.'
-            : 'O cadastro do cliente precisa ter um CPF válido para pagar com PIX.');
+        throw new Error('O cadastro do cliente precisa ter um CPF válido para pagar com PIX.');
     }
 
     const appUrl = getAppUrl();
@@ -168,7 +165,6 @@ async function criarPagamentoPix({ idPedido, valorTotal, email, cpf }) {
 
     const dadosPix = pagamento.point_of_interaction &&
         pagamento.point_of_interaction.transaction_data;
-
     if (!pagamento.id || !dadosPix || !dadosPix.qr_code || !dadosPix.qr_code_base64) {
         throw new Error('Mercado Pago não retornou os dados do QR Code PIX.');
     }
@@ -182,16 +178,78 @@ async function criarPagamentoPix({ idPedido, valorTotal, email, cpf }) {
     };
 }
 
+async function criarOrderPixTeste() {
+    if (!usandoCredenciaisDeTeste()) {
+        throw new Error('Configure MP_ENVIRONMENT=test para criar um pedido PIX de teste.');
+    }
+
+    const valorTeste = '50.00';
+    const emailPagador = process.env.MP_TEST_PAYER_EMAIL || 'test_payer@example.com';
+    const referenciaExterna = 'pix-test-' + crypto.randomUUID();
+    const order = await requestMercadoPago('/v1/orders', {
+        method: 'POST',
+        headers: {
+            'X-Idempotency-Key': crypto.randomUUID()
+        },
+        body: JSON.stringify({
+            type: 'online',
+            processing_mode: 'automatic',
+            external_reference: referenciaExterna,
+            total_amount: valorTeste,
+            payer: {
+                email: emailPagador,
+                first_name: 'APRO'
+            },
+            transactions: {
+                payments: [{
+                    amount: valorTeste,
+                    payment_method: {
+                        id: 'pix',
+                        type: 'bank_transfer'
+                    }
+                }]
+            }
+        })
+    });
+
+    const pagamento = order.transactions &&
+        order.transactions.payments &&
+        order.transactions.payments[0];
+    const metodoPagamento = pagamento && pagamento.payment_method;
+    if (!order.id || !pagamento || !metodoPagamento) {
+        throw new Error('Mercado Pago não retornou os dados do pedido PIX de teste.');
+    }
+
+    return {
+        id: order.id,
+        status: order.status || null,
+        statusDetail: order.status_detail || null,
+        paymentId: pagamento.id || null,
+        paymentStatus: pagamento.status || null,
+        paymentStatusDetail: pagamento.status_detail || null,
+        amount: pagamento.amount || valorTeste,
+        qrCode: metodoPagamento.qr_code || null,
+        qrCodeBase64: metodoPagamento.qr_code_base64 || null,
+        ticketUrl: metodoPagamento.ticket_url || null
+    };
+}
+
+async function buscarOrderPix(idOrder) {
+    if (!usandoCredenciaisDeTeste()) {
+        throw new Error('Configure MP_ENVIRONMENT=test para consultar um pedido PIX de teste.');
+    }
+    if (!/^[a-z\d]+$/i.test(String(idOrder))) {
+        throw new Error('Identificador de pedido PIX inválido.');
+    }
+    return requestMercadoPago('/v1/orders/' + encodeURIComponent(idOrder));
+}
+
 async function buscarPagamento(idPagamento) {
-    return requestMercadoPago(
-        '/v1/payments/' + encodeURIComponent(idPagamento)
-    );
+    return requestMercadoPago('/v1/payments/' + encodeURIComponent(idPagamento));
 }
 
 function validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo) {
-    if (!idPagamento || !requestId || !assinatura || !segredo) {
-        return false;
-    }
+    if (!idPagamento || !requestId || !assinatura || !segredo) return false;
 
     const partes = Object.fromEntries(
         assinatura.split(',').map(parte => {
@@ -199,10 +257,7 @@ function validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo) {
             return [chave, valor];
         })
     );
-
-    if (!partes.ts || !/^[a-f\d]{64}$/i.test(partes.v1 || '')) {
-        return false;
-    }
+    if (!partes.ts || !/^[a-f\d]{64}$/i.test(partes.v1 || '')) return false;
 
     const manifesto = [
         'id:' + String(idPagamento).toLowerCase(),
@@ -210,12 +265,10 @@ function validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo) {
         'ts:' + partes.ts,
         ''
     ].join(';');
-
     const assinaturaEsperada = crypto
         .createHmac('sha256', segredo)
         .update(manifesto)
         .digest();
-
     const assinaturaRecebida = Buffer.from(partes.v1, 'hex');
 
     return assinaturaEsperada.length === assinaturaRecebida.length &&
@@ -225,6 +278,8 @@ function validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo) {
 module.exports = {
     criarPreferencia,
     criarPagamentoPix,
+    criarOrderPixTeste,
+    buscarOrderPix,
     buscarPagamento,
     validarAssinaturaWebhook
 };

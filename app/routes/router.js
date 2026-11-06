@@ -10,6 +10,8 @@ require('dotenv').config();
 const {
     criarPreferencia,
     criarPagamentoPix,
+    criarOrderPixTeste,
+    buscarOrderPix,
     buscarPagamento,
     validarAssinaturaWebhook
 } = require('../services/mercadopago');
@@ -659,6 +661,57 @@ router.post('/webhooks/mercadopago', async (req, res) => {
     }
 });
 
+router.post('/admin/teste-pix-mercadopago', requireAdmin, async (req, res) => {
+    if (process.env.MP_ENVIRONMENT !== 'test') {
+        return res.sendStatus(404);
+    }
+
+    try {
+        const order = await criarOrderPixTeste();
+        return res.status(201).json(order);
+    } catch (erro) {
+        console.error('Erro ao criar pedido PIX de teste do Mercado Pago:', erro.message);
+        return res.status(502).json({
+            erro: 'Não foi possível criar o pedido PIX de teste.',
+            detalhe: erro.message
+        });
+    }
+});
+
+router.get('/admin/teste-pix-mercadopago', requireAdmin, (req, res) => {
+    if (process.env.MP_ENVIRONMENT !== 'test') {
+        return res.sendStatus(404);
+    }
+
+    return res.render('pages/teste-pix-mercadopago');
+});
+
+router.get('/admin/teste-pix-mercadopago/:id', requireAdmin, async (req, res) => {
+    if (process.env.MP_ENVIRONMENT !== 'test') {
+        return res.sendStatus(404);
+    }
+
+    try {
+        const order = await buscarOrderPix(req.params.id);
+        const pagamento = order.transactions &&
+            order.transactions.payments &&
+            order.transactions.payments[0];
+        return res.json({
+            id: order.id,
+            status: order.status || null,
+            status_detail: order.status_detail || null,
+            payment_status: pagamento ? pagamento.status : null,
+            payment_status_detail: pagamento ? pagamento.status_detail : null
+        });
+    } catch (erro) {
+        console.error('Erro ao consultar pedido PIX de teste do Mercado Pago:', erro.message);
+        return res.status(502).json({
+            erro: 'Não foi possível consultar o pedido PIX de teste.',
+            detalhe: erro.message
+        });
+    }
+});
+
 router.get('/finalizar-compra', requireLogin, blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
     const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
@@ -698,6 +751,14 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
         if (!errors.isEmpty()) {
             const msg = encodeURIComponent(errors.array()[0].msg);
             return res.redirect('/finalizar-compra?erro=' + msg);
+        }
+
+        if (req.body.forma_pagamento === 'pix' &&
+            process.env.MP_ENVIRONMENT === 'test') {
+            return res.redirect('/finalizar-compra?erro=' +
+                encodeURIComponent(
+                    'O PIX de teste do Mercado Pago usa um pedido fixo de R$ 50,00. Acesse a rota de teste como administrador para validar a integração.'
+                ));
         }
 
         const { id_usuario, session_id } = getIdentificador(req);
