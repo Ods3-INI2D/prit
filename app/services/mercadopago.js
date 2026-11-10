@@ -117,67 +117,6 @@ async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email })
     return checkoutUrl;
 }
 
-async function criarPagamentoPix({ idPedido, valorTotal, email, cpf }) {
-    if (usandoCredenciaisDeTeste()) {
-        throw new Error(
-            'O teste de PIX do Mercado Pago deve ser feito pela rota de teste da API Orders, não pelo checkout de compra.'
-        );
-    }
-
-    const valor = Number(valorTotal);
-    if (!Number.isFinite(valor) || valor <= 0) {
-        throw new Error('Valor de pagamento inválido.');
-    }
-
-    const accessToken = process.env.MP_ACCESS_TOKEN;
-    if (!accessToken) {
-        throw new Error('MP_ACCESS_TOKEN não configurado.');
-    }
-
-    const emailPagador = email;
-    const cpfPagador = (cpf || '').replace(/\D/g, '');
-
-    if (!emailPagador || !/^\d{11}$/.test(cpfPagador)) {
-        throw new Error('O cadastro do cliente precisa ter um CPF válido para pagar com PIX.');
-    }
-
-    const appUrl = getAppUrl();
-    const pagamento = await requestMercadoPago('/v1/payments', {
-        method: 'POST',
-        headers: {
-            'X-Idempotency-Key': crypto.randomUUID()
-        },
-        body: JSON.stringify({
-            transaction_amount: Number(valor.toFixed(2)),
-            description: 'Pedido #' + idPedido,
-            payment_method_id: 'pix',
-            external_reference: String(idPedido),
-            notification_url: appUrl + '/webhooks/mercadopago',
-            payer: {
-                email: emailPagador,
-                identification: {
-                    type: 'CPF',
-                    number: cpfPagador
-                }
-            }
-        })
-    });
-
-    const dadosPix = pagamento.point_of_interaction &&
-        pagamento.point_of_interaction.transaction_data;
-    if (!pagamento.id || !dadosPix || !dadosPix.qr_code || !dadosPix.qr_code_base64) {
-        throw new Error('Mercado Pago não retornou os dados do QR Code PIX.');
-    }
-
-    return {
-        id: pagamento.id,
-        status: pagamento.status || 'pending',
-        qrCode: dadosPix.qr_code,
-        qrCodeBase64: dadosPix.qr_code_base64,
-        ticketUrl: dadosPix.ticket_url || null
-    };
-}
-
 async function criarOrderPixTeste() {
     if (!usandoCredenciaisDeTeste()) {
         throw new Error('Configure MP_ENVIRONMENT=test para criar um pedido PIX de teste.');
@@ -277,7 +216,6 @@ function validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo) {
 
 module.exports = {
     criarPreferencia,
-    criarPagamentoPix,
     criarOrderPixTeste,
     buscarOrderPix,
     buscarPagamento,
