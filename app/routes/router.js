@@ -9,7 +9,6 @@ var nodemailer = require('nodemailer');
 require('dotenv').config();
 const {
     criarPreferencia,
-    criarPagamentoPix,
     criarOrderPixTeste,
     buscarOrderPix,
     buscarPagamento,
@@ -753,14 +752,6 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             return res.redirect('/finalizar-compra?erro=' + msg);
         }
 
-        if (req.body.forma_pagamento === 'pix' &&
-            process.env.MP_ENVIRONMENT === 'test') {
-            return res.redirect('/finalizar-compra?erro=' +
-                encodeURIComponent(
-                    'O PIX de teste do Mercado Pago usa um pedido fixo de R$ 50,00. Acesse a rota de teste como administrador para validar a integração.'
-                ));
-        }
-
         const { id_usuario, session_id } = getIdentificador(req);
         const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
 
@@ -835,34 +826,13 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
         );
 
         let checkoutUrl;
-        let pagamentoPix;
         try {
-            if (req.body.forma_pagamento === 'pix') {
-                const usuario = await usuariosModel.findByEmail(req.session.usuarioEmail);
-                if (!usuario) {
-                    throw new Error('Não foi possível localizar o cadastro do cliente.');
-                }
-                pagamentoPix = await criarPagamentoPix({
-                    idPedido: pedidoResult.id_pedido,
-                    valorTotal: valor_total,
-                    email: usuario.email,
-                    cpf: usuario.cpf
-                });
-                const dadosSalvos = await pedidosModel.atualizarDadosPix(
-                    pedidoResult.id_pedido,
-                    pagamentoPix
-                );
-                if (!dadosSalvos) {
-                    throw new Error('Não foi possível salvar os dados do PIX no pedido.');
-                }
-            } else {
-                checkoutUrl = await criarPreferencia({
-                    idPedido: pedidoResult.id_pedido,
-                    valorTotal: valor_total,
-                    formaPagamento: req.body.forma_pagamento,
-                    email: req.session.usuarioEmail
-                });
-            }
+            checkoutUrl = await criarPreferencia({
+                idPedido: pedidoResult.id_pedido,
+                valorTotal: valor_total,
+                formaPagamento: req.body.forma_pagamento,
+                email: req.session.usuarioEmail
+            });
         } catch (erro) {
             console.error('Erro ao criar checkout do Mercado Pago:', erro.message);
             return res.redirect('/finalizar-compra?erro=' +
@@ -876,10 +846,6 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
             await carrinhoModel.limparPorSession(session_id);
         }
 
-        if (pagamentoPix) {
-            return res.redirect('/pagamento/resultado?pedido=' +
-                encodeURIComponent(pedidoResult.id_pedido));
-        }
         return res.redirect(checkoutUrl);
     }
 );
