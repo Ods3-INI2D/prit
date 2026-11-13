@@ -9,9 +9,8 @@ var nodemailer = require('nodemailer');
 require('dotenv').config();
 const {
     criarPreferencia,
-    criarOrderPixTeste,
-    buscarOrderPix,
     buscarPagamento,
+    buscarPagamentosPorPedido,
     validarAssinaturaWebhook
 } = require('../services/mercadopago');
 
@@ -605,109 +604,102 @@ router.post('/carrinho/remover/:id', blockAdmin, async (req, res) => {
 });
 
 // ── Finalizar Compra ──────────────────────────────────────
+async function aplicarPagamentoMP(pagamentoMP) {
+    const idPedido = Number(pagamentoMP.external_reference);
+    if (!Number.isSafeInteger(idPedido) || idPedido <= 0) {
+        return { codigo: 400 };
+    }
+
+    const pedido = await pedidosModel.findById(idPedido);
+    const pagamentoLocal = await pedidosModel.findPagamentoByPedido(idPedido);
+    const valorPago = Math.round(Number(pagamentoMP.transaction_amount) * 100);
+    const valorPedido = pedido ? Math.round(Number(pedido.valor_total) * 100) : NaN;
+    const valorLocal = pagamentoLocal ? Math.round(Number(pagamentoLocal.valor) * 100) : NaN;
+
+    if (!pedido || !pagamentoLocal ||
+        pagamentoMP.currency_id !== 'BRL' ||
+        valorPago !== valorPedido ||
+        valorPago !== valorLocal) {
+        console.error('Mercado Pago: pagamento não confere com o pedido.', {
+            idPedido,
+            pedidoEncontrado: !!pedido,
+            pagamentoLocalEncontrado: !!pagamentoLocal,
+            moeda: pagamentoMP.currency_id,
+            valorPagoCentavos: valorPago,
+            valorPedidoCentavos: valorPedido,
+            valorLocalCentavos: valorLocal
+        });
+        return { codigo: 422 };
+    }
+
+    const statusPedido = pagamentoMP.status === 'approved'
+        ? 'aprovado'
+        : ['cancelled', 'refunded', 'charged_back', 'rejected'].includes(pagamentoMP.status)
+            ? 'cancelado'
+            : 'pendente';
+
+    if (pedido.status === 'aprovado' &&
+        (statusPedido === 'pendente' || pagamentoMP.status === 'rejected')) {
+        return { codigo: 200 };
+    }
+
+    const atualizado = await pedidosModel.atualizarStatusPagamento(
+        idPedido,
+        pagamentoMP.status,
+        statusPedido
+    );
+    return { codigo: atualizado ? 200 : 404 };
+}
+
 router.post('/webhooks/mercadopago', async (req, res) => {
-    if (req.body && req.body.type && req.body.type !== 'payment') {
-        return res.sendStatus(200);
+    console.log('MP webhook recebido:', {
+        query: req.query,
+        type: req.body && req.body.type,
+        temAssinatura: !!req.get('x-signature')
+    });
+
+    let idPagamento;
+
+    const ehIpn = !!req.query.topic && !req.query['data.id'];
+
+    if (ehIpn) {
+        if (req.query.topic !== 'payment') {
+            return res.sendStatus(200);
+        }
+        idPagamento = req.query.id;
+    } else {
+        if (req.body && req.body.type && req.body.type !== 'payment') {
+            return res.sendStatus(200);
+        }
+
+        const segredo = process.env.MP_WEBHOOK_SECRET;
+        if (!segredo) {
+            console.error('Webhook do Mercado Pago recebido sem MP_WEBHOOK_SECRET configurado.');
+            return res.sendStatus(503);
+        }
+
+        idPagamento = req.query['data.id'] ||
+            (req.body && req.body.data && req.body.data.id);
+        const requestId = req.get('x-request-id');
+        const assinatura = req.get('x-signature');
+        if (!validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo)) {
+            console.error('Webhook do Mercado Pago com assinatura inválida. ' +
+                'Confira se MP_WEBHOOK_SECRET é o segredo da aplicação (modo teste x produção).');
+            return res.sendStatus(401);
+        }
     }
 
-    const segredo = process.env.MP_WEBHOOK_SECRET;
-    if (!segredo) {
-        console.error('Webhook do Mercado Pago recebido sem MP_WEBHOOK_SECRET configurado.');
-        return res.sendStatus(503);
-    }
-
-    const idPagamento = req.query['data.id'] ||
-        (req.body && req.body.data && req.body.data.id);
-    const requestId = req.get('x-request-id');
-    const assinatura = req.get('x-signature');
-    if (!validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo)) {
-        return res.sendStatus(401);
+    if (!idPagamento || !/^\d+$/.test(String(idPagamento))) {
+        return res.sendStatus(400);
     }
 
     try {
         const pagamentoMP = await buscarPagamento(idPagamento);
-        const idPedido = Number(pagamentoMP.external_reference);
-        if (!Number.isSafeInteger(idPedido) || idPedido <= 0) {
-            return res.sendStatus(400);
-        }
-
-        const pedido = await pedidosModel.findById(idPedido);
-        const pagamentoLocal = await pedidosModel.findPagamentoByPedido(idPedido);
-        const valorPago = Math.round(Number(pagamentoMP.transaction_amount) * 100);
-        const valorPedido = pedido ? Math.round(Number(pedido.valor_total) * 100) : NaN;
-        if (!pedido || !pagamentoLocal ||
-            pagamentoMP.currency_id !== 'BRL' ||
-            valorPago !== valorPedido ||
-            valorPago !== Math.round(Number(pagamentoLocal.valor) * 100)) {
-            console.error('Webhook do Mercado Pago não corresponde a um pedido válido.');
-            return res.sendStatus(422);
-        }
-
-        const statusPedido = pagamentoMP.status === 'approved'
-            ? 'aprovado'
-            : ['cancelled', 'refunded', 'charged_back', 'rejected'].includes(pagamentoMP.status)
-                ? 'cancelado'
-                : 'pendente';
-        const atualizado = await pedidosModel.atualizarStatusPagamento(
-            idPedido,
-            pagamentoMP.status,
-            statusPedido
-        );
-        return res.sendStatus(atualizado ? 200 : 404);
+        const resultado = await aplicarPagamentoMP(pagamentoMP);
+        return res.sendStatus(resultado.codigo);
     } catch (erro) {
         console.error('Erro ao processar webhook do Mercado Pago:', erro.message);
         return res.sendStatus(500);
-    }
-});
-
-router.post('/admin/teste-pix-mercadopago', requireAdmin, async (req, res) => {
-    if (process.env.MP_ENVIRONMENT !== 'test') {
-        return res.sendStatus(404);
-    }
-
-    try {
-        const order = await criarOrderPixTeste();
-        return res.status(201).json(order);
-    } catch (erro) {
-        console.error('Erro ao criar pedido PIX de teste do Mercado Pago:', erro.message);
-        return res.status(502).json({
-            erro: 'Não foi possível criar o pedido PIX de teste.',
-            detalhe: erro.message
-        });
-    }
-});
-
-router.get('/admin/teste-pix-mercadopago', requireAdmin, (req, res) => {
-    if (process.env.MP_ENVIRONMENT !== 'test') {
-        return res.sendStatus(404);
-    }
-
-    return res.render('pages/teste-pix-mercadopago');
-});
-
-router.get('/admin/teste-pix-mercadopago/:id', requireAdmin, async (req, res) => {
-    if (process.env.MP_ENVIRONMENT !== 'test') {
-        return res.sendStatus(404);
-    }
-
-    try {
-        const order = await buscarOrderPix(req.params.id);
-        const pagamento = order.transactions &&
-            order.transactions.payments &&
-            order.transactions.payments[0];
-        return res.json({
-            id: order.id,
-            status: order.status || null,
-            status_detail: order.status_detail || null,
-            payment_status: pagamento ? pagamento.status : null,
-            payment_status_detail: pagamento ? pagamento.status_detail : null
-        });
-    } catch (erro) {
-        console.error('Erro ao consultar pedido PIX de teste do Mercado Pago:', erro.message);
-        return res.status(502).json({
-            erro: 'Não foi possível consultar o pedido PIX de teste.',
-            detalhe: erro.message
-        });
     }
 });
 
@@ -856,9 +848,23 @@ router.get('/pagamento/resultado', requireLogin, blockAdmin, async (req, res) =>
         return res.redirect('/meus-pedidos');
     }
 
-    const pedido = await pedidosModel.findById(idPedido);
+    let pedido = await pedidosModel.findById(idPedido);
     if (!pedido || Number(pedido.id_usuario) !== Number(req.session.idUsuario)) {
         return res.sendStatus(404);
+    }
+
+    if (pedido.status === 'pendente') {
+        try {
+            const pagamentos = await buscarPagamentosPorPedido(idPedido);
+            const escolhido = pagamentos.find(function(p) { return p.status === 'approved'; }) ||
+                pagamentos[0];
+            if (escolhido) {
+                await aplicarPagamentoMP(escolhido);
+                pedido = await pedidosModel.findById(idPedido) || pedido;
+            }
+        } catch (erro) {
+            console.error('Erro ao sincronizar o pagamento do pedido ' + idPedido + ':', erro.message);
+        }
     }
 
     const pagamento = await pedidosModel.findPagamentoByPedido(idPedido);
