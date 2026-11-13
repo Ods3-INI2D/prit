@@ -7,17 +7,21 @@ const TIPOS_PAGAMENTO = {
     boleto: 'ticket'
 };
 
-const TODOS_TIPOS_PAGAMENTO = [
+const TIPOS_FALLBACK = [
     'ticket',
     'bank_transfer',
     'atm',
     'credit_card',
     'debit_card',
     'prepaid_card',
-    'digital_wallet',
+    'digital_currency',
+    'digital_credit',
     'voucher_card',
     'crypto_transfer'
 ];
+const TIPOS_NAO_EXCLUIVEIS = ['account_money'];
+
+let cacheTipos = { valor: null, expiraEm: 0 };
 
 function usandoCredenciaisDeTeste() {
     return process.env.MP_ENVIRONMENT === 'test';
@@ -36,6 +40,26 @@ function getAppUrl() {
     return url.origin;
 }
 
+function appEhLocal(appUrl) {
+    const host = new URL(appUrl).hostname;
+    return host === 'localhost' || host === '127.0.0.1' || host === '::1';
+}
+
+function detalheDoErro(data) {
+    if (!data || typeof data !== 'object') return '';
+    const partes = [];
+    if (data.message) partes.push(data.message);
+    if (Array.isArray(data.errors)) {
+        data.errors.forEach(function(e) {
+            const texto = [e.code, e.message, [].concat(e.details || []).join(', ')]
+                .filter(Boolean)
+                .join(' - ');
+            if (texto) partes.push(texto);
+        });
+    }
+    return partes.length ? ': ' + partes.join(' | ') : '';
+}
+
 async function requestMercadoPago(path, options = {}) {
     const accessToken = process.env.MP_ACCESS_TOKEN;
     if (!accessToken) {
@@ -51,14 +75,50 @@ async function requestMercadoPago(path, options = {}) {
         }
     });
 
-    const data = await response.json();
+    const texto = await response.text();
+    let data = null;
+    try {
+        data = texto ? JSON.parse(texto) : null;
+    } catch (_) {
+        data = null;
+    }
+
     if (!response.ok) {
         throw new Error(
-            'Mercado Pago respondeu com HTTP ' + response.status +
-            (data.message ? ': ' + data.message : '')
+            'Mercado Pago respondeu com HTTP ' + response.status + detalheDoErro(data)
         );
     }
     return data;
+}
+
+async function listarTiposDePagamento() {
+    if (cacheTipos.valor && Date.now() < cacheTipos.expiraEm) {
+        return cacheTipos.valor;
+    }
+
+    const tipos = new Set(TIPOS_FALLBACK);
+    try {
+        const metodos = await requestMercadoPago('/v1/payment_methods');
+        if (Array.isArray(metodos)) {
+            metodos.forEach(function(m) {
+                if (m && m.payment_type_id) tipos.add(m.payment_type_id);
+            });
+        }
+        cacheTipos = { valor: Array.from(tipos), expiraEm: Date.now() + 60 * 60 * 1000 };
+    } catch (erro) {
+        console.error('Não foi possível listar os tipos de pagamento do Mercado Pago:', erro.message);
+        return Array.from(tipos);
+    }
+    return cacheTipos.valor;
+}
+
+async function tiposParaExcluir(tipoPermitido) {
+    const todos = await listarTiposDePagamento();
+    return todos
+        .filter(function(tipo) {
+            return tipo !== tipoPermitido && !TIPOS_NAO_EXCLUIVEIS.includes(tipo);
+        })
+        .map(function(id) { return { id: id }; });
 }
 
 async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email }) {
@@ -76,31 +136,39 @@ async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email })
     const urlResultado = new URL('/pagamento/resultado', appUrl);
     urlResultado.searchParams.set('pedido', String(idPedido));
 
+    const corpo = {
+        external_reference: String(idPedido),
+        items: [{
+            id: String(idPedido),
+            title: 'Pedido #' + idPedido,
+            quantity: 1,
+            currency_id: 'BRL',
+            unit_price: Number(valor.toFixed(2))
+        }],
+        payer: email ? { email } : undefined,
+        payment_methods: {
+            excluded_payment_types: await tiposParaExcluir(tipoPermitido)
+        },
+        back_urls: {
+            success: urlResultado.toString(),
+            failure: urlResultado.toString(),
+            pending: urlResultado.toString()
+        },
+        auto_return: 'approved'
+    };
+
+    if (appEhLocal(appUrl)) {
+        console.warn(
+            'APP_URL aponta para localhost: o webhook do Mercado Pago não será chamado. ' +
+            'O status do pedido será atualizado ao voltar para /pagamento/resultado.'
+        );
+    } else {
+        corpo.notification_url = appUrl + '/webhooks/mercadopago?source_news=webhooks';
+    }
+
     const preference = await requestMercadoPago('/checkout/preferences', {
         method: 'POST',
-        body: JSON.stringify({
-            external_reference: String(idPedido),
-            items: [{
-                id: String(idPedido),
-                title: 'Pedido #' + idPedido,
-                quantity: 1,
-                currency_id: 'BRL',
-                unit_price: Number(valor.toFixed(2))
-            }],
-            payer: email ? { email } : undefined,
-            payment_methods: {
-                excluded_payment_types: TODOS_TIPOS_PAGAMENTO
-                    .filter(tipo => tipo !== tipoPermitido)
-                    .map(id => ({ id }))
-            },
-            back_urls: {
-                success: urlResultado.toString(),
-                failure: urlResultado.toString(),
-                pending: urlResultado.toString()
-            },
-            auto_return: 'approved',
-            notification_url: appUrl + '/webhooks/mercadopago'
-        })
+        body: JSON.stringify(corpo)
     });
 
     const checkoutDeTeste = usandoCredenciaisDeTeste();
@@ -117,74 +185,18 @@ async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email })
     return checkoutUrl;
 }
 
-async function criarOrderPixTeste() {
-    if (!usandoCredenciaisDeTeste()) {
-        throw new Error('Configure MP_ENVIRONMENT=test para criar um pedido PIX de teste.');
-    }
-
-    const valorTeste = '50.00';
-    const emailPagador = process.env.MP_TEST_PAYER_EMAIL || 'test_payer@example.com';
-    const referenciaExterna = 'pix-test-' + crypto.randomUUID();
-    const order = await requestMercadoPago('/v1/orders', {
-        method: 'POST',
-        headers: {
-            'X-Idempotency-Key': crypto.randomUUID()
-        },
-        body: JSON.stringify({
-            type: 'online',
-            processing_mode: 'automatic',
-            external_reference: referenciaExterna,
-            total_amount: valorTeste,
-            payer: {
-                email: emailPagador,
-                first_name: 'APRO'
-            },
-            transactions: {
-                payments: [{
-                    amount: valorTeste,
-                    payment_method: {
-                        id: 'pix',
-                        type: 'bank_transfer'
-                    }
-                }]
-            }
-        })
-    });
-
-    const pagamento = order.transactions &&
-        order.transactions.payments &&
-        order.transactions.payments[0];
-    const metodoPagamento = pagamento && pagamento.payment_method;
-    if (!order.id || !pagamento || !metodoPagamento) {
-        throw new Error('Mercado Pago não retornou os dados do pedido PIX de teste.');
-    }
-
-    return {
-        id: order.id,
-        status: order.status || null,
-        statusDetail: order.status_detail || null,
-        paymentId: pagamento.id || null,
-        paymentStatus: pagamento.status || null,
-        paymentStatusDetail: pagamento.status_detail || null,
-        amount: pagamento.amount || valorTeste,
-        qrCode: metodoPagamento.qr_code || null,
-        qrCodeBase64: metodoPagamento.qr_code_base64 || null,
-        ticketUrl: metodoPagamento.ticket_url || null
-    };
-}
-
-async function buscarOrderPix(idOrder) {
-    if (!usandoCredenciaisDeTeste()) {
-        throw new Error('Configure MP_ENVIRONMENT=test para consultar um pedido PIX de teste.');
-    }
-    if (!/^[a-z\d]+$/i.test(String(idOrder))) {
-        throw new Error('Identificador de pedido PIX inválido.');
-    }
-    return requestMercadoPago('/v1/orders/' + encodeURIComponent(idOrder));
-}
-
 async function buscarPagamento(idPagamento) {
     return requestMercadoPago('/v1/payments/' + encodeURIComponent(idPagamento));
+}
+
+async function buscarPagamentosPorPedido(idPedido) {
+    const params = new URLSearchParams({
+        external_reference: String(idPedido),
+        sort: 'date_created',
+        criteria: 'desc'
+    });
+    const data = await requestMercadoPago('/v1/payments/search?' + params.toString());
+    return data && Array.isArray(data.results) ? data.results : [];
 }
 
 function validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo) {
@@ -216,8 +228,7 @@ function validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo) {
 
 module.exports = {
     criarPreferencia,
-    criarOrderPixTeste,
-    buscarOrderPix,
     buscarPagamento,
+    buscarPagamentosPorPedido,
     validarAssinaturaWebhook
 };
