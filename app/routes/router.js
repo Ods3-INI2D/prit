@@ -11,6 +11,7 @@ const {
     criarPreferencia,
     buscarPagamento,
     buscarPagamentosPorPedido,
+    prazoPagamentoHoras,
     validarAssinaturaWebhook
 } = require('../services/mercadopago');
 
@@ -464,9 +465,19 @@ router.post('/usuario/atualizar-foto', requireLogin, (req, res) => {
 // ── Meus Pedidos 
 router.get('/meus-pedidos', requireLogin, blockAdmin, async (req, res) => {
     try {
-        const pedidos = await pedidosModel.findByUsuarioComDetalhes(req.session.idUsuario);
+        const porPagina = 10;
+        const total = await pedidosModel.contarPorUsuario(req.session.idUsuario);
+        const totalPaginas = Math.max(1, Math.ceil(total / porPagina));
+        const pagina = Math.min(Math.max(parseInt(req.query.pagina, 10) || 1, 1), totalPaginas);
+        const pedidos = await pedidosModel.findByUsuarioComDetalhes(req.session.idUsuario, {
+            limite:       porPagina,
+            deslocamento: (pagina - 1) * porPagina
+        });
         res.render('pages/meus-pedidos', {
             pedidos,
+            total,
+            pagina,
+            totalPaginas,
             usuario:       res.locals.usuario,
             mensagemErro:  null,
             query:         req.query
@@ -1240,5 +1251,40 @@ router.post('/admin/excluir-banner/:id', requireAdmin, async (req, res) => {
         res.redirect('/admin?erro=excluir_banner&tab=banners');
     }
 });
+
+let limpezaEmAndamento = false;
+
+async function cancelarPedidosVencidos() {
+    if (limpezaEmAndamento) return;
+    limpezaEmAndamento = true;
+    try {
+        const vencidos = await pedidosModel.findPendentesVencidos(
+            prazoPagamentoHoras('boleto'),
+            prazoPagamentoHoras('pix')
+        );
+        for (const idPedido of vencidos) {
+            try {
+                const pagamentos = await buscarPagamentosPorPedido(idPedido);
+                const aprovado = pagamentos.find(p => p.status === 'approved');
+                if (aprovado) {
+                    await aplicarPagamentoMP(aprovado);
+                    continue;
+                }
+                const emAndamento = pagamentos.some(p => ['in_process', 'authorized'].includes(p.status));
+                if (emAndamento) continue;
+                await pedidosModel.cancelarPedidoPendente(idPedido);
+            } catch (erro) {
+                console.error('Falha ao verificar o pedido vencido ' + idPedido + ':', erro.message);
+            }
+        }
+    } catch (erro) {
+        console.error('Falha ao cancelar pedidos vencidos:', erro.message);
+    } finally {
+        limpezaEmAndamento = false;
+    }
+}
+
+setTimeout(cancelarPedidosVencidos, 20000).unref();
+setInterval(cancelarPedidosVencidos, 30 * 60 * 1000).unref();
 
 module.exports = router;

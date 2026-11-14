@@ -50,33 +50,29 @@
             </section>
 
             <% if (forma_pagamento_label === 'PIX' && pix_qr_code && status_pedido === 'pendente') { %>
-                <section aria-labelledby="titulo-pagamento-pix"
-                         style="background-color:#2a2a2a;border-radius:0.625rem;padding:1.25rem;margin-bottom:1.75rem;">
-                    <h2 id="titulo-pagamento-pix"
-                        style="font-size:1rem;font-weight:600;color:#4da6ff;margin-bottom:0.75rem;">
+                <section class="pagamento-pix" aria-labelledby="titulo-pagamento-pix">
+                    <h2 id="titulo-pagamento-pix" class="titulo-pix">
                         Pague com PIX
                     </h2>
-                    <p style="font-size:0.9rem;color:#d9d9d9;margin-bottom:1rem;">
+                    <p class="descricao-pix">
                         Escaneie o QR Code no aplicativo do seu banco ou copie o código PIX.
                     </p>
                     <% if (pix_qr_code_base64) { %>
                         <img src="data:image/png;base64,<%= pix_qr_code_base64 %>"
                              alt="QR Code PIX do pedido"
-                             style="display:block;width: min(100%, 16rem);height:auto;margin:0 auto 1rem;background:#fff;padding:0.5rem;border-radius:0.5rem;">
+                             class="qr-code-pix">
                     <% } %>
-                    <label for="codigo-pix"
-                           style="display:block;font-size:0.875rem;color:#d9d9d9;margin-bottom:0.5rem;">
+                    <label for="codigo-pix" class="label-pix">
                         PIX copia e cola
                     </label>
                     <textarea id="codigo-pix" readonly rows="4"
-                              style="display:block;width:100%;box-sizing:border-box;margin-bottom:0.75rem;"><%= pix_qr_code %></textarea>
-                    <button type="button" id="copiar-pix"
-                            style="padding:0.7rem 1rem;border:0;border-radius:0.4rem;background:#1683ff;color:#fff;cursor:pointer;">
+                              class="codigo-pix"><%= pix_qr_code %></textarea>
+                    <button type="button" id="copiar-pix" class="btn-copiar-pix">
                         Copiar código PIX
                     </button>
-                    <output id="mensagem-copia-pix" aria-live="polite"></output>
+                    <output id="mensagem-copia-pix" class="mensagem-copia-pix" aria-live="polite"></output>
                     <% if (pix_ticket_url) { %>
-                        <p style="margin-top:0.75rem;">
+                        <p class="link-pagamento-pix">
                             <a href="<%= pix_ticket_url %>" target="_blank" rel="noopener noreferrer">
                                 Abrir pagamento PIX no Mercado Pago
                             </a>
@@ -85,26 +81,22 @@
                 </section>
             <% } %>
 
-            <section aria-labelledby="titulo-resumo-pedido">
-                <h2 id="titulo-resumo-pedido"
-                    style="font-size:1.1rem;font-weight:600;color:#4da6ff;margin-bottom:1rem;text-align:center;">
+            <section class="resumo-compra" aria-labelledby="titulo-resumo-pedido">
+                <h2 id="titulo-resumo-pedido" class="titulo-resumo-compra">
                     Resumo da Compra
                 </h2>
 
-                <table style="width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:0.9rem;">
-                    <caption style="display:none;">Detalhes do pedido confirmado</caption>
+                <table class="tabela-resumo-compra">
+                    <caption class="visually-hidden">Detalhes do pedido confirmado</caption>
                     <thead>
-                        <tr style="border-bottom:0.0625rem solid #404040;">
-                            <th scope="col"
-                                style="text-align:left;padding:0.5rem 0;color:#888;font-weight:500;">
+                        <tr>
+                            <th scope="col" class="coluna-produto">
                                 Produto
                             </th>
-                            <th scope="col"
-                                style="text-align:center;padding:0.5rem 0;color:#888;font-weight:500;">
+                            <th scope="col" class="coluna-quantidade">
                                 Qtd
                             </th>
-                            <th scope="col"
-                                style="text-align:right;padding:0.5rem 0;color:#888;font-weight:500;">
+                            <th scope="col" class="coluna-valor">
                                 Valor
                             </th>
                         </tr>
@@ -112,17 +104,17 @@
                     <tbody>
                         <% itens.forEach(function(item) {
                             var precoUnit = parseFloat(item.preco_unit) || 0;
-                            var qtd       = parseInt(item.quantidade)   || 1;
+                            var qtd       = parseInt(item.qtd || item.quantidade, 10) || 1;
                             var subtotal  = precoUnit * qtd;
                         %>
-                            <tr style="border-bottom:0.0625rem solid rgba(255,255,255,0.06);">
-                                <td style="padding:0.625rem 0;color:white;">
+                            <tr>
+                                <td class="celula-produto">
                                     <%= item.nome %>
                                 </td>
-                                <td style="text-align:center;padding:0.625rem 0;color:#d9d9d9;">
+                                <td class="celula-quantidade">
                                     <%= qtd %>
                                 </td>
-                                <td style="text-align:right;padding:0.625rem 0;color:#4da6ff;font-weight:600;">
+                                <td class="celula-valor">
                                     R$ <%= subtotal.toFixed(2) %>
                                 </td>
                             </tr>
@@ -130,14 +122,10 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="2"
-                                style="padding:0.75rem 0;font-weight:700;color:white;
-                                       border-top:0.0625rem solid #404040;">
+                            <td colspan="2" class="celula-total-label">
                                 Total
                             </td>
-                            <td style="text-align:right;padding:0.75rem 0;font-weight:700;
-                                       color:#4da6ff;font-size:1.05rem;
-                                       border-top:0.0625rem solid #404040;">
+                            <td class="celula-total-valor">
                                 R$ <%= parseFloat(valor_total).toFixed(2) %>
                             </td>
                         </tr>
@@ -145,27 +133,24 @@
                 </table>
             </section>
 
-            <section aria-labelledby="titulo-info-entrega"
-                     style="background-color:#2a2a2a;border-radius:0.625rem;
-                            padding:1.25rem;margin-bottom:1.75rem;text-align:left;">
-                <h2 id="titulo-info-entrega"
-                    style="font-size:1rem;font-weight:600;color:#4da6ff;margin-bottom:0.75rem;">
+            <section class="info-entrega-confirmacao" aria-labelledby="titulo-info-entrega">
+                <h2 id="titulo-info-entrega" class="titulo-info-entrega">
                     Informações de Entrega
                 </h2>
 
                 <dl>
-                    <dt style="display:none;">Endereço</dt>
-                    <dd style="font-size:0.875rem;color:#d9d9d9;margin-bottom:0.4rem;">
+                    <dt class="visually-hidden">Endereço</dt>
+                    <dd class="detalhe-entrega">
                         📍 <%= endereco %>
                     </dd>
 
-                    <dt style="display:none;">Forma de Pagamento</dt>
-                    <dd style="font-size:0.875rem;color:#d9d9d9;margin-bottom:0.4rem;">
+                    <dt class="visually-hidden">Forma de Pagamento</dt>
+                    <dd class="detalhe-entrega">
                         💳 <%= forma_pagamento_label %>
                     </dd>
 
-                    <dt style="display:none;">Prazo estimado</dt>
-                    <dd style="font-size:0.8125rem;color:#888;">
+                    <dt class="visually-hidden">Prazo estimado</dt>
+                    <dd class="prazo-entrega">
                         🚚 Prazo estimado: 5 a 10 dias úteis após confirmação do pagamento
                     </dd>
                 </dl>
@@ -173,9 +158,7 @@
 
             <nav class="acoes-confirmacao" aria-label="Ações pós-compra">
                 <a href="/home" class="btn-voltar-home">Continuar Comprando</a>
-                <a href="/usuario"
-                   class="btn-voltar-home"
-                   style="background-color:#2a2a2a;border:0.125rem solid #4da6ff;color:#4da6ff;">
+                <a href="/usuario" class="btn-voltar-home btn-minha-conta">
                     Minha Conta
                 </a>
             </nav>
