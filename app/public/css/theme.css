@@ -635,7 +635,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .total-resumo {
-    color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 .checkbox-label {
@@ -836,6 +836,10 @@ output a:hover {
 
 [data-theme="light"] .btn-editar {
     color: #ffffff !important;
+}
+
+[data-theme="light"] .checkbox-label-admin {
+    color: var(--text-secondary);
 }
 
 [data-theme="light"] .mensagem-aviso {

@@ -11,13 +11,13 @@
 
 .resumo-carrinho dl.linhas-resumo dt {
     font-size: 1.25rem;
-    color: #d9d9d9;
+    color: var(--text-tertiary);
     font-weight: 500;
 }
 
 .resumo-carrinho dl.linhas-resumo dd {
     font-size: 1.25rem;
-    color: #d9d9d9;
+    color: var(--text-tertiary);
     text-align: right;
     margin-left: 0;
 }
@@ -28,7 +28,7 @@
     justify-content: space-between;
     align-items: center;
     font-size: 0.9rem;
-    color: #d9d9d9;
+    color: var(--text-tertiary);
     margin-bottom: 0.5rem;
 }
 
@@ -43,7 +43,7 @@
 
 /* aside do carrinho — garante mesmos estilos do .resumo-carrinho */
 .carrinho-layout > aside.resumo-carrinho {
-    background-color: #2a2a2a;
+    background-color: var(--bg-tertiary);
     padding: 2.5rem;
     border-radius: 1.09375rem;
     box-shadow: 0 0.1875rem 0.875rem rgba(0, 0, 0, 0.4);
@@ -58,8 +58,8 @@ a.btn-finalizar {
     text-decoration: none;
     width: 100%;
     padding: 1.5rem 0;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--btn-primary-bg);
+    color: var(--text-primary);
     border: none;
     border-radius: 0.78125rem;
     font-size: 1.375rem;
@@ -69,7 +69,7 @@ a.btn-finalizar {
 }
 
 a.btn-finalizar:hover {
-    background-color: #0056b3;
+    background-color: var(--btn-primary-hover);
     transform: translateY(-0.125rem);
 }
 

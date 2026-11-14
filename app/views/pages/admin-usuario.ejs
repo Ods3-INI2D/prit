@@ -99,6 +99,28 @@
 
                         var statusClasse = 'status-' + (pedido.status || 'pendente');
 
+                        var statusPagMapa = {
+                            approved:     ['Aprovado', 'aprovado'],
+                            aprovado:     ['Aprovado', 'aprovado'],
+                            authorized:   ['Autorizado', 'pendente'],
+                            pending:      ['Pendente', 'pendente'],
+                            pendente:     ['Pendente', 'pendente'],
+                            in_process:   ['Em análise', 'pendente'],
+                            in_mediation: ['Em mediação', 'pendente'],
+                            rejected:     ['Recusado', 'cancelado'],
+                            cancelled:    ['Cancelado', 'cancelado'],
+                            cancelado:    ['Cancelado', 'cancelado'],
+                            refunded:     ['Reembolsado', 'cancelado'],
+                            charged_back: ['Estornado', 'cancelado']
+                        };
+                        var statusPagBruto = pedido.pagamento && pedido.pagamento.status
+                            ? String(pedido.pagamento.status)
+                            : null;
+                        var statusPag = statusPagBruto
+                            ? (statusPagMapa[statusPagBruto.toLowerCase()] ||
+                               [statusPagBruto.charAt(0).toUpperCase() + statusPagBruto.slice(1), 'pendente'])
+                            : null;
+
                         var dataPedido = pedido.criado_em
                             ? new Date(pedido.criado_em).toLocaleDateString('pt-BR', {
                                 day: '2-digit', month: 'long', year: 'numeric'
@@ -203,8 +225,8 @@
                                     <% if (pedido.pagamento && pedido.pagamento.status) { %>
                                         <dt>Status do Pagamento</dt>
                                         <dd>
-                                            <output class="status-pagamento status-pag-<%= pedido.pagamento.status %>">
-                                                <%= pedido.pagamento.status.charAt(0).toUpperCase() + pedido.pagamento.status.slice(1) %>
+                                            <output class="status-pagamento status-pag-<%= statusPag[1] %>">
+                                                <%= statusPag[0] %>
                                             </output>
                                         </dd>
                                     <% } %>
