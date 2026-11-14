@@ -21,6 +21,22 @@ const TIPOS_FALLBACK = [
 ];
 const TIPOS_NAO_EXCLUIVEIS = ['account_money'];
 
+const PRAZO_PAGAMENTO_HORAS = {
+    cartao_credito: 24,
+    cartao_debito: 24,
+    pix: 24,
+    boleto: 72
+};
+
+function prazoPagamentoHoras(formaPagamento) {
+    return PRAZO_PAGAMENTO_HORAS[formaPagamento] || 24;
+}
+
+function dataComFusoBrasil(data) {
+    const local = new Date(data.getTime() - 3 * 60 * 60 * 1000);
+    return local.toISOString().replace('Z', '-03:00');
+}
+
 let cacheTipos = { valor: null, expiraEm: 0 };
 
 function usandoCredenciaisDeTeste() {
@@ -136,6 +152,11 @@ async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email })
     const urlResultado = new URL('/pagamento/resultado', appUrl);
     urlResultado.searchParams.set('pedido', String(idPedido));
 
+    const inicioValidade = new Date();
+    const fimValidade = new Date(
+        inicioValidade.getTime() + prazoPagamentoHoras(formaPagamento) * 60 * 60 * 1000
+    );
+
     const corpo = {
         external_reference: String(idPedido),
         items: [{
@@ -145,7 +166,7 @@ async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email })
             currency_id: 'BRL',
             unit_price: Number(valor.toFixed(2))
         }],
-        payer: email ? { email } : undefined,
+        payer: !usandoCredenciaisDeTeste() && email ? { email } : undefined,
         payment_methods: {
             excluded_payment_types: await tiposParaExcluir(tipoPermitido)
         },
@@ -154,7 +175,10 @@ async function criarPreferencia({ idPedido, valorTotal, formaPagamento, email })
             failure: urlResultado.toString(),
             pending: urlResultado.toString()
         },
-        auto_return: 'approved'
+        auto_return: 'approved',
+        expires: true,
+        expiration_date_from: dataComFusoBrasil(inicioValidade),
+        expiration_date_to: dataComFusoBrasil(fimValidade)
     };
 
     if (appEhLocal(appUrl)) {
@@ -228,6 +252,7 @@ function validarAssinaturaWebhook(idPagamento, requestId, assinatura, segredo) {
 
 module.exports = {
     criarPreferencia,
+    prazoPagamentoHoras,
     buscarPagamento,
     buscarPagamentosPorPedido,
     validarAssinaturaWebhook

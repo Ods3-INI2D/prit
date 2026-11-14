@@ -468,7 +468,8 @@ router.get('/meus-pedidos', requireLogin, blockAdmin, async (req, res) => {
         res.render('pages/meus-pedidos', {
             pedidos,
             usuario:       res.locals.usuario,
-            mensagemErro:  null
+            mensagemErro:  null,
+            query:         req.query
         });
     } catch (err) {
         console.error('Erro ao carregar meus pedidos:', err);
@@ -489,6 +490,10 @@ router.post('/meus-pedidos/:id/comprar-novamente', requireLogin, blockAdmin, asy
 
         if (!pedido || pedido.id_usuario !== idUsuario) {
             return res.redirect('/meus-pedidos?erro=pedido_nao_encontrado');
+        }
+
+        if (['aprovado', 'enviado', 'entregue'].indexOf(pedido.status) === -1) {
+            return res.redirect('/meus-pedidos?erro=pedido_nao_pago');
         }
 
         if (!pedido.itens || pedido.itens.length === 0) {

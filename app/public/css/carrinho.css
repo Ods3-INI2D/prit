@@ -11,9 +11,9 @@
 }
 
 body {
-    background-color: #1f1f1f;
+    background-color: var(--bg-primary);
     font-family: 'Inter', sans-serif;
-    color: white;
+    color: var(--text-primary);
     width: 100%;
     min-height: 100vh;
     margin: 0;
@@ -35,7 +35,7 @@ main {
     font-size: 1.875rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: white;
+    color: var(--text-primary);
     text-align: center;
     word-wrap: break-word;
 }
@@ -48,7 +48,7 @@ main {
 
 .mensagem-vazio {
     font-size: 1.4375rem;
-    color: #888;
+    color: var(--text-muted);
     margin-bottom: 2.8125rem;
     display: block;
 }
@@ -56,8 +56,8 @@ main {
 .btn-continuar {
     display: inline-block;
     padding: 1.25rem 2.5rem;
-    background-color: #163069;
-    color: white;
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
     text-decoration: none;
     border-radius: 0.9375rem;
     font-size: 1.25rem;
@@ -66,7 +66,7 @@ main {
 }
 
 .btn-continuar:hover {
-    background-color: #0d1f42;
+    background-color: var(--btn-secondary-hover);
     transform: translateY(-0.125rem);
 }
 
@@ -89,7 +89,7 @@ main {
 }
 
 .item-carrinho {
-    background-color: #2a2a2a;
+    background-color: var(--bg-secondary);
     border-radius: 1.09375rem;
     padding: 2.5rem;
     margin-bottom: 1.875rem;
@@ -115,12 +115,12 @@ main {
     font-size: 1.53125rem;
     font-weight: 600;
     margin-bottom: 0.78125rem;
-    color: white;
+    color: var(--text-primary);
 }
 
 .categoria-produto {
     font-size: 1.09375rem;
-    color: #888;
+    color: var(--text-muted);
     margin-bottom: 1.09375rem;
     display: block;
 }
@@ -137,7 +137,7 @@ main {
 .preco-desconto {
     font-size: 1.3125rem;
     font-weight: 600;
-    color: #4da6ff;
+    color: var(--accent-primary);
     display: flex;
     align-items: center;
     gap: 0.375rem;
@@ -145,7 +145,7 @@ main {
 
 .preco-original {
     font-size: 1.1875rem;
-    color: #888;
+    color: var(--text-muted);
     text-decoration: line-through;
     margin-bottom: 0;
     display: block;
@@ -162,8 +162,8 @@ main {
 .btn-quantidade {
     width: 2.75rem;
     height: 2.75rem;
-    background-color: #163069;
-    color: white;
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
     border: none;
     border-radius: 0.5rem;
     font-size: 1.5rem;
@@ -179,7 +179,7 @@ main {
 }
 
 .btn-quantidade:hover {
-    background-color: #0d1f42;
+    background-color: var(--btn-secondary-hover);
 }
 
 .btn-quantidade:active {
@@ -203,7 +203,7 @@ main {
 .subtotal-item {
     font-size: 1.125rem;
     font-weight: 600;
-    color: #4da6ff;
+    color: var(--accent-primary);
     margin-top: 0.625rem;
     display: block;
 }
@@ -218,8 +218,8 @@ main {
 .btn-avaliar {
     display: inline-block;
     padding: 1.09375rem 1.25rem;
-    background-color: #163069;
-    color: white;
+    background-color: var(--btn-secondary-bg);
+    color: var(--text-primary);
     text-decoration: none;
     border-radius: 0.78125rem;
     font-size: 1.09375rem;
@@ -229,12 +229,12 @@ main {
 }
 
 .btn-avaliar:hover {
-    background-color: #0d1f42;
+    background-color: var(--btn-secondary-hover);
 }
 
 .btn-remover {
-    background-color: #d93025;
-    color: white;
+    background-color: var(--error-border);
+    color: var(--text-footer);
     border: none;
     padding: 1.09375rem 1.25rem;
     border-radius: 0.78125rem;
@@ -277,7 +277,7 @@ main {
     gap: 0.5rem;
     font-size: 1.25rem;
     margin-bottom: 0.25rem;
-    color: #d9d9d9;
+    color: var(--text-tertiary);
 }
 
 .linha-resumo:last-child {
@@ -302,7 +302,7 @@ main {
     margin-top: 1.5rem;
     margin-bottom: 2.5rem;
     padding-top: 1.5rem;
-    border-top: 0.0625rem solid #555;
+    border-top: 0.0625rem solid var(--border-color);
     flex-wrap: wrap;
     width: 100%;
 }
@@ -322,8 +322,8 @@ main {
 .btn-finalizar {
     width: 100%;
     padding: 1.5rem 0;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--btn-primary-bg);
+    color: var(--text-primary);
     border: none;
     border-radius: 0.78125rem;
     font-size: 1.375rem;
@@ -335,7 +335,7 @@ main {
 }
 
 .btn-finalizar:hover {
-    background-color: #0056b3;
+    background-color: var(--btn-primary-hover);
     transform: translateY(-0.125rem);
 }
 

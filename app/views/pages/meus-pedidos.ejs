@@ -41,7 +41,8 @@
                 var errosQuery = {
                     pedido_nao_encontrado:  'Pedido não encontrado ou sem permissão de acesso.',
                     pedido_sem_itens:       'Este pedido não possui itens que possam ser adicionados ao carrinho.',
-                    erro_comprar_novamente: 'Ocorreu um erro ao tentar repetir o pedido. Tente novamente.'
+                    erro_comprar_novamente: 'Ocorreu um erro ao tentar repetir o pedido. Tente novamente.',
+                    pedido_nao_pago:        'Só é possível comprar novamente pedidos com pagamento aprovado.'
                 };
                 var erroQuery = typeof query !== 'undefined' && query && query.erro
                     ? errosQuery[query.erro] || null
@@ -97,6 +98,28 @@
                         }[pedido.status] || pedido.status;
 
                         var statusClasse = 'status-' + (pedido.status || 'pendente');
+
+                        var statusPagMapa = {
+                            approved:     ['Aprovado', 'aprovado'],
+                            aprovado:     ['Aprovado', 'aprovado'],
+                            authorized:   ['Autorizado', 'pendente'],
+                            pending:      ['Pendente', 'pendente'],
+                            pendente:     ['Pendente', 'pendente'],
+                            in_process:   ['Em análise', 'pendente'],
+                            in_mediation: ['Em mediação', 'pendente'],
+                            rejected:     ['Recusado', 'cancelado'],
+                            cancelled:    ['Cancelado', 'cancelado'],
+                            cancelado:    ['Cancelado', 'cancelado'],
+                            refunded:     ['Reembolsado', 'cancelado'],
+                            charged_back: ['Estornado', 'cancelado']
+                        };
+                        var statusPagBruto = pedido.pagamento && pedido.pagamento.status
+                            ? String(pedido.pagamento.status)
+                            : null;
+                        var statusPag = statusPagBruto
+                            ? (statusPagMapa[statusPagBruto.toLowerCase()] ||
+                               [statusPagBruto.charAt(0).toUpperCase() + statusPagBruto.slice(1), 'pendente'])
+                            : null;
 
                         var dataPedido = pedido.criado_em
                             ? new Date(pedido.criado_em).toLocaleDateString('pt-BR', {
@@ -299,6 +322,7 @@
                                 (não indexável por bots, não repetível por refresh acidental)
                                 e semanticamente correta (é uma ação que altera estado).
                             %>
+                            <% if (['aprovado', 'enviado', 'entregue'].indexOf(pedido.status) !== -1) { %>
                             <nav class="pedido-acoes"
                                  aria-label="Ações do pedido #<%= pedido.id_pedido %>">
 
@@ -317,6 +341,7 @@
                                 </form>
 
                             </nav>
+                            <% } %>
                         </footer>
 
                         <%# Bloco de pagamento (quando existir) %>
@@ -352,11 +377,8 @@
                                     <% if (pedido.pagamento.status) { %>
                                         <dt>Status do pagamento</dt>
                                         <dd>
-                                            <output class="status-pagamento status-pag-<%= pedido.pagamento.status %>">
-                                                <%=
-                                                    pedido.pagamento.status.charAt(0).toUpperCase() +
-                                                    pedido.pagamento.status.slice(1)
-                                                %>
+                                            <output class="status-pagamento status-pag-<%= statusPag[1] %>">
+                                                <%= statusPag[0] %>
                                             </output>
                                         </dd>
                                     <% } %>
