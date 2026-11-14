@@ -82,8 +82,9 @@
             <%# ── Lista de pedidos ────────────────────────────────────── %>
             <% } else { %>
 
+                <% var totalPedidos = typeof total !== 'undefined' ? total : pedidos.length; %>
                 <output class="contador-pedidos" role="status" aria-live="polite">
-                    <%= pedidos.length %> pedido<%= pedidos.length !== 1 ? 's' : '' %> encontrado<%= pedidos.length !== 1 ? 's' : '' %>
+                    <%= totalPedidos %> pedido<%= totalPedidos !== 1 ? 's' : '' %> encontrado<%= totalPedidos !== 1 ? 's' : '' %>
                 </output>
 
                 <ol class="lista-pedidos" aria-label="Lista de pedidos realizados">
@@ -389,6 +390,18 @@
                     </li>
                     <% }); %>
                 </ol>
+
+                <% if (typeof totalPaginas !== 'undefined' && totalPaginas > 1) { %>
+                    <nav class="paginacao" aria-label="Paginação dos pedidos">
+                        <% if (pagina > 1) { %>
+                            <a href="/meus-pedidos?pagina=<%= pagina - 1 %>" class="btn-acao-secundaria" rel="prev">Anterior</a>
+                        <% } %>
+                        <output class="paginacao-atual" role="status">Página <%= pagina %> de <%= totalPaginas %></output>
+                        <% if (pagina < totalPaginas) { %>
+                            <a href="/meus-pedidos?pagina=<%= pagina + 1 %>" class="btn-acao-secundaria" rel="next">Próxima</a>
+                        <% } %>
+                    </nav>
+                <% } %>
 
             <% } %>
 
