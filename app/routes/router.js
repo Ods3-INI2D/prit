@@ -24,6 +24,7 @@ const { pedidosModel   } = require('../models/pedidosmodel');
 
 // validacoes
 var { valCPF, valDDD, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
+const { compareSenha } = require('../helpers/auth');
 
 // algoritmo de personalizacao
 const { ordenarPorRelevancia } = require('../helpers/personalizacao');
@@ -315,7 +316,18 @@ router.post('/login',
         }
 
         const usuario = await usuariosModel.findByEmail(req.body.email);
-        if (usuario && req.body.senha === usuario.senhan) {
+        let senhaConfere = false;
+        if (usuario) {
+            const senhaSalva = String(usuario.senhan || '');
+            try {
+                senhaConfere = /^\$2[aby]\$\d{2}\$/.test(senhaSalva)
+                    ? await compareSenha(req.body.senha, senhaSalva)
+                    : req.body.senha === senhaSalva;
+            } catch (erro) {
+                senhaConfere = false;
+            }
+        }
+        if (usuario && senhaConfere) {
             await carrinhoModel.migrarParaUsuario(req.session.sessionId, usuario.id_usuario);
             req.session.usuarioEmail = usuario.email;
             req.session.idUsuario    = usuario.id_usuario;
