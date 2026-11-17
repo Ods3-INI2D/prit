@@ -533,6 +533,44 @@ router.post('/meus-pedidos/:id/comprar-novamente', requireLogin, blockAdmin, asy
     }
 });
 
+router.post('/meus-pedidos/:id/pagar', requireLogin, blockAdmin, async (req, res) => {
+    try {
+        const idPedido  = parseInt(req.params.id, 10);
+        const idUsuario = req.session.idUsuario;
+
+        const pedido = await pedidosModel.findById(idPedido);
+        if (!pedido || pedido.id_usuario !== idUsuario) {
+            return res.redirect('/meus-pedidos?erro=pedido_nao_encontrado');
+        }
+        if (pedido.status !== 'pendente') {
+            return res.redirect('/meus-pedidos?erro=pedido_nao_pendente');
+        }
+
+        const pagamentoLocal = await pedidosModel.findPagamentoByPedido(idPedido);
+        if (!pagamentoLocal) {
+            return res.redirect('/meus-pedidos?erro=erro_concluir_pagamento');
+        }
+
+        const pagamentosMP = await buscarPagamentosPorPedido(idPedido);
+        const aprovado = pagamentosMP.find(p => p.status === 'approved');
+        if (aprovado) {
+            await aplicarPagamentoMP(aprovado);
+            return res.redirect('/pagamento/resultado?pedido=' + idPedido);
+        }
+
+        const checkoutUrl = await criarPreferencia({
+            idPedido: idPedido,
+            valorTotal: pedido.valor_total,
+            formaPagamento: pagamentoLocal.forma,
+            email: req.session.usuarioEmail
+        });
+        return res.redirect(checkoutUrl);
+    } catch (err) {
+        console.error('Erro em concluir pagamento:', err.message);
+        return res.redirect('/meus-pedidos?erro=erro_concluir_pagamento');
+    }
+});
+
 // ── Produto ───────────────────────────────────────────────
 router.get('/produto/:id', async (req, res) => {
     const produto = await produtosModel.findById(req.params.id);

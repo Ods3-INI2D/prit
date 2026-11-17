@@ -42,7 +42,9 @@
                     pedido_nao_encontrado:  'Pedido não encontrado ou sem permissão de acesso.',
                     pedido_sem_itens:       'Este pedido não possui itens que possam ser adicionados ao carrinho.',
                     erro_comprar_novamente: 'Ocorreu um erro ao tentar repetir o pedido. Tente novamente.',
-                    pedido_nao_pago:        'Só é possível comprar novamente pedidos com pagamento aprovado.'
+                    pedido_nao_pago:        'Só é possível comprar novamente pedidos com pagamento aprovado.',
+                    pedido_nao_pendente:    'Este pedido não está mais aguardando pagamento.',
+                    erro_concluir_pagamento: 'Não foi possível abrir o pagamento deste pedido. Tente novamente.'
                 };
                 var erroQuery = typeof query !== 'undefined' && query && query.erro
                     ? errosQuery[query.erro] || null
@@ -323,6 +325,18 @@
                                 (não indexável por bots, não repetível por refresh acidental)
                                 e semanticamente correta (é uma ação que altera estado).
                             %>
+                            <% if (pedido.status === 'pendente') { %>
+                            <nav class="pedido-acoes"
+                                 aria-label="Ações do pedido #<%= pedido.id_pedido %>">
+                                <form method="POST"
+                                      action="/meus-pedidos/<%= pedido.id_pedido %>/pagar"
+                                      aria-label="Concluir pagamento do pedido #<%= pedido.id_pedido %>">
+                                    <button type="submit" class="btn-acao-secundaria">
+                                        Concluir Pagamento
+                                    </button>
+                                </form>
+                            </nav>
+                            <% } %>
                             <% if (['aprovado', 'enviado', 'entregue'].indexOf(pedido.status) !== -1) { %>
                             <nav class="pedido-acoes"
                                  aria-label="Ações do pedido #<%= pedido.id_pedido %>">

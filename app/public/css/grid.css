@@ -4,7 +4,6 @@ body {
     font-family: 'Inter', sans-serif;
 }
 
-/* nav principal */
 .nav-principal {
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -16,7 +15,6 @@ body {
     min-height: 3.75rem;
 }
 
-/* hamburger */
 .hamburger {
     grid-column: 1;
     flex-shrink: 0;
@@ -44,7 +42,6 @@ body {
     margin-left: auto;
 }
 
-/* busca */
 .busca-form {
     display: flex;
     align-items: center;
@@ -94,14 +91,12 @@ body {
     height: 1.125rem;
 }
 
-/* icones usuário e carrinho */
 .user, .cart {
     width: 1.25rem;
     height: 1.25rem;
     flex-shrink: 0;
 }
 
-/* Responsividade Desktop */
 @media (min-width: 901px) {
     .nav-principal {
         padding: 1rem 5%;
@@ -123,6 +118,10 @@ body {
     .busca-container {
         gap: 1.5rem;
         margin-left: 0;
+    }
+
+    .link-usuario-mobile {
+        display: none;
     }
 
     .busca-form {
