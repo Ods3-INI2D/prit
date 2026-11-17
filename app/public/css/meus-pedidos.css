@@ -11,9 +11,9 @@
 }
 
 body {
-    background-color: #1f1f1f;
+    background-color: var(--bg-primary);
     font-family: 'Inter', sans-serif;
-    color: white;
+    color: var(--text-primary);
     width: 100%;
     min-height: 100vh;
     margin: 0;
@@ -24,14 +24,12 @@ main {
     padding: 1.875rem 0 3rem;
 }
 
-/* ── Container principal ─────────────────────────── */
 .pedidos-container {
     width: 90%;
     max-width: 62rem;
     margin: 0 auto;
 }
 
-/* ── Navegação ───────────────────────────────────── */
 .navegacao {
     margin-bottom: 1.75rem;
 }
@@ -40,15 +38,19 @@ main {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    color: white;
+    color: var(--text-primary);
     text-decoration: none;
     font-size: 0.9375rem;
     font-weight: 500;
     transition: color 0.3s ease;
 }
 
+.voltar output {
+    color: inherit;
+}
+
 .voltar:hover {
-    color: #4da6ff;
+    color: var(--accent-primary);
 }
 
 .seta-voltar {
@@ -56,25 +58,26 @@ main {
     height: auto;
 }
 
-/* ── Título ──────────────────────────────────────── */
+[data-theme="light"] .seta-voltar {
+    filter: invert(1);
+}
+
 .titulo-pedidos {
     font-size: 1.875rem;
     font-weight: 700;
     margin-bottom: 0.75rem;
-    color: white;
+    color: var(--text-primary);
     text-align: center;
 }
 
-/* ── Contador ────────────────────────────────────── */
 .contador-pedidos {
     display: block;
     text-align: center;
     font-size: 0.9rem;
-    color: #888;
+    color: var(--text-muted);
     margin-bottom: 2rem;
 }
 
-/* ── Estado vazio / sem acesso ───────────────────── */
 .estado-vazio {
     display: flex;
     flex-direction: column;
@@ -92,22 +95,21 @@ main {
 .titulo-estado {
     font-size: 1.375rem;
     font-weight: 700;
-    color: white;
+    color: var(--text-primary);
 }
 
 .descricao-estado {
     font-size: 1rem;
-    color: #888;
+    color: var(--text-muted);
     max-width: 26rem;
     line-height: 1.6;
 }
 
-/* ── Botões de ação ──────────────────────────────── */
 .btn-acao-principal {
     display: inline-block;
     padding: 0.875rem 2rem;
-    background-color: #163069;
-    color: white;
+    background-color: var(--btn-secondary-bg);
+    color: #ffffff;
     text-decoration: none;
     border-radius: 0.625rem;
     font-size: 1rem;
@@ -117,7 +119,7 @@ main {
 }
 
 .btn-acao-principal:hover {
-    background-color: #0d1f42;
+    background-color: var(--btn-secondary-hover);
     transform: translateY(-0.125rem);
 }
 
@@ -125,22 +127,23 @@ main {
     display: inline-block;
     padding: 0.625rem 1.25rem;
     background-color: transparent;
-    color: #4da6ff;
+    color: var(--accent-primary);
     text-decoration: none;
-    border: 0.125rem solid #4da6ff;
+    border: 0.125rem solid var(--accent-primary);
     border-radius: 0.5rem;
     font-size: 0.875rem;
     font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
     transition: background-color 0.3s ease, color 0.3s ease;
     white-space: nowrap;
 }
 
 .btn-acao-secundaria:hover {
-    background-color: #4da6ff;
-    color: #1f1f1f;
+    background-color: var(--accent-primary);
+    color: var(--bg-secondary);
 }
 
-/* ── Lista de pedidos ────────────────────────────── */
 .lista-pedidos {
     list-style: none;
     padding: 0;
@@ -150,27 +153,27 @@ main {
     gap: 1.5rem;
 }
 
-/* ── Card de pedido ──────────────────────────────── */
 .pedido-card {
-    background-color: #2a2a2a;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
     border-radius: 0.875rem;
     overflow: hidden;
-    box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.3);
-    border: 0.0625rem solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.18);
+    border: 0.0625rem solid var(--border-color);
     transition: box-shadow 0.3s ease;
 }
 
 .pedido-card:hover {
-    box-shadow: 0 0.25rem 1.25rem rgba(77, 166, 255, 0.1);
+    box-shadow: 0 0.25rem 1.25rem rgba(77, 166, 255, 0.2);
 }
 
-/* ── Cabeçalho do card ───────────────────────────── */
 .pedido-cabecalho {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     padding: 1.25rem 1.25rem 1rem;
-    border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.08);
+    background-color: var(--bg-header);
+    border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.15);
 }
 
 .pedido-identificacao {
@@ -182,16 +185,16 @@ main {
 .pedido-numero {
     font-size: 1.0625rem;
     font-weight: 700;
-    color: white;
+    color: #ffffff;
 }
 
 .pedido-numero output {
-    color: #4da6ff;
+    color: #cfe5ff;
 }
 
 .pedido-data {
     font-size: 0.8125rem;
-    color: #888;
+    color: rgba(255, 255, 255, 0.8);
     display: block;
 }
 
@@ -205,10 +208,9 @@ main {
 .pedido-valor-total {
     font-size: 1.125rem;
     font-weight: 700;
-    color: white;
+    color: #ffffff;
 }
 
-/* ── Status badges ───────────────────────────────── */
 .pedido-status {
     display: inline-block;
     padding: 0.3rem 0.875rem;
@@ -216,24 +218,24 @@ main {
     font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.02em;
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
-.status-pendente  { background-color: rgba(255, 193,  7, 0.15); color: #ffc107; border: 0.0625rem solid #ffc107; }
-.status-aprovado  { background-color: rgba(77,  166, 255, 0.15); color: #4da6ff; border: 0.0625rem solid #4da6ff; }
-.status-enviado   { background-color: rgba(138, 43,  226, 0.15); color: #ba68c8; border: 0.0625rem solid #ba68c8; }
-.status-entregue  { background-color: rgba(76,  175,  80, 0.15); color: #81c784; border: 0.0625rem solid #81c784; }
-.status-cancelado { background-color: rgba(217, 48,   37, 0.15); color: #ff6b6b; border: 0.0625rem solid #d93025; }
+.status-pendente  { color: #ffd54f; border: 0.0625rem solid #ffd54f; }
+.status-aprovado  { color: #90caf9; border: 0.0625rem solid #90caf9; }
+.status-enviado   { color: #e1bee7; border: 0.0625rem solid #e1bee7; }
+.status-entregue  { color: #a5d6a7; border: 0.0625rem solid #a5d6a7; }
+.status-cancelado { color: #ff8a80; border: 0.0625rem solid #ff8a80; }
 
-/* ── Seção de itens ──────────────────────────────── */
 .pedido-itens {
     padding: 1.25rem;
-    border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.08);
+    border-bottom: 0.0625rem solid var(--border-light);
 }
 
 .titulo-itens-pedido {
     font-size: 0.9375rem;
     font-weight: 600;
-    color: #4da6ff;
+    color: var(--accent-primary);
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -242,7 +244,7 @@ main {
 
 .qtd-itens {
     font-size: 0.8125rem;
-    color: #888;
+    color: var(--text-muted);
     font-weight: 400;
 }
 
@@ -255,15 +257,14 @@ main {
     gap: 0.875rem;
 }
 
-/* ── Item individual ─────────────────────────────── */
 .item-pedido {
     display: flex;
     gap: 0.875rem;
     align-items: flex-start;
     padding: 0.875rem;
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: var(--bg-tertiary);
     border-radius: 0.5rem;
-    border: 0.0625rem solid rgba(255, 255, 255, 0.05);
+    border: 0.0625rem solid var(--border-light);
 }
 
 .item-imagem-container {
@@ -277,6 +278,7 @@ main {
     object-fit: cover;
     border-radius: 0.375rem;
     display: block;
+    background-color: #ffffff;
 }
 
 .item-info {
@@ -287,26 +289,26 @@ main {
 .item-nome {
     font-size: 0.9375rem;
     font-weight: 600;
-    color: white;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
     line-height: 1.3;
 }
 
 .item-link {
-    color: white;
+    color: var(--text-primary);
     text-decoration: none;
     transition: color 0.3s ease;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
 .item-link:hover {
-    color: #4da6ff;
+    color: var(--accent-primary);
 }
 
-/* ── DL de detalhes do item ──────────────────────── */
 .item-detalhes {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -315,30 +317,33 @@ main {
 }
 
 .item-detalhes dt {
-    color: #888;
+    color: var(--text-muted);
     font-weight: 500;
 }
 
 .item-detalhes dd {
-    color: #d9d9d9;
+    color: var(--text-secondary);
     margin: 0;
 }
 
-.item-subtotal {
-    color: #4da6ff;
+.item-detalhes dd output {
+    color: inherit;
+}
+
+.item-detalhes dd output.item-subtotal {
+    color: var(--accent-primary);
     font-weight: 600;
 }
 
-/* ── Rodapé do card ──────────────────────────────── */
 .pedido-rodape {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     padding: 1rem 1.25rem;
-    border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.08);
+    background-color: var(--bg-footer);
+    border-bottom: 0.0625rem solid var(--border-light);
 }
 
-/* ── DL de totais do pedido ──────────────────────── */
 .pedido-totais {
     display: flex;
     justify-content: space-between;
@@ -347,7 +352,7 @@ main {
 }
 
 .pedido-totais dt {
-    color: #d9d9d9;
+    color: #ffffff;
     font-weight: 500;
 }
 
@@ -358,7 +363,7 @@ main {
 .valor-destaque {
     font-size: 1.125rem;
     font-weight: 700;
-    color: white;
+    color: #ffffff;
 }
 
 .pedido-acoes {
@@ -367,16 +372,26 @@ main {
     flex-wrap: wrap;
 }
 
-/* ── Bloco de pagamento ──────────────────────────── */
+.pedido-rodape .btn-acao-secundaria {
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.pedido-rodape .btn-acao-secundaria:hover {
+    background-color: #ffffff;
+    color: #163069;
+}
+
 .pedido-pagamento {
     padding: 1rem 1.25rem;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
 }
 
 .titulo-pagamento {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #888;
+    color: var(--text-muted);
     margin-bottom: 0.625rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -390,13 +405,22 @@ main {
 }
 
 .pagamento-detalhes dt {
-    color: #888;
+    color: var(--text-muted);
     font-weight: 500;
 }
 
 .pagamento-detalhes dd {
     margin: 0;
-    color: #d9d9d9;
+    color: var(--text-secondary);
+}
+
+.pagamento-detalhes dd output,
+.pagamento-detalhes dd address {
+    color: inherit;
+}
+
+.pagamento-detalhes dd output.status-pagamento {
+    padding: 0.15rem 0.5rem;
 }
 
 .status-pagamento {
@@ -407,21 +431,29 @@ main {
     font-weight: 600;
 }
 
-.status-pag-pendente  { background-color: rgba(255, 193,  7, 0.12); color: #ffc107; }
-.status-pag-aprovado  { background-color: rgba(76,  175, 80, 0.12); color: #81c784; }
-.status-pag-cancelado { background-color: rgba(217, 48,  37, 0.12); color: #ff6b6b; }
+.status-pag-pendente  { background-color: var(--warning-bg); color: var(--warning-text); }
+.status-pag-aprovado  { background-color: rgba(76, 175, 80, 0.15); color: #81c784; }
+.status-pag-cancelado { background-color: var(--error-bg); color: var(--error-text); }
 
-/* ── Sem itens ───────────────────────────────────── */
+[data-theme="light"] .status-pag-pendente  { color: #7a5c00; }
+[data-theme="light"] .status-pag-aprovado  { color: #1b5e20; }
+
+.pagamento-detalhes dd output.status-pag-pendente  { color: var(--warning-text); }
+.pagamento-detalhes dd output.status-pag-aprovado  { color: #81c784; }
+.pagamento-detalhes dd output.status-pag-cancelado { color: var(--error-text); }
+
+[data-theme="light"] .pagamento-detalhes dd output.status-pag-pendente { color: #7a5c00; }
+[data-theme="light"] .pagamento-detalhes dd output.status-pag-aprovado { color: #1b5e20; }
+
 .sem-itens-pedido {
     display: block;
     padding: 1.25rem;
-    color: #888;
+    color: var(--text-muted);
     font-size: 0.875rem;
     text-align: center;
     font-style: italic;
 }
 
-/* ── Mensagens ───────────────────────────────────── */
 .mensagem-erro {
     display: block;
     padding: 1rem;
@@ -430,12 +462,25 @@ main {
     text-align: center;
     font-weight: 500;
     font-size: 0.9375rem;
-    background-color: rgba(217, 48, 37, 0.15);
-    border: 0.125rem solid #d93025;
-    color: #ff6b6b;
+    background-color: var(--error-bg);
+    border: 0.125rem solid var(--error-border);
+    color: var(--error-text);
 }
 
-/* ── Responsividade — Desktop ────────────────────── */
+.paginacao {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.paginacao-atual {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
 @media (min-width: 901px) {
 
     main {
@@ -452,7 +497,6 @@ main {
         margin-bottom: 2.5rem;
     }
 
-    /* Cabeçalho do card em linha */
     .pedido-cabecalho {
         flex-direction: row;
         justify-content: space-between;
@@ -482,7 +526,6 @@ main {
         font-size: 1.25rem;
     }
 
-    /* Itens */
     .pedido-itens {
         padding: 1.5rem 1.75rem;
     }
@@ -516,7 +559,6 @@ main {
         gap: 0.25rem 1rem;
     }
 
-    /* Rodapé */
     .pedido-rodape {
         flex-direction: row;
         justify-content: space-between;
@@ -533,7 +575,6 @@ main {
         font-size: 1.25rem;
     }
 
-    /* Pagamento */
     .pedido-pagamento {
         padding: 1rem 1.75rem;
     }
@@ -543,7 +584,6 @@ main {
         gap: 0.3rem 1.25rem;
     }
 
-    /* Estado vazio */
     .titulo-estado {
         font-size: 1.625rem;
     }
@@ -556,18 +596,4 @@ main {
         font-size: 1.0625rem;
         padding: 1rem 2.5rem;
     }
-}
-
-.paginacao {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-.paginacao-atual {
-    font-size: 0.9rem;
-    color: #888;
 }
