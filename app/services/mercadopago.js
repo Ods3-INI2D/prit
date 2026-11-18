@@ -40,7 +40,10 @@ function dataComFusoBrasil(data) {
 let cacheTipos = { valor: null, expiraEm: 0 };
 
 function usandoCredenciaisDeTeste() {
-    return process.env.MP_ENVIRONMENT === 'test';
+    const accessToken = process.env.MP_ACCESS_TOKEN;
+    return process.env.MP_ENVIRONMENT === 'test' &&
+        typeof accessToken === 'string' &&
+        accessToken.startsWith('TEST-');
 }
 
 function getAppUrl() {
