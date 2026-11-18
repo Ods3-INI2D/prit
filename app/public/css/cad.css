@@ -23,16 +23,16 @@ header {
     justify-content: center;
     align-items: center;
     background-color: #001863;
-    height: 16vh;
+    min-height: 9.5rem;
     width: 100%;
     border-bottom-left-radius: 0.71875rem;
     border-bottom-right-radius: 0.71875rem;
-    padding: 5rem;
+    padding: 1.75rem 1rem;
 }
 
 img.icon {
-    width: 38%;
-    max-width: 11.25rem;
+    width: 65%;
+    max-width: 15rem;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -229,14 +229,14 @@ footer {
 @media (min-width: 901px) {
 
     header {
-        height: 15vh;
+        min-height: 11rem;
         border-bottom-left-radius: 0.625rem;
         border-bottom-right-radius: 0.625rem;
     }
 
     img.icon {
-        width: 80%;
-        max-width: 12.5rem;
+        width: 60%;
+        max-width: 17.5rem;
     }
 
     main {
