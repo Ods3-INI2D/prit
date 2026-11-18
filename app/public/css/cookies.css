@@ -16,6 +16,7 @@
 
 .cookies-titulo {
     margin: 0 0 0.4rem;
+    color: inherit;
     font-size: 1.1rem;
 }
 
@@ -72,4 +73,30 @@
     border: 1px solid #383838;
     border-radius: 6px;
     cursor: pointer;
+}
+
+html[data-theme="light"] .cookies-banner {
+    background-color: #ffffff;
+    color: #1f2937;
+    border-color: #d1d5db;
+    box-shadow: 0 6px 24px rgba(15, 23, 42, 0.18);
+}
+
+html[data-theme="light"] .cookies-banner .cookies-titulo {
+    color: #111827;
+}
+
+html[data-theme="light"] .cookies-banner .cookies-recusar {
+    color: #1f2937;
+}
+
+html[data-theme="light"] .cookies-banner .cookies-btn:focus-visible,
+html[data-theme="light"] .cookies-preferencias .cookies-link:focus-visible {
+    outline-color: #1d4ed8;
+}
+
+html[data-theme="light"] .cookies-preferencias .cookies-link {
+    background-color: #ffffff;
+    color: #005ea8;
+    border-color: #b8c2cc;
 }
