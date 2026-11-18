@@ -1,0 +1,27 @@
+<link rel="stylesheet" href="/css/cookies.css">
+<% if (typeof cookiesStatus !== 'undefined') { %>
+    <% const mostrarBanner = cookiesStatus === null || (cookiesAviso && cookiesStatus !== 'aceito'); %>
+    <% if (mostrarBanner) { %>
+        <aside class="cookies-banner" role="dialog" aria-labelledby="cookies-titulo" aria-describedby="cookies-texto">
+            <h2 id="cookies-titulo" class="cookies-titulo">Cookies</h2>
+            <p id="cookies-texto" class="cookies-texto">
+                <% if (cookiesAviso) { %>
+                    Para entrar na sua conta ou usar o carrinho, precisamos do cookie de sessão.
+                <% } else { %>
+                    Usamos um cookie de sessão para manter você conectado e guardar o seu carrinho.
+                    Você pode recusar e continuar navegando, mas login e carrinho não vão funcionar.
+                <% } %>
+            </p>
+            <form class="cookies-acoes" method="post" action="/cookies/consentimento">
+                <input type="hidden" name="voltar" value="<%= cookiesVoltar %>">
+                <button type="submit" name="acao" value="aceitar" class="cookies-btn cookies-aceitar">Aceitar</button>
+                <button type="submit" name="acao" value="recusar" class="cookies-btn cookies-recusar">Recusar</button>
+            </form>
+        </aside>
+    <% } else { %>
+        <form class="cookies-preferencias" method="post" action="/cookies/consentimento">
+            <input type="hidden" name="voltar" value="<%= cookiesVoltar %>">
+            <button type="submit" name="acao" value="redefinir" class="cookies-link">Preferências de cookies</button>
+        </form>
+    <% } %>
+<% } %>
