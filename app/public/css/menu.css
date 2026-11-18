@@ -12,7 +12,6 @@
     box-sizing: border-box;
 }
 
-/* hamburger */
 .hamburger {
     position: relative;
     width: 1.25rem;
@@ -52,7 +51,6 @@
     transform: rotate(-45deg);
 }
 
-/* menu lateral */
 .opcoes {
     position: fixed;
     top: 0;
@@ -73,7 +71,6 @@
     transform: translateX(0);
 }
 
-/* logo e user no menu */
 .opcoes .plogo {
     width: 0.875rem;
     height: auto;
@@ -93,7 +90,6 @@
     border-radius: 50%;
 }
 
-/* user info */
 .menu-content {
     margin-top: 0;
     padding: 0;
@@ -126,7 +122,6 @@
     color: var(--accent-hover);
 }
 
-/* categorias */
 .categorias {
     margin-bottom: 0;
     padding: 0;
@@ -141,7 +136,6 @@
     background-color: var(--border-light);
 }
 
-/* menu principal */
 .menu-principal {
     list-style: none;
     padding: 0;
@@ -184,7 +178,6 @@
     transform: rotate(90deg);
 }
 
-/* submenu */
 .submenu {
     list-style: none;
     padding: 0;
@@ -217,7 +210,6 @@
     color: var(--text-primary);
 }
 
-/* outro */
 .outro {
     margin: 0;
     padding: 0.625rem 0 0 0;
@@ -244,7 +236,6 @@
     color: var(--text-primary);
 }
 
-/* theme toggle */
 .theme-toggle {
     display: flex;
     align-items: center;
@@ -277,7 +268,6 @@
     flex-grow: 1;
 }
 
-/* footer do menu */
 .opcoes footer {
     margin: 0;
     background-color: var(--bg-submenu);
@@ -285,7 +275,6 @@
     padding: 0;
 }
 
-/* overlay menu */
 .opcoes.is-open::before {
     content: none;
 }
@@ -294,14 +283,76 @@
     display: none;
 }
 
-/* responsividade desktop */
 @media (min-width: 901px) {
     :root {
         --menu-width: 20rem;
         --menu-max-width: 20rem;
     }
 
-        .hamburger,
+    .opcoes {
+        padding: 0;
+    }
+
+    .opcoes .plogo {
+        width: 1.25rem;
+        top: 1.5rem;
+        right: 1.0625rem;
+    }
+
+    .opcoes .user {
+        width: 4.75rem;
+        height: 4.75rem;
+        margin-bottom: 0.9375rem;
+    }
+
+    .nome {
+        font-size: 1.125rem;
+    }
+
+    .conta {
+        font-size: 0.9375rem;
+    }
+
+    .tit {
+        font-size: 1rem;
+    }
+
+    .menu-item > a,
+    .linkhp {
+        font-size: 0.9375rem;
+        padding: 0.9375rem 1.0625rem;
+    }
+
+    .submenu a {
+        font-size: 0.875rem;
+        padding: 0.875rem 1.625rem;
+    }
+
+    .outro a,
+    .theme-toggle {
+        font-size: 0.875rem;
+        padding: 0.875rem 1.0625rem;
+    }
+
+    .theme-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .opcoes.is-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: var(--menu-width);
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+    }
+}
+
+@media (min-width: 1400px) {
+    .hamburger,
     .opcoes {
         display: none;
     }
@@ -398,64 +449,4 @@
     .desktop-navigation .theme-toggle:hover {
         background-color: rgba(255, 255, 255, 0.18);
     }
-
-    .opcoes {
-        padding: 0;
-    }
-
-    .opcoes .plogo {
-        width: 1.25rem;
-        top: 1.5rem;
-        right: 1.0625rem;
-    }
-
-    .opcoes .user {
-        width: 4.75rem;
-        height: 4.75rem;
-        margin-bottom: 0.9375rem;
-    }
-
-    .nome {
-        font-size: 1.125rem;
-    }
-
-    .conta {
-        font-size: 0.9375rem;
-    }
-
-    .tit {
-        font-size: 1rem;
-    }
-
-    .menu-item > a,
-    .linkhp {
-        font-size: 0.9375rem;
-        padding: 0.9375rem 1.0625rem;
-    }
-
-    .submenu a {
-        font-size: 0.875rem;
-        padding: 0.875rem 1.625rem;
-    }
-
-    .outro a,
-    .theme-toggle {
-        font-size: 0.875rem;
-        padding: 0.875rem 1.0625rem;
-    }
-
-    .theme-icon {
-        width: 1.25rem;
-        height: 1.25rem;
-    }
-    
-    .opcoes.is-open::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: var(--menu-width);
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: -1;
-    }}
+}

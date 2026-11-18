@@ -11,8 +11,6 @@
     <a href="/home"><img src="/imagens/logo-branco.svg" alt="logo" class="logo"></a>
 
     <section class="busca-container">
-        <a class="link-usuario-mobile" href="<%= isAdmin ? '/admin' : (usuario ? '/usuario' : '/login') %>"><img src="/imagens/user-branco.svg" alt="user" class="user"></a>
-
         <form class="busca-form" method="GET" action="/busca" role="search">
             <label for="busca">
                 <input type="text" 
@@ -27,6 +25,8 @@
                 <img src="/imagens/lupa-branca.svg" alt="buscar" class="lupa">
             </button>
         </form>
+
+        <a class="link-usuario-mobile" href="<%= isAdmin ? '/admin' : (usuario ? '/usuario' : '/login') %>"><img src="/imagens/user-branco.svg" alt="user" class="user"></a>
 
         <% if(!isAdmin) { %>
             <a href="/carrinho"><img src="/imagens/carrinho-branco.svg" alt="carrinho" class="cart"></a>
