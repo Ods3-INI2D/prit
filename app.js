@@ -5,7 +5,6 @@ if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1);
 }
 
-
 app.use(express.static('app/public'));
 app.set('view engine', 'ejs');
 app.set('views', './app/views');
