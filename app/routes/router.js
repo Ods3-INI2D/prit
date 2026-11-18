@@ -1,7 +1,8 @@
 var express    = require('express');
 var router     = express.Router();
 var { body, validationResult } = require('express-validator');
-var session    = require('express-session');
+const { sessaoComConsentimento, exigirCookies } = require('../middlewares/cookiesSessao');
+const rotasCookies = require('./cookies');
 var multer     = require('multer');
 var path       = require('path');
 var fs         = require('fs');
@@ -51,12 +52,9 @@ const uploadFoto = multer({
 });
 
 // sessao
-router.use(session({
-    secret: process.env.SESSION_SECRET || 'chave-secreta-farmacia-super-segura-2024',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
-}));
+router.use(sessaoComConsentimento);
+router.use(rotasCookies);
+
 
 // ── Multer: memória (sem disco) ───────────────────────────────────────────────
 
@@ -296,6 +294,13 @@ router.post('/login',
     body('email').isEmail().withMessage('E-mail inválido!'),
     body('senha').notEmpty().withMessage('Senha obrigatória!'),
     async (req, res) => {
+                if (!req.cookiesAceitos) {
+            res.locals.cookiesAviso = true;
+            return res.render('pages/login', {
+                erro:     'Para entrar, aceite o uso do cookie de sessão.',
+                redirect: req.body.redirect || '/home'
+            });
+        };
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render('pages/login', {
@@ -616,7 +621,7 @@ router.get('/produto/:id', async (req, res) => {
     });
 });
 
-router.post('/produto/:id/adicionar-carrinho', blockAdmin, async (req, res) => {
+router.post('/produto/:id/adicionar-carrinho', exigirCookies, blockAdmin, async (req, res) => {
     const produto = await produtosModel.findById(req.params.id);
     if (!produto || produto.status === 'fora-de-estoque') {
         return res.redirect('/produto/' + req.params.id + '?erro=fora_de_estoque');
@@ -657,13 +662,13 @@ router.get('/carrinho', blockAdmin, async (req, res) => {
     });
 });
 
-router.post('/carrinho/atualizar/:id', blockAdmin, async (req, res) => {
+router.post('/carrinho/atualizar/:id', exigirCookies, blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
     await carrinhoModel.updateQuantidade(req.params.id, id_usuario, session_id, parseInt(req.body.quantidade));
     res.redirect('/carrinho');
 });
 
-router.post('/carrinho/remover/:id', blockAdmin, async (req, res) => {
+router.post('/carrinho/remover/:id', exigirCookies, blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
     await carrinhoModel.removerProduto(req.params.id, id_usuario, session_id);
     res.redirect('/carrinho');
