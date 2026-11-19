@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%# o link de ativação traz o token na URL: não repassa a URL a outros sites %>
+    <meta name="referrer" content="no-referrer">
+    <meta name="robots" content="noindex">
+    <%
+    var conteudos = {
+        'aguardando': {
+            titulo:   'Confirme seu e-mail',
+            tipo:     'info',
+            alerta:   false,
+            mensagem: 'Cadastro realizado! Enviamos um link de ativação para o e-mail informado.',
+            detalhe:  'O link vale por ' + validadeHoras + ' horas. Se não encontrar a mensagem, olhe também a caixa de spam.',
+            acoes:    ['reenviar', 'login']
+        },
+        'falha-envio': {
+            titulo:   'Cadastro realizado',
+            tipo:     'aviso',
+            alerta:   true,
+            mensagem: 'Sua conta foi criada, mas não conseguimos enviar o e-mail de ativação agora.',
+            detalhe:  'Peça um novo link para concluir a ativação.',
+            acoes:    ['reenviar']
+        },
+        'reenviado': {
+            titulo:   'Verifique seu e-mail',
+            tipo:     'info',
+            alerta:   false,
+            mensagem: 'Se existir uma conta aguardando ativação para esse e-mail, enviamos um novo link.',
+            detalhe:  'O link vale por ' + validadeHoras + ' horas. Pode levar alguns minutos para chegar; confira também o spam.',
+            acoes:    ['login']
+        },
+        'sucesso': {
+            titulo:   'Conta ativada!',
+            tipo:     'sucesso',
+            alerta:   false,
+            mensagem: 'Seu e-mail foi confirmado e sua conta está ativa.',
+            detalhe:  'Use seu e-mail e senha para entrar.',
+            acoes:    ['login']
+        },
+        'ja-ativa': {
+            titulo:   'Conta já ativada',
+            tipo:     'info',
+            alerta:   false,
+            mensagem: 'Esta conta já está ativa.',
+            detalhe:  'Você já pode entrar com seu e-mail e senha.',
+            acoes:    ['login']
+        },
+        'link-invalido': {
+            titulo:   'Link inválido ou expirado',
+            tipo:     'erro',
+            alerta:   true,
+            mensagem: 'Não foi possível validar este link de ativação.',
+            detalhe:  'Ele pode ter expirado ou sido digitado incorretamente. Peça um novo link.',
+            acoes:    ['reenviar']
+        },
+        'erro-ativacao': {
+            titulo:   'Não foi possível ativar',
+            tipo:     'erro',
+            alerta:   true,
+            mensagem: 'Ocorreu um erro ao ativar sua conta.',
+            detalhe:  'Tente acessar o link novamente em instantes.',
+            acoes:    ['reenviar']
+        }
+    };
+    var c = conteudos[estado] || conteudos['link-invalido'];
+    %>
+    <title><%= c.titulo %> | +Saúde</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/estilo.css">
+    <link rel="stylesheet" href="/css/cad.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/ativacao.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <header>
+        <img class="icon" src="/imagens/logo-branco.svg" alt="Logo +Saúde">
+    </header>
+
+    <main>
+        <section class="txt ativacao" aria-labelledby="ativacao-titulo">
+            <article class="title-group">
+                <h1 class="tit" id="ativacao-titulo"><%= c.titulo %></h1>
+            </article>
+
+            <article class="ativacao-status ativacao-status--<%= c.tipo %>" role="<%= c.alerta ? 'alert' : 'status' %>">
+                <p class="ativacao-mensagem"><%= c.mensagem %></p>
+
+                <% if (email) { %>
+                    <p class="ativacao-email">
+                        <span class="ativacao-rotulo">E-mail:</span>
+                        <strong><%= email %></strong>
+                    </p>
+                <% } %>
+
+                <p class="ativacao-detalhe"><%= c.detalhe %></p>
+            </article>
+
+            <nav class="ativacao-acoes" aria-label="Próximos passos">
+                <% if (c.acoes.indexOf('login') !== -1) { %>
+                    <a class="ativacao-botao" href="/login">Ir para o login</a>
+                <% } %>
+                <% if (c.acoes.indexOf('reenviar') !== -1) { %>
+                    <a class="<%= c.acoes.indexOf('login') !== -1 ? 'link' : 'ativacao-botao' %>" href="/reenviar-ativacao">Reenviar e-mail de ativação</a>
+                <% } %>
+            </nav>
+        </section>
+    </main>
+
+    <footer></footer>
+
+    <%- include('cookies.ejs') %>
+</body>
+</html>

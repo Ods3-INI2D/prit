@@ -45,14 +45,54 @@ const usuariosModel = {
         try {
             const senhaHasheada = await hashSenha(dados.senhan);
             
+            // a conta nasce inativa (ativo = 0) até o e-mail ser confirmado
             const [result] = await pool.query(
-                'INSERT INTO usuarios (nome, nasc, cpf, ddd, tel, email, senhan, sexo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                'INSERT INTO usuarios (nome, nasc, cpf, ddd, tel, email, senhan, sexo, ativo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)',
                 [dados.nome, dados.nasc, dados.cpf, dados.ddd, dados.tel, dados.email, senhaHasheada, dados.sexo || null]
             );
             return result;
         } catch (erro) {
             console.error('Erro ao criar usuário:', erro);
             return erro;
+        }
+    },
+
+    // dados mínimos para o fluxo de ativação (inclui o status da conta)
+    findParaAtivacao: async (id) => {
+        try {
+            const [linhas] = await pool.query(
+                'SELECT id_usuario, nome, email, ativo FROM usuarios WHERE id_usuario = ?',
+                [id]
+            );
+            return linhas[0] || null;
+        } catch (erro) {
+            return null;
+        }
+    },
+ 
+    findParaAtivacaoPorEmail: async (email) => {
+        try {
+            const [linhas] = await pool.query(
+                'SELECT id_usuario, nome, email, ativo FROM usuarios WHERE email = ?',
+                [email]
+            );
+            return linhas[0] || null;
+        } catch (erro) {
+            return null;
+        }
+    },
+ 
+    // ativa a conta; retorna true somente se ela estava inativa e foi ativada agora
+    ativarConta: async (id) => {
+        try {
+            const [result] = await pool.query(
+                'UPDATE usuarios SET ativo = 1, ativado_em = NOW() WHERE id_usuario = ? AND ativo = 0',
+                [id]
+            );
+            return result.affectedRows === 1;
+        } catch (erro) {
+            console.error('Erro ao ativar conta:', erro);
+            return false;
         }
     },
 

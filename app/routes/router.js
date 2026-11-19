@@ -27,6 +27,10 @@ const { pedidosModel   } = require('../models/pedidosmodel');
 var { valCPF, valDDD, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
 const { compareSenha } = require('../helpers/auth');
 
+// ativacao de conta por e-mail
+const { verificarTokenAtivacao } = require('../helpers/tokenAtivacao');
+const { enviarEmailAtivacao, podeReenviar, VALIDADE_HORAS } = require('../services/ativacaoConta');
+
 // algoritmo de personalizacao
 const { ordenarPorRelevancia } = require('../helpers/personalizacao');
 
@@ -97,10 +101,6 @@ function uploadBufferToCloudinary(buffer, folder) {
     });
 }
 
-// ── Helper: apaga imagem do Cloudinary pela URL pública ──────────────────────
-// Extrai o public_id a partir da URL segura do Cloudinary.
-// Exemplo: https://res.cloudinary.com/<cloud>/image/upload/v123/<folder>/<id>.jpg
-//          → "<folder>/<id>"
 
 function deleteCloudinaryImage(url) {
     if (!url || !url.includes('cloudinary.com')) return Promise.resolve();
@@ -269,13 +269,87 @@ router.post('/cadastro',
         if (!errors.isEmpty()) {
             return res.render('pages/cadastro', { erros: true, valores: req.body, listaErros: errors });
         }
-        await usuariosModel.create(req.body);
-        req.session.notificacao = {
-            titulo: "Cadastro Realizado!",
-            mensagem: `Bem-vindo, ${req.body.nome}! Faça login para continuar.`,
-            tipo: "success"
-        };
-        res.redirect('/login');
+        const resultado = await usuariosModel.create(req.body);
+ 
+        // o model devolve o erro (em vez de lançar) quando o INSERT falha
+        if (!resultado || !resultado.insertId) {
+            const duplicado = resultado && resultado.code === 'ER_DUP_ENTRY';
+            const msg       = String((resultado && resultado.sqlMessage) || '');
+            if (duplicado) {
+                const campo = msg.includes('cpf') ? 'cpf' : 'email';
+                const texto = campo === 'cpf' ? 'CPF já cadastrado!' : 'E-mail já cadastrado!';
+                return res.render('pages/cadastro', {
+                    erros: true, valores: req.body,
+                    listaErros: { errors: [{ path: campo, msg: texto }] }
+                });
+            }
+            return res.render('pages/cadastro', {
+                erros: null, valores: req.body, listaErros: null,
+                erroGeral: 'Não foi possível concluir o cadastro. Tente novamente em instantes.'
+            });
+        }
+ 
+        // a conta só passa a valer depois que o link enviado por e-mail for acessado
+        const enviado = await enviarEmailAtivacao({
+            id_usuario: resultado.insertId,
+            nome:       req.body.nome,
+            email:      req.body.email
+        });
+ 
+        res.render('partial/ativacao', {
+            estado: enviado ? 'aguardando' : 'falha-envio',
+            email:  req.body.email,
+            validadeHoras: VALIDADE_HORAS
+        });
+    }
+);
+
+// ── Ativação de conta ─────────────────────────────────────
+// Rota pública: quem está ativando ainda não consegue fazer login.
+router.get('/ativar-conta', async (req, res) => {
+    const renderizar = (status, estado) =>
+        res.status(status).render('partial/ativacao', { estado, email: null, validadeHoras: VALIDADE_HORAS });
+ 
+    const token = verificarTokenAtivacao(req.query.token);
+    if (!token.ok) return renderizar(400, 'link-invalido');
+ 
+    const usuario = await usuariosModel.findParaAtivacao(token.idUsuario);
+    // o e-mail dentro do token precisa ser o mesmo da conta
+    if (!usuario || usuario.email !== token.email) return renderizar(400, 'link-invalido');
+ 
+    if (Number(usuario.ativo) !== 0) return renderizar(200, 'ja-ativa');
+ 
+    const ativada = await usuariosModel.ativarConta(usuario.id_usuario);
+    if (!ativada) return renderizar(500, 'erro-ativacao');
+ 
+    return renderizar(200, 'sucesso');
+});
+ 
+router.get('/reenviar-ativacao', (req, res) => {
+    res.render('partial/reenviar-ativacao', { erro: null, email: '' });
+});
+ 
+router.post('/reenviar-ativacao',
+    body('email').trim().isEmail().withMessage('Informe um e-mail válido!'),
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).render('partial/reenviar-ativacao', {
+                erro:  errors.array()[0].msg,
+                email: req.body.email || ''
+            });
+        }
+ 
+        const email   = req.body.email.trim();
+        const usuario = await usuariosModel.findParaAtivacaoPorEmail(email);
+ 
+        // só reenvia para conta existente e ainda inativa, respeitando o intervalo mínimo
+        if (usuario && Number(usuario.ativo) === 0 && podeReenviar(usuario.email)) {
+            await enviarEmailAtivacao(usuario);
+        }
+ 
+        // resposta idêntica em qualquer caso: não revela se o e-mail está cadastrado
+        res.render('partial/ativacao', { estado: 'reenviado', email, validadeHoras: VALIDADE_HORAS });
     }
 );
 
@@ -332,6 +406,16 @@ router.post('/login',
                 senhaConfere = false;
             }
         }
+
+        // senha correta, mas e-mail ainda não confirmado
+        if (usuario && senhaConfere && Number(usuario.ativo) === 0) {
+            return res.status(403).render('pages/login', {
+                erro:          'Sua conta ainda não foi ativada. Confira o e-mail que enviamos no cadastro.',
+                emailPendente: true,
+                redirect:      req.body.redirect || '/home'
+            });
+        }
+        
         if (usuario && senhaConfere) {
             await carrinhoModel.migrarParaUsuario(req.session.sessionId, usuario.id_usuario);
             req.session.usuarioEmail = usuario.email;
