@@ -32,32 +32,48 @@
         <% } %>
 
         <%#
-            [ALTERADO] Antes: carrossel grande (1 slide por vez, com autoplay, setas e indicadores).
-            Agora: faixa com banners pequenos. Desktop = 3 lado a lado; mobile = 2 lado a lado
-            (o 3º é ocultado só por CSS, ver banners.css). Mesma lógica da faixa "Para Você":
-            a lista já chega ordenada por relevância do router e aqui só se pega os primeiros.
+            [ALTERADO] Antes: faixa de banners pequenos em grade (desktop 3 | mobile 2, o 3º oculto por CSS).
+            Agora: CARROSSEL de banners médios. Desktop = 2 por vez; celular = 1 por vez (a quantidade
+            visível é definida só no CSS, ver --banners-por-vez em banners.css). Os banners além dos que
+            cabem ficam fora da tela e entram por rolagem: botões ◀ ▶, toque/arraste ou avanço automático
+            a cada 20 s (ver /js/banners-carrossel.js). A lista já chega ordenada por relevância do router.
         %>
         <%
-            var LIMITE_BANNERS = 3;   // [NOVO] equivale ao LIMITE_POR_CARROSSEL da faixa "Para Você"
-            var listaBanners   = (typeof banners !== 'undefined' && banners) ? banners : [];
+            var LIMITE_BANNERS  = 10;   // [ALTERADO] era 3; o carrossel comporta mais banners que a grade
+            var listaBanners    = (typeof banners !== 'undefined' && banners) ? banners : [];
             var bannersExibidos = listaBanners.slice(0, LIMITE_BANNERS);
         %>
 
         <% if (bannersExibidos.length > 0) { %>
-            <section class="banners-destaque" aria-label="Destaques">
-                <ul class="banners-lista">
-                    <% bannersExibidos.forEach(function(banner) { %>
+            <%# [ALTERADO] ganhou data-banners-carrossel (gancho do JS); aria-roledescription anuncia "carrossel" a leitores de tela %>
+            <section class="banners-destaque" aria-label="Destaques" aria-roledescription="carrossel" data-banners-carrossel>
+                <%#
+                    [NOVO] sem elemento de apoio: o próprio <section> é um grid (ver banners.css) em que o trilho e os
+                    botões ◀ ▶ ocupam a mesma célula.
+                    Botões começam hidden: sem JS (ou com poucos banners) não aparecem sem função.
+                %>
+                <button type="button" class="banners-btn banners-btn-ant" data-banners-direcao="-1"
+                        aria-controls="banners-trilho" aria-label="Banners anteriores" hidden>◀</button>
+
+                <%# [ALTERADO] era <ul class="banners-lista"> (grade). Agora é o trilho rolável; tabindex="0" permite rolar com as setas do teclado %>
+                <ul class="banners-trilho" id="banners-trilho" tabindex="0" aria-label="Lista de destaques">
+                    <% bannersExibidos.forEach(function(banner, indice) { %>
                         <li class="banner-item">
                             <%# a legenda (figcaption) já nomeia o link, por isso o alt da imagem fica vazio %>
                             <a href="<%= banner.link || '/home' %>" class="banner-link">
                                 <figure class="banner-figura">
-                                    <img src="<%= banner.imagem %>" alt="" class="banner-imagem" loading="lazy">
+                                    <%# [ALTERADO] os 2 primeiros (visíveis no desktop) carregam já; os demais, sob demanda %>
+                                    <img src="<%= banner.imagem %>" alt="" class="banner-imagem" loading="<%= indice < 2 ? 'eager' : 'lazy' %>">
                                     <figcaption class="banner-legenda"><%= banner.legenda %></figcaption>
                                 </figure>
                             </a>
                         </li>
                     <% }); %>
                 </ul>
+
+                <button type="button" class="banners-btn banners-btn-prox" data-banners-direcao="1"
+                        aria-controls="banners-trilho" aria-label="Próximos banners" hidden>▶</button>
+
             </section>
         <% } %>
 
@@ -156,6 +172,7 @@
     <%# [NOVO] script do carrossel de produtos %>
     <script src="/js/carrossel-produtos.js" defer></script>
 
-    <%# [ALTERADO] removido o <script> inline do carrossel grande (slides/autoplay): não há mais carrossel de banners %>
+    <%# [ALTERADO] voltou a existir carrossel de banners, agora em arquivo próprio (antes era <script> inline, já removido) %>
+    <script src="/js/banners-carrossel.js" defer></script>
 </body>
 </html>
