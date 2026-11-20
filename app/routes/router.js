@@ -29,7 +29,9 @@ const { compareSenha } = require('../helpers/auth');
 
 // ativacao de conta por e-mail
 const { verificarTokenAtivacao } = require('../helpers/tokenAtivacao');
-const { enviarEmailAtivacao, podeReenviar, VALIDADE_HORAS } = require('../services/ativacaoConta');
+const { enviarEmailAtivacao, urlBaseDaRequisicao, podeReenviar, VALIDADE_HORAS } = require('../services/ativacaoConta');
+
+
 
 // algoritmo de personalizacao
 const { ordenarPorRelevancia } = require('../helpers/personalizacao');
@@ -294,6 +296,19 @@ router.post('/cadastro',
             id_usuario: resultado.insertId,
             nome:       req.body.nome,
             email:      req.body.email
+        }, urlBaseDaRequisicao(req));
+ 
+        res.render('partial/ativacao', {
+            estado: enviado ? 'aguardando' : 'falha-envio',
+            email:  req.body.email,
+            validadeHoras: VALIDADE_HORAS
+        });
+ 
+        // a conta só passa a valer depois que o link enviado por e-mail for acessado
+        const enviado = await enviarEmailAtivacao({
+            id_usuario: resultado.insertId,
+            nome:       req.body.nome,
+            email:      req.body.email
         });
  
         res.render('partial/ativacao', {
@@ -345,7 +360,7 @@ router.post('/reenviar-ativacao',
  
         // só reenvia para conta existente e ainda inativa, respeitando o intervalo mínimo
         if (usuario && Number(usuario.ativo) === 0 && podeReenviar(usuario.email)) {
-            await enviarEmailAtivacao(usuario);
+            await enviarEmailAtivacao(usuario, urlBaseDaRequisicao(req));
         }
  
         // resposta idêntica em qualquer caso: não revela se o e-mail está cadastrado

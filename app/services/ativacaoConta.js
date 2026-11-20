@@ -1,4 +1,5 @@
-
+// Serviço de ativação de conta: monta o link, envia o e-mail e controla
+// o intervalo mínimo entre reenvios.
 
 require('dotenv').config();
 const { gerarTokenAtivacao, VALIDADE_HORAS } = require('../helpers/tokenAtivacao');
@@ -6,27 +7,40 @@ const { emailAtivarConta } = require('../helpers/emailAtivarConta');
 const { enviarEmail } = require('../helpers/email');
 
 const INTERVALO_REENVIO_MS = 60 * 1000;
-const ultimosEnvios = new Map();
+const ultimosEnvios = new Map(); // email -> timestamp do último envio
 
-function urlBase() {
-    const base = process.env.APP_URL ||
+// A base do link vem da configuração (APP_URL), nunca do cabeçalho Host da
+// requisição: assim ninguém consegue fazer o e-mail apontar para outro site.
+// Única exceção: quando o servidor é acessado como localhost (desenvolvimento),
+// o link aponta para o próprio localhost. Esse endereço só funciona na máquina de
+// quem recebe o e-mail, então não abre brecha para desviar o token.
+const HOST_LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])(:\d{1,5})?$/;
+
+function urlBaseDaRequisicao(req) {
+    const host = String(req.get('host') || '');
+    return HOST_LOCAL.test(host) ? req.protocol + '://' + host : null;
+}
+
+function urlBase(baseDaRequisicao) {
+    const base = baseDaRequisicao || process.env.APP_URL ||
         (process.env.NODE_ENV === 'production' ? null : 'http://localhost:' + (process.env.PORT || 3000));
     if (!base) throw new Error('APP_URL não configurada.');
     return base.replace(/\/+$/, '');
 }
 
-function montarLinkAtivacao(usuario) {
-    return urlBase() + '/ativar-conta?token=' + encodeURIComponent(gerarTokenAtivacao(usuario));
+function montarLinkAtivacao(usuario, baseDaRequisicao) {
+    return urlBase(baseDaRequisicao) + '/ativar-conta?token=' + encodeURIComponent(gerarTokenAtivacao(usuario));
 }
 
 /**
  * Envia (ou reenvia) o e-mail de ativação.
  * @param {{ id_usuario: number, nome: string, email: string }} usuario
+ * @param {string|null} [baseDaRequisicao] resultado de urlBaseDaRequisicao(req)
  * @returns {Promise<boolean>} true se o e-mail foi enviado
  */
-async function enviarEmailAtivacao(usuario) {
+async function enviarEmailAtivacao(usuario, baseDaRequisicao) {
     try {
-        const link = montarLinkAtivacao(usuario);
+        const link = montarLinkAtivacao(usuario, baseDaRequisicao);
         const { assunto, texto, html } = emailAtivarConta({
             nome: usuario.nome,
             link,
@@ -55,4 +69,4 @@ function podeReenviar(email) {
     return !ultimo || Date.now() - ultimo >= INTERVALO_REENVIO_MS;
 }
 
-module.exports = { enviarEmailAtivacao, podeReenviar, VALIDADE_HORAS };
+module.exports = { enviarEmailAtivacao, urlBaseDaRequisicao, podeReenviar, VALIDADE_HORAS };
