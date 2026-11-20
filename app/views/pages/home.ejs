@@ -60,34 +60,32 @@
         </section>
 
         <%#
-            [ALTERADO] Todo o bloco de produtos abaixo foi substituído.
-            Antes: 3 seções separadas (Para Você / Descontos / Categorias), cada uma com grid de
-            produtos e o cartão de produto copiado 3x.
-            Agora: UM carrossel horizontal; cada coluna = uma categoria, com no máximo 4 produtos.
+            [ALTERADO] Antes: UM carrossel horizontal em que cada coluna = uma categoria (produtos empilhados).
+            Agora: cada categoria é uma FAIXA horizontal (<section>) com o PRÓPRIO carrossel de produtos.
         %>
         <%
-            var LIMITE_POR_COLUNA = 4;
-            var listaProdutos     = (typeof produtos !== 'undefined' && produtos) ? produtos : [];
-            var colunas           = [];
+            var LIMITE_POR_CARROSSEL = 12;   // [ALTERADO] era LIMITE_POR_COLUNA = 4; carrossel precisa de mais itens
+            var listaProdutos        = (typeof produtos !== 'undefined' && produtos) ? produtos : [];
+            var faixas               = [];   // [ALTERADO] era "colunas"
 
-            // Coluna "Para Você" (somente usuário logado que não é admin)
+            // Faixa "Para Você" (somente usuário logado que não é admin)
             if (typeof usuario !== 'undefined' && usuario && !isAdmin) {
-                var paraVoce = listaProdutos.slice(0, LIMITE_POR_COLUNA);
+                var paraVoce = listaProdutos.slice(0, LIMITE_POR_CARROSSEL);
                 if (paraVoce.length > 0) {
-                    colunas.push({ id: 'para-voce', titulo: 'Para Você', link: null, itens: paraVoce });
+                    faixas.push({ id: 'para-voce', titulo: 'Para Você', link: null, itens: paraVoce });
                 }
             }
 
-            // Coluna "Descontos"
+            // Faixa "Descontos"
             var comDesconto = listaProdutos.filter(function(p) {
                 return p.precoDesconto !== null && p.precoDesconto > 0;
             });
             if (comDesconto.length > 0) {
-                colunas.push({ id: 'descontos', titulo: 'Descontos', link: '/home',
-                               itens: comDesconto.slice(0, LIMITE_POR_COLUNA) });
+                faixas.push({ id: 'descontos', titulo: 'Descontos', link: '/home',
+                              itens: comDesconto.slice(0, LIMITE_POR_CARROSSEL) });
             }
 
-            // Uma coluna por categoria (categorias sem produtos são ignoradas)
+            // Uma faixa por categoria (categorias sem produtos são ignoradas)
             if (typeof categorias !== 'undefined' && categorias && categorias.length > 0) {
                 categorias.forEach(function(categoria) {
                     var daCategoria = listaProdutos.filter(function(p) {
@@ -96,47 +94,51 @@
                         return nomes.indexOf(categoria.nome) !== -1;
                     });
                     if (daCategoria.length === 0) return;
-                    colunas.push({ id: 'cat-' + categoria.id_categoria, titulo: categoria.nome,
-                                   link: '/categoria/' + categoria.slug,
-                                   itens: daCategoria.slice(0, LIMITE_POR_COLUNA) });
+                    faixas.push({ id: 'cat-' + categoria.id_categoria, titulo: categoria.nome,
+                                  link: '/categoria/' + categoria.slug,
+                                  itens: daCategoria.slice(0, LIMITE_POR_CARROSSEL) });
                 });
             }
         %>
 
-        <% if (colunas.length > 0) { %>
-            <section class="carrossel-produtos" aria-label="Produtos por categoria">
-                <nav class="carrossel-produtos-controles" aria-label="Controles do carrossel de produtos">
-                    <button type="button" class="carrossel-produtos-btn" data-direcao="-1"
-                            aria-controls="trilho-produtos" aria-label="Ver categoria anterior">◀</button>
-                    <button type="button" class="carrossel-produtos-btn" data-direcao="1"
-                            aria-controls="trilho-produtos" aria-label="Ver próxima categoria">▶</button>
-                </nav>
+        <% if (faixas.length > 0) { %>
+            <%# [ALTERADO] um <section> por categoria; data-carrossel é o gancho do JS (um carrossel independente por faixa) %>
+            <% faixas.forEach(function(faixa) { %>
+                <section class="carrossel-produtos" data-carrossel aria-labelledby="titulo-<%= faixa.id %>">
+                    <header class="header-categoria">
+                        <h2 id="titulo-<%= faixa.id %>" class="titulo-categoria"><%= faixa.titulo %></h2>
 
-                <ul class="carrossel-produtos-trilho" id="trilho-produtos" tabindex="0"
-                    aria-label="Categorias de produtos, role para o lado para ver mais">
-                    <% colunas.forEach(function(coluna) { %>
-                        <li class="coluna-produtos">
-                            <header class="header-categoria">
-                                <h2 id="titulo-<%= coluna.id %>" class="titulo-categoria"><%= coluna.titulo %></h2>
-                                <% if (coluna.link) { %>
-                                    <a href="<%= coluna.link %>" class="link-ver-mais">
-                                        <span>Ver mais</span>
-                                        <img src="/imagens/setal.svg" alt="" class="seta-ver-mais">
-                                    </a>
-                                <% } %>
-                            </header>
+                        <% if (faixa.link) { %>
+                            <a href="<%= faixa.link %>" class="link-ver-mais">
+                                <span>Ver mais</span>
+                                <img src="/imagens/setal.svg" alt="" class="seta-ver-mais">
+                            </a>
+                        <% } %>
 
-                            <ul class="lista-produtos-coluna" aria-labelledby="titulo-<%= coluna.id %>">
-                                <% coluna.itens.forEach(function(produto) { %>
-                                    <li>
-                                        <%- include('../partial/produto-home.ejs', { produto: produto }) %>
-                                    </li>
-                                <% }); %>
-                            </ul>
-                        </li>
-                    <% }); %>
-                </ul>
-            </section>
+                    </header>
+
+                    <%# [NOVO] palco: agrupa os botões e o trilho para posicionar ◀ ▶ nas extremidades da faixa %>
+                    <div class="carrossel-produtos-palco">
+                        <%# [ALTERADO] botões saíram do cabeçalho: ◀ na extremidade esquerda, ▶ na direita (ver ordem do DOM = ordem de tabulação) %>
+                        <button type="button" class="carrossel-produtos-btn carrossel-produtos-btn-ant" data-direcao="-1"
+                                aria-controls="trilho-<%= faixa.id %>"
+                                aria-label="Produtos anteriores de <%= faixa.titulo %>">◀</button>
+
+                        <ul class="carrossel-produtos-trilho" id="trilho-<%= faixa.id %>" tabindex="0"
+                            aria-labelledby="titulo-<%= faixa.id %>">
+                            <% faixa.itens.forEach(function(produto) { %>
+                                <li class="item-carrossel">
+                                    <%- include('../partial/produto-home.ejs', { produto: produto }) %>
+                                </li>
+                            <% }); %>
+                        </ul>
+
+                        <button type="button" class="carrossel-produtos-btn carrossel-produtos-btn-prox" data-direcao="1"
+                                aria-controls="trilho-<%= faixa.id %>"
+                                aria-label="Próximos produtos de <%= faixa.titulo %>">▶</button>
+                    </div>
+                </section>
+            <% }); %>
         <% } else { %>
             <article class="sem-produtos">
                 <p class="mensagem-vazio">Nenhum produto disponível no momento.</p>
