@@ -406,7 +406,7 @@
             <%# banners %>
             <article class="tab-content" id="tab-banners" role="tabpanel" aria-labelledby="titulo-banners">
                 <section class="lista-banners-section">
-                    <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners do Carrossel</h2>
+                    <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners de Destaque</h2>  <%# [ALTERADO] era "...do Carrossel" %>
 
                     <%# --- Formulário de criar novo banner --- %>
                     <section class="adicionar-categoria" style="margin-bottom:2rem;">
@@ -433,6 +433,36 @@
                                 <output id="link-novo-info" class="info-arquivo">Exemplos: /home, /categoria/cuidados-com-a-pele, /produto/123</output>
                             </fieldset>
 
+                            <%# [NOVO] faixa etária e sexo: alimentam o algoritmo de relevância ("Para Você") %>
+                            <fieldset>
+                                <legend class="label-titulo">Faixa Etária Recomendada</legend>
+                                <label for="faixa-etaria-novo-banner">
+                                    <select id="faixa-etaria-novo-banner" name="faixa_etaria">
+                                        <option value="">Todas as idades</option>
+                                        <option value="40+">A partir de 40 anos</option>
+                                        <option value="45+">A partir de 45 anos</option>
+                                        <option value="50+">A partir de 50 anos</option>
+                                        <option value="55+">A partir de 55 anos</option>
+                                        <option value="60+">A partir de 60 anos</option>
+                                        <option value="65+">A partir de 65 anos</option>
+                                        <option value="70+">A partir de 70 anos</option>
+                                        <option value="75+">A partir de 75 anos</option>
+                                        <option value="80+">80 anos ou mais</option>
+                                    </select>
+                                </label>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend class="label-titulo">Público-Alvo (Sexo)</legend>
+                                <label for="sexo-novo-banner">
+                                    <select id="sexo-novo-banner" name="sexo">
+                                        <option value="todos">N/A</option>
+                                        <option value="masculino">Masculino</option>
+                                        <option value="feminino">Feminino</option>
+                                    </select>
+                                </label>
+                            </fieldset>
+
                             <fieldset class="campo-imagem">
                                 <legend><strong class="label-titulo">Imagem do Banner <output style="color:#ff6b6b">*</output></strong></legend>
                                 <label for="imagem-novo-banner" class="label-arquivo">
@@ -453,7 +483,7 @@
                     <h3 class="subtitulo" style="font-size:1.2rem;">Banners Existentes</h3>
 
                     <output class="mensagem-info" role="status">
-                        Edite ou exclua os banners que aparecem no carrossel da página inicial.
+                        Edite ou exclua os banners de destaque da página inicial. A home mostra 3 banners no desktop e 2 no mobile, escolhidos pelo mesmo critério de relevância da faixa "Para Você".  <%# [ALTERADO] texto %>
                     </output>
 
                     <% if (typeof banners !== 'undefined' && banners && banners.length > 0) { %>
@@ -468,12 +498,17 @@
                                         </figure>
                                         <output class="usuario-info">Legenda: <%= banner.legenda %></output>
                                         <output class="usuario-info">Link: <%= banner.link || '/home' %></output>
+                                        <%# [NOVO] público-alvo do banner %>
+                                        <output class="usuario-info">Faixa etária: <%= banner.faixa_etaria || 'Todas as idades' %></output>
+                                        <output class="usuario-info">Público: <%= banner.sexo === 'masculino' ? 'Masculino' : (banner.sexo === 'feminino' ? 'Feminino' : 'N/A') %></output>
                                     </article>
                                     <nav class="acoes-usuario" aria-label="Ações do banner <%= index + 1 %>">
                                         <button class="btn-editar" type="button"
                                                 data-banner-id="<%= banner.id_banner %>"
                                                 data-banner-legenda="<%= banner.legenda %>"
                                                 data-banner-link="<%= banner.link || '/home' %>"
+                                                data-banner-faixa="<%= banner.faixa_etaria || '' %>"
+                                                data-banner-sexo="<%= banner.sexo || 'todos' %>"
                                                 aria-label="Editar banner <%= index + 1 %>">Editar</button>
                                         <form method="POST" action="/admin/excluir-banner/<%= banner.id_banner %>" class="form-inline">
                                             <button class="btn-excluir" type="submit"
@@ -511,7 +546,7 @@
     <%# Modal de edição de banner %>
     <aside id="modal-banner" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
         <article class="modal-content">
-            <h2 class="subtitulo" id="modal-titulo">Editar Banner do Carrossel</h2>
+            <h2 class="subtitulo" id="modal-titulo">Editar Banner de Destaque</h2>  <%# [ALTERADO] era "...do Carrossel" %>
             <form method="POST" id="form-editar-banner" enctype="multipart/form-data" class="form-produto" aria-label="Formulário de edição de banner">
                 <fieldset>
                     <legend class="label-titulo">Legenda do Banner</legend>
@@ -531,6 +566,36 @@
                                aria-describedby="link-info">
                     </label>
                     <output id="link-info" class="info-arquivo">Exemplos: /home, /categoria/cuidados-com-a-pele, /produto/123</output>
+                </fieldset>
+
+                <%# [NOVO] faixa etária e sexo no modal de edição (preenchidos em abrirModal) %>
+                <fieldset>
+                    <legend class="label-titulo">Faixa Etária Recomendada</legend>
+                    <label for="faixa-banner">
+                        <select id="faixa-banner" name="faixa_etaria">
+                            <option value="">Todas as idades</option>
+                            <option value="40+">A partir de 40 anos</option>
+                            <option value="45+">A partir de 45 anos</option>
+                            <option value="50+">A partir de 50 anos</option>
+                            <option value="55+">A partir de 55 anos</option>
+                            <option value="60+">A partir de 60 anos</option>
+                            <option value="65+">A partir de 65 anos</option>
+                            <option value="70+">A partir de 70 anos</option>
+                            <option value="75+">A partir de 75 anos</option>
+                            <option value="80+">80 anos ou mais</option>
+                        </select>
+                    </label>
+                </fieldset>
+
+                <fieldset>
+                    <legend class="label-titulo">Público-Alvo (Sexo)</legend>
+                    <label for="sexo-banner">
+                        <select id="sexo-banner" name="sexo">
+                            <option value="todos">N/A</option>
+                            <option value="masculino">Masculino</option>
+                            <option value="feminino">Feminino</option>
+                        </select>
+                    </label>
                 </fieldset>
 
                 <fieldset class="campo-imagem">
@@ -632,11 +697,15 @@
             var btnFechar    = document.getElementById('btn-fechar-modal');
             var inputLegenda = document.getElementById('legenda-banner');
             var inputLink    = document.getElementById('link-banner');
+            var selectFaixa  = document.getElementById('faixa-banner');   // [NOVO]
+            var selectSexo   = document.getElementById('sexo-banner');    // [NOVO]
 
-            function abrirModal(bannerId, legenda, link) {
+            function abrirModal(bannerId, legenda, link, faixa, sexo) {   // [ALTERADO] +faixa, +sexo
                 form.action = '/admin/editar-banner/' + bannerId;
                 inputLegenda.value = legenda || '';
                 inputLink.value    = link    || '/home';
+                selectFaixa.value  = faixa   || '';        // [NOVO]
+                selectSexo.value   = sexo    || 'todos';   // [NOVO]
                 document.getElementById('imagem-banner').value = '';
                 document.getElementById('preview-banner').innerHTML = '';
                 modal.classList.add('active');
@@ -656,7 +725,9 @@
                     abrirModal(
                         this.getAttribute('data-banner-id'),
                         this.getAttribute('data-banner-legenda'),
-                        this.getAttribute('data-banner-link')
+                        this.getAttribute('data-banner-link'),
+                        this.getAttribute('data-banner-faixa'),   // [NOVO]
+                        this.getAttribute('data-banner-sexo')     // [NOVO]
                     );
                 });
             });

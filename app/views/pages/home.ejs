@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="/css/menu.css">
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/bloco.css">
-    <link rel="stylesheet" href="/css/carousel.css">
+    <%# [ALTERADO] carousel.css (carrossel grande) substituído por banners.css (banners pequenos) %>
+    <link rel="stylesheet" href="/css/banners.css">
     <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <link rel="stylesheet" href="/css/notificacao.css">
@@ -30,34 +31,35 @@
             </section>
         <% } %>
 
-        <section class="carousel-container" aria-label="Carrossel de destaques">
-            <% if(banners && banners.length > 0) { %>
-                <% banners.forEach(function(banner, index) { %>
-                    <figure class="carousel-slide <%= index === 0 ? 'active' : '' %>"
-                            aria-hidden="<%= index === 0 ? 'false' : 'true' %>">
-                        <a href="<%= banner.link || '/home' %>" class="carousel-link" aria-label="<%= banner.legenda %>">
-                            <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>">
-                            <figcaption class="carousel-caption"><%= banner.legenda %></figcaption>
-                        </a>
-                    </figure>
-                <% }); %>
-            <% } %>
+        <%#
+            [ALTERADO] Antes: carrossel grande (1 slide por vez, com autoplay, setas e indicadores).
+            Agora: faixa com banners pequenos. Desktop = 3 lado a lado; mobile = 2 lado a lado
+            (o 3º é ocultado só por CSS, ver banners.css). Mesma lógica da faixa "Para Você":
+            a lista já chega ordenada por relevância do router e aqui só se pega os primeiros.
+        %>
+        <%
+            var LIMITE_BANNERS = 3;   // [NOVO] equivale ao LIMITE_POR_CARROSSEL da faixa "Para Você"
+            var listaBanners   = (typeof banners !== 'undefined' && banners) ? banners : [];
+            var bannersExibidos = listaBanners.slice(0, LIMITE_BANNERS);
+        %>
 
-            <nav class="carousel-controls" aria-label="Controles do carrossel">
-                <button class="carousel-btn prev" aria-label="Slide anterior">◀</button>
-                <button class="carousel-btn next" aria-label="Próximo slide">▶</button>
-            </nav>
-
-            <nav class="carousel-indicators" aria-label="Indicadores do carrossel">
-                <% if(banners && banners.length > 0) { %>
-                    <% banners.forEach(function(banner, index) { %>
-                        <button class="indicator <%= index === 0 ? 'active' : '' %>"
-                                aria-label="Ir para slide <%= index + 1 %>"
-                                data-slide="<%= index %>"></button>
+        <% if (bannersExibidos.length > 0) { %>
+            <section class="banners-destaque" aria-label="Destaques">
+                <ul class="banners-lista">
+                    <% bannersExibidos.forEach(function(banner) { %>
+                        <li class="banner-item">
+                            <%# a legenda (figcaption) já nomeia o link, por isso o alt da imagem fica vazio %>
+                            <a href="<%= banner.link || '/home' %>" class="banner-link">
+                                <figure class="banner-figura">
+                                    <img src="<%= banner.imagem %>" alt="" class="banner-imagem" loading="lazy">
+                                    <figcaption class="banner-legenda"><%= banner.legenda %></figcaption>
+                                </figure>
+                            </a>
+                        </li>
                     <% }); %>
-                <% } %>
-            </nav>
-        </section>
+                </ul>
+            </section>
+        <% } %>
 
         <%#
             [ALTERADO] Antes: UM carrossel horizontal em que cada coluna = uma categoria (produtos empilhados).
@@ -154,54 +156,6 @@
     <%# [NOVO] script do carrossel de produtos %>
     <script src="/js/carrossel-produtos.js" defer></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var slides     = document.querySelectorAll('.carousel-slide');
-            var prevBtn    = document.querySelector('.carousel-btn.prev');
-            var nextBtn    = document.querySelector('.carousel-btn.next');
-            var indicators = document.querySelectorAll('.indicator');
-            var currentSlide = 0;
-            var autoPlayInterval;
-
-            if(slides.length === 0) return;
-
-            function showSlide(n) {
-                slides.forEach(function(s) {
-                    s.classList.remove('active');
-                    s.setAttribute('aria-hidden', 'true');
-                });
-                indicators.forEach(function(ind) { ind.classList.remove('active'); });
-
-                currentSlide = (n + slides.length) % slides.length;
-
-                slides[currentSlide].classList.add('active');
-                slides[currentSlide].setAttribute('aria-hidden', 'false');
-                if(indicators[currentSlide]) indicators[currentSlide].classList.add('active');
-            }
-
-            function startAutoPlay() { autoPlayInterval = setInterval(function() { showSlide(currentSlide + 1); }, 5000); }
-            function stopAutoPlay()  { clearInterval(autoPlayInterval); }
-
-            if(prevBtn) prevBtn.addEventListener('click', function(e) { e.stopPropagation(); showSlide(currentSlide - 1); stopAutoPlay(); startAutoPlay(); });
-            if(nextBtn) nextBtn.addEventListener('click', function(e) { e.stopPropagation(); showSlide(currentSlide + 1); stopAutoPlay(); startAutoPlay(); });
-
-            indicators.forEach(function(ind) {
-                ind.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    showSlide(parseInt(this.getAttribute('data-slide')));
-                    stopAutoPlay();
-                    startAutoPlay();
-                });
-            });
-
-            startAutoPlay();
-
-            var container = document.querySelector('.carousel-container');
-            if(container) {
-                container.addEventListener('mouseenter', stopAutoPlay);
-                container.addEventListener('mouseleave', startAutoPlay);
-            }
-        });
-    </script>
+    <%# [ALTERADO] removido o <script> inline do carrossel grande (slides/autoplay): não há mais carrossel de banners %>
 </body>
 </html>

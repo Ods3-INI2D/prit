@@ -25,8 +25,10 @@ const bannersModel = {
     create: async (dados) => {
         try {
             const [result] = await pool.query(
-                'INSERT INTO banners (imagem, legenda, link) VALUES (?, ?, ?)',
-                [dados.imagem, dados.legenda || '', dados.link || '/home']
+                // [ALTERADO] grava também faixa_etaria e sexo (usados pelo algoritmo "Para Você")
+                'INSERT INTO banners (imagem, legenda, link, faixa_etaria, sexo) VALUES (?, ?, ?, ?, ?)',
+                [dados.imagem, dados.legenda || '', dados.link || '/home',
+                 dados.faixa_etaria || null, dados.sexo || null]
             );
             return result;
         } catch (erro) {
@@ -37,8 +39,10 @@ const bannersModel = {
     update: async (id, dados) => {
         try {
             const [result] = await pool.query(
-                'UPDATE banners SET imagem = ?, legenda = ?, link = ? WHERE id_banner = ?',
-                [dados.imagem, dados.legenda, dados.link, id]
+                // [ALTERADO] atualiza também faixa_etaria e sexo
+                'UPDATE banners SET imagem = ?, legenda = ?, link = ?, faixa_etaria = ?, sexo = ? WHERE id_banner = ?',
+                [dados.imagem, dados.legenda, dados.link,
+                 dados.faixa_etaria || null, dados.sexo || null, id]
             );
             return result;
         } catch (erro) {

@@ -477,9 +477,17 @@ router.get('/home', async (req, res) => {
         usuarioCompleto
     );
 
+    // [NOVO] banners seguem o mesmo algoritmo da faixa "Para Você":
+    // mais recentes primeiro (como os produtos, que vêm por id DESC) e depois ordenarPorRelevancia
+    // (faixa etária + sexo do usuário). A home exibe apenas os primeiros (ver LIMITE_BANNERS em home.ejs).
+    const bannersRecentes  = (Array.isArray(banners) ? banners : [])
+        .slice()
+        .sort((a, b) => b.id_banner - a.id_banner);
+    const bannersOrdenados = ordenarPorRelevancia(bannersRecentes, usuarioCompleto);
+
     res.render('pages/home', {
         produtos:   produtosOrdenados,
-        banners,
+        banners:    bannersOrdenados,   // [ALTERADO] era "banners" (lista crua, ordem do banco)
         categorias: categoriasOrdenadas,
         notificacao: notificacao
     });
@@ -1323,6 +1331,19 @@ router.post('/admin/atualizar-faixa-categoria/:id', requireAdmin, async (req, re
     }
 });
 
+// [NOVO] ── Público-alvo do banner (mesmos valores de produtos e categorias) ──
+const FAIXAS_BANNER = ['40+', '45+', '50+', '55+', '60+', '65+', '70+', '75+', '80+'];
+const SEXOS_BANNER  = ['masculino', 'feminino', 'todos'];
+
+function lerPublicoBanner(body) {
+    const faixa = (body.faixa_etaria || '').trim();
+    const sexo  = (body.sexo         || '').trim();
+    return {
+        faixa_etaria: FAIXAS_BANNER.includes(faixa) ? faixa : null,   // null = todas as idades
+        sexo:         SEXOS_BANNER.includes(sexo)   ? sexo  : null    // null = sem restrição
+    };
+}
+
 // ── Admin: criar banner (com Cloudinary) ─────────────────
 router.post('/admin/criar-banner', requireAdmin, (req, res) => {
     uploadBanner.single('imagem')(req, res, async (err) => {
@@ -1336,7 +1357,8 @@ router.post('/admin/criar-banner', requireAdmin, (req, res) => {
             let   link    = (req.body.link    || '/home').trim();
             if (!link.startsWith('/')) link = '/' + link;
 
-            const result = await bannersModel.create({ imagem: imagemUrl, legenda, link });
+            // [ALTERADO] inclui faixa_etaria e sexo vindos do formulário
+            const result = await bannersModel.create({ imagem: imagemUrl, legenda, link, ...lerPublicoBanner(req.body) });
             if (result && result.errno) return res.redirect('/admin?erro=criar_banner&tab=banners');
             res.redirect('/admin?sucesso=banner_criado&tab=banners');
         } catch (e) {
@@ -1367,7 +1389,8 @@ router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
             let link    = (req.body.link    || '/home').trim();
             if (!link.startsWith('/')) link = '/' + link;
 
-            await bannersModel.update(bannerId, { imagem: imagemUrl, legenda, link });
+            // [ALTERADO] inclui faixa_etaria e sexo vindos do formulário
+            await bannersModel.update(bannerId, { imagem: imagemUrl, legenda, link, ...lerPublicoBanner(req.body) });
             res.redirect('/admin?sucesso=banner_editado&tab=banners');
         } catch (e) {
             console.error('Erro ao editar banner:', e);
