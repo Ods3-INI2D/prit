@@ -296,19 +296,6 @@ router.post('/cadastro',
             id_usuario: resultado.insertId,
             nome:       req.body.nome,
             email:      req.body.email
-        }, urlBaseDaRequisicao(req));
- 
-        res.render('partial/ativacao', {
-            estado: enviado ? 'aguardando' : 'falha-envio',
-            email:  req.body.email,
-            validadeHoras: VALIDADE_HORAS
-        });
- 
-        // a conta só passa a valer depois que o link enviado por e-mail for acessado
-        const enviado = await enviarEmailAtivacao({
-            id_usuario: resultado.insertId,
-            nome:       req.body.nome,
-            email:      req.body.email
         });
  
         res.render('partial/ativacao', {
