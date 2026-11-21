@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/css/notificacao.css">
     <link rel="stylesheet" href="/css/toggle-senha.css">
     <link rel="stylesheet" href="/css/validacao-frontend.css">
+    <link rel="stylesheet" href="/css/ativacao.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
 </head>
@@ -39,6 +40,12 @@
                 <article class="erro-login" role="alert">
                     <output class="mensagem-erro" aria-live="polite"><%= erro %></output>
                 </article>
+            <% } %>
+
+            <% if (typeof emailPendente !== 'undefined' && emailPendente) { %>
+                <nav class="login-ativacao" aria-label="Ativação de conta">
+                    <a href="/reenviar-ativacao" class="link">Não recebeu o e-mail? Reenviar link de ativação</a>
+                </nav>
             <% } %>
 
             <form method="POST" action="/login" novalidate aria-label="Formulário de login">

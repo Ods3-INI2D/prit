@@ -44,6 +44,12 @@
                 <h1 class="tit">Cadastro</h1>
             </article>
 
+            <% if (typeof erroGeral !== 'undefined' && erroGeral) { %>
+                <article class="erro-login" role="alert">
+                    <output class="mensagem-erro" aria-live="polite"><%= erroGeral %></output>
+                </article>
+            <% } %>
+
             <form method="POST" action="/cadastro" novalidate aria-label="Formulário de cadastro de usuário">
 
                 <fieldset>

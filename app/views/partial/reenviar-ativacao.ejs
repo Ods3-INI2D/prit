@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reenviar ativação | +Saúde</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/estilo.css">
+    <link rel="stylesheet" href="/css/cad.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/validacao-frontend.css">
+    <link rel="stylesheet" href="/css/ativacao.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <header>
+        <img class="icon" src="/imagens/logo-branco.svg" alt="Logo +Saúde">
+    </header>
+
+    <main>
+        <section class="txt" aria-labelledby="reenviar-titulo">
+            <article class="title-group">
+                <h1 class="tit" id="reenviar-titulo">Ativar conta</h1>
+                <p class="ativacao-detalhe">
+                    Informe o e-mail do seu cadastro e enviaremos um novo link de ativação.
+                </p>
+            </article>
+
+            <% if (erro) { %>
+                <article class="erro-login" role="alert">
+                    <output class="mensagem-erro" aria-live="polite"><%= erro %></output>
+                </article>
+            <% } %>
+
+            <form method="POST" action="/reenviar-ativacao" aria-label="Formulário para reenviar o e-mail de ativação">
+                <fieldset>
+                    <legend><h2>E-mail</h2></legend>
+                    <label for="email">
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="exemplo@dominio.com"
+                            value="<%= email %>"
+                            autocomplete="email"
+                            required>
+                    </label>
+                </fieldset>
+
+                <button id="btn" type="submit">Reenviar link</button>
+
+                <nav class="signup-prompt" aria-label="Outras opções">
+                    <p>
+                        <a href="/login" class="link">Já ativou sua conta?
+                            <strong class="link2">Entre aqui</strong>
+                        </a>
+                    </p>
+                </nav>
+            </form>
+        </section>
+    </main>
+
+    <footer></footer>
+
+    <%- include('cookies.ejs') %>
+</body>
+</html>

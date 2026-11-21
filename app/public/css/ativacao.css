@@ -1,0 +1,113 @@
+/* Ativação de conta: páginas de status e de reenvio do link */
+
+/* bloco de status (sucesso, info, aviso, erro) */
+.ativacao-status {
+    padding: 1.1875rem;
+    margin-bottom: 1.3125rem;
+    border: 0.125rem solid var(--info-border, #4da6ff);
+    border-radius: 0.71875rem;
+    background-color: var(--info-bg, rgba(77, 166, 255, 0.12));
+    text-align: left;
+    line-height: 1.45;
+}
+
+.ativacao-status--sucesso {
+    border-color: var(--success-border, #4da6ff);
+    background-color: var(--success-bg, rgba(77, 166, 255, 0.2));
+}
+
+.ativacao-status--aviso {
+    border-color: var(--warning-border, #ffc107);
+    background-color: var(--warning-bg, rgba(255, 193, 7, 0.2));
+}
+
+.ativacao-status--erro {
+    border-color: var(--error-border, #ff5555);
+    background-color: var(--error-bg, rgba(255, 85, 85, 0.12));
+}
+
+.ativacao-mensagem {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.ativacao-email {
+    margin-bottom: 0.75rem;
+    overflow-wrap: anywhere;
+}
+
+.ativacao-email strong {
+    font-weight: 700;
+}
+
+.ativacao-rotulo {
+    color: var(--text-muted, #a0a0a0);
+}
+
+.ativacao-detalhe {
+    font-size: 0.9375rem;
+    color: var(--text-muted, #a0a0a0);
+}
+
+/* texto de apoio abaixo do título (tela de reenvio) */
+.title-group .ativacao-detalhe {
+    margin-top: 0.75rem;
+}
+
+/* ações (links / botões) */
+.ativacao-acoes {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    text-align: center;
+}
+
+.ativacao-botao {
+    display: block;
+    padding: 1.09375rem;
+    border-radius: 0.71875rem;
+    background-color: var(--btn-primary-bg, #007bff);
+    color: #fff;
+    font-family: 'Belanosima', sans-serif;
+    font-size: 1.1875rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.ativacao-botao:hover,
+.ativacao-botao:focus-visible {
+    background-color: var(--btn-primary-hover, #0056b3);
+    transform: translateY(-0.125rem);
+}
+
+.ativacao-botao:focus-visible,
+.ativacao-acoes .link:focus-visible {
+    outline: 0.125rem solid var(--border-focus, #4da6ff);
+    outline-offset: 0.1875rem;
+}
+
+/* aviso exibido na tela de login (conta ainda não ativada) */
+.login-ativacao {
+    margin-bottom: 1.3125rem;
+    text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ativacao-botao {
+        transition: none;
+    }
+
+    .ativacao-botao:hover,
+    .ativacao-botao:focus-visible {
+        transform: none;
+    }
+}
+
+/* desktop */
+@media (min-width: 901px) {
+    .ativacao-botao {
+        padding: 1rem;
+        font-size: 1.125rem;
+    }
+}

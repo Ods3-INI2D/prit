@@ -18,18 +18,19 @@ body {
   display: none !important;
 }
 
-/* SEÇÃO DE CATEGORIA */
-.secao-categoria {
+/* [ALTERADO] Agora cada categoria é uma FAIXA horizontal (<section>) com o próprio carrossel */
+.carrossel-produtos {
   width: 100%;
   margin: 2.5rem auto 0;
   padding: 0 0.625rem;
 }
 
+/* [ALTERADO] título | ver mais na mesma linha (os botões ◀ ▶ agora ficam nas extremidades do trilho) */
 .header-categoria {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
   padding: 0 0.3125rem;
   background: transparent;
 }
@@ -38,7 +39,7 @@ body {
   font-size: 1.375rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0;
+  margin: 0 auto 0 0;               /* [ALTERADO] empurra "Ver mais" e os botões para a direita */
 }
 
 .link-ver-mais {
@@ -66,21 +67,82 @@ body {
   transition: transform 0.3s ease;
 }
 
-/* Layout Produtos - Grid 2 colunas no mobile */
-.produtos-container {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
+/* [NOVO] PALCO: referência de posicionamento dos botões, que ficam alinhados com o trilho */
+.carrossel-produtos-palco {
+  position: relative;
 }
 
-/* Descontos - Grid 2 colunas no mobile (8 produtos) */
-.produtos-descontos {
-  grid-template-columns: repeat(2, 1fr);
+/* [ALTERADO] BOTÕES NAS EXTREMIDADES: centralizados na altura dos cartões */
+.carrossel-produtos-btn {
+  position: absolute;
+  top: calc(50% - 0.25rem);          /* compensa o padding assimétrico do trilho */
+  transform: translateY(-50%);
+  z-index: 1;
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.0625rem solid var(--bg-tertiary);
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, opacity 0.3s ease;
+}
+
+.carrossel-produtos-btn[hidden] {
+  display: none;
+}
+
+.carrossel-produtos-btn-ant  { left: 0.25rem; }
+.carrossel-produtos-btn-prox { right: 0.25rem; }
+
+.carrossel-produtos-btn:hover:not(:disabled) {
+  background-color: var(--bg-tertiary);
+  transform: translateY(-50%) scale(1.08);   /* [ALTERADO] mantém o centramento vertical */
+}
+
+.carrossel-produtos-btn:focus-visible,
+.carrossel-produtos-trilho:focus-visible {
+  outline: 0.125rem solid var(--accent-primary);
+  outline-offset: 0.125rem;
+}
+
+.carrossel-produtos-btn:disabled {
+  opacity: 0;                        /* [ALTERADO] some nas pontas (início/fim) em vez de ficar sobre o cartão */
+  pointer-events: none;
+  cursor: default;
+}
+
+/* [ALTERADO] TRILHO: 1 produto por coluna do grid, rolagem horizontal com snap */
+.carrossel-produtos-trilho {
+  list-style: none;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 70%;           /* mobile: ~1 produto + "espiada" do próximo */
+  gap: 1rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0.25rem;   /* [NOVO] o snap respeita o padding: início do trilho = scrollLeft 0 */
+  padding: 0.25rem 0.25rem 0.75rem; /* respiro para a sombra/hover dos cartões não serem cortados */
+  scrollbar-width: thin;
+}
+
+/* [ALTERADO] antes .coluna-produtos (coluna de categoria); agora cada <li> é um produto */
+.item-carrossel {
+  min-width: 0;
+  display: flex;                    /* cartões da mesma faixa com a mesma altura */
+  scroll-snap-align: start;
 }
 
 .bloco-produto-home {
   display: flex;
+  flex: 1;                           /* [NOVO] ocupa toda a altura do <li> */
   flex-direction: column;
   background-color: var(--bg-secondary);
   border-radius: 0.5rem;
@@ -97,24 +159,33 @@ body {
 .link-produto-home {
   text-decoration: none;
   color: var(--text-primary);
+  /* [ALTERADO] cartão volta a ser vertical (imagem em cima, texto embaixo): é o formato ideal para carrossel horizontal */
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
 }
 
 .imagem-produto-home {
   width: 100%;
-  height: 10.625rem;
+  aspect-ratio: 4 / 3;               /* [ALTERADO] era altura fixa/grid; mantém imagens uniformes na faixa */
   object-fit: cover;
+}
+
+/* wrapper de layout do texto do cartão */
+.info-produto-home {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .nome-produto-home {
   font-size: 0.875rem;
   font-weight: 600;
-  padding: 0.625rem 0.625rem 0.375rem;
+  padding: 0.625rem 0.625rem 0;        /* [ALTERADO] sem padding inferior: evitava a 3ª linha "vazar" no line-clamp */
+  margin-bottom: 0.375rem;
   line-height: 1.2;
-  min-height: 2.5rem;
-  display: -webkit-box;
+  display: -webkit-box;                /* [ALTERADO] min-height removido */
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -224,9 +295,16 @@ body {
   background-color: var(--accent-hover);
 }
 
+/* [ALTERADO] Tablet: 3 produtos visíveis por carrossel */
+@media (min-width: 640px) {
+  .carrossel-produtos-trilho {
+    grid-auto-columns: calc((100% - 2rem) / 3);  /* 3 produtos = 2 gaps de 1rem */
+  }
+}
+
 /* Responsividade Desktop */
 @media (min-width: 901px) {
-    .secao-categoria {
+    .carrossel-produtos {
         width: 90%;
         max-width: 75rem;
         margin: 3rem auto 0;
@@ -234,13 +312,14 @@ body {
     }
 
     .header-categoria {
-        margin-bottom: 1.75rem;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
         padding: 0;
         background: transparent;
     }
 
     .titulo-categoria {
-        font-size: 1.875rem;
+        font-size: 1.75rem;
     }
 
     .link-ver-mais {
@@ -252,30 +331,30 @@ body {
         width: 1.25rem;
     }
 
-    /* Descontos - 4 colunas (8 produtos em 2 linhas) */
-    .produtos-descontos {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 2rem;
+    /* [ALTERADO] Desktop: 4 produtos visíveis por carrossel */
+    .carrossel-produtos-trilho {
+        grid-auto-columns: calc((100% - 4.5rem) / 4);  /* 4 produtos = 3 gaps de 1.5rem */
+        gap: 1.5rem;
     }
 
-    /* Outras categorias - 4 colunas (4 produtos em 1 linha) */
-    .produtos-container {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 2rem;
+    .carrossel-produtos-btn {
+        width: 2.75rem;
+        height: 2.75rem;
+        font-size: 1rem;
     }
+
+    /* [NOVO] Desktop: botões metade para fora da faixa, nas extremidades do trilho */
+    .carrossel-produtos-btn-ant  { left: -1.375rem; }
+    .carrossel-produtos-btn-prox { right: -1.375rem; }
 
     .bloco-produto-home {
         border-radius: 0.6rem;
     }
 
-    .imagem-produto-home {
-        height: 14rem;
-    }
-
     .nome-produto-home {
-        font-size: 1.1rem;
-        padding: 1rem 1rem 0.6rem;
-        min-height: 3.5rem;
+        font-size: 1rem;
+        padding: 0.75rem 0.75rem 0;
+        margin-bottom: 0.4rem;
     }
 
     .preco-original-home,
