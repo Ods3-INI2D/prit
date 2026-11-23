@@ -1692,7 +1692,7 @@ router.post('/api/maisa/chat', async (req, res) => {
             console.warn('[maisa] Chave ou projeto Gemini sem permissão/faturamento (' + (statusUpstream || 'auth') + ').');
             return res.status(502).json({
                 ok: false,
-                erro: 'A chave da API do Gemini configurada não possui permissão ou faturamento ativo para este projeto. Verifique a GEMINI_API_KEY em Settings > Secrets.'
+                erro: 'A chave da API do Gemini configurada não possui permissão para os modelos usados. Verifique a GEMINI_API_KEY (crie uma nova em aistudio.google.com/apikey, em um projeto sem faturamento) ou defina GEMINI_MODEL com um modelo gratuito.'
             });
         }
         if (statusUpstream === 429 || /RESOURCE_EXHAUSTED/i.test(msgSegura)) {

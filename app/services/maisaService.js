@@ -1,10 +1,187 @@
 const { GoogleGenAI, Type } = require('@google/genai');
 const { calcularIdade, pontuar, ordenarPorRelevancia } = require('../helpers/personalizacao');
 
-const MODELO_MAISA = 'gemini-4-hydrogen';
+// Modelos da camada GRATUITA da Gemini API (não exigem faturamento), do mais novo ao mais antigo.
+// O modelo anterior ('gemini-4-hydrogen') pertence à família Gemini 4, que é paga.
+// Para forçar um modelo específico, defina GEMINI_MODEL no .env (ele passa a ser tentado primeiro).
+const MODELOS_GRATUITOS = [
+    'gemini-3.8-flash',
+    'gemini-3.6-flash',
+    'gemini-3.5-flash-lite',
+    'gemini-3.1-flash-lite'
+];
+
+function listarModelosMaisa() {
+    const preferido = String(process.env.GEMINI_MODEL || '').trim();
+    const lista = preferido ? [preferido, ...MODELOS_GRATUITOS] : MODELOS_GRATUITOS.slice();
+    return Array.from(new Set(lista));
+}
+
+// Erros que indicam problema com AQUELE modelo (inexistente, sem acesso/faturamento, cota esgotada),
+// e não com a requisição em si. Nesses casos vale tentar o próximo modelo da lista.
+function erroDeModeloIndisponivel(erro) {
+    const status = Number(erro && (erro.status || erro.code));
+    const msg = String((erro && erro.message) || '');
+    if (status === 404 || status === 403 || status === 429) return true;
+    if (status === 400 && /billing|faturamento|not available|not supported|not found|FAILED_PRECONDITION|free tier/i.test(msg)) return true;
+    return /RESOURCE_EXHAUSTED|NOT_FOUND|PERMISSION_DENIED|FAILED_PRECONDITION/i.test(msg);
+}
+
+// ── Provedores de reserva (todos com camada gratuita, via API compatível com OpenAI) ──────────
+// Usados automaticamente quando o Gemini falha (chave bloqueada, 403, cota, etc.).
+// Configure no .env pelo menos UM destes (todos opcionais):
+//   GROQ_API_KEY=...        (console.groq.com/keys)        GROQ_MODEL=llama-3.3-70b-versatile
+//   OPENROUTER_API_KEY=...  (openrouter.ai/keys)           OPENROUTER_MODEL=<modelo ":free">
+//   LLM_FALLBACK_URL=http://localhost:11434/v1/chat/completions  (ex.: Ollama local, 100% grátis e offline)
+//   LLM_FALLBACK_MODEL=llama3.1   LLM_FALLBACK_KEY=(opcional)
+function listarModelosEnv(valor) {
+    return String(valor || '').split(',').map(m => m.trim()).filter(Boolean);
+}
+
+function listarProvedoresReserva() {
+    const lista = [];
+    if (process.env.GROQ_API_KEY) {
+        // O Groq aposenta modelos com frequência (ex.: llama-3.3-70b-versatile saiu da camada gratuita
+        // em ago/2026). Tentamos vários, em ordem; GROQ_MODEL (aceita lista separada por vírgula) vem primeiro.
+        lista.push({
+            nome: 'groq',
+            url: 'https://api.groq.com/openai/v1/chat/completions',
+            chave: process.env.GROQ_API_KEY,
+            modelos: Array.from(new Set([
+                ...listarModelosEnv(process.env.GROQ_MODEL),
+                'openai/gpt-oss-120b',
+                'openai/gpt-oss-20b',
+                'qwen/qwen3.6-27b',
+                'llama-3.3-70b-versatile'
+            ]))
+        });
+    }
+    if (process.env.OPENROUTER_API_KEY && process.env.OPENROUTER_MODEL) {
+        lista.push({
+            nome: 'openrouter',
+            url: 'https://openrouter.ai/api/v1/chat/completions',
+            chave: process.env.OPENROUTER_API_KEY,
+            modelos: listarModelosEnv(process.env.OPENROUTER_MODEL)
+        });
+    }
+    if (process.env.LLM_FALLBACK_URL && process.env.LLM_FALLBACK_MODEL) {
+        lista.push({
+            nome: 'personalizado',
+            url: process.env.LLM_FALLBACK_URL,
+            chave: process.env.LLM_FALLBACK_KEY || '',
+            modelos: listarModelosEnv(process.env.LLM_FALLBACK_MODEL)
+        });
+    }
+    return lista;
+}
+
+function limparErroParaLog(erro) {
+    return String((erro && erro.message) || erro || 'erro desconhecido')
+        .replace(/AIza[0-9A-Za-z_-]+/g, '[REDACTED]')
+        .replace(/gsk_[0-9A-Za-z]+/g, '[REDACTED]')
+        .replace(/sk-[0-9A-Za-z_-]+/g, '[REDACTED]')
+        .slice(0, 300);
+}
+
+const modeloReservaQueFuncionou = new Map();
+
+function modeloReservaIndisponivel(erro) {
+    return Number(erro && erro.status) === 404 ||
+        /model_not_found|does not exist|decommissioned|no longer supported|not have access/i.test(String((erro && erro.message) || ''));
+}
+
+async function chamarModeloReserva(prov, modelo, messages, usarModoJson) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (prov.chave) headers.Authorization = `Bearer ${prov.chave}`;
+    const corpoReq = { model: modelo, messages, temperature: 0.9 };
+    if (usarModoJson) corpoReq.response_format = { type: 'json_object' };
+
+    const resp = await fetch(prov.url, {
+        method: 'POST',
+        headers,
+        signal: AbortSignal.timeout(30000),
+        body: JSON.stringify(corpoReq)
+    });
+    if (!resp.ok) {
+        const corpo = await resp.text().catch(() => '');
+        const erro = new Error(`HTTP ${resp.status} ${corpo.slice(0, 200)}`);
+        erro.status = resp.status;
+        throw erro;
+    }
+    const json = await resp.json();
+    const texto = json && json.choices && json.choices[0] && json.choices[0].message
+        ? json.choices[0].message.content
+        : '';
+    if (!texto || !String(texto).trim()) throw new Error('resposta vazia');
+    return String(texto);
+}
+
+async function chamarProvedorReserva(prov, { systemInstruction, contents, quantidadeSugestoes }) {
+    const formato = [
+        'FORMATO OBRIGATÓRIO: responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSON) com exatamente estas chaves:',
+        '{"tem_relacao_com_catalogo": boolean, "resposta": string, "produtos_recomendados": [{"id_produto": number, "motivo": string}], ' +
+            `"sugestoes_perguntas": [string x${quantidadeSugestoes}]}`
+    ].join('\n');
+
+    const messages = [
+        { role: 'system', content: `${systemInstruction}\n\n${formato}` },
+        ...contents.map(c => ({
+            role: c.role === 'model' ? 'assistant' : 'user',
+            content: (c.parts || []).map(x => x.text || '').join('\n')
+        }))
+    ];
+
+    const lembrado = modeloReservaQueFuncionou.get(prov.nome);
+    const ordem = lembrado ? [lembrado, ...prov.modelos.filter(m => m !== lembrado)] : prov.modelos.slice();
+    let ultimoErro = null;
+
+    for (const modelo of ordem) {
+        try {
+            let texto;
+            try {
+                texto = await chamarModeloReserva(prov, modelo, messages, true);
+            } catch (erro) {
+                // alguns modelos não aceitam response_format: repete sem ele (o prompt já exige JSON)
+                if (Number(erro.status) === 400 && /response_format|json/i.test(erro.message)) {
+                    texto = await chamarModeloReserva(prov, modelo, messages, false);
+                } else {
+                    throw erro;
+                }
+            }
+            modeloReservaQueFuncionou.set(prov.nome, modelo);
+            return { texto, modelo };
+        } catch (erro) {
+            ultimoErro = erro;
+            if (lembrado === modelo) modeloReservaQueFuncionou.delete(prov.nome);
+            if (!modeloReservaIndisponivel(erro)) throw erro;
+            console.warn(`[maisa] ${prov.nome}: modelo "${modelo}" indisponível; tentando o próximo.`);
+        }
+    }
+    throw ultimoErro || new Error('nenhum modelo disponível');
+}
+
+function removerCercaMarkdown(texto) {
+    return String(texto || '')
+        .trim()
+        .replace(/^```(?:json)?\s*/i, '')
+        .replace(/\s*```$/i, '')
+        .trim();
+}
+
 
 let clienteGemini = null;
 let chaveEmCache = null;
+
+// Quando o PROJETO inteiro não tem acesso (ex.: "free tier is not available for this project"),
+// todos os modelos falham do mesmo jeito. Pausamos o Gemini por alguns minutos e vamos direto
+// aos provedores de reserva, sem perder tempo nem poluir o log a cada mensagem.
+const PAUSA_PROJETO_BLOQUEADO_MS = 10 * 60 * 1000;
+let geminiPausadoAte = 0;
+
+function erroDeProjetoBloqueado(erro) {
+    const msg = String((erro && erro.message) || '');
+    return /free tier is not available for this project|project has been denied access|reported as leaked|set up billing/i.test(msg);
+}
 
 function obterClienteGemini() {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -682,7 +859,6 @@ function priorizarEGarantirSugestoes({ sugestoes = [], quantidade = 4, usuario =
 }
 
 async function consultarMaisa({ mensagem, historico = [], produtos = [], categorias = [], usuario = null, limiteSugestoes = 4 }) {
-    const ai = obterClienteGemini();
     const quantidadeSugestoes = normalizarLimiteSugestoes(limiteSugestoes);
     const perfilAlvo = resolverPerfilAlvo(usuario, mensagem, historico);
     const systemInstruction = construirInstrucaoSistema({
@@ -701,22 +877,82 @@ async function consultarMaisa({ mensagem, historico = [], produtos = [], categor
         }
     ];
 
-    const response = await executarComRetry(() =>
-        ai.models.generateContent({
-            model: MODELO_MAISA,
-            contents,
-            config: {
-                systemInstruction,
-                temperature: 0.9,
-                responseMimeType: 'application/json',
-                responseSchema: criarSchemaRespostaMaisa(quantidadeSugestoes)
-            }
-        })
-    );
+    let textoBruto = null;
+    let modoEmergencia = false;
 
-    const textoBruto = (response && response.text ? response.text : '').trim();
-    let dados;
+    // 1) Gemini (modelos gratuitos, com fallback entre eles)
     try {
+        if (Date.now() < geminiPausadoAte) {
+            throw new Error('Gemini pausado temporariamente (projeto sem acesso à camada gratuita).');
+        }
+        const ai = obterClienteGemini();
+        let ultimoErro = null;
+        for (const modelo of listarModelosMaisa()) {
+            try {
+                const response = await executarComRetry(() =>
+                    ai.models.generateContent({
+                        model: modelo,
+                        contents,
+                        config: {
+                            systemInstruction,
+                            temperature: 0.9,
+                            responseMimeType: 'application/json',
+                            responseSchema: criarSchemaRespostaMaisa(quantidadeSugestoes)
+                        }
+                    })
+                );
+                textoBruto = (response && response.text ? response.text : '').trim();
+                if (textoBruto) break;
+            } catch (erro) {
+                ultimoErro = erro;
+                console.warn(`[maisa] Gemini "${modelo}" falhou (${(erro && (erro.status || erro.code)) || 'erro'}): ${limparErroParaLog(erro)}`);
+                if (erroDeProjetoBloqueado(erro)) {
+                    geminiPausadoAte = Date.now() + PAUSA_PROJETO_BLOQUEADO_MS;
+                    console.warn('[maisa] O projeto do Gemini não tem acesso à camada gratuita; pausando o Gemini por 10 min e usando reservas.');
+                    break;
+                }
+                if (!erroDeModeloIndisponivel(erro)) break;
+            }
+        }
+        if (!textoBruto && ultimoErro) throw ultimoErro;
+    } catch (erro) {
+        console.warn('[maisa] Gemini indisponível, tentando provedores de reserva:', limparErroParaLog(erro));
+    }
+
+    // 2) Provedores de reserva gratuitos (Groq, OpenRouter, Ollama/servidor próprio...)
+    if (!textoBruto) {
+        for (const prov of listarProvedoresReserva()) {
+            try {
+                const { texto, modelo } = await chamarProvedorReserva(prov, { systemInstruction, contents, quantidadeSugestoes });
+                textoBruto = removerCercaMarkdown(texto);
+                if (textoBruto) {
+                    console.info(`[maisa] Resposta gerada pelo provedor de reserva "${prov.nome}" (${modelo}).`);
+                    break;
+                }
+            } catch (erro) {
+                console.warn(`[maisa] Provedor "${prov.nome}" falhou: ${limparErroParaLog(erro)}`);
+            }
+        }
+    }
+
+    // 3) Modo de emergência: nenhuma IA respondeu. Usa a busca por palavras-chave do próprio catálogo.
+    if (!textoBruto) {
+        modoEmergencia = true;
+        console.warn('[maisa] Nenhum provedor de IA respondeu; usando modo de emergência (busca por palavras-chave).');
+    }
+
+    let dados;
+    if (modoEmergencia) {
+        const possuiRelacaoEmerg = mensagemTemRelacaoComCatalogo(mensagem, historico, produtos, categorias);
+        dados = {
+            tem_relacao_com_catalogo: possuiRelacaoEmerg,
+            resposta: possuiRelacaoEmerg
+                ? 'Entendi o que você procura. Separei algumas opções da nossa loja que podem ajudar no seu dia a dia. Se o desconforto continuar ou for forte, vale conversar com um médico de confiança.'
+                : 'Posso ajudar com produtos de saúde e bem-estar da +Saúde. Escolha uma das categorias abaixo ou me conte o que você procura.',
+            produtos_recomendados: [],
+            sugestoes_perguntas: []
+        };
+    } else try {
         dados = JSON.parse(textoBruto);
     } catch (_) {
         const possuiRelacao = mensagemTemRelacaoComCatalogo(mensagem, historico, produtos, categorias);
