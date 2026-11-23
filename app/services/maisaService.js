@@ -46,18 +46,18 @@ function resolverPerfilAlvo(usuario, mensagem = '', historico = []) {
     const textoCombinado = textos.join(' ').toLowerCase();
 
     let idadeInferida = null;
-    const matchIdade = textoCombinado.match(/\b(\d{2})\s*anos\b|\b(\d{2})\+\b/);
+    const matchIdade = textoCombinado.match(/(?:^|\s)(?:(\d{2})\s*anos|(\d{2})\+|(?:tem|com)\s+(\d{2}))(?=$|\s|[.,!?;:])/);
     if (matchIdade) {
-        const val = parseInt(matchIdade[1] || matchIdade[2], 10);
+        const val = parseInt(matchIdade[1] || matchIdade[2] || matchIdade[3], 10);
         if (val >= 18 && val <= 115) idadeInferida = val;
-    } else if (/\bterceira idade\b|\bidos[oa]\b|\bsenhor(?:a)?\b|\bvov[ôó]\b|\bavo\b/.test(textoCombinado)) {
-        idadeInferida = 65;
+    } else if (/(?:^|\s)(?:terceira idade|idos[oa]|senhor(?:a)?|vov[ôó]|v[ôó]|av[ôó]|avo|sogr[oa]|velhinh[oa])(?=$|\s|[.,!?;:])/.test(textoCombinado)) {
+        idadeInferida = 70;
     }
 
     let sexoInferido = null;
-    if (/\b(mulher|feminino|feminina|senhora|mãe|mae|esposa|avó|avoa|tia|idosa)\b/.test(textoCombinado)) {
+    if (/(?:^|\s)(?:mulher|feminino|feminina|senhora|mãe|mae|esposa|vó|vovó|avó|avoa|sogra|tia|idosa|velhinha)(?=$|\s|[.,!?;:])/.test(textoCombinado)) {
         sexoInferido = 'feminino';
-    } else if (/\b(homem|masculino|masculina|senhor|pai|marido|avô|tio|idoso)\b/.test(textoCombinado)) {
+    } else if (/(?:^|\s)(?:homem|masculino|masculina|senhor|pai|marido|vô|vovô|avô|avo|sogro|tio|idoso|velhinho)(?=$|\s|[.,!?;:])/.test(textoCombinado)) {
         sexoInferido = 'masculino';
     }
 
@@ -218,16 +218,24 @@ function construirInstrucaoSistema({ produtos, categorias, usuario, perfilAlvo, 
         '- Use linguagem acessível ao público idoso, sem jargões médicos difíceis nem palavras em inglês.',
         `- ${avisoVariacaoHistorico}`,
         '',
-        'INTERPRETAÇÃO DE PALAVRAS-CHAVE CURTAS:',
-        '- Muitas vezes o cliente envia apenas palavras-chave soltas (ex.: "dor nas costas", "pele seca", "cansaço", "pressão", "esquecimento", "cabelo").',
-        '- Nunca responda pedindo para ele explicar melhor antes de ajudar. Interprete imediatamente a necessidade provável, dê uma dica prática e segura para o dia a dia (sem diagnosticar nem prescrever remédios; lembrando de consultar um médico se a dor ou sintoma for forte ou persistente) e conecte com os produtos do catálogo quando houver relação.',
+        'INTERPRETAÇÃO DE PALAVRAS-CHAVE E FRASES INDIRETAS / INFORMAÇÕES PRESSUPOSTAS (MUITO IMPORTANTE):',
+        '- Os clientes (ou familiares) raramente pedem o nome exato de um produto; muitas vezes mandam apenas palavras-chave ("dor nas costas", "pele seca") OU contam situações cotidianas com necessidades IMPLÍCITAS/PRESSUPOSTAS.',
+        '- Nunca peça para explicar melhor antes de ajudar, e NUNCA considere um relato indireto sobre queda, dificuldade física, rotina ou medo do idoso como "fora do catálogo".',
+        '- Sempre deduza: (1) quem precisa de cuidado e seu perfil implícito, (2) o risco ou necessidade pressuposta, (3) uma orientação humana e responsável (incluindo avaliar médico se houver queda recente, tontura ou dor intensa), e (4) conecte com 3 produtos reais do catálogo JSON que ajudem na prevenção, apoio, recuperação ou conforto.',
+        '- Exemplos de frases indiretas e como raciocinar (use a mesma lógica para qualquer variação semelhante):',
+        '  • "Meu vô caiu" / "Minha mãe levou um tombo" / "Ele quase escorregou ontem": pressupõe risco de novas quedas, perda de equilíbrio/força, insegurança ao andar ou no banheiro e possível impacto/fraqueza óssea/muscular -> acolha, lembre de observar sinais de dor/tontura com um médico e indique produtos do catálogo voltados a segurança, prevenção de quedas, apoio no banheiro/casa, mobilidade, ortopedia, pressão arterial (tontura) ou fortalecimento ósseo/articular, conforme o que existir no catálogo JSON.',
+        '  • "Minha vó tem medo de tomar banho sozinha" / "O box fica muito liso": pressupõe risco de escorregamento -> indique prevenção no banheiro, apoio, firmeza e estabilidade.',
+        '  • "Ele não consegue levantar direito da cama / sofá / vaso": pressupõe perda de força, mobilidade reduzida ou dor articular -> conecte a apoio de locomoção/segurança/ortopedia ou mobilidade articular.',
+        '  • "Ela fica o dia todo sentada reclamando" / "Acorda toda travada": pressupõe desconforto na coluna/postura, articulações ou circulação -> conecte a ortopedia/conforto ou suporte articular/circulatório.',
+        '  • "Meu pai anda meio tonto às vezes": pressupõe necessidade de acompanhar pressão arterial e garantir apoio seguro contra quedas (sempre orientando consulta médica).',
+        '  • "Ele sempre esquece se já tomou o remédio" / "Não enxerga os números pequenos": pressupõe dificuldade de memória, rotina ou leitura -> conecte a organização de comprimidos, visor/letras grandes ou suporte cognitivo.',
+        '  • "À noite ele levanta no escuro para ir ao banheiro": pressupõe risco de tropeço noturno, insegurança residencial e apoio ao caminhar.',
+        '  • "A pele dela machuca/coça fácil" / "Evita comida dura porque machuca a boca" / "Anda sem forças": pressupõe ressecamento/sensibilidade da pele, cuidado com prótese/gengiva/boca seca ou reposição vitamínica/energia.',
         '',
         'REGRA DE PERTINÊNCIA AO CATÁLOGO (OBRIGATÓRIO):',
-        '- Primeiro avalie se o problema, dúvida ou palavra-chave tem relação real com a proposta do site e com as soluções oferecidas pelos produtos e categorias do catálogo JSON abaixo.',
-        '- SE TIVER RELAÇÃO (`tem_relacao_com_catalogo = true`): recomende SEMPRE exatamente 3 produtos distintos do catálogo em "produtos_recomendados", priorizando itens "em-estoque" e de maior `pontuacao_relevancia`. Se citar algum item fora de estoque, avise brevemente.',
-        '- SE NÃO TIVER RELAÇÃO com os produtos e proposta do site (`tem_relacao_com_catalogo = false` — ex.: receitas culinárias, futebol, conserto de eletrônicos/carros, programação, perguntas gerais sem ligação com saúde/mobilidade/segurança/bem-estar da loja, ou algo que nenhum produto do site resolve):',
-        '  • Retorne `produtos_recomendados: []` (lista VAZIA — não force produtos sem relação).',
-        '  • Explique com gentileza e naturalidade o que a loja +Saúde oferece (ou oriente atendimento médico imediato em caso de emergência grave).',
+        '- Defina `tem_relacao_com_catalogo = true` sempre que a mensagem trouxer uma necessidade DIRETA ou INDIRETA/PRESSUPOSTA ligada a saúde, quedas, tombos, medo de cair, tontura, dor, postura, mobilidade, banheiro, segurança em casa, cuidados com idosos/familiares, pele, higiene bucal, cabelo, memória, pressão ou bem-estar.',
+        '- Quando `tem_relacao_com_catalogo = true`: recomende SEMPRE exatamente 3 produtos distintos do catálogo em "produtos_recomendados", priorizando itens "em-estoque" e de maior `pontuacao_relevancia`. Se citar algum item fora de estoque, avise brevemente.',
+        '- Defina `tem_relacao_com_catalogo = false` SOMENTE quando o assunto for realmente alheio ao universo da loja (ex.: receita culinária, resultado de futebol, conserto de celular/carro, programação, conta matemática, piada sem vínculo com cuidados). Nesse caso, retorne `produtos_recomendados: []` e apresente com gentileza o que a +Saúde oferece.',
         '',
         'ALGORITMO DE PERSONALIZAÇÃO POR IDADE E SEXO:',
         '- O catálogo JSON abaixo JÁ ESTÁ ORDENADO pelo algoritmo oficial de personalização (`pontuacao_relevancia`: +3 faixa etária compatível, +2 sexo compatível, 0 neutro, -1 incompatível).',
@@ -367,14 +375,71 @@ function normalizarTexto(str) {
 }
 
 const STOP_WORDS_BUSCA = new Set([
-    'para', 'como', 'com', 'sem', 'uma', 'uns', 'umas', 'que', 'qual', 'quais',
-    'tenho', 'quero', 'preciso', 'procuro', 'gostaria', 'uso', 'usar', 'algo',
-    'mais', 'muito', 'muita', 'pouco', 'meu', 'minha', 'meus', 'minhas',
-    'isso', 'este', 'esta', 'esse', 'essa', 'pode', 'sobre', 'loja', 'produto', 'produtos',
-    'categoria', 'opcoes', 'ver', 'nas', 'nos', 'dos', 'das', 'pela', 'pelo'
+    'para', 'como', 'com', 'sem', 'uma', 'uns', 'umas', 'que', 'qual', 'quais', 'quem',
+    'onde', 'quando', 'porque', 'por', 'tenho', 'tem', 'tinha', 'teve', 'quero', 'preciso',
+    'procuro', 'gostaria', 'uso', 'usar', 'algo', 'mais', 'muito', 'muita', 'pouco',
+    'meu', 'minha', 'meus', 'minhas', 'seu', 'sua', 'seus', 'suas', 'dele', 'dela',
+    'voce', 'voces', 'eles', 'elas', 'nosso', 'nossa', 'tudo', 'nada', 'cada', 'todo',
+    'toda', 'todos', 'todas', 'isso', 'isto', 'aqui', 'ali', 'este', 'esta', 'estao',
+    'estava', 'esse', 'essa', 'pode', 'podem', 'deve', 'devem', 'sobre', 'loja',
+    'produto', 'produtos', 'categoria', 'opcoes', 'ver', 'viu', 'nas', 'nos', 'dos',
+    'das', 'pela', 'pelo', 'ontem', 'hoje', 'amanha', 'agora', 'sempre', 'nunca',
+    'vezes', 'ficou', 'fica', 'ficar', 'foi', 'ser', 'sao', 'era', 'fazer', 'fez',
+    'faz', 'dar', 'deu', 'saber', 'sabe', 'tambem', 'muitas', 'muitos', 'apenas'
 ]);
 
 const EXPANSOES_BUSCA = {
+    vo: ['terceira', 'idade', '60', 'seguranca', 'mobilidade', 'ortopedia', 'monitoramento'],
+    vovo: ['terceira', 'idade', '60', 'seguranca', 'mobilidade', 'ortopedia', 'monitoramento'],
+    avo: ['terceira', 'idade', '60', 'seguranca', 'mobilidade', 'ortopedia', 'monitoramento'],
+    idoso: ['terceira', 'idade', '60', 'seguranca', 'mobilidade', 'ortopedia', 'monitoramento'],
+    idosa: ['terceira', 'idade', '60', 'seguranca', 'mobilidade', 'ortopedia', 'monitoramento'],
+    velhinho: ['terceira', 'idade', '60', 'seguranca', 'mobilidade', 'ortopedia'],
+    velhinha: ['terceira', 'idade', '60', 'seguranca', 'mobilidade', 'ortopedia'],
+    caiu: ['seguranca', 'banheiro', 'residencial', 'barra', 'apoio', 'antiderrapante', 'tapete', 'mobilidade', 'locomocao', 'bengala', 'andador', 'ortopedia', 'osseo', 'calcio', 'articulacao', 'colageno', 'terceira', 'idade'],
+    cai: ['seguranca', 'banheiro', 'residencial', 'barra', 'apoio', 'antiderrapante', 'mobilidade', 'locomocao', 'bengala', 'andador', 'ortopedia', 'osseo', 'calcio'],
+    caindo: ['seguranca', 'banheiro', 'residencial', 'barra', 'apoio', 'antiderrapante', 'mobilidade', 'locomocao', 'bengala', 'andador', 'ortopedia'],
+    caia: ['seguranca', 'banheiro', 'residencial', 'barra', 'apoio', 'antiderrapante', 'mobilidade', 'locomocao', 'bengala', 'andador'],
+    tropecou: ['seguranca', 'residencial', 'antiderrapante', 'tapete', 'barra', 'apoio', 'mobilidade', 'locomocao', 'bengala', 'andador'],
+    tropecar: ['seguranca', 'residencial', 'antiderrapante', 'tapete', 'barra', 'apoio', 'mobilidade', 'bengala', 'andador'],
+    tropecando: ['seguranca', 'residencial', 'antiderrapante', 'tapete', 'mobilidade', 'bengala', 'andador'],
+    escorregou: ['seguranca', 'banheiro', 'antiderrapante', 'tapete', 'barra', 'apoio', 'mobilidade'],
+    escorregando: ['seguranca', 'banheiro', 'antiderrapante', 'tapete', 'barra', 'apoio'],
+    escorregadio: ['seguranca', 'banheiro', 'antiderrapante', 'tapete', 'barra', 'apoio'],
+    liso: ['seguranca', 'banheiro', 'antiderrapante', 'tapete', 'barra', 'apoio'],
+    molhado: ['seguranca', 'banheiro', 'antiderrapante', 'tapete', 'barra', 'apoio'],
+    tonto: ['pressao', 'arterial', 'medidor', 'aparelho', 'monitoramento', 'seguranca', 'apoio', 'mobilidade', 'omega', 'vitamina'],
+    tonta: ['pressao', 'arterial', 'medidor', 'aparelho', 'monitoramento', 'seguranca', 'apoio', 'mobilidade', 'omega', 'vitamina'],
+    tontura: ['pressao', 'arterial', 'medidor', 'aparelho', 'monitoramento', 'seguranca', 'apoio', 'mobilidade', 'omega', 'vitamina'],
+    desequilibrio: ['seguranca', 'barra', 'apoio', 'mobilidade', 'locomocao', 'bengala', 'andador'],
+    levantar: ['mobilidade', 'locomocao', 'apoio', 'barra', 'grade', 'ortopedia', 'ortopedico', 'articulacao', 'colageno'],
+    levantando: ['mobilidade', 'locomocao', 'apoio', 'barra', 'grade', 'ortopedia', 'ortopedico', 'articulacao'],
+    sozinho: ['seguranca', 'banheiro', 'residencial', 'apoio', 'barra', 'antiderrapante', 'mobilidade', 'monitoramento'],
+    sozinha: ['seguranca', 'banheiro', 'residencial', 'apoio', 'barra', 'antiderrapante', 'mobilidade', 'monitoramento'],
+    medo: ['seguranca', 'banheiro', 'residencial', 'apoio', 'barra', 'antiderrapante', 'mobilidade'],
+    escuro: ['seguranca', 'residencial', 'banheiro', 'apoio', 'barra'],
+    noite: ['seguranca', 'residencial', 'banheiro', 'apoio', 'absorcao', 'noturna', 'intima'],
+    esquece: ['organizador', 'comprimidos', 'letra', 'monitoramento', 'memoria', 'omega'],
+    esquecendo: ['organizador', 'comprimidos', 'letra', 'monitoramento', 'memoria', 'omega'],
+    esqueci: ['organizador', 'comprimidos', 'letra', 'monitoramento', 'memoria'],
+    remedio: ['organizador', 'comprimidos', 'monitoramento', 'boca', 'seca'],
+    remedios: ['organizador', 'comprimidos', 'monitoramento', 'boca', 'seca'],
+    enxerga: ['visor', 'grande', 'letra', 'organizador', 'aparelho', 'pressao'],
+    enxergo: ['visor', 'grande', 'letra', 'organizador', 'aparelho', 'pressao'],
+    pequeno: ['visor', 'grande', 'letra', 'organizador', 'aparelho'],
+    pequena: ['visor', 'grande', 'letra', 'organizador', 'aparelho'],
+    mastigar: ['protese', 'dentadura', 'gengiva', 'bucal', 'macia'],
+    travado: ['articulacao', 'articulacoes', 'colageno', 'mobilidade', 'ortopedia', 'ortopedico'],
+    travada: ['articulacao', 'articulacoes', 'colageno', 'mobilidade', 'ortopedia', 'ortopedico'],
+    fraco: ['vitamina', 'multivitaminico', 'calcio', 'mobilidade', 'bengala', 'andador', 'apoio', 'seguranca'],
+    fraca: ['vitamina', 'multivitaminico', 'calcio', 'mobilidade', 'bengala', 'andador', 'apoio', 'seguranca'],
+    fraqueza: ['vitamina', 'multivitaminico', 'calcio', 'mobilidade', 'bengala', 'andador', 'apoio', 'seguranca'],
+    falhando: ['mobilidade', 'locomocao', 'bengala', 'andador', 'apoio', 'seguranca', 'calcio', 'colageno'],
+    rasga: ['pele', 'hidratante', 'locao', 'sabonete', 'sensivel', 'madura'],
+    ressecado: ['pele', 'hidratante', 'locao', 'sabonete', 'ureia', 'sensivel'],
+    ressecada: ['pele', 'hidratante', 'locao', 'sabonete', 'ureia', 'sensivel'],
+    pe: ['meia', 'compressao', 'pernas', 'circulacao', 'ortopedico', 'antiderrapante'],
+    pes: ['meia', 'compressao', 'pernas', 'circulacao', 'ortopedico', 'antiderrapante'],
     costas: ['lombar', 'coluna', 'postura', 'ortopedico', 'ortopedica', 'ortopedia', 'encosto', 'almofada', 'colchao', 'osseo', 'muscular', 'articular', 'articulacao', 'mobilidade', 'calcio', 'colageno', 'magnesio'],
     coluna: ['costas', 'lombar', 'postura', 'ortopedico', 'ortopedica', 'ortopedia', 'encosto', 'almofada', 'osseo', 'articular', 'articulacao', 'mobilidade', 'calcio', 'colageno'],
     lombar: ['costas', 'coluna', 'postura', 'ortopedico', 'ortopedica', 'ortopedia', 'cinta', 'almofada', 'encosto', 'osseo', 'muscular', 'articular', 'calcio', 'colageno', 'magnesio'],
@@ -427,7 +492,7 @@ function extrairTermosBusca(texto) {
     const textoNorm = normalizarTexto(texto);
     const termosBase = textoNorm
         .split(/\s+/)
-        .filter(t => t.length >= 3 && !STOP_WORDS_BUSCA.has(t));
+        .filter(t => (t.length >= 3 || Object.prototype.hasOwnProperty.call(EXPANSOES_BUSCA, t)) && !STOP_WORDS_BUSCA.has(t));
     return Array.from(new Set(
         termosBase.flatMap(t => [t, ...(EXPANSOES_BUSCA[t] || [])])
     ));
