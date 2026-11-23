@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="/css/toggle-senha.css">
     <link rel="stylesheet" href="/css/validacao-frontend.css">
     <link rel="stylesheet" href="/css/ativacao.css">
+    <link rel="stylesheet" href="/css/recuperar-senha.css"> <%# RECUPERAR SENHA: novo %>
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
 </head>
@@ -79,6 +80,12 @@
                     </label>
                     <output class="error-message" id="senha-error" role="alert" aria-live="polite"></output>
                 </fieldset>
+
+                <%# >>> RECUPERAR SENHA (início) %>
+                <nav class="login-recuperar" aria-label="Recuperação de senha">
+                    <a href="/recuperar-senha" class="link">Esqueci minha senha</a>
+                </nav>
+                <%# <<< RECUPERAR SENHA (fim) %>
 
                 <button id="btn-login" type="submit">Entrar</button>
 

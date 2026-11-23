@@ -5,6 +5,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (formCadastro) validarCadastro(formCadastro);
     if (formLogin)    validarLogin(formLogin);
+
+    // >>> RECUPERAR SENHA (início) -----------------------------------
+    const formRecuperar = document.querySelector('form[action="/recuperar-senha"]');
+    const formResetar   = document.querySelector('form[action="/resetar-senha"]');
+
+    if (formRecuperar) validarRecuperarSenha(formRecuperar);
+    if (formResetar)   validarResetarSenha(formResetar);
+    // <<< RECUPERAR SENHA (fim) --------------------------------------
 });
 
 /*cadastro */
@@ -243,3 +251,34 @@ function limparErros(form) {
         out.textContent   = '';
     });
 }
+
+// >>> RECUPERAR SENHA (início: funções) -------------------------------
+/*recuperar senha: informar o e-mail*/
+function validarRecuperarSenha(form) {
+    const inputEmail = form.querySelector('#email');
+
+    if (inputEmail) inputEmail.addEventListener('blur', () => validarEmail(inputEmail));
+
+    form.addEventListener('submit', function (e) {
+        limparErros(form);
+        if (inputEmail && !validarEmail(inputEmail)) e.preventDefault();
+    });
+}
+
+/*redefinir senha: nova senha + confirmação*/
+function validarResetarSenha(form) {
+    const inputSenha     = form.querySelector('#senhan');
+    const inputConfirmar = form.querySelector('#csenha');
+
+    if (inputSenha)     inputSenha.addEventListener('blur', () => validarSenha(inputSenha));
+    if (inputConfirmar) inputConfirmar.addEventListener('blur', () => validarConfirmaSenha(inputSenha, inputConfirmar));
+
+    form.addEventListener('submit', function (e) {
+        limparErros(form);
+        let valido = true;
+        if (inputSenha && !validarSenha(inputSenha)) valido = false;
+        if (inputSenha && inputConfirmar && !validarConfirmaSenha(inputSenha, inputConfirmar)) valido = false;
+        if (!valido) e.preventDefault();
+    });
+}
+// <<< RECUPERAR SENHA (fim: funções) ----------------------------------

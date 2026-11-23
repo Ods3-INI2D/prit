@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Recuperar senha | +Saúde</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/estilo.css">
+    <link rel="stylesheet" href="/css/cad.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/validacao-frontend.css">
+    <link rel="stylesheet" href="/css/ativacao.css">
+    <link rel="stylesheet" href="/css/recuperar-senha.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <header>
+        <img class="icon" src="/imagens/logo-branco.svg" alt="Logo +Saúde">
+    </header>
+
+    <main>
+        <section class="txt" aria-labelledby="recuperar-titulo">
+            <article class="title-group">
+                <h1 class="tit" id="recuperar-titulo">Recuperar senha</h1>
+                <% if (!enviado) { %>
+                    <p class="ativacao-detalhe">
+                        Informe o e-mail do seu cadastro e enviaremos um link para você criar uma nova senha.
+                    </p>
+                <% } %>
+            </article>
+
+            <% if (enviado) { %>
+                <article class="ativacao-status ativacao-status--info rec-status" role="status">
+                    <p class="ativacao-mensagem">
+                        Se existir uma conta ativa para esse e-mail, enviamos as instruções para redefinir a senha.
+                    </p>
+
+                    <% if (email) { %>
+                        <p class="ativacao-email">
+                            <span class="ativacao-rotulo">E-mail:</span>
+                            <strong><%= email %></strong>
+                        </p>
+                    <% } %>
+
+                    <p class="ativacao-detalhe">
+                        O link vale por <%= validadeMinutos %> minutos e só pode ser usado uma vez.
+                        Pode levar alguns minutos para chegar; confira também a caixa de spam.
+                    </p>
+                </article>
+
+                <nav class="ativacao-acoes" aria-label="Próximos passos">
+                    <a class="ativacao-botao" href="/login">Voltar para o login</a>
+                    <a class="link" href="/recuperar-senha">Informar outro e-mail</a>
+                </nav>
+            <% } else { %>
+                <% if (erro) { %>
+                    <article class="erro-login" role="alert">
+                        <output class="mensagem-erro" aria-live="polite"><%= erro %></output>
+                    </article>
+                <% } %>
+
+                <form method="POST" action="/recuperar-senha" novalidate aria-label="Formulário para recuperar a senha">
+                    <fieldset>
+                        <legend><h2>E-mail</h2></legend>
+                        <label for="email">
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="exemplo@dominio.com"
+                                value="<%= email %>"
+                                autocomplete="email"
+                                aria-describedby="email-error"
+                                required>
+                        </label>
+                        <output class="error-message" id="email-error" role="alert" aria-live="polite"></output>
+                    </fieldset>
+
+                    <button id="btn" type="submit">Enviar link</button>
+
+                    <nav class="signup-prompt" aria-label="Outras opções">
+                        <p>
+                            <a href="/login" class="link">Lembrou da senha?
+                                <strong class="link2">Voltar para o login</strong>
+                            </a>
+                        </p>
+                    </nav>
+                </form>
+            <% } %>
+        </section>
+    </main>
+
+    <footer></footer>
+
+    <script src="/js/validacao.js"></script>
+
+    <%- include('../partial/cookies.ejs') %>
+</body>
+</html>
