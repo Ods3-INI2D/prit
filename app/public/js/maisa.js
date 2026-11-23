@@ -20,6 +20,18 @@
     const userName = root.dataset.userName || '';
     const isAdmin = root.dataset.isAdmin === 'true';
 
+    function ehDesktop() {
+        return window.matchMedia('(min-width: 901px)').matches;
+    }
+
+    function obterLimiteSugestoes() {
+        return ehDesktop() ? 4 : 2;
+    }
+
+    function obterDispositivo() {
+        return ehDesktop() ? 'desktop' : 'mobile';
+    }
+
     function lerCategoriasDoSite() {
         const el = document.getElementById('maisa-categorias-data');
         if (!el) return [];
@@ -38,7 +50,6 @@
                     titulo: nome,
                     pergunta: 'Quero ver opções da categoria ' + nome + '.'
                 });
-                if (out.length >= 6) break;
             }
             return out;
         } catch (_) {
@@ -75,16 +86,19 @@
     }
 
     let sugestoesPersonalizadas = null;
+    let sugestoesLimiteCache = null;
     let carregandoSugestoes = false;
 
     async function carregarSugestoesPersonalizadas() {
-        if (sugestoesPersonalizadas || carregandoSugestoes) return;
+        const limiteAtual = obterLimiteSugestoes();
+        if ((sugestoesPersonalizadas && sugestoesLimiteCache === limiteAtual) || carregandoSugestoes) return;
         carregandoSugestoes = true;
         try {
-            const resp = await fetch('/api/maisa/sugestoes');
+            const resp = await fetch('/api/maisa/sugestoes?limite=' + limiteAtual + '&dispositivo=' + obterDispositivo());
             if (!resp.ok) return;
             const data = await resp.json();
             if (data && data.ok && Array.isArray(data.topicos) && data.topicos.length > 0) {
+                sugestoesLimiteCache = limiteAtual;
                 sugestoesPersonalizadas = {
                     saudacao: data.saudacao || null,
                     topicos: data.topicos
@@ -206,9 +220,11 @@
     }
 
     function renderBoasVindas() {
-        const listaTopicos = (sugestoesPersonalizadas && Array.isArray(sugestoesPersonalizadas.topicos))
+        const limite = obterLimiteSugestoes();
+        const listaBase = (sugestoesPersonalizadas && Array.isArray(sugestoesPersonalizadas.topicos))
             ? sugestoesPersonalizadas.topicos
             : TOPICOS_CATEGORIAS_SITE;
+        const listaTopicos = listaBase.slice(0, limite);
 
         const saudacaoNome = userName ? ', ' + userName.split(' ')[0] : '';
         const textoBoasVindas = (sugestoesPersonalizadas && sugestoesPersonalizadas.saudacao)
@@ -399,7 +415,7 @@
         if (!ehInicial && Array.isArray(sugestoes) && sugestoes.length > 0) {
             const chips = document.createElement('div');
             chips.className = 'maisa-chips';
-            sugestoes.slice(0, 3).forEach(function (s) {
+            sugestoes.slice(0, obterLimiteSugestoes()).forEach(function (s) {
                 chips.appendChild(criarBotaoChip(s));
             });
             wrapper.appendChild(chips);
@@ -446,7 +462,9 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     mensagem: texto,
-                    historico: historico
+                    historico: historico,
+                    limiteSugestoes: obterLimiteSugestoes(),
+                    dispositivo: obterDispositivo()
                 })
             });
             const data = await resp.json();

@@ -120,7 +120,64 @@ function resumirCatalogo(produtos, categorias, perfilAlvo) {
     return { listaProdutos, listaCategorias };
 }
 
-function construirInstrucaoSistema({ produtos, categorias, usuario, perfilAlvo, historico = [] }) {
+function normalizarLimiteSugestoes(limite) {
+    if (limite === 'mobile') return 2;
+    const n = Number(limite);
+    if (n === 2) return 2;
+    return 4;
+}
+
+function usuarioPossuiPerfil(usuario) {
+    return !!(
+        usuario &&
+        ((usuario.nasc && calcularIdade(usuario.nasc) !== null) ||
+            (usuario.sexo && usuario.sexo !== 'prefiro-nao-dizer'))
+    );
+}
+
+function ordenarCategoriasParaPerfil(categorias = [], produtos = [], usuario = null) {
+    const listaCats = Array.isArray(categorias) ? categorias : [];
+    const listaProds = Array.isArray(produtos) ? produtos : [];
+    if (!usuarioPossuiPerfil(usuario)) return listaCats.slice();
+
+    return listaCats
+        .map((cat, indice) => {
+            const catScore = pontuar(cat, usuario);
+            const idCat = Number(cat && cat.id_categoria);
+            const nomeCatNorm = normalizarTexto(cat && cat.nome);
+            let maxProdScore = -99;
+            let prodMatchCount = 0;
+
+            for (const prod of listaProds) {
+                const idsStr = String(prod && prod.ids_categorias ? prod.ids_categorias : '');
+                const idsArr = idsStr ? idsStr.split(',').map(s => Number(s.trim())) : [];
+                const catProdNorm = normalizarTexto(prod && prod.categoria);
+                const pertence = (Number.isFinite(idCat) && idCat > 0 && idsArr.includes(idCat)) ||
+                    (nomeCatNorm && catProdNorm.includes(nomeCatNorm));
+                if (!pertence) continue;
+                const pScore = pontuar(prod, usuario);
+                if (pScore > maxProdScore) maxProdScore = pScore;
+                if (pScore > 0) prodMatchCount++;
+            }
+
+            return {
+                cat,
+                catScore,
+                maxProdScore: maxProdScore === -99 ? 0 : maxProdScore,
+                prodMatchCount,
+                indice
+            };
+        })
+        .sort((a, b) =>
+            b.catScore - a.catScore ||
+            b.maxProdScore - a.maxProdScore ||
+            b.prodMatchCount - a.prodMatchCount ||
+            a.indice - b.indice
+        )
+        .map(item => item.cat);
+}
+
+function construirInstrucaoSistema({ produtos, categorias, usuario, perfilAlvo, historico = [], quantidadeSugestoes = 4 }) {
     const { listaProdutos, listaCategorias } = resumirCatalogo(produtos, categorias, perfilAlvo);
     const idadeUsuario = perfilAlvo && perfilAlvo.nasc ? calcularIdade(perfilAlvo.nasc) : null;
     const sexoUsuario = perfilAlvo && perfilAlvo.sexo ? perfilAlvo.sexo : null;
@@ -130,8 +187,9 @@ function construirInstrucaoSistema({ produtos, categorias, usuario, perfilAlvo, 
         : (sexoUsuario === 'masculino' ? 'masculino' : 'não informado');
 
     const nomeCliente = usuario && usuario.nome ? usuario.nome : null;
+    const estaLogadoComPerfil = usuarioPossuiPerfil(usuario);
     const contextoUsuario = perfilAlvo
-        ? `Perfil considerado no algoritmo de personalização${nomeCliente ? ` (Cliente "${nomeCliente}")` : ''}: ${idadeUsuario !== null ? `idade aproximada ${idadeUsuario} anos` : 'idade não informada'}, sexo "${sexoLegivel}" (origem: ${perfilAlvo.origem}).`
+        ? `Perfil considerado no algoritmo de personalização${nomeCliente ? ` (Cliente logado "${nomeCliente}")` : ''}: ${idadeUsuario !== null ? `idade aproximada ${idadeUsuario} anos` : 'idade não informada'}, sexo "${sexoLegivel}" (origem: ${perfilAlvo.origem}).`
         : 'Cliente visitante sem idade ou sexo informados ainda.';
 
     const respostasAnteriores = Array.isArray(historico)
@@ -144,6 +202,10 @@ function construirInstrucaoSistema({ produtos, categorias, usuario, perfilAlvo, 
     const avisoVariacaoHistorico = respostasAnteriores.length > 0
         ? `Respostas que você já deu antes nesta conversa (NÃO repita a mesma abertura, estrutura nem frases parecidas): ${JSON.stringify(respostasAnteriores)}`
         : 'Esta é sua primeira resposta nesta conversa; comece de forma natural e acolhedora sem soar mecânica.';
+
+    const instrucaoPrioridadeSugestoes = estaLogadoComPerfil
+        ? `- O cliente está LOGADO com faixa etária e sexo definidos no sistema. PRIORIZE e ORDENE as ${quantidadeSugestoes} opções de \`sugestoes_perguntas\` colocando primeiro aquelas que atendem melhor ao algoritmo de faixa etária e sexo (ligadas às categorias e produtos com maior \`pontuacao_relevancia\`), mantendo coerência com o rumo da conversa.`
+        : `- Gere exatamente ${quantidadeSugestoes} sugestões curtas e naturais que continuem o rumo da conversa atual.`;
 
     return [
         'Você é a Maisa, assistente virtual da loja de saúde e bem-estar +Saúde, voltada principalmente para o público idoso.',
@@ -173,9 +235,11 @@ function construirInstrucaoSistema({ produtos, categorias, usuario, perfilAlvo, 
         '- Nunca diagnostique doenças nem prescreva medicamentos.',
         '',
         'SUGESTÕES DE CONTINUAÇÃO COERENTES (`sugestoes_perguntas`):',
-        '- Gere de 2 a 3 sugestões curtas e naturais que continuem EXATAMENTE o rumo da conversa atual (ex.: explorar um cuidado próximo ao problema citado, tirar dúvida sobre uso, filtrar conforto/rotina dentro do mesmo assunto).',
+        `- Forneça EXATAMENTE ${quantidadeSugestoes} sugestões curtas e distintas para continuar a conversa.`,
+        instrucaoPrioridadeSugestoes,
+        '- As sugestões devem seguir o rumo da conversa atual (ex.: explorar um cuidado próximo ao problema citado, tirar dúvida sobre uso, filtrar conforto/rotina dentro do mesmo assunto).',
         '- NUNCA coloque sugestões genéricas fora do contexto (como "Ver promoções" se o assunto não for preço).',
-        '- Se `tem_relacao_com_catalogo` for false, sugira 2 a 3 caminhos baseados nas categorias reais existentes no site para ajudar o cliente a voltar ao catálogo.',
+        `- Se \`tem_relacao_com_catalogo\` for false, gere exatamente ${quantidadeSugestoes} caminhos baseados nas categorias reais existentes no site para ajudar o cliente a voltar ao catálogo.`,
         '',
         'REGRAS DOS MOTIVOS DOS PRODUTOS:',
         '- Em cada item de `produtos_recomendados`, escreva um `motivo` único e específico em 1 frase curta explicando por que aquele produto ajuda no problema apresentado pelo cliente (evite motivos padronizados ou repetidos entre os 3 itens).',
@@ -187,48 +251,51 @@ function construirInstrucaoSistema({ produtos, categorias, usuario, perfilAlvo, 
     ].join('\n');
 }
 
-const schemaRespostaMaisa = {
-    type: Type.OBJECT,
-    properties: {
-        tem_relacao_com_catalogo: {
-            type: Type.BOOLEAN,
-            description: 'true somente se o assunto ou palavra-chave tiver relação com a proposta da loja e os produtos do catálogo; false se não tiver relação.'
-        },
-        resposta: {
-            type: Type.STRING,
-            description: 'Resposta única, humana e clara em português para o usuário, sem seguir template fixo.'
-        },
-        produtos_recomendados: {
-            type: Type.ARRAY,
-            maxItems: '3',
-            description: 'Se tem_relacao_com_catalogo for true, exatamente 3 produtos distintos do catálogo que atendam ao problema apresentado. Se false, array vazio [].',
-            items: {
-                type: Type.OBJECT,
-                properties: {
-                    id_produto: {
-                        type: Type.INTEGER,
-                        description: 'ID exato do produto no catálogo.'
+function criarSchemaRespostaMaisa(quantidadeSugestoes = 4) {
+    const qtd = normalizarLimiteSugestoes(quantidadeSugestoes);
+    return {
+        type: Type.OBJECT,
+        properties: {
+            tem_relacao_com_catalogo: {
+                type: Type.BOOLEAN,
+                description: 'true somente se o assunto ou palavra-chave tiver relação com a proposta da loja e os produtos do catálogo; false se não tiver relação.'
+            },
+            resposta: {
+                type: Type.STRING,
+                description: 'Resposta única, humana e clara em português para o usuário, sem seguir template fixo.'
+            },
+            produtos_recomendados: {
+                type: Type.ARRAY,
+                maxItems: '3',
+                description: 'Se tem_relacao_com_catalogo for true, exatamente 3 produtos distintos do catálogo que atendam ao problema apresentado. Se false, array vazio [].',
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        id_produto: {
+                            type: Type.INTEGER,
+                            description: 'ID exato do produto no catálogo.'
+                        },
+                        motivo: {
+                            type: Type.STRING,
+                            description: 'Frase curta e específica conectando este produto ao problema ou palavra-chave do usuário.'
+                        }
                     },
-                    motivo: {
-                        type: Type.STRING,
-                        description: 'Frase curta e específica conectando este produto ao problema ou palavra-chave do usuário.'
-                    }
-                },
-                required: ['id_produto', 'motivo']
+                    required: ['id_produto', 'motivo']
+                }
+            },
+            sugestoes_perguntas: {
+                type: Type.ARRAY,
+                minItems: String(qtd),
+                maxItems: String(qtd),
+                description: `Exatamente ${qtd} sugestões curtas, ordenadas da mais aderente ao perfil (faixa etária e sexo, se logado) e ao rumo da conversa.`,
+                items: {
+                    type: Type.STRING
+                }
             }
         },
-        sugestoes_perguntas: {
-            type: Type.ARRAY,
-            minItems: '2',
-            maxItems: '3',
-            description: 'De 2 a 3 sugestões curtas para continuar a conversa de modo totalmente coerente com o rumo atual.',
-            items: {
-                type: Type.STRING
-            }
-        }
-    },
-    required: ['tem_relacao_com_catalogo', 'resposta', 'produtos_recomendados', 'sugestoes_perguntas']
-};
+        required: ['tem_relacao_com_catalogo', 'resposta', 'produtos_recomendados', 'sugestoes_perguntas']
+    };
+}
 
 function normalizarHistorico(historico) {
     if (!Array.isArray(historico)) return [];
@@ -259,19 +326,12 @@ async function executarComRetry(fn, tentativas = 3) {
 
 /**
  * Gera sugestões iniciais do chatbot usando EXCLUSIVAMENTE categorias já existentes no site,
- * ordenadas pelo mesmo algoritmo de relevância por idade e sexo (personalizacao.js).
+ * ordenadas pelo mesmo algoritmo de relevância por idade e sexo (personalizacao.js)
+ * e limitadas a 4 em desktop ou 2 em dispositivos móveis.
  */
-function gerarSugestoesPersonalizadas({ produtos = [], categorias = [], usuario = null }) {
-    const listaCats = Array.isArray(categorias) ? categorias : [];
-    const temPerfil = !!(
-        usuario &&
-        ((usuario.nasc && calcularIdade(usuario.nasc) !== null) ||
-            (usuario.sexo && usuario.sexo !== 'prefiro-nao-dizer'))
-    );
-
-    const catsOrdenadas = temPerfil
-        ? ordenarPorRelevancia(listaCats, usuario)
-        : listaCats.slice();
+function gerarSugestoesPersonalizadas({ produtos = [], categorias = [], usuario = null, limite = 4 }) {
+    const limiteFinal = normalizarLimiteSugestoes(limite);
+    const catsOrdenadas = ordenarCategoriasParaPerfil(categorias, produtos, usuario);
 
     const topicos = [];
     const nomesUsados = new Set();
@@ -286,7 +346,7 @@ function gerarSugestoesPersonalizadas({ produtos = [], categorias = [], usuario 
             titulo: nome,
             pergunta: `Quero ver opções da categoria ${nome}.`
         });
-        if (topicos.length >= 6) break;
+        if (topicos.length >= limiteFinal) break;
     }
 
     const primeiroNome = usuario && usuario.nome ? String(usuario.nome).trim().split(' ')[0] : '';
@@ -474,10 +534,100 @@ function garantirTresProdutos({ recomendados = [], mensagem = '', historico = []
     return selecionados;
 }
 
-async function consultarMaisa({ mensagem, historico = [], produtos = [], categorias = [], usuario = null }) {
+function pontuarSugestaoPorPerfil(textoSugestao, { usuario = null, produtos = [], categorias = [] }) {
+    if (!usuarioPossuiPerfil(usuario)) return 0;
+
+    const textoNorm = normalizarTexto(textoSugestao);
+    const termos = extrairTermosBusca(textoSugestao);
+    let melhorScore = 0;
+
+    for (const cat of Array.isArray(categorias) ? categorias : []) {
+        const catNorm = normalizarTexto(cat && cat.nome);
+        const bateCat = (catNorm && textoNorm.includes(catNorm)) ||
+            termos.some(t => contemTermo(catNorm, t));
+        if (bateCat) {
+            const s = pontuar(cat, usuario);
+            if (s > melhorScore) melhorScore = s;
+        }
+    }
+
+    for (const prod of Array.isArray(produtos) ? produtos : []) {
+        const prodNorm = normalizarTexto(`${prod && prod.nome} ${prod && prod.categoria} ${prod && prod.descricao}`);
+        const bateProd = termos.some(t => contemTermo(prodNorm, t));
+        if (bateProd) {
+            const s = pontuar(prod, usuario);
+            if (s > melhorScore) melhorScore = s;
+        }
+    }
+
+    const idade = usuario && usuario.nasc ? calcularIdade(usuario.nasc) : null;
+    if (idade !== null && idade >= 60 && /\b(60|idos|terceira idade)\b/.test(textoNorm)) {
+        melhorScore += 2;
+    }
+    if (usuario && usuario.sexo === 'feminino' && /\b(mulher|feminin)\b/.test(textoNorm)) {
+        melhorScore += 2;
+    } else if (usuario && usuario.sexo === 'masculino' && /\b(homem|masculin)\b/.test(textoNorm)) {
+        melhorScore += 2;
+    }
+
+    return melhorScore;
+}
+
+function priorizarEGarantirSugestoes({ sugestoes = [], quantidade = 4, usuario = null, produtos = [], categorias = [] }) {
+    const qtd = normalizarLimiteSugestoes(quantidade);
+    const unicas = [];
+    const vistas = new Set();
+
+    for (const s of Array.isArray(sugestoes) ? sugestoes : []) {
+        if (typeof s !== 'string') continue;
+        const limpo = s.trim();
+        if (!limpo) continue;
+        const chave = limpo.toLowerCase();
+        if (vistas.has(chave)) continue;
+        vistas.add(chave);
+        unicas.push(limpo);
+    }
+
+    const ordenadas = usuarioPossuiPerfil(usuario)
+        ? unicas
+            .map((texto, idx) => ({
+                texto,
+                score: pontuarSugestaoPorPerfil(texto, { usuario, produtos, categorias }),
+                idx
+            }))
+            .sort((a, b) => b.score - a.score || a.idx - b.idx)
+            .map(item => item.texto)
+        : unicas;
+
+    if (ordenadas.length < qtd) {
+        const catsOrdenadas = ordenarCategoriasParaPerfil(categorias, produtos, usuario);
+        for (const cat of catsOrdenadas) {
+            if (ordenadas.length >= qtd) break;
+            const nome = cat && cat.nome ? String(cat.nome).trim() : '';
+            if (!nome) continue;
+            const opcao = `Ver ${nome}`;
+            if (!vistas.has(opcao.toLowerCase())) {
+                vistas.add(opcao.toLowerCase());
+                ordenadas.push(opcao);
+            }
+        }
+    }
+
+    return ordenadas.slice(0, qtd);
+}
+
+async function consultarMaisa({ mensagem, historico = [], produtos = [], categorias = [], usuario = null, limiteSugestoes = 4 }) {
     const ai = obterClienteGemini();
+    const quantidadeSugestoes = normalizarLimiteSugestoes(limiteSugestoes);
     const perfilAlvo = resolverPerfilAlvo(usuario, mensagem, historico);
-    const systemInstruction = construirInstrucaoSistema({ produtos, categorias, usuario, perfilAlvo, historico });
+    const systemInstruction = construirInstrucaoSistema({
+        produtos,
+        categorias,
+        usuario,
+        perfilAlvo,
+        historico,
+        quantidadeSugestoes
+    });
     const contents = [
         ...normalizarHistorico(historico),
         {
@@ -494,7 +644,7 @@ async function consultarMaisa({ mensagem, historico = [], produtos = [], categor
                 systemInstruction,
                 temperature: 0.9,
                 responseMimeType: 'application/json',
-                responseSchema: schemaRespostaMaisa
+                responseSchema: criarSchemaRespostaMaisa(quantidadeSugestoes)
             }
         })
     );
@@ -505,16 +655,11 @@ async function consultarMaisa({ mensagem, historico = [], produtos = [], categor
         dados = JSON.parse(textoBruto);
     } catch (_) {
         const possuiRelacao = mensagemTemRelacaoComCatalogo(mensagem, historico, produtos, categorias);
-        const nomesCats = (Array.isArray(categorias) ? categorias : [])
-            .map(c => c && c.nome)
-            .filter(Boolean)
-            .slice(0, 2)
-            .map(nome => `Ver ${nome}`);
         dados = {
             tem_relacao_com_catalogo: possuiRelacao,
             resposta: textoBruto || 'Desculpe, tive um problema para organizar minha resposta agora. Pode tentar enviar de novo?',
             produtos_recomendados: [],
-            sugestoes_perguntas: nomesCats
+            sugestoes_perguntas: []
         };
     }
 
@@ -533,18 +678,19 @@ async function consultarMaisa({ mensagem, historico = [], produtos = [], categor
         })
         : [];
 
-    const sugestoesLimpas = Array.isArray(dados.sugestoes_perguntas)
-        ? dados.sugestoes_perguntas
-            .filter(s => typeof s === 'string' && s.trim())
-            .map(s => s.trim())
-            .slice(0, 3)
-        : [];
+    const sugestoesPriorizadas = priorizarEGarantirSugestoes({
+        sugestoes: dados.sugestoes_perguntas,
+        quantidade: quantidadeSugestoes,
+        usuario,
+        produtos,
+        categorias
+    });
 
     return {
         tem_relacao_com_catalogo: temRelacao,
         resposta: typeof dados.resposta === 'string' ? dados.resposta : '',
         produtos_recomendados: produtosGarantidos,
-        sugestoes_perguntas: sugestoesLimpas,
+        sugestoes_perguntas: sugestoesPriorizadas,
         perfilAlvo
     };
 }
@@ -554,5 +700,7 @@ module.exports = {
     gerarSugestoesPersonalizadas,
     resolverPerfilAlvo,
     garantirTresProdutos,
-    mensagemTemRelacaoComCatalogo
+    mensagemTemRelacaoComCatalogo,
+    priorizarEGarantirSugestoes,
+    normalizarLimiteSugestoes
 };
