@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%# o link traz o token na URL: não repassa a URL a outros sites e não indexa a página %>
+    <meta name="referrer" content="no-referrer">
+    <meta name="robots" content="noindex">
+    <title>Redefinir senha | +Saúde</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/estilo.css">
+    <link rel="stylesheet" href="/css/cad.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/toggle-senha.css">
+    <link rel="stylesheet" href="/css/validacao-frontend.css">
+    <link rel="stylesheet" href="/css/ativacao.css">
+    <link rel="stylesheet" href="/css/recuperar-senha.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <header>
+        <img class="icon" src="/imagens/logo-branco.svg" alt="Logo +Saúde">
+    </header>
+
+    <main>
+        <section class="txt" aria-labelledby="resetar-titulo">
+            <article class="title-group">
+                <h1 class="tit" id="resetar-titulo">Redefinir senha</h1>
+                <p class="ativacao-detalhe">Escolha uma nova senha para a sua conta.</p>
+            </article>
+
+            <% if (erroGeral) { %>
+                <article class="erro-login" role="alert">
+                    <output class="mensagem-erro" aria-live="polite"><%= erroGeral %></output>
+                </article>
+            <% } %>
+
+            <form method="POST" action="/resetar-senha" novalidate aria-label="Formulário para redefinir a senha">
+                <input type="hidden" name="token" value="<%= token %>">
+
+                <fieldset>
+                    <legend><h2>Nova senha</h2></legend>
+                    <label for="senhan" class="campo-senha">
+                        <input
+                            type="password"
+                            id="senhan"
+                            name="senhan"
+                            placeholder="Sua nova senha"
+                            autocomplete="new-password"
+                            class="<%= erros.senhan ? 'error' : '' %>"
+                            aria-describedby="senhan-dica senhan-error"
+                            <% if (erros.senhan) { %>aria-invalid="true"<% } %>
+                            required>
+                        <button type="button" class="btn-toggle-senha" aria-label="Mostrar senha" data-target="senhan"></button>
+                    </label>
+                    <output id="senhan-dica" class="rec-dica">
+                        De 6 a 20 caracteres, com letra maiúscula, número e caractere especial (!@#$%^&amp;*).
+                    </output>
+                    <output class="error-message" id="senhan-error" role="alert" aria-live="polite"<% if (erros.senhan) { %> style="display:block"<% } %>><%= erros.senhan || '' %></output>
+                </fieldset>
+
+                <fieldset>
+                    <legend><h2>Confirmar nova senha</h2></legend>
+                    <label for="csenha" class="campo-senha">
+                        <input
+                            type="password"
+                            id="csenha"
+                            name="csenha"
+                            placeholder="Repita a nova senha"
+                            autocomplete="new-password"
+                            class="<%= erros.csenha ? 'error' : '' %>"
+                            aria-describedby="csenha-error"
+                            <% if (erros.csenha) { %>aria-invalid="true"<% } %>
+                            required>
+                        <button type="button" class="btn-toggle-senha" aria-label="Mostrar senha" data-target="csenha"></button>
+                    </label>
+                    <output class="error-message" id="csenha-error" role="alert" aria-live="polite"<% if (erros.csenha) { %> style="display:block"<% } %>><%= erros.csenha || '' %></output>
+                </fieldset>
+
+                <button id="btn" type="submit">Salvar nova senha</button>
+
+                <nav class="signup-prompt" aria-label="Outras opções">
+                    <p>
+                        <a href="/login" class="link">Desistiu?
+                            <strong class="link2">Voltar para o login</strong>
+                        </a>
+                    </p>
+                </nav>
+            </form>
+        </section>
+    </main>
+
+    <footer></footer>
+
+    <script src="/js/validacao.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.btn-toggle-senha').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const input = document.getElementById(this.getAttribute('data-target'));
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        this.setAttribute('aria-label', 'Ocultar senha');
+                    } else {
+                        input.type = 'password';
+                        this.setAttribute('aria-label', 'Mostrar senha');
+                    }
+                });
+            });
+        });
+    </script>
+
+    <%- include('../partial/cookies.ejs') %>
+</body>
+</html>

@@ -171,6 +171,38 @@ const usuariosModel = {
         }
     },
 
+    // >>> RECUPERAR SENHA (início) ---------------------------------------
+    // usuário completo (inclui o hash da senha) para validar o link de recuperação
+    findParaRecuperacao: async (id) => {
+        try {
+            const [linhas] = await pool.query(
+                'SELECT * FROM usuarios WHERE id_usuario = ?',
+                [id]
+            );
+            return linhas[0] || null;
+        } catch (erro) {
+            return null;
+        }
+    },
+
+    // grava a nova senha somente se o hash atual ainda for o mesmo do momento em que o
+    // link foi validado. Isso garante que o link funcione uma única vez, mesmo com dois
+    // envios simultâneos. Retorna true se a senha foi trocada.
+    redefinirSenha: async (id, hashSenhaAtual, novaSenha) => {
+        try {
+            const novoHash = await hashSenha(novaSenha);
+            const [result] = await pool.query(
+                'UPDATE usuarios SET senhan = ? WHERE id_usuario = ? AND senhan = ?',
+                [novoHash, id, hashSenhaAtual]
+            );
+            return result.affectedRows === 1;
+        } catch (erro) {
+            console.error('Erro ao redefinir senha:', erro);
+            return false;
+        }
+    },
+    // <<< RECUPERAR SENHA (fim) ------------------------------------------
+
     updateCampo: async (email, campo, valor) => {
         const camposPermitidos = ['nome', 'nasc', 'cpf', 'ddd', 'tel', 'sexo', 'foto_perfil'];
         if (!camposPermitidos.includes(campo)) return null;

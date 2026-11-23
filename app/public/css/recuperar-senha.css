@@ -1,0 +1,57 @@
+/* Recuperação de senha: link "Esqueci minha senha" no login e telas de recuperar/redefinir.
+   Reaproveita o visual de login.css, cad.css, ativacao.css e validacao-frontend.css. */
+
+/* link "Esqueci minha senha", logo abaixo do campo de senha */
+.login-recuperar {
+    margin: -0.25rem 0 0.5rem;
+    text-align: right;
+}
+
+.login-recuperar .link {
+    display: inline-block;
+    padding: 0.4375rem 0;
+    font-size: 0.9375rem;
+}
+
+.login-recuperar .link:focus-visible,
+.rec-acoes .link:focus-visible {
+    outline: 0.125rem solid var(--border-focus, #4da6ff);
+    outline-offset: 0.1875rem;
+    border-radius: 0.25rem;
+}
+
+/* dica das regras da senha (fica sempre visível, ao contrário de output.error-message) */
+.rec-dica {
+    display: block;
+    margin-top: 0.3rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    color: var(--text-muted, #a0a0a0);
+}
+
+/* o formulário aparece depois da mensagem de erro/sucesso */
+.rec-status {
+    margin-bottom: 1.3125rem;
+}
+
+/* links de apoio abaixo do formulário/mensagem */
+.rec-acoes {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.rec-acoes p + p {
+    margin-top: 0.75rem;
+}
+
+/* desktop */
+@media (min-width: 901px) {
+    .login-recuperar .link {
+        font-size: 1rem;
+    }
+
+    .rec-dica {
+        font-size: 0.9rem;
+    }
+}

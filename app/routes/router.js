@@ -31,6 +31,10 @@ const { compareSenha } = require('../helpers/auth');
 const { verificarTokenAtivacao } = require('../helpers/tokenAtivacao');
 const { enviarEmailAtivacao, urlBaseDaRequisicao, podeReenviar, VALIDADE_HORAS } = require('../services/ativacaoConta');
 
+// >>> RECUPERAR SENHA (início: import) ---------------------------------
+const { solicitarRecuperacao, validarLinkRecuperacao, VALIDADE_MINUTOS } = require('../services/recuperacaoSenha');
+// <<< RECUPERAR SENHA (fim: import) -----------------------------------
+
 
 
 // algoritmo de personalizacao
@@ -355,13 +359,118 @@ router.post('/reenviar-ativacao',
     }
 );
 
+// >>> RECUPERAR SENHA (início: rotas) ---------------------------------
+// ── Recuperação de senha ("Esqueci minha senha") ──────────
+const MSG_LINK_INVALIDO = 'Este link é inválido ou expirou. Informe seu e-mail para receber um novo.';
+
+// quem já está logado não precisa recuperar a senha (mesma ideia do verificarUsuAutenticado dos slides)
+function redirecionarSeLogado(req, res, next) {
+    if (req.session && req.session.usuarioEmail) {
+        return res.redirect(req.session.isAdmin ? '/admin' : '/home');
+    }
+    next();
+}
+
+// regras da nova senha: as mesmas do cadastro
+const regrasNovaSenha = [
+    body('senhan').isLength({ min: 6, max: 20 }).withMessage('Senha deve ter de 6 a 20 caracteres!')
+        .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
+        .withMessage('Senha precisa de maiúscula, número e caractere especial!'),
+    body('csenha').custom((v, { req }) => {
+        if (v !== req.body.senhan) throw new Error('As senhas não conferem!');
+        return true;
+    })
+];
+
+function renderRecuperarSenha(res, { status = 200, erro = null, email = '', enviado = false } = {}) {
+    return res.status(status).render('pages/recuperar-senha', {
+        erro, email, enviado, validadeMinutos: VALIDADE_MINUTOS
+    });
+}
+
+// 1) formulário onde o usuário informa o e-mail
+router.get('/recuperar-senha', redirecionarSeLogado, (req, res) => {
+    renderRecuperarSenha(res);
+});
+
+router.post('/recuperar-senha', redirecionarSeLogado,
+    body('email').trim().isEmail().withMessage('Informe um e-mail válido!'),
+    (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return renderRecuperarSenha(res, {
+                status: 400,
+                erro:   errors.array()[0].msg,
+                email:  req.body.email || ''
+            });
+        }
+
+        const email = req.body.email.trim();
+
+        // sem "await" de propósito: a resposta demora o mesmo tempo exista o e-mail ou não,
+        // então não dá para descobrir quais e-mails estão cadastrados medindo o tempo
+        solicitarRecuperacao(email, urlBaseDaRequisicao(req));
+
+        // resposta idêntica em qualquer caso: não revela se o e-mail está cadastrado
+        renderRecuperarSenha(res, { email, enviado: true });
+    }
+);
+
+// 2) link recebido por e-mail: valida o token e mostra o formulário da nova senha
+router.get('/resetar-senha', async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+
+    const token     = String(req.query.token || '');
+    const validacao = await validarLinkRecuperacao(token);
+    if (!validacao.ok) {
+        return renderRecuperarSenha(res, { status: 400, erro: MSG_LINK_INVALIDO });
+    }
+
+    res.render('pages/resetar-senha', { token, erros: {}, erroGeral: null });
+});
+
+// 3) grava a nova senha. O usuário vem do TOKEN (revalidado aqui), nunca de um
+// campo do formulário: assim ninguém consegue trocar a senha de outra conta.
+router.post('/resetar-senha', regrasNovaSenha, async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+
+    const token     = String(req.body.token || '');
+    const validacao = await validarLinkRecuperacao(token);
+    if (!validacao.ok) {
+        return renderRecuperarSenha(res, { status: 400, erro: MSG_LINK_INVALIDO });
+    }
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const erros = {};
+        errors.array().forEach(e => { if (!erros[e.path]) erros[e.path] = e.msg; });
+        return res.status(400).render('pages/resetar-senha', { token, erros, erroGeral: null });
+    }
+
+    const { id_usuario, senhan: hashAtual } = validacao.usuario;
+    const trocou = await usuariosModel.redefinirSenha(id_usuario, hashAtual, req.body.senhan);
+    if (!trocou) {
+        // link já usado em outra aba, ou falha ao gravar
+        return renderRecuperarSenha(res, { status: 400, erro: MSG_LINK_INVALIDO });
+    }
+
+    res.redirect('/login?senha=redefinida');
+});
+// <<< RECUPERAR SENHA (fim: rotas) ------------------------------------
+
 // ── Login
 router.get('/login', (req, res) => {
     const erroAdmin = req.query.erro === 'admin'
         ? 'Acesso negado. Apenas administradores podem acessar esta área.'
         : null;
+    // >>> RECUPERAR SENHA (início: aviso de senha redefinida) ----------
+    const notificacao = req.query.senha === 'redefinida'
+        ? { titulo: 'Senha redefinida', mensagem: 'Sua nova senha foi registrada. Entre com ela para continuar.' }
+        : null;
+    // <<< RECUPERAR SENHA (fim) ----------------------------------------
     res.render('pages/login', {
         erro:     erroAdmin,
+        notificacao,                      // <<< RECUPERAR SENHA (linha nova)
         redirect: req.query.redirect || '/home'
     });
 });
