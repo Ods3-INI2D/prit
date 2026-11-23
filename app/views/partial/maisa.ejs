@@ -77,4 +77,5 @@
     </section>
 </div>
 
+<script type="application/json" id="maisa-categorias-data"><%- JSON.stringify((typeof categoriasMenu !== 'undefined' && Array.isArray(categoriasMenu) ? categoriasMenu : []).map(function (c) { return { nome: c.nome, slug: c.slug }; })).replace(/</g, '\\u003c') %></script>
 <script src="/js/maisa.js" defer></script>

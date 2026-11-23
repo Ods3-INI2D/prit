@@ -1563,6 +1563,19 @@ setTimeout(cancelarPedidosVencidos, 20000).unref();
 setInterval(cancelarPedidosVencidos, 30 * 60 * 1000).unref();
 
 // ── Chatbot Maisa (Assistente de IA para público idoso) ──────────────────────
+function resolverLimiteSugestoes(req) {
+    const dispositivo = String(req.body?.dispositivo || req.query?.dispositivo || '').toLowerCase();
+    if (dispositivo === 'mobile') return 2;
+    if (dispositivo === 'desktop') return 4;
+
+    const limiteParam = Number(req.body?.limiteSugestoes ?? req.query?.limite);
+    if (limiteParam === 2) return 2;
+    if (limiteParam === 4) return 4;
+
+    const ua = String(req.get('user-agent') || '');
+    return /Mobi|Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) ? 2 : 4;
+}
+
 router.get('/api/maisa/sugestoes', async (req, res) => {
     try {
         const [produtos, categorias] = await Promise.all([
@@ -1570,10 +1583,12 @@ router.get('/api/maisa/sugestoes', async (req, res) => {
             produtosModel.findAllCategorias()
         ]);
         const usuario = res.locals.usuario && !res.locals.isAdmin ? res.locals.usuario : null;
+        const limite = resolverLimiteSugestoes(req);
         const sugestoes = gerarSugestoesPersonalizadas({
             produtos: Array.isArray(produtos) ? produtos : [],
             categorias: Array.isArray(categorias) ? categorias : [],
-            usuario
+            usuario,
+            limite
         });
         return res.json({
             ok: true,
@@ -1620,7 +1635,8 @@ router.post('/api/maisa/chat', async (req, res) => {
             historico,
             produtos: listaProdutos,
             categorias: listaCategorias,
-            usuario: res.locals.usuario && !res.locals.isAdmin ? res.locals.usuario : null
+            usuario: res.locals.usuario && !res.locals.isAdmin ? res.locals.usuario : null,
+            limiteSugestoes: resolverLimiteSugestoes(req)
         });
 
         const mapaProdutos = new Map(
@@ -1676,7 +1692,7 @@ router.post('/api/maisa/chat', async (req, res) => {
             console.warn('[maisa] Chave ou projeto Gemini sem permissão/faturamento (' + (statusUpstream || 'auth') + ').');
             return res.status(502).json({
                 ok: false,
-                erro: 'A chave da API do Gemini configurada não possui permissão ou faturamento ativo para este projeto. Verifique a GEMINI_API_KEY em Settings > Secrets.'
+                erro: 'A chave da API do Gemini configurada não possui permissão para os modelos usados. Verifique a GEMINI_API_KEY (crie uma nova em aistudio.google.com/apikey, em um projeto sem faturamento) ou defina GEMINI_MODEL com um modelo gratuito.'
             });
         }
         if (statusUpstream === 429 || /RESOURCE_EXHAUSTED/i.test(msgSegura)) {
