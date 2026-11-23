@@ -1,7 +1,17 @@
 const { GoogleGenAI, Type } = require('@google/genai');
 const { calcularIdade, pontuar, ordenarPorRelevancia } = require('../helpers/personalizacao');
 
-const MODELO_MAISA = 'gemini-4-hydrogen';
+// Modelos tentados em ordem. Podem ser sobrescritos via GEMINI_MODELS (separados por vírgula).
+// Os modelos "flash" têm camada gratuita na API do Gemini (com limites de uso), sem exigir faturamento.
+const MODELOS_PADRAO = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+
+function obterModelos() {
+    const env = String(process.env.GEMINI_MODELS || process.env.GEMINI_MODEL || '')
+        .split(',')
+        .map(m => m.trim())
+        .filter(Boolean);
+    return env.length ? env : MODELOS_PADRAO;
+}
 
 let clienteGemini = null;
 let chaveEmCache = null;
@@ -328,40 +338,89 @@ function gerarSugestoesPersonalizadas({ produtos = [], categorias = [], usuario 
     return { saudacao, topicos };
 }
 
-async function consultarMaisa({ mensagem, historico = [], produtos = [], categorias = [], usuario = null }) {
+function montarRespostaLocal({ mensagem, historico, produtos, perfilAlvo }) {
+    const selecionados = garantirTresProdutos({ recomendados: [], mensagem, historico, produtos, perfilAlvo });
+    const mapa = new Map((Array.isArray(produtos) ? produtos : []).map(p => [Number(p.id_produto), p]));
+    const nomes = selecionados
+        .map(r => mapa.get(r.id_produto))
+        .filter(Boolean)
+        .map(p => p.nome);
+
+    let resposta;
+    if (nomes.length) {
+        resposta = `Encontrei opções no nosso catálogo que combinam com o que você procura, como ${nomes[0]}. Veja abaixo os produtos que separei para você.`;
+    } else {
+        resposta = 'Não encontrei produtos para esse pedido agora. Tente descrever de outro jeito o que você procura.';
+    }
+    return {
+        resposta,
+        produtos_recomendados: selecionados,
+        sugestoes_perguntas: ['Ver promoções', 'Vitaminas 60+']
+    };
+}
+
+async function chamarGemini({ mensagem, historico, produtos, categorias, usuario, perfilAlvo }) {
     const ai = obterClienteGemini();
-    const perfilAlvo = resolverPerfilAlvo(usuario, mensagem, historico);
     const systemInstruction = construirInstrucaoSistema({ produtos, categorias, usuario, perfilAlvo });
     const contents = [
         ...normalizarHistorico(historico),
-        {
-            role: 'user',
-            parts: [{ text: String(mensagem || '').trim().slice(0, 1000) }]
-        }
+        { role: 'user', parts: [{ text: String(mensagem || '').trim().slice(0, 1000) }] }
     ];
 
-    const response = await executarComRetry(() =>
-        ai.models.generateContent({
-            model: MODELO_MAISA,
-            contents,
-            config: {
-                systemInstruction,
-                responseMimeType: 'application/json',
-                responseSchema: schemaRespostaMaisa
-            }
-        })
-    );
+    let ultimoErro;
+    for (const modelo of obterModelos()) {
+        try {
+            const response = await executarComRetry(() =>
+                ai.models.generateContent({
+                    model: modelo,
+                    contents,
+                    config: {
+                        systemInstruction,
+                        responseMimeType: 'application/json',
+                        responseSchema: schemaRespostaMaisa
+                    }
+                })
+            );
+            return response;
+        } catch (erro) {
+            ultimoErro = erro;
+            const msg = String((erro && erro.message) || '').replace(/AIza[0-9A-Za-z_-]+/g, '[REDACTED]');
+            console.warn(`[maisa] Modelo "${modelo}" falhou (${(erro && (erro.status || erro.code)) || 'sem status'}): ${msg.slice(0, 200)}`);
+        }
+    }
+    throw ultimoErro || new Error('Nenhum modelo Gemini disponível.');
+}
 
-    const textoBruto = (response && response.text ? response.text : '').trim();
+/**
+ * Consulta a IA (Gemini). Se a IA estiver indisponível (sem chave, sem cota/faturamento,
+ * modelo inválido, limite de requisições...), responde com o motor local de busca
+ * no catálogo, para que a Maisa nunca fique fora do ar.
+ */
+async function consultarMaisa({ mensagem, historico = [], produtos = [], categorias = [], usuario = null }) {
+    const perfilAlvo = resolverPerfilAlvo(usuario, mensagem, historico);
+
     let dados;
+    let modo = 'ia';
     try {
-        dados = JSON.parse(textoBruto);
-    } catch (_) {
-        dados = {
-            resposta: textoBruto || 'Desculpe, não consegui organizar a resposta agora. Pode tentar perguntar novamente?',
-            produtos_recomendados: [],
-            sugestoes_perguntas: ['Mostrar vitaminas 60+', 'Produtos em promoção']
-        };
+        const response = await chamarGemini({ mensagem, historico, produtos, categorias, usuario, perfilAlvo });
+        const textoBruto = (response && response.text ? response.text : '').trim();
+        try {
+            dados = JSON.parse(textoBruto);
+        } catch (_) {
+            dados = {
+                resposta: textoBruto || 'Desculpe, não consegui organizar a resposta agora. Pode tentar perguntar novamente?',
+                produtos_recomendados: [],
+                sugestoes_perguntas: ['Mostrar vitaminas 60+', 'Produtos em promoção']
+            };
+        }
+    } catch (erro) {
+        modo = 'local';
+        if (!erro || erro.codigo !== 'MISSING_API_KEY') {
+            console.warn('[maisa] IA indisponível, usando busca local no catálogo.');
+        } else {
+            console.warn('[maisa] GEMINI_API_KEY ausente, usando busca local no catálogo.');
+        }
+        dados = montarRespostaLocal({ mensagem, historico, produtos, perfilAlvo });
     }
 
     const produtosGarantidos = garantirTresProdutos({
@@ -376,7 +435,8 @@ async function consultarMaisa({ mensagem, historico = [], produtos = [], categor
         resposta: typeof dados.resposta === 'string' ? dados.resposta : '',
         produtos_recomendados: produtosGarantidos,
         sugestoes_perguntas: Array.isArray(dados.sugestoes_perguntas) ? dados.sugestoes_perguntas.slice(0, 2) : [],
-        perfilAlvo
+        perfilAlvo,
+        modo
     };
 }
 
