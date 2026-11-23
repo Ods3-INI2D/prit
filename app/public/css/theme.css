@@ -5,7 +5,7 @@
     --bg-menu: #0f0f0f;
     --bg-submenu: #0a0a0a;
     --bg-header: #163069;
-    --bg-footer: rgb(91, 123, 225);
+    --bg-footer: #1e3a8a;
     --bg-input: #2a2a2a;
     --bg-modal: rgba(0, 0, 0, 0.95);
     --text-primary: #ffffff;
@@ -53,7 +53,7 @@
     --bg-menu: #f5f5f5;
     --bg-submenu: #ffffff;
     --bg-header: #2563a8;
-    --bg-footer: rgb(91, 123, 225);
+    --bg-footer: #1e3a8a;
     --bg-input: #ffffff;
     --bg-modal: rgba(255, 255, 255, 0.98);
     --text-primary: #1a1a1a;

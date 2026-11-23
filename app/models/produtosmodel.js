@@ -1,9 +1,11 @@
 const pool = require('../config/pool_conexoes');
+const mockStore = require('../config/mock_store');
 
 const produtosModel = {
 
     // total de registros
     totRegistros: async () => {
+        if (pool.isMock) return mockStore.produtos.length;
         try {
             const [result] = await pool.query(
                 'SELECT COUNT(*) AS total FROM produtos'
@@ -16,6 +18,16 @@ const produtosModel = {
 
     // lista com categorias
     findAll: async (offset = null, qtde = null) => {
+        if (pool.isMock) {
+            const ordenados = mockStore.produtos
+                .slice()
+                .sort((a, b) => b.id_produto - a.id_produto)
+                .map(mockStore.formatarProduto);
+            if (offset !== null && qtde !== null) {
+                return ordenados.slice(Number(offset), Number(offset) + Number(qtde));
+            }
+            return ordenados;
+        }
         try {
             let linhas;
             if (offset === null && qtde === null) {
@@ -52,6 +64,18 @@ const produtosModel = {
 
     // busca por id
     findById: async (id) => {
+        if (pool.isMock) {
+            const prod = mockStore.produtos.find(p => p.id_produto === Number(id));
+            if (!prod) return null;
+            const formatado = mockStore.formatarProduto(prod);
+            const avals = mockStore.avaliacoes
+                .filter(a => a.id_produto === Number(id))
+                .slice()
+                .sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em));
+            formatado.avaliacoes = avals;
+            formatado.lista_categorias = formatado.categoria ? formatado.categoria.split(', ') : [];
+            return formatado;
+        }
         try {
             const [linhas] = await pool.query(
                 `SELECT p.*,
@@ -82,6 +106,21 @@ const produtosModel = {
 
     // busca por categoria
     findByCategoria: async (nomeCategoria) => {
+        if (pool.isMock) {
+            const alvo = String(nomeCategoria || '').toLowerCase();
+            const geralSet = new Set(['cuidados com a pele', 'higiene bucal', 'cabelo']);
+            return mockStore.produtos
+                .slice()
+                .sort((a, b) => b.id_produto - a.id_produto)
+                .map(mockStore.formatarProduto)
+                .filter(p => {
+                    const nomes = (p.categoria || '').split(', ').map(s => s.trim().toLowerCase());
+                    if (alvo === 'geral') {
+                        return nomes.some(n => geralSet.has(n));
+                    }
+                    return nomes.includes(alvo);
+                });
+        }
         try {
             let linhas;
             if (nomeCategoria.toLowerCase() === 'geral') {
@@ -121,6 +160,16 @@ const produtosModel = {
 
     // busca por slug da categoria
     findBySlugCategoria: async (slug) => {
+        if (pool.isMock) {
+            return mockStore.produtos
+                .slice()
+                .sort((a, b) => b.id_produto - a.id_produto)
+                .map(mockStore.formatarProduto)
+                .filter(p => {
+                    const slugs = (p.slugs_categorias || '').split(',').map(s => s.trim());
+                    return slugs.includes(slug);
+                });
+        }
         try {
             const [linhas] = await pool.query(
                 `SELECT p.*,
@@ -144,6 +193,23 @@ const produtosModel = {
 
     // cadastro admin
     create: async (dados, ids_categorias = []) => {
+        if (pool.isMock) {
+            const id_produto = mockStore.seq.produto++;
+            mockStore.produtos.push({
+                id_produto,
+                nome: dados.nome,
+                descricao: dados.descricao || '',
+                preco: Number(dados.preco) || 0,
+                preco_desconto: dados.preco_desconto ? Number(dados.preco_desconto) : null,
+                imagem: dados.imagem || '/imagens/foto.svg',
+                status: dados.status || 'em-estoque',
+                faixa_etaria: dados.faixa_etaria || null,
+                sexo: dados.sexo || null,
+                ids_categorias: ids_categorias.map(Number),
+                criado_em: new Date()
+            });
+            return { insertId: id_produto, affectedRows: 1 };
+        }
         const conn = await pool.getConnection();
         try {
             await conn.beginTransaction();
@@ -184,6 +250,24 @@ const produtosModel = {
 
     // atualizaçao admin
     update: async (id, dados, ids_categorias = []) => {
+        if (pool.isMock) {
+            const idx = mockStore.produtos.findIndex(p => p.id_produto === Number(id));
+            if (idx === -1) return { affectedRows: 0 };
+            const atual = mockStore.produtos[idx];
+            mockStore.produtos[idx] = {
+                ...atual,
+                nome: dados.nome,
+                descricao: dados.descricao || '',
+                preco: Number(dados.preco) || 0,
+                preco_desconto: dados.preco_desconto ? Number(dados.preco_desconto) : null,
+                imagem: dados.imagem || atual.imagem,
+                status: dados.status || 'em-estoque',
+                faixa_etaria: dados.faixa_etaria || null,
+                sexo: dados.sexo || null,
+                ids_categorias: ids_categorias.map(Number)
+            };
+            return { affectedRows: 1 };
+        }
         const conn = await pool.getConnection();
         try {
             await conn.beginTransaction();
@@ -227,19 +311,37 @@ const produtosModel = {
 
     // exclusao fisica admin
     delete: async (id) => {
+        if (pool.isMock) {
+            const idx = mockStore.produtos.findIndex(p => p.id_produto === Number(id));
+            if (idx === -1) return { affectedRows: 0 };
+            mockStore.produtos.splice(idx, 1);
+            return { affectedRows: 1 };
+        }
         try {
             await pool.query('DELETE FROM itens_pedido WHERE id_produto = ?', [id]);
             await pool.query('DELETE FROM carrinho WHERE id_produto = ?', [id]);
             const [result] = await pool.query('DELETE FROM produtos WHERE id_produto = ?', [id]);
             return result;
         } catch (erro) {
-        console.error('delete produto erro:', erro);
-        return erro;
+            console.error('delete produto erro:', erro);
+            return erro;
         }
     },
 
     // avaliaçoes
     addAvaliacao: async (id_produto, id_usuario, nota, texto) => {
+        if (pool.isMock) {
+            const id_avaliacao = mockStore.seq.avaliacao++;
+            mockStore.avaliacoes.push({
+                id_avaliacao,
+                id_produto: Number(id_produto),
+                id_usuario: Number(id_usuario),
+                nota: Number(nota),
+                texto: texto || '',
+                criado_em: new Date()
+            });
+            return { insertId: id_avaliacao, affectedRows: 1 };
+        }
         try {
             const [result] = await pool.query(
                 'INSERT INTO avaliacoes (id_produto, id_usuario, nota, texto) VALUES (?, ?, ?, ?)',
@@ -253,6 +355,11 @@ const produtosModel = {
     },
 
     deleteAvaliacao: async (id_avaliacao) => {
+        if (pool.isMock) {
+            const idx = mockStore.avaliacoes.findIndex(a => a.id_avaliacao === Number(id_avaliacao));
+            if (idx !== -1) mockStore.avaliacoes.splice(idx, 1);
+            return { affectedRows: idx !== -1 ? 1 : 0 };
+        }
         try {
             const [result] = await pool.query(
                 'DELETE FROM avaliacoes WHERE id_avaliacao = ?',
@@ -266,6 +373,9 @@ const produtosModel = {
 
     // categorias
     findAllCategorias: async () => {
+        if (pool.isMock) {
+            return mockStore.categorias.slice().sort((a, b) => a.nome.localeCompare(b.nome));
+        }
         try {
             const [linhas] = await pool.query(
                 'SELECT * FROM categorias ORDER BY nome'
@@ -278,6 +388,9 @@ const produtosModel = {
     },
 
     findCategoriaPorNome: async (nome) => {
+        if (pool.isMock) {
+            return mockStore.categorias.find(c => c.nome.toLowerCase() === String(nome || '').toLowerCase()) || null;
+        }
         try {
             const [linhas] = await pool.query(
                 'SELECT * FROM categorias WHERE nome = ?',
@@ -290,6 +403,9 @@ const produtosModel = {
     },
 
     findCategoriaPorId: async (id) => {
+        if (pool.isMock) {
+            return mockStore.categorias.find(c => c.id_categoria === Number(id)) || null;
+        }
         try {
             const [linhas] = await pool.query(
                 'SELECT * FROM categorias WHERE id_categoria = ?',
@@ -302,6 +418,9 @@ const produtosModel = {
     },
 
     findCategoriaPorSlug: async (slug) => {
+        if (pool.isMock) {
+            return mockStore.categorias.find(c => c.slug === slug) || null;
+        }
         try {
             const [linhas] = await pool.query(
                 'SELECT * FROM categorias WHERE slug = ?',
@@ -315,6 +434,23 @@ const produtosModel = {
 
     // criar categoria
     createCategoria: async (nome, faixaEtaria = null, sexo = null) => {
+        if (pool.isMock) {
+            const slugBase = mockStore.slugify(nome);
+            let slug = slugBase;
+            let sufixo = 1;
+            while (mockStore.categorias.some(c => c.slug === slug)) {
+                slug = slugBase + '-' + sufixo++;
+            }
+            const id_categoria = mockStore.seq.categoria++;
+            mockStore.categorias.push({
+                id_categoria,
+                nome,
+                slug,
+                faixa_etaria: faixaEtaria || null,
+                sexo: sexo || null
+            });
+            return { insertId: id_categoria, slug, affectedRows: 1 };
+        }
         try {
             const slugBase = nome
                 .toLowerCase()
@@ -354,6 +490,15 @@ const produtosModel = {
     },
 
     deleteCategoria: async (id) => {
+        if (pool.isMock) {
+            const idNum = Number(id);
+            mockStore.produtos.forEach(p => {
+                p.ids_categorias = (p.ids_categorias || []).filter(cid => cid !== idNum);
+            });
+            const idx = mockStore.categorias.findIndex(c => c.id_categoria === idNum);
+            if (idx !== -1) mockStore.categorias.splice(idx, 1);
+            return { affectedRows: idx !== -1 ? 1 : 0 };
+        }
         try {
             await pool.query('DELETE FROM produto_categorias WHERE id_categoria = ?', [id]);
             const [result] = await pool.query('DELETE FROM categorias WHERE id_categoria = ?', [id]);
@@ -365,6 +510,13 @@ const produtosModel = {
     },
 
     updateCategoria: async (id, faixa_etaria, sexo) => {
+        if (pool.isMock) {
+            const cat = mockStore.categorias.find(c => c.id_categoria === Number(id));
+            if (!cat) return { affectedRows: 0 };
+            cat.faixa_etaria = faixa_etaria || null;
+            cat.sexo = sexo || null;
+            return { affectedRows: 1 };
+        }
         try {
             const [result] = await pool.query(
                 'UPDATE categorias SET faixa_etaria = ?, sexo = ? WHERE id_categoria = ?',
@@ -379,6 +531,18 @@ const produtosModel = {
 
     // busca por palavra chave
     search: async (termo) => {
+        if (pool.isMock) {
+            const q = String(termo || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            return mockStore.produtos
+                .map(mockStore.formatarProduto)
+                .filter(p => norm(p.nome).includes(q) || norm(p.descricao).includes(q) || norm(p.categoria).includes(q))
+                .sort((a, b) => {
+                    const aNome = norm(a.nome).includes(q) ? 0 : 1;
+                    const bNome = norm(b.nome).includes(q) ? 0 : 1;
+                    return aNome - bNome || b.id_produto - a.id_produto;
+                });
+        }
         try {
             const termoBusca = '%' + termo + '%';
             const [linhas] = await pool.query(
@@ -402,7 +566,7 @@ const produtosModel = {
             console.error('search erro:', erro);
             return [];
         }
-    },
+    }
 };
 
 module.exports = { produtosModel };

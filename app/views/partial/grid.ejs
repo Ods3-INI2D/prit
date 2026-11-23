@@ -14,7 +14,7 @@
         <form class="busca-form" method="GET" action="/busca" role="search">
             <label for="busca">
                 <input type="text" 
-                       placeholder="Buscar..." 
+                       placeholder="Buscar produtos..." 
                        name="q" 
                        id="busca"
                        value="<%= typeof termoBusca !== 'undefined' ? termoBusca : '' %>"
@@ -22,14 +22,18 @@
                        aria-label="Campo de busca de produtos">
             </label>
             <button type="submit" class="lupa-btn" aria-label="Buscar produtos">
-                <img src="/imagens/lupa-branca.svg" alt="buscar" class="lupa">
+                <img src="/imagens/lupa-branca.svg" alt="" class="lupa">
+                <span class="desktop-action-label">Buscar</span>
             </button>
         </form>
 
-        <a class="link-usuario-mobile" href="<%= isAdmin ? '/admin' : (usuario ? '/usuario' : '/login') %>"><img src="/imagens/user-branco.svg" alt="user" class="user"></a>
+        <a class="link-usuario-mobile" href="<%= isAdmin ? '/admin' : (usuario ? '/usuario' : '/login') %>" aria-label="Minha conta"><img src="/imagens/user-branco.svg" alt="user" class="user"></a>
 
         <% if(!isAdmin) { %>
-            <a href="/carrinho"><img src="/imagens/carrinho-branco.svg" alt="carrinho" class="cart"></a>
+            <a href="/carrinho" class="link-carrinho" aria-label="Ir para o carrinho">
+                <img src="/imagens/carrinho-branco.svg" alt="" class="cart">
+                <span class="desktop-action-label">Carrinho</span>
+            </a>
         <% } %>
     </section>
 </nav>

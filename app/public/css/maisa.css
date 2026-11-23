@@ -1,0 +1,730 @@
+/* Assistente Maisa (+Saúde) — Interface simples, legível e calma para população idosa */
+
+.maisa-root {
+    --maisa-font: 19px;
+    --maisa-font-small: 16px;
+    --maisa-brand: #163069;
+    --maisa-brand-2: #1d4ed8;
+    --maisa-bg: #0f172a;
+    --maisa-surface: #1e293b;
+    --maisa-surface-soft: #263349;
+    --maisa-text: #ffffff;
+    --maisa-text-muted: #cbd5e1;
+    --maisa-border: #334155;
+    --maisa-focus: #fbbf24;
+    --maisa-user-bg: #1d4ed8;
+    --maisa-user-text: #ffffff;
+    --maisa-bot-bg: #1e293b;
+    --maisa-accent: #60a5fa;
+    --maisa-ok-text: #86efac;
+    --maisa-warn-text: #fde68a;
+    --maisa-err-bg: #7f1d1d;
+    --maisa-err-text: #fecaca;
+    font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+}
+
+html[data-theme="light"] .maisa-root {
+    --maisa-bg: #f8fafc;
+    --maisa-surface: #ffffff;
+    --maisa-surface-soft: #f1f5f9;
+    --maisa-text: #0f172a;
+    --maisa-text-muted: #475569;
+    --maisa-border: #cbd5e1;
+    --maisa-focus: #d97706;
+    --maisa-user-bg: #163069;
+    --maisa-user-text: #ffffff;
+    --maisa-bot-bg: #ffffff;
+    --maisa-accent: #1d4ed8;
+    --maisa-ok-text: #15803d;
+    --maisa-warn-text: #b45309;
+    --maisa-err-bg: #fee2e2;
+    --maisa-err-text: #991b1b;
+}
+
+.maisa-root[data-maisa-size="large"] {
+    --maisa-font: 22px;
+    --maisa-font-small: 18px;
+}
+
+.maisa-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Botão flutuante simples e claro */
+.maisa-launcher {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 9400;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1.25rem 0.65rem 0.75rem;
+    min-height: 3.75rem;
+    border-radius: 999px;
+    border: 2px solid #ffffff;
+    background-color: #163069;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.35);
+    transition: transform 0.16s ease, background-color 0.16s ease;
+}
+
+.maisa-launcher:hover {
+    transform: translateY(-2px);
+    background-color: #1d4ed8;
+}
+
+.maisa-launcher[hidden] {
+    display: none;
+}
+
+.maisa-avatar-img {
+    width: 2.65rem;
+    height: 2.65rem;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #ebf4ff;
+    border: 2px solid #ffffff;
+    flex-shrink: 0;
+}
+
+.maisa-launcher-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+}
+
+/* Fundo suave quando o painel está aberto */
+.maisa-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9550;
+    background-color: rgba(15, 23, 42, 0.5);
+}
+
+.maisa-backdrop[hidden] {
+    display: none;
+}
+
+/* Janela principal do chat */
+.maisa-panel {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 9600;
+    width: min(480px, calc(100vw - 1.5rem));
+    height: min(680px, calc(100vh - 2rem));
+    display: flex;
+    flex-direction: column;
+    background-color: var(--maisa-surface);
+    color: var(--maisa-text);
+    border: 2px solid var(--maisa-border);
+    border-radius: 1rem;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
+.maisa-panel[hidden] {
+    display: none;
+}
+
+/* Cabeçalho único e enxuto */
+.maisa-header {
+    background-color: #163069;
+    color: #ffffff;
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.maisa-header-info {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+}
+
+.maisa-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #ffffff !important;
+    line-height: 1.2;
+}
+
+.maisa-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-shrink: 0;
+}
+
+.maisa-header-btn {
+    min-height: 2.75rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 0.6rem;
+    border: 2px solid rgba(255, 255, 255, 0.65);
+    background-color: transparent;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.maisa-header-btn:hover {
+    background-color: rgba(255, 255, 255, 0.16);
+}
+
+.maisa-header-btn[aria-pressed="true"] {
+    background-color: #ffffff;
+    color: #163069;
+    border-color: #ffffff;
+}
+
+.maisa-header-btn[hidden] {
+    display: none;
+}
+
+.maisa-close-btn {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+}
+
+.maisa-close-btn:hover {
+    background-color: #991b1b;
+    border-color: #991b1b;
+}
+
+.maisa-launcher:focus-visible,
+.maisa-header-btn:focus-visible,
+.maisa-speak-btn:focus-visible,
+.maisa-topic-btn:focus-visible,
+.maisa-chip:focus-visible,
+.maisa-card-link:focus-visible,
+.maisa-card-cart:focus-visible,
+.maisa-voice-btn:focus-visible,
+.maisa-send-btn:focus-visible {
+    outline: 3px solid var(--maisa-focus);
+    outline-offset: 2px;
+}
+
+/* Área de conversa ampla e limpa */
+.maisa-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    background-color: var(--maisa-bg);
+    font-size: var(--maisa-font);
+    line-height: 1.55;
+}
+
+.maisa-msg {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    max-width: 100%;
+}
+
+.maisa-msg-user {
+    align-self: flex-end;
+    align-items: flex-end;
+    max-width: 88%;
+}
+
+.maisa-msg-bot {
+    align-self: flex-start;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.maisa-bubble {
+    padding: 0.9rem 1.1rem;
+    border-radius: 0.9rem;
+    word-wrap: break-word;
+    white-space: pre-line;
+}
+
+.maisa-msg-user .maisa-bubble {
+    background-color: var(--maisa-user-bg);
+    color: var(--maisa-user-text);
+    border-bottom-right-radius: 0.25rem;
+}
+
+.maisa-msg-bot .maisa-bubble {
+    background-color: var(--maisa-bot-bg);
+    color: var(--maisa-text);
+    border: 1px solid var(--maisa-border);
+    border-bottom-left-radius: 0.25rem;
+}
+
+/* Botão discreto de ouvir resposta */
+.maisa-speak-btn {
+    min-height: 2.5rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 0.55rem;
+    border: 1px solid var(--maisa-border);
+    background-color: var(--maisa-surface);
+    color: var(--maisa-text);
+    font-size: var(--maisa-font-small);
+    font-weight: 700;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+.maisa-speak-btn:hover {
+    border-color: var(--maisa-accent);
+}
+
+/* Botões iniciais limpos (sem caixa dentro de caixa) */
+.maisa-topics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: 100%;
+    margin-top: 0.25rem;
+}
+
+.maisa-topic-btn {
+    width: 100%;
+    min-height: 3.35rem;
+    padding: 0.75rem 1.1rem;
+    border-radius: 0.75rem;
+    border: 2px solid var(--maisa-border);
+    background-color: var(--maisa-surface);
+    color: var(--maisa-text);
+    font-size: var(--maisa-font);
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.maisa-topic-btn:hover {
+    background-color: var(--maisa-brand-2);
+    border-color: var(--maisa-brand-2);
+    color: #ffffff;
+}
+
+/* Sugestões rápidas (máximo 2 botões limpos) */
+.maisa-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.maisa-chip {
+    min-height: 2.85rem;
+    padding: 0.5rem 0.95rem;
+    border-radius: 0.65rem;
+    border: 2px solid var(--maisa-accent);
+    background-color: var(--maisa-surface);
+    color: var(--maisa-text);
+    font-size: var(--maisa-font-small);
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+}
+
+.maisa-chip:hover {
+    background-color: var(--maisa-brand-2);
+    border-color: var(--maisa-brand-2);
+    color: #ffffff;
+}
+
+/* Cartões de produto simplificados */
+.maisa-products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.maisa-product-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.95rem;
+    border-radius: 0.85rem;
+    background-color: var(--maisa-surface);
+    border: 1px solid var(--maisa-border);
+}
+
+.maisa-product-top {
+    display: flex;
+    gap: 0.85rem;
+    align-items: center;
+}
+
+.maisa-product-img {
+    width: 4.5rem;
+    height: 4.5rem;
+    object-fit: contain;
+    border-radius: 0.6rem;
+    background-color: #ffffff;
+    border: 1px solid var(--maisa-border);
+    flex-shrink: 0;
+    padding: 0.25rem;
+}
+
+.maisa-product-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.maisa-product-name {
+    margin: 0;
+    font-size: 1em;
+    font-weight: 800;
+    color: var(--maisa-text);
+    line-height: 1.3;
+}
+
+.maisa-product-price-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.maisa-product-price {
+    font-size: 1.08em;
+    font-weight: 800;
+    color: var(--maisa-accent);
+}
+
+.maisa-product-old-price {
+    font-size: var(--maisa-font-small);
+    color: var(--maisa-text-muted);
+    text-decoration: line-through;
+}
+
+.maisa-product-out {
+    margin: 0;
+    font-size: var(--maisa-font-small);
+    font-weight: 700;
+    color: var(--maisa-warn-text);
+}
+
+.maisa-product-reason {
+    margin: 0;
+    font-size: var(--maisa-font-small);
+    color: var(--maisa-text-muted);
+    line-height: 1.45;
+}
+
+.maisa-product-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.maisa-card-link,
+.maisa-card-cart {
+    flex: 1 1 9rem;
+    min-height: 3rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: 0.6rem;
+    font-size: var(--maisa-font-small);
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.maisa-card-link {
+    background-color: var(--maisa-surface-soft);
+    color: var(--maisa-text);
+    border: 1px solid var(--maisa-border);
+}
+
+.maisa-card-link:hover {
+    border-color: var(--maisa-accent);
+}
+
+.maisa-card-cart {
+    background-color: #163069;
+    color: #ffffff;
+    border: 2px solid #163069;
+}
+
+.maisa-card-cart:hover:not(:disabled) {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+.maisa-card-cart:disabled {
+    opacity: 0.75;
+    cursor: default;
+}
+
+.maisa-card-feedback {
+    margin: 0;
+    font-size: var(--maisa-font-small);
+    font-weight: 700;
+    color: var(--maisa-ok-text);
+}
+
+.maisa-card-feedback.is-error {
+    color: var(--maisa-err-text);
+}
+
+/* Indicador de carregamento */
+.maisa-typing {
+    padding: 0.8rem 1rem;
+    border-radius: 0.85rem;
+    background-color: var(--maisa-bot-bg);
+    border: 1px solid var(--maisa-border);
+    color: var(--maisa-text-muted);
+    font-size: var(--maisa-font-small);
+    font-weight: 700;
+    align-self: flex-start;
+}
+
+/* Campo de mensagem limpo */
+.maisa-form {
+    padding: 0.85rem 1rem;
+    border-top: 1px solid var(--maisa-border);
+    background-color: var(--maisa-surface);
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    flex-shrink: 0;
+}
+
+.maisa-input-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.maisa-input {
+    flex: 1;
+    min-height: 3.25rem;
+    max-height: 6rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.65rem;
+    border: 2px solid var(--maisa-border) !important;
+    background-color: var(--maisa-surface) !important;
+    color: var(--maisa-text) !important;
+    font-family: inherit;
+    font-size: var(--maisa-font);
+    line-height: 1.4;
+    resize: none;
+}
+
+html[data-theme="light"] .maisa-input {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #64748b !important;
+}
+
+html[data-theme="light"] .maisa-input::placeholder {
+    color: #475569 !important;
+}
+
+.maisa-input:focus {
+    outline: 3px solid var(--maisa-focus);
+    outline-offset: 1px;
+    border-color: var(--maisa-brand-2) !important;
+}
+
+.maisa-voice-btn {
+    min-height: 3.25rem;
+    padding: 0 0.9rem;
+    border-radius: 0.65rem;
+    border: 2px solid var(--maisa-border);
+    background-color: var(--maisa-surface-soft);
+    color: var(--maisa-text);
+    font-size: 0.98rem;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.maisa-voice-btn[hidden] {
+    display: none;
+}
+
+.maisa-voice-btn.is-listening {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+    color: #ffffff;
+}
+
+.maisa-send-btn {
+    min-height: 3.25rem;
+    padding: 0 1.2rem;
+    border-radius: 0.65rem;
+    border: none;
+    background-color: #163069;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.maisa-send-btn:hover:not(:disabled) {
+    background-color: #1d4ed8;
+}
+
+.maisa-send-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.maisa-voice-status {
+    margin: 0;
+    font-size: var(--maisa-font-small);
+    font-weight: 700;
+    color: #dc2626;
+}
+
+.maisa-voice-status[hidden] {
+    display: none;
+}
+
+.maisa-desktop-only {
+    display: none;
+}
+
+@media (min-width: 901px) {
+    .maisa-desktop-only {
+        display: inline;
+    }
+
+    .maisa-launcher {
+        right: 1.75rem;
+        bottom: 1.75rem;
+        min-height: 4.1rem;
+        padding: 0.7rem 1.45rem 0.7rem 0.85rem;
+    }
+
+    .maisa-launcher-label {
+        font-size: 1.15rem;
+    }
+
+    .maisa-panel {
+        right: 1.75rem;
+        bottom: 1.75rem;
+        width: min(620px, calc(100vw - 2.5rem));
+        height: min(740px, calc(100vh - 2.5rem));
+        border-radius: 1.1rem;
+    }
+
+    .maisa-header {
+        padding: 1rem 1.35rem;
+    }
+
+    .maisa-title {
+        font-size: 1.35rem;
+    }
+
+    .maisa-messages {
+        padding: 1.4rem;
+        gap: 1.25rem;
+    }
+
+    .maisa-topics-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+
+    .maisa-topic-btn {
+        min-height: 3.75rem;
+        padding: 0.85rem 1.15rem;
+    }
+
+    .maisa-product-card {
+        padding: 1.15rem;
+        gap: 0.85rem;
+    }
+
+    .maisa-product-img {
+        width: 5.25rem;
+        height: 5.25rem;
+    }
+
+    .maisa-form {
+        padding: 1rem 1.35rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .maisa-launcher {
+        right: 0.75rem;
+        bottom: 0.75rem;
+        padding: 0.55rem 1rem 0.55rem 0.65rem;
+        min-height: 3.35rem;
+    }
+
+    .maisa-panel {
+        right: 0.35rem;
+        left: 0.35rem;
+        bottom: 0.35rem;
+        width: auto;
+        height: 88vh;
+        border-radius: 0.85rem;
+    }
+
+    .maisa-topics-list {
+        gap: 0.45rem;
+    }
+
+    .maisa-topic-btn {
+        min-height: 2.75rem;
+        padding: 0.5rem 0.85rem;
+        font-size: 0.95rem;
+    }
+
+    .maisa-chips {
+        gap: 0.4rem;
+    }
+
+    .maisa-chip {
+        min-height: 2.4rem;
+        padding: 0.38rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .maisa-product-actions {
+        flex-direction: column;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .maisa-launcher,
+    .maisa-topic-btn {
+        transition: none;
+    }
+
+    .maisa-launcher:hover {
+        transform: none;
+    }
+}

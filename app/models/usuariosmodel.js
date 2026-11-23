@@ -1,4 +1,5 @@
 const pool = require('../config/pool_conexoes');
+const mockStore = require('../config/mock_store');
 const { hashSenha } = require('../helpers/auth');
 
 let colunasAtivacao = null;
@@ -16,18 +17,22 @@ function garantirColunasAtivacao() {
             await adicionar('ALTER TABLE usuarios ADD COLUMN ativado_em DATETIME NULL DEFAULT NULL');
             console.log('[ativacao] Colunas ativo/ativado_em criadas em usuarios.');
         })().catch((erro) => {
-            colunasAtivacao = null; // permite nova tentativa
+            colunasAtivacao = null;
             console.error('[ativacao] Não foi possível criar as colunas automaticamente. ' +
                 'Execute app/config/ativacao/ativacao_migrations.sql no banco.', erro.message);
             throw erro;
         });
     }
     return colunasAtivacao;
-};
+}
 
 const usuariosModel = {
 
     findAll: async () => {
+        if (pool.isMock) {
+            await mockStore.garantirUsuarioDemo();
+            return mockStore.usuarios.map(({ senhan, ...u }) => u);
+        }
         try {
             const [linhas] = await pool.query(
                 'SELECT id_usuario, nome, nasc, cpf, ddd, tel, email, criado_em FROM usuarios ORDER BY id_usuario'
@@ -39,6 +44,10 @@ const usuariosModel = {
     },
 
     findByEmail: async (email) => {
+        if (pool.isMock) {
+            await mockStore.garantirUsuarioDemo();
+            return mockStore.usuarios.find(u => u.email.toLowerCase() === String(email || '').toLowerCase()) || null;
+        }
         try {
             const [linhas] = await pool.query(
                 'SELECT * FROM usuarios WHERE email = ?',
@@ -51,6 +60,13 @@ const usuariosModel = {
     },
 
     findById: async (id) => {
+        if (pool.isMock) {
+            await mockStore.garantirUsuarioDemo();
+            const u = mockStore.usuarios.find(user => user.id_usuario === Number(id));
+            if (!u) return null;
+            const { senhan, ...resto } = u;
+            return resto;
+        }
         try {
             const [linhas] = await pool.query(
                 'SELECT id_usuario, nome, nasc, cpf, ddd, tel, email, criado_em FROM usuarios WHERE id_usuario = ?',
@@ -63,23 +79,46 @@ const usuariosModel = {
     },
 
     create: async (dados) => {
-        /*
-            dados: { nome, nasc, cpf, ddd, tel, email, senhan, sexo }
-        */
+        if (pool.isMock) {
+            await mockStore.garantirUsuarioDemo();
+            if (mockStore.usuarios.some(u => u.email.toLowerCase() === String(dados.email).toLowerCase())) {
+                return { code: 'ER_DUP_ENTRY', sqlMessage: 'Duplicate entry for email' };
+            }
+            if (mockStore.usuarios.some(u => u.cpf === dados.cpf)) {
+                return { code: 'ER_DUP_ENTRY', sqlMessage: 'Duplicate entry for cpf' };
+            }
+            const senhaHasheada = await hashSenha(dados.senhan);
+            const id_usuario = mockStore.seq.usuario++;
+            // No modo em memória sem SMTP configurado, já ativa para permitir teste imediato se desejado, ou respeita ativação
+            const emailConfigurado = Boolean(process.env.RESEND_API_KEY || ((process.env.SMTP_USER || process.env.EMAIL_USER) && (process.env.SMTP_PASS || process.env.EMAIL_PASS)));
+            mockStore.usuarios.push({
+                id_usuario,
+                nome: dados.nome,
+                nasc: dados.nasc,
+                cpf: dados.cpf,
+                ddd: dados.ddd,
+                tel: dados.tel,
+                email: dados.email,
+                senhan: senhaHasheada,
+                sexo: dados.sexo || null,
+                foto_perfil: null,
+                ativo: emailConfigurado ? 0 : 1,
+                ativado_em: emailConfigurado ? null : new Date(),
+                criado_em: new Date()
+            });
+            return { insertId: id_usuario, affectedRows: 1 };
+        }
         try {
             const senhaHasheada = await hashSenha(dados.senhan);
- 
-            // a conta nasce inativa (ativo = 0) até o e-mail ser confirmado
             const inserir = () => pool.query(
                 'INSERT INTO usuarios (nome, nasc, cpf, ddd, tel, email, senhan, sexo, ativo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)',
                 [dados.nome, dados.nasc, dados.cpf, dados.ddd, dados.tel, dados.email, senhaHasheada, dados.sexo || null]
             );
- 
+
             let result;
             try {
                 [result] = await inserir();
             } catch (erro) {
-                // banco ainda sem a coluna "ativo": cria as colunas de ativação e tenta de novo
                 if (erro.code === 'ER_BAD_FIELD_ERROR' && /ativo/.test(erro.sqlMessage || '')) {
                     await garantirColunasAtivacao();
                     [result] = await inserir();
@@ -94,8 +133,12 @@ const usuariosModel = {
         }
     },
 
-    // dados mínimos para o fluxo de ativação (inclui o status da conta)
     findParaAtivacao: async (id) => {
+        if (pool.isMock) {
+            await mockStore.garantirUsuarioDemo();
+            const u = mockStore.usuarios.find(user => user.id_usuario === Number(id));
+            return u ? { id_usuario: u.id_usuario, nome: u.nome, email: u.email, ativo: u.ativo } : null;
+        }
         try {
             const [linhas] = await pool.query(
                 'SELECT id_usuario, nome, email, ativo FROM usuarios WHERE id_usuario = ?',
@@ -106,8 +149,13 @@ const usuariosModel = {
             return null;
         }
     },
- 
+
     findParaAtivacaoPorEmail: async (email) => {
+        if (pool.isMock) {
+            await mockStore.garantirUsuarioDemo();
+            const u = mockStore.usuarios.find(user => user.email.toLowerCase() === String(email || '').toLowerCase());
+            return u ? { id_usuario: u.id_usuario, nome: u.nome, email: u.email, ativo: u.ativo } : null;
+        }
         try {
             const [linhas] = await pool.query(
                 'SELECT id_usuario, nome, email, ativo FROM usuarios WHERE email = ?',
@@ -118,9 +166,15 @@ const usuariosModel = {
             return null;
         }
     },
- 
-    // ativa a conta; retorna true somente se ela estava inativa e foi ativada agora
+
     ativarConta: async (id) => {
+        if (pool.isMock) {
+            const u = mockStore.usuarios.find(user => user.id_usuario === Number(id) && Number(user.ativo) === 0);
+            if (!u) return false;
+            u.ativo = 1;
+            u.ativado_em = new Date();
+            return true;
+        }
         try {
             const [result] = await pool.query(
                 'UPDATE usuarios SET ativo = 1, ativado_em = NOW() WHERE id_usuario = ? AND ativo = 0',
@@ -133,47 +187,11 @@ const usuariosModel = {
         }
     },
 
-    findParaAtivacao: async (id) => {
-        try {
-            const [linhas] = await pool.query(
-                'SELECT id_usuario, nome, email, ativo FROM usuarios WHERE id_usuario = ?',
-                [id]
-            );
-            return linhas[0] || null;
-        } catch (erro) {
-            return null;
-        }
-    },
- 
-    findParaAtivacaoPorEmail: async (email) => {
-        try {
-            const [linhas] = await pool.query(
-                'SELECT id_usuario, nome, email, ativo FROM usuarios WHERE email = ?',
-                [email]
-            );
-            return linhas[0] || null;
-        } catch (erro) {
-            return null;
-        }
-    },
- 
-    // ativa a conta; retorna true somente se ela estava inativa e foi ativada agora
-    ativarConta: async (id) => {
-        try {
-            const [result] = await pool.query(
-                'UPDATE usuarios SET ativo = 1, ativado_em = NOW() WHERE id_usuario = ? AND ativo = 0',
-                [id]
-            );
-            return result.affectedRows === 1;
-        } catch (erro) {
-            console.error('Erro ao ativar conta:', erro);
-            return false;
-        }
-    },
-
-    // >>> RECUPERAR SENHA (início) ---------------------------------------
-    // usuário completo (inclui o hash da senha) para validar o link de recuperação
     findParaRecuperacao: async (id) => {
+        if (pool.isMock) {
+            await mockStore.garantirUsuarioDemo();
+            return mockStore.usuarios.find(user => user.id_usuario === Number(id)) || null;
+        }
         try {
             const [linhas] = await pool.query(
                 'SELECT * FROM usuarios WHERE id_usuario = ?',
@@ -185,10 +203,13 @@ const usuariosModel = {
         }
     },
 
-    // grava a nova senha somente se o hash atual ainda for o mesmo do momento em que o
-    // link foi validado. Isso garante que o link funcione uma única vez, mesmo com dois
-    // envios simultâneos. Retorna true se a senha foi trocada.
     redefinirSenha: async (id, hashSenhaAtual, novaSenha) => {
+        if (pool.isMock) {
+            const u = mockStore.usuarios.find(user => user.id_usuario === Number(id) && user.senhan === hashSenhaAtual);
+            if (!u) return false;
+            u.senhan = await hashSenha(novaSenha);
+            return true;
+        }
         try {
             const novoHash = await hashSenha(novaSenha);
             const [result] = await pool.query(
@@ -201,11 +222,16 @@ const usuariosModel = {
             return false;
         }
     },
-    // <<< RECUPERAR SENHA (fim) ------------------------------------------
 
     updateCampo: async (email, campo, valor) => {
         const camposPermitidos = ['nome', 'nasc', 'cpf', 'ddd', 'tel', 'sexo', 'foto_perfil'];
         if (!camposPermitidos.includes(campo)) return null;
+        if (pool.isMock) {
+            const u = mockStore.usuarios.find(user => user.email.toLowerCase() === String(email || '').toLowerCase());
+            if (!u) return { affectedRows: 0 };
+            u[campo] = valor;
+            return { affectedRows: 1 };
+        }
         try {
             const [result] = await pool.query(
                 `UPDATE usuarios SET \`${campo}\` = ? WHERE email = ?`,
@@ -217,11 +243,15 @@ const usuariosModel = {
         }
     },
 
-    // remove usuario admin
     delete: async (email) => {
+        if (pool.isMock) {
+            const idx = mockStore.usuarios.findIndex(user => user.email.toLowerCase() === String(email || '').toLowerCase());
+            if (idx !== -1) mockStore.usuarios.splice(idx, 1);
+            return { affectedRows: idx !== -1 ? 1 : 0 };
+        }
         try {
             const [usuario] = await pool.query(
-            'SELECT id_usuario FROM usuarios WHERE email = ?', [email]
+                'SELECT id_usuario FROM usuarios WHERE email = ?', [email]
             );
             if (usuario[0]) {
                 const id = usuario[0].id_usuario;

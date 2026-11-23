@@ -109,8 +109,9 @@ main {
 }
 
 .faixa-etaria-produto {
-    font-size: 0.875rem;
-    color: #4da6ff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent-primary);
     margin-bottom: 1rem;
     display: block;
 }
@@ -556,7 +557,17 @@ main {
     }
 
     .voltar {
+        min-height: 2.75rem;
         font-size: 1.1rem;
+    }
+
+    .voltar:focus-visible,
+    .btn-comprar:focus-visible,
+    .btn-calcular:focus-visible,
+    .btn-enviar-avaliacao:focus-visible,
+    .link-produto:focus-visible {
+        outline: 3px solid #fbbf24;
+        outline-offset: 3px;
     }
 
     .seta-voltar {
@@ -595,7 +606,11 @@ main {
     }
 
     .faixa-etaria-produto {
-        font-size: 1rem;
+        font-size: 1.05rem;
+    }
+
+    .preco-desconto, .preco-produto, .preco-original {
+        font-variant-numeric: tabular-nums;
     }
 
     .preco-desconto, .preco-produto {
@@ -613,7 +628,8 @@ main {
     .btn-comprar {
         width: auto;
         max-width: 25rem;
-        padding: 1.3rem 0;
+        min-height: 3.5rem;
+        padding: 1.15rem 1.5rem;
         font-size: 1.2rem;
     }
 

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <defs>
+    <linearGradient id="bg1" x1="0" y1="0" x2="800" y2="450" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#163069"/>
+      <stop offset="100%" stop-color="#2563A8"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg1)"/>
+  <circle cx="680" cy="110" r="140" fill="#4DA6FF" fill-opacity="0.18"/>
+  <circle cx="130" cy="360" r="110" fill="#FFFFFF" fill-opacity="0.08"/>
+  <rect x="64" y="84" width="150" height="40" rx="20" fill="#4DA6FF"/>
+  <text x="139" y="110" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#0A1931">LINHA 60+</text>
+  <text x="64" y="185" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#FFFFFF">Cuidado e Bem-Estar</text>
+  <text x="64" y="236" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#93C5FD">na Melhor Idade</text>
+  <text x="64" y="290" font-family="Arial, sans-serif" font-size="22" fill="#E0F2FE">Vitaminas, mobilidade e conforto selecionados para você</text>
+</svg>

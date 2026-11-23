@@ -1,8 +1,38 @@
 const pool = require('../config/pool_conexoes');
+const mockStore = require('../config/mock_store');
 
 const pedidosModel = {
 
     create: async (id_usuario, itens, valor_total) => {
+        if (pool.isMock) {
+            const id_pedido = mockStore.seq.pedido++;
+            const agora = new Date();
+            const itensSalvos = itens.map((item, idx) => {
+                const prod = mockStore.produtos.find(p => p.id_produto === Number(item.id_produto));
+                const precoUnit = item.precoDesconto && item.precoDesconto > 0
+                    ? item.precoDesconto
+                    : item.preco;
+                return {
+                    id_item: idx + 1,
+                    id_pedido,
+                    id_produto: item.id_produto,
+                    qtd: item.quantidade,
+                    preco_unit: precoUnit,
+                    nome: prod ? prod.nome : 'Produto',
+                    imagem: prod ? prod.imagem : '/imagens/foto.svg'
+                };
+            });
+            mockStore.pedidos.push({
+                id_pedido,
+                id_usuario: Number(id_usuario),
+                data_pedido: agora,
+                valor_total,
+                status: 'pendente',
+                criado_em: agora,
+                itens: itensSalvos
+            });
+            return { id_pedido };
+        }
         const conn = await pool.getConnection();
         try {
             await conn.beginTransaction();
@@ -37,6 +67,21 @@ const pedidosModel = {
     },
 
     createPagamento: async (id_pedido, forma, valor) => {
+        if (pool.isMock) {
+            const id_pagamento = mockStore.seq.pagamento++;
+            mockStore.pagamentos.push({
+                id_pagamento,
+                id_pedido: Number(id_pedido),
+                forma,
+                valor,
+                status: 'pendente',
+                mp_payment_id: null,
+                pix_qr_code: null,
+                pix_qr_code_base64: null,
+                pix_ticket_url: null
+            });
+            return { id_pagamento };
+        }
         try {
             const [result] = await pool.query(
                 `INSERT INTO pagamentos (id_pedido, forma, valor, status)
@@ -51,6 +96,10 @@ const pedidosModel = {
     },
 
     findPagamentoByPedido: async (id_pedido) => {
+        if (pool.isMock) {
+            const pags = mockStore.pagamentos.filter(p => p.id_pedido === Number(id_pedido));
+            return pags[pags.length - 1] || null;
+        }
         const [pagamentos] = await pool.query(
             `SELECT id_pagamento, id_pedido, forma, valor, status,
                     mp_payment_id, pix_qr_code, pix_qr_code_base64, pix_ticket_url
@@ -64,6 +113,16 @@ const pedidosModel = {
     },
 
     atualizarDadosPix: async (id_pedido, pagamentoPix) => {
+        if (pool.isMock) {
+            const pag = await pedidosModel.findPagamentoByPedido(id_pedido);
+            if (!pag) return false;
+            pag.mp_payment_id = String(pagamentoPix.id);
+            pag.pix_qr_code = pagamentoPix.qrCode;
+            pag.pix_qr_code_base64 = pagamentoPix.qrCodeBase64;
+            pag.pix_ticket_url = pagamentoPix.ticketUrl;
+            pag.status = pagamentoPix.status;
+            return true;
+        }
         const [result] = await pool.query(
             `UPDATE pagamentos
              SET mp_payment_id = ?, pix_qr_code = ?,
@@ -90,6 +149,10 @@ const pedidosModel = {
     },
 
     findEnderecoByPagamento: async (id_pagamento) => {
+        if (pool.isMock) {
+            const ents = mockStore.entregas.filter(e => e.id_pagamento === Number(id_pagamento));
+            return ents[ents.length - 1] ? ents[ents.length - 1].codigo_rastreio : null;
+        }
         const [entregas] = await pool.query(
             `SELECT codigo_rastreio
              FROM entregas
@@ -102,6 +165,14 @@ const pedidosModel = {
     },
 
     atualizarStatusPagamento: async (id_pedido, statusPagamento, statusPedido) => {
+        if (pool.isMock) {
+            const ped = mockStore.pedidos.find(p => p.id_pedido === Number(id_pedido));
+            const pag = await pedidosModel.findPagamentoByPedido(id_pedido);
+            if (!ped || !pag) return false;
+            pag.status = statusPagamento;
+            ped.status = statusPedido;
+            return true;
+        }
         const conn = await pool.getConnection();
         try {
             await conn.beginTransaction();
@@ -138,6 +209,17 @@ const pedidosModel = {
     },
 
     createEntrega: async (id_pagamento, transportadora, endereco) => {
+        if (pool.isMock) {
+            const id_entrega = mockStore.seq.entrega++;
+            mockStore.entregas.push({
+                id_entrega,
+                id_pagamento: Number(id_pagamento),
+                transportadora,
+                codigo_rastreio: endereco || null,
+                status: 'aguardando'
+            });
+            return { id_entrega };
+        }
         try {
             const [result] = await pool.query(
                 `INSERT INTO entregas (id_pagamento, transportadora, codigo_rastreio, status)
@@ -152,6 +234,11 @@ const pedidosModel = {
     },
 
     findByUsuario: async (id_usuario) => {
+        if (pool.isMock) {
+            return mockStore.pedidos
+                .filter(p => p.id_usuario === Number(id_usuario))
+                .map(p => ({ ...p, total_itens: (p.itens || []).length }));
+        }
         try {
             const [linhas] = await pool.query(
                 `SELECT p.*,
@@ -171,6 +258,9 @@ const pedidosModel = {
     },
 
     findById: async (id_pedido) => {
+        if (pool.isMock) {
+            return mockStore.pedidos.find(p => p.id_pedido === Number(id_pedido)) || null;
+        }
         try {
             const [pedidos] = await pool.query(
                 'SELECT * FROM pedidos WHERE id_pedido = ?',
@@ -194,6 +284,9 @@ const pedidosModel = {
     },
 
     contarPorUsuario: async (id_usuario) => {
+        if (pool.isMock) {
+            return mockStore.pedidos.filter(p => p.id_usuario === Number(id_usuario)).length;
+        }
         try {
             const [linhas] = await pool.query(
                 'SELECT COUNT(*) AS total FROM pedidos WHERE id_usuario = ?',
@@ -207,6 +300,35 @@ const pedidosModel = {
     },
 
     findByUsuarioComDetalhes: async (id_usuario, opcoes = {}) => {
+        if (pool.isMock) {
+            const usuario = mockStore.usuarios.find(u => u.id_usuario === Number(id_usuario)) || {};
+            let lista = mockStore.pedidos
+                .filter(p => p.id_usuario === Number(id_usuario))
+                .slice()
+                .sort((a, b) => b.id_pedido - a.id_pedido);
+            if (Number.isInteger(opcoes.limite) && opcoes.limite > 0) {
+                const start = Math.max(0, opcoes.deslocamento || 0);
+                lista = lista.slice(start, start + opcoes.limite);
+            }
+            return lista.map(p => {
+                const pag = mockStore.pagamentos.filter(pg => pg.id_pedido === p.id_pedido).pop() || null;
+                const ent = pag ? mockStore.entregas.filter(e => e.id_pagamento === pag.id_pagamento).pop() || null : null;
+                return {
+                    ...p,
+                    ddd: usuario.ddd || null,
+                    tel: usuario.tel || null,
+                    endereco: ent ? ent.codigo_rastreio : null,
+                    transportadora: ent ? ent.transportadora : null,
+                    status_entrega: ent ? ent.status : null,
+                    pagamento: pag ? {
+                        id_pagamento: pag.id_pagamento,
+                        forma: pag.forma,
+                        valor: pag.valor,
+                        status: pag.status
+                    } : null
+                };
+            });
+        }
         try {
             const paginado = Number.isInteger(opcoes.limite) && opcoes.limite > 0;
             const parametros = [id_usuario];
@@ -312,6 +434,7 @@ const pedidosModel = {
     },
 
     findPendentesVencidos: async (prazoBoletoHoras, prazoPadraoHoras) => {
+        if (pool.isMock) return [];
         const [linhas] = await pool.query(
             `SELECT p.id_pedido
              FROM pedidos p
@@ -328,6 +451,12 @@ const pedidosModel = {
     },
 
     cancelarPedidoPendente: async (id_pedido) => {
+        if (pool.isMock) {
+            const ped = mockStore.pedidos.find(p => p.id_pedido === Number(id_pedido) && p.status === 'pendente');
+            if (!ped) return false;
+            ped.status = 'cancelado';
+            return true;
+        }
         const conn = await pool.getConnection();
         try {
             await conn.beginTransaction();

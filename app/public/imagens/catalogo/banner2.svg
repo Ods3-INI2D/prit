@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="800" y2="450" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0F766E"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg2)"/>
+  <circle cx="670" cy="340" r="150" fill="#FFFFFF" fill-opacity="0.1"/>
+  <rect x="64" y="84" width="210" height="40" rx="20" fill="#FDE68A"/>
+  <text x="169" y="110" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1E293B">OFERTAS DA SEMANA</text>
+  <text x="64" y="185" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#FFFFFF">Pele Hidratada</text>
+  <text x="64" y="236" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#A7F3D0">&amp; Higiene Suave</text>
+  <text x="64" y="290" font-family="Arial, sans-serif" font-size="22" fill="#ECFEFF">Fórmulas suaves e dermatologicamente testadas</text>
+</svg>

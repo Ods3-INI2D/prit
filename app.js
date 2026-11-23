@@ -1,9 +1,7 @@
 const express = require('express');
 const app     = express();
 require('dotenv').config();
-if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', 1);
-}
+app.set('trust proxy', 1);
 
 
 app.use(express.static('app/public'));
@@ -15,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 const rotas = require('./app/routes/router');
 app.use('/', rotas);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor online\nhttp://localhost:${PORT}`);
+const PORT = Number(process.env.PORT) || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor online\nhttp://0.0.0.0:${PORT}`);
 });

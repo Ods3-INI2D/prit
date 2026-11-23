@@ -1,0 +1,8 @@
+{
+  "name": "+Saúde",
+  "description": "Farmácia e cuidados de saúde para a terceira idade com assistente virtual Maisa.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
