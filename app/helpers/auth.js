@@ -1,6 +1,6 @@
-// Funções de autenticação e segurança com bcrypt
+// Funções de autenticação e segurança com bcryptjs
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 /**
  * Criptografa uma senha usando bcrypt

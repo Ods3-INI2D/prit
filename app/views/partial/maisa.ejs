@@ -1,0 +1,80 @@
+<link rel="stylesheet" href="/css/maisa.css">
+
+<div id="maisa-chatbot"
+     class="maisa-root"
+     data-maisa-size="normal"
+     data-user-name="<%= (typeof usuario !== 'undefined' && usuario && !isAdmin) ? usuario.nome : '' %>"
+     data-is-admin="<%= (typeof isAdmin !== 'undefined' && isAdmin) ? 'true' : 'false' %>">
+
+    <button type="button"
+            id="maisa-launcher"
+            class="maisa-launcher"
+            aria-controls="maisa-panel"
+            aria-expanded="false"
+            aria-label="Abrir ajuda da Maisa para encontrar produtos">
+        <img src="/imagens/maisa-avatar.svg" alt="" class="maisa-avatar-img">
+        <span class="maisa-launcher-label">Ajuda da Maisa</span>
+    </button>
+
+    <div id="maisa-backdrop" class="maisa-backdrop" hidden></div>
+
+    <section id="maisa-panel"
+             class="maisa-panel"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="maisa-dialog-title"
+             hidden>
+        <header class="maisa-header">
+            <div class="maisa-header-info">
+                <img src="/imagens/maisa-avatar.svg" alt="Maisa" class="maisa-avatar-img">
+                <h2 id="maisa-dialog-title" class="maisa-title">Maisa</h2>
+            </div>
+
+            <div class="maisa-header-actions">
+                <button type="button"
+                        id="maisa-font-toggle"
+                        class="maisa-header-btn"
+                        aria-pressed="false"
+                        aria-label="Aumentar tamanho da letra">A+<span class="maisa-desktop-only"> Letra maior</span></button>
+                <button type="button"
+                        id="maisa-clear"
+                        class="maisa-header-btn"
+                        aria-label="Recomeçar conversa"
+                        hidden>Recomeçar</button>
+                <button type="button"
+                        id="maisa-close"
+                        class="maisa-header-btn maisa-close-btn"
+                        aria-label="Fechar conversa">Fechar ✕</button>
+            </div>
+        </header>
+
+        <div id="maisa-messages"
+             class="maisa-messages"
+             aria-live="polite"
+             aria-label="Conversa com a Maisa"></div>
+
+        <form id="maisa-form" class="maisa-form">
+            <label for="maisa-input" class="maisa-sr-only">Digite o que você procura</label>
+            <div class="maisa-input-row">
+                <textarea id="maisa-input"
+                          class="maisa-input"
+                          rows="1"
+                          maxlength="1000"
+                          placeholder="Digite o que procura..."></textarea>
+                <button type="button"
+                        id="maisa-voice"
+                        class="maisa-voice-btn"
+                        aria-label="Falar pelo microfone"
+                        hidden>Falar</button>
+                <button type="submit"
+                        id="maisa-send"
+                        class="maisa-send-btn">Enviar</button>
+            </div>
+            <p id="maisa-voice-status" class="maisa-voice-status" role="status" hidden>
+                Ouvindo... pode falar.
+            </p>
+        </form>
+    </section>
+</div>
+
+<script src="/js/maisa.js" defer></script>

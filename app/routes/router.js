@@ -38,7 +38,10 @@ const { solicitarRecuperacao, validarLinkRecuperacao, VALIDADE_MINUTOS } = requi
 
 
 // algoritmo de personalizacao
-const { ordenarPorRelevancia } = require('../helpers/personalizacao');
+const { ordenarPorRelevancia, pontuar } = require('../helpers/personalizacao');
+
+// chatbot Maisa
+const { consultarMaisa, gerarSugestoesPersonalizadas } = require('../services/maisaService');
 
 // cloudinary
 const cloudinary = require('../config/cloudinary');
@@ -1105,9 +1108,8 @@ router.post('/finalizar-compra', requireLogin, blockAdmin,
                 encodeURIComponent('Não foi possível iniciar o pagamento. Verifique a configuração do Mercado Pago e tente novamente.'));
         }
 
-        const pool = require('../config/pool_conexoes');
         if (id_usuario) {
-            await pool.query('DELETE FROM carrinho WHERE id_usuario = ?', [id_usuario]);
+            await carrinhoModel.limparPorUsuario(id_usuario);
         } else {
             await carrinhoModel.limparPorSession(session_id);
         }
@@ -1559,5 +1561,177 @@ async function cancelarPedidosVencidos() {
 
 setTimeout(cancelarPedidosVencidos, 20000).unref();
 setInterval(cancelarPedidosVencidos, 30 * 60 * 1000).unref();
+
+// ── Chatbot Maisa (Assistente de IA para público idoso) ──────────────────────
+router.get('/api/maisa/sugestoes', async (req, res) => {
+    try {
+        const [produtos, categorias] = await Promise.all([
+            produtosModel.findAll(),
+            produtosModel.findAllCategorias()
+        ]);
+        const usuario = res.locals.usuario && !res.locals.isAdmin ? res.locals.usuario : null;
+        const sugestoes = gerarSugestoesPersonalizadas({
+            produtos: Array.isArray(produtos) ? produtos : [],
+            categorias: Array.isArray(categorias) ? categorias : [],
+            usuario
+        });
+        return res.json({
+            ok: true,
+            saudacao: sugestoes.saudacao,
+            topicos: sugestoes.topicos
+        });
+    } catch (erro) {
+        console.warn('[maisa] Erro ao gerar sugestões personalizadas:', erro && erro.message);
+        return res.json({
+            ok: true,
+            saudacao: null,
+            topicos: null
+        });
+    }
+});
+
+router.post('/api/maisa/chat', async (req, res) => {
+    try {
+        const mensagem = typeof req.body?.mensagem === 'string' ? req.body.mensagem.trim() : '';
+        if (!mensagem) {
+            return res.status(400).json({
+                ok: false,
+                erro: 'Por favor, escreva ou fale o que você procura para que eu possa ajudar.'
+            });
+        }
+        if (mensagem.length > 1000) {
+            return res.status(400).json({
+                ok: false,
+                erro: 'Sua mensagem ficou muito longa. Tente resumir em até 1000 caracteres.'
+            });
+        }
+
+        const historico = Array.isArray(req.body?.historico) ? req.body.historico : [];
+        const [produtos, categorias] = await Promise.all([
+            produtosModel.findAll(),
+            produtosModel.findAllCategorias()
+        ]);
+
+        const listaProdutos = Array.isArray(produtos) ? produtos : [];
+        const listaCategorias = Array.isArray(categorias) ? categorias : [];
+
+        const resultado = await consultarMaisa({
+            mensagem,
+            historico,
+            produtos: listaProdutos,
+            categorias: listaCategorias,
+            usuario: res.locals.usuario && !res.locals.isAdmin ? res.locals.usuario : null
+        });
+
+        const mapaProdutos = new Map(
+            listaProdutos.map(p => [Number(p.id_produto), p])
+        );
+
+        const produtosRecomendados = [];
+        const idsAdicionados = new Set();
+
+        for (const rec of resultado.produtos_recomendados) {
+            const idNum = Number(rec && rec.id_produto);
+            if (!Number.isInteger(idNum) || idsAdicionados.has(idNum)) continue;
+            const prod = mapaProdutos.get(idNum);
+            if (!prod) continue;
+            idsAdicionados.add(idNum);
+            const preco = parseFloat(prod.preco) || 0;
+            const precoDesconto = prod.preco_desconto != null ? parseFloat(prod.preco_desconto) : null;
+            produtosRecomendados.push({
+                id: Number(prod.id_produto),
+                nome: prod.nome,
+                imagem: prod.imagem || '/imagens/foto.svg',
+                preco,
+                precoDesconto: precoDesconto && precoDesconto > 0 ? precoDesconto : null,
+                categoria: prod.categoria || '',
+                faixa_etaria: prod.faixa_etaria || null,
+                sexo: prod.sexo || 'todos',
+                status: prod.status || 'em-estoque',
+                relevancia: pontuar(prod, resultado.perfilAlvo),
+                motivo: typeof rec.motivo === 'string' ? rec.motivo : ''
+            });
+            if (produtosRecomendados.length >= 3) break;
+        }
+
+        const produtosOrdenados = ordenarPorRelevancia(produtosRecomendados, resultado.perfilAlvo);
+
+        return res.json({
+            ok: true,
+            resposta: resultado.resposta,
+            produtos: produtosOrdenados,
+            sugestoes: resultado.sugestoes_perguntas
+        });
+    } catch (erro) {
+        const msgSegura = String((erro && erro.message) || 'Erro desconhecido').replace(/AIza[0-9A-Za-z_-]+/g, '[REDACTED]');
+        const statusUpstream = erro && (erro.status || erro.code);
+        if (erro && erro.codigo === 'MISSING_API_KEY') {
+            console.warn('[maisa] GEMINI_API_KEY ausente nas variáveis de ambiente.');
+            return res.status(503).json({
+                ok: false,
+                erro: 'A assistente Maisa ainda não está conectada ao serviço de inteligência artificial. Configure a GEMINI_API_KEY em Settings > Secrets.'
+            });
+        }
+        if (statusUpstream === 400 || statusUpstream === 403 || /API_KEY_INVALID|PERMISSION_DENIED/i.test(msgSegura)) {
+            console.warn('[maisa] Chave ou projeto Gemini sem permissão/faturamento (' + (statusUpstream || 'auth') + ').');
+            return res.status(502).json({
+                ok: false,
+                erro: 'A chave da API do Gemini configurada não possui permissão ou faturamento ativo para este projeto. Verifique a GEMINI_API_KEY em Settings > Secrets.'
+            });
+        }
+        if (statusUpstream === 429 || /RESOURCE_EXHAUSTED/i.test(msgSegura)) {
+            console.warn('[maisa] Limite de requisições do Gemini atingido (429).');
+            return res.status(429).json({
+                ok: false,
+                erro: 'Muitas solicitações ao mesmo tempo. Aguarde alguns instantes e tente novamente.'
+            });
+        }
+        console.error('[maisa] Erro ao processar consulta:', statusUpstream, msgSegura);
+        return res.status(502).json({
+            ok: false,
+            erro: 'Tive uma instabilidade momentânea para responder. Por favor, tente novamente em alguns segundos.'
+        });
+    }
+});
+
+router.post('/api/maisa/adicionar-carrinho/:id', async (req, res) => {
+    try {
+        if (req.session && req.session.isAdmin && req.session.usuarioEmail === ADMIN_EMAIL) {
+            return res.status(403).json({
+                ok: false,
+                erro: 'Contas de administrador não adicionam itens ao carrinho.'
+            });
+        }
+        if (!req.cookiesAceitos) {
+            return res.status(409).json({
+                ok: false,
+                needsCookies: true,
+                erro: 'Para guardar produtos no carrinho, aceite os cookies no aviso da página ou clique em "Ver produto".'
+            });
+        }
+        const produto = await produtosModel.findById(req.params.id);
+        if (!produto) {
+            return res.status(404).json({ ok: false, erro: 'Produto não encontrado.' });
+        }
+        if (produto.status === 'fora-de-estoque') {
+            return res.status(400).json({ ok: false, erro: 'Este produto está fora de estoque no momento.' });
+        }
+        const { id_usuario, session_id } = getIdentificador(req);
+        await carrinhoModel.addProduto(req.params.id, id_usuario, session_id, 1);
+        const itens = await carrinhoModel.findByIdentificador(id_usuario, session_id);
+        const totalItens = (Array.isArray(itens) ? itens : []).reduce((acc, i) => acc + (parseInt(i.quantidade, 10) || 1), 0);
+        return res.json({
+            ok: true,
+            mensagem: `"${produto.nome}" foi adicionado ao seu carrinho!`,
+            totalItens
+        });
+    } catch (erro) {
+        console.error('[maisa] Erro ao adicionar ao carrinho:', erro);
+        return res.status(500).json({
+            ok: false,
+            erro: 'Não foi possível adicionar ao carrinho agora.'
+        });
+    }
+});
 
 module.exports = router;

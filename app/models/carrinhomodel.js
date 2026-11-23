@@ -1,9 +1,16 @@
 const pool = require('../config/pool_conexoes');
+const mockStore = require('../config/mock_store');
 
 const carrinhoModel = {
 
     // verifica se produto esta no carrinho
     temProduto: async (id_produto, id_usuario, session_id) => {
+        if (pool.isMock) {
+            return mockStore.carrinho.some(item =>
+                item.id_produto === Number(id_produto) &&
+                (id_usuario ? item.id_usuario === Number(id_usuario) : item.session_id === session_id)
+            );
+        }
         try {
             let linhas;
             if (id_usuario) {
@@ -25,6 +32,27 @@ const carrinhoModel = {
 
     // retorna itens do carrinho com dados do produto
     findByIdentificador: async (id_usuario, session_id) => {
+        if (pool.isMock) {
+            return mockStore.carrinho
+                .filter(item => id_usuario ? item.id_usuario === Number(id_usuario) : item.session_id === session_id)
+                .map(item => {
+                    const p = mockStore.produtos.find(prod => prod.id_produto === Number(item.id_produto));
+                    if (!p) return null;
+                    const fmt = mockStore.formatarProduto(p);
+                    return {
+                        id_carrinho: item.id_carrinho,
+                        quantidade: item.quantidade,
+                        id_produto: p.id_produto,
+                        nome: p.nome,
+                        imagem: p.imagem,
+                        preco: p.preco,
+                        preco_desconto: p.preco_desconto,
+                        status: p.status,
+                        categoria: fmt.categoria
+                    };
+                })
+                .filter(Boolean);
+        }
         try {
             let linhas;
             if (id_usuario) {
@@ -67,6 +95,25 @@ const carrinhoModel = {
 
     // adiciona quantidade
     addProduto: async (id_produto, id_usuario, session_id, qtd = 1) => {
+        if (pool.isMock) {
+            const existing = mockStore.carrinho.find(item =>
+                item.id_produto === Number(id_produto) &&
+                (id_usuario ? item.id_usuario === Number(id_usuario) : item.session_id === session_id)
+            );
+            if (existing) {
+                existing.quantidade += Number(qtd) || 1;
+                return { affectedRows: 1 };
+            }
+            const id_carrinho = mockStore.seq.carrinho++;
+            mockStore.carrinho.push({
+                id_carrinho,
+                id_produto: Number(id_produto),
+                id_usuario: id_usuario ? Number(id_usuario) : null,
+                session_id: id_usuario ? null : session_id,
+                quantidade: Number(qtd) || 1
+            });
+            return { insertId: id_carrinho, affectedRows: 1 };
+        }
         try {
             let existente;
             if (id_usuario) {
@@ -104,10 +151,18 @@ const carrinhoModel = {
 
     // atualiza quantidade
     updateQuantidade: async (id_produto, id_usuario, session_id, novaQtd) => {
+        if (novaQtd <= 0) {
+            return await carrinhoModel.removerProduto(id_produto, id_usuario, session_id);
+        }
+        if (pool.isMock) {
+            const item = mockStore.carrinho.find(i =>
+                i.id_produto === Number(id_produto) &&
+                (id_usuario ? i.id_usuario === Number(id_usuario) : i.session_id === session_id)
+            );
+            if (item) item.quantidade = Number(novaQtd);
+            return { affectedRows: item ? 1 : 0 };
+        }
         try {
-            if (novaQtd <= 0) {
-                return await carrinhoModel.removerProduto(id_produto, id_usuario, session_id);
-            }
             let result;
             if (id_usuario) {
                 [result] = await pool.query(
@@ -129,6 +184,14 @@ const carrinhoModel = {
 
     // remove produto
     removerProduto: async (id_produto, id_usuario, session_id) => {
+        if (pool.isMock) {
+            const idx = mockStore.carrinho.findIndex(i =>
+                i.id_produto === Number(id_produto) &&
+                (id_usuario ? i.id_usuario === Number(id_usuario) : i.session_id === session_id)
+            );
+            if (idx !== -1) mockStore.carrinho.splice(idx, 1);
+            return { affectedRows: idx !== -1 ? 1 : 0 };
+        }
         try {
             let result;
             if (id_usuario) {
@@ -151,6 +214,21 @@ const carrinhoModel = {
 
     // migra carrinho sem conta para usuario logado
     migrarParaUsuario: async (session_id, id_usuario) => {
+        if (pool.isMock) {
+            const anonimos = mockStore.carrinho.filter(i => i.session_id === session_id);
+            for (const item of anonimos) {
+                const existente = mockStore.carrinho.find(i => i.id_produto === item.id_produto && i.id_usuario === Number(id_usuario));
+                if (existente) {
+                    existente.quantidade += item.quantidade;
+                    const idx = mockStore.carrinho.indexOf(item);
+                    if (idx !== -1) mockStore.carrinho.splice(idx, 1);
+                } else {
+                    item.id_usuario = Number(id_usuario);
+                    item.session_id = null;
+                }
+            }
+            return true;
+        }
         try {
             const [itensAnonimos] = await pool.query(
                 'SELECT * FROM carrinho WHERE session_id = ?',
@@ -182,8 +260,33 @@ const carrinhoModel = {
         }
     },
 
+    limparPorUsuario: async (id_usuario) => {
+        if (pool.isMock) {
+            for (let i = mockStore.carrinho.length - 1; i >= 0; i--) {
+                if (mockStore.carrinho[i].id_usuario === Number(id_usuario)) {
+                    mockStore.carrinho.splice(i, 1);
+                }
+            }
+            return true;
+        }
+        try {
+            await pool.query('DELETE FROM carrinho WHERE id_usuario = ?', [id_usuario]);
+            return true;
+        } catch (erro) {
+            return false;
+        }
+    },
+
     // limpa carrinho por session_id
     limparPorSession: async (session_id) => {
+        if (pool.isMock) {
+            for (let i = mockStore.carrinho.length - 1; i >= 0; i--) {
+                if (mockStore.carrinho[i].session_id === session_id) {
+                    mockStore.carrinho.splice(i, 1);
+                }
+            }
+            return true;
+        }
         try {
             await pool.query('DELETE FROM carrinho WHERE session_id = ?', [session_id]);
             return true;

@@ -96,6 +96,16 @@ body {
     flex-shrink: 0;
 }
 
+.desktop-action-label {
+    display: none;
+}
+
+.link-carrinho {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
 @media (min-width: 640px) {
     .nav-principal {
         grid-template-columns: auto auto 1fr;
@@ -133,20 +143,20 @@ body {
     }
 }
 
-@media (min-width: 1400px) {
+@media (min-width: 1024px) {
     .nav-principal {
         grid-template-columns: auto 1fr;
         padding: 1rem 5%;
         gap: 1.5rem;
-        min-height: 4.75rem;
+        min-height: 5rem;
     }
 
     .logo {
-        width: 7.5rem;
+        width: 7.75rem;
     }
 
     .busca-container {
-        gap: 1.5rem;
+        gap: 1rem;
         margin-left: 0;
     }
 
@@ -155,21 +165,60 @@ body {
     }
 
     .busca-form {
-        max-width: 31.25rem;
+        max-width: 34rem;
     }
 
     .busca-form input[type="text"] {
-        padding: 0.625rem 0.875rem;
+        min-height: 2.85rem;
+        padding: 0.65rem 1rem;
         font-size: 1rem;
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        border-radius: 0.5rem;
+        color: #0f172a;
+    }
+
+    .busca-form input[type="text"]::placeholder {
+        color: #475569;
+    }
+
+    .desktop-action-label {
+        display: inline;
+        white-space: nowrap;
+    }
+
+    .lupa-btn,
+    .link-carrinho {
+        min-height: 2.85rem;
+        padding: 0 1rem;
+        gap: 0.5rem;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.38);
+        background-color: rgba(255, 255, 255, 0.14);
+        color: #ffffff;
+        font-size: 0.95rem;
+        font-weight: 700;
+        transition: background-color 0.16s ease;
+    }
+
+    .lupa-btn:hover,
+    .link-carrinho:hover {
+        background-color: rgba(255, 255, 255, 0.24);
+    }
+
+    .nav-principal a:focus-visible,
+    .nav-principal button:focus-visible,
+    .busca-form input[type="text"]:focus-visible {
+        outline: 3px solid #fbbf24;
+        outline-offset: 2px;
     }
 
     .lupa {
-        width: 1.5rem;
-        height: 1.5rem;
+        width: 1.35rem;
+        height: 1.35rem;
     }
 
     .user, .cart {
-        width: 1.625rem;
-        height: 1.625rem;
+        width: 1.45rem;
+        height: 1.45rem;
     }
 }

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" rx="20" fill="#EBF4FF"/>
+  <rect x="135" y="75" width="130" height="175" rx="18" fill="#2563A8"/>
+  <rect x="155" y="48" width="90" height="32" rx="8" fill="#163069"/>
+  <rect x="150" y="115" width="100" height="95" rx="10" fill="#FFFFFF"/>
+  <path d="M200 135V185M175 160H225" stroke="#2563A8" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="305" cy="95" r="24" fill="#FBBF24"/>
+  <text x="305" y="102" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#163069">D3</text>
+</svg>

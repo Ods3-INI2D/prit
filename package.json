@@ -5,12 +5,15 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node app.js",
+    "build": "node -e \"console.log('Express + EJS ready')\"",
     "start": "node app.js"
   },
   "author": "rafael",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^6.0.0",
+    "@google/genai": "^3.6.1",
+    "bcryptjs": "^3.0.3",
     "cloudinary": "^2.10.0",
     "dotenv": "^17.4.2",
     "dotenv-expand": "^13.0.0",
