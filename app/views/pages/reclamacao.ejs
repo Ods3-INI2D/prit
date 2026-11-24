@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reclamações e dúvidas | +Saúde</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/estilo.css">
+    <link rel="stylesheet" href="/css/cad.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/validacao-frontend.css">
+    <link rel="stylesheet" href="/css/ativacao.css">
+    <link rel="stylesheet" href="/css/contato.css">
+    <link rel="stylesheet" href="/css/theme.css">
+    <script src="/js/theme.js"></script>
+</head>
+<body>
+    <header>
+        <a href="/home"><img class="icon" src="/imagens/logo-branco.svg" alt="Logo +Saúde"></a>
+    </header>
+
+    <main>
+        <section class="txt" aria-labelledby="reclamacao-titulo">
+            <article class="title-group">
+                <h1 class="tit" id="reclamacao-titulo">Reclamações e dúvidas</h1>
+                <p class="ativacao-detalhe">
+                    Conte o que aconteceu e nossa central de atendimento responderá no e-mail informado.
+                </p>
+            </article>
+
+            <output class="contato-retorno" id="contato-retorno" role="status" aria-live="polite" hidden></output>
+
+            <form method="POST" action="/reclamacao" novalidate aria-label="Formulário de reclamação">
+                <fieldset>
+                    <legend><h2>Nome</h2></legend>
+                    <label for="nome">
+                        <input type="text" id="nome" name="nome" placeholder="Seu nome" autocomplete="name" aria-describedby="nome-error" required>
+                    </label>
+                    <output class="error-message" id="nome-error" role="alert" aria-live="polite"></output>
+                </fieldset>
+
+                <fieldset>
+                    <legend><h2>E-mail</h2></legend>
+                    <label for="email">
+                        <input type="email" id="email" name="email" placeholder="exemplo@dominio.com" autocomplete="email" aria-describedby="email-error" required>
+                    </label>
+                    <output class="error-message" id="email-error" role="alert" aria-live="polite"></output>
+                </fieldset>
+
+                <fieldset>
+                    <legend><h2>Mensagem</h2></legend>
+                    <label for="mensagem">
+                        <textarea id="mensagem" name="mensagem" rows="6" maxlength="2000" placeholder="Descreva sua reclamação ou dúvida" aria-describedby="mensagem-error" required></textarea>
+                    </label>
+                    <output class="error-message" id="mensagem-error" role="alert" aria-live="polite"></output>
+                </fieldset>
+
+                <button id="btn" type="submit">Enviar reclamação</button>
+
+                <nav class="signup-prompt" aria-label="Outras opções">
+                    <p>
+                        <a href="/home" class="link">Quer voltar?
+                            <strong class="link2">Ir para a página inicial</strong>
+                        </a>
+                    </p>
+                </nav>
+            </form>
+        </section>
+    </main>
+
+    <footer></footer>
+
+    <script src="/js/validacao.js"></script>
+    <script src="/js/contato.js"></script>
+
+    <%- include('../partial/cookies.ejs') %>
+</body>
+</html>

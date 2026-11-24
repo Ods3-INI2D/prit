@@ -30,6 +30,7 @@ const { compareSenha } = require('../helpers/auth');
 // ativacao de conta por e-mail
 const { verificarTokenAtivacao } = require('../helpers/tokenAtivacao');
 const { enviarEmailAtivacao, urlBaseDaRequisicao, podeReenviar, VALIDADE_HORAS } = require('../services/ativacaoConta');
+const { enviarReclamacao } = require('../services/contatoService');
 
 // >>> RECUPERAR SENHA (início: import) ---------------------------------
 const { solicitarRecuperacao, validarLinkRecuperacao, VALIDADE_MINUTOS } = require('../services/recuperacaoSenha');
@@ -1749,5 +1750,26 @@ router.post('/api/maisa/adicionar-carrinho/:id', async (req, res) => {
         });
     }
 });
+
+router.get('/reclamacao', (req, res) => {
+    res.render('pages/reclamacao');
+});
+
+router.post('/reclamacao',
+    body('nome').trim().notEmpty().withMessage('Informe seu nome!'),
+    body('email').trim().isEmail().withMessage('Informe um e-mail válido!'),
+    body('mensagem').trim().isLength({ min: 10, max: 2000 }).withMessage('Escreva sua reclamação (mínimo 10 caracteres).'),
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ ok: false, erro: errors.array()[0].msg });
+        }
+        const enviado = await enviarReclamacao(req.body);
+        if (!enviado) {
+            return res.status(500).json({ ok: false, erro: 'Não foi possível enviar agora. Tente novamente.' });
+        }
+        return res.json({ ok: true, mensagem: 'Reclamação enviada com sucesso!' });
+    }
+);
 
 module.exports = router;

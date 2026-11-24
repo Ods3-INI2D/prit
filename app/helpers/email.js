@@ -26,7 +26,7 @@ function formatarRemetente(endereco) {
 }
 
 // ── Resend (HTTPS) ───────────────────────────────────────
-async function enviarPeloResend({ to, subject, text, html }) {
+async function enviarPeloResend({ to, subject, text, html, replyTo }) {
     let de = process.env.EMAIL_FROM;
     if (!de) {
         de = 'onboarding@resend.dev';
@@ -39,7 +39,7 @@ async function enviarPeloResend({ to, subject, text, html }) {
             'Authorization': 'Bearer ' + process.env.RESEND_API_KEY,
             'Content-Type':  'application/json'
         },
-        body: JSON.stringify({ from: formatarRemetente(de), to: [to], subject, text, html }),
+        body: JSON.stringify({ from: formatarRemetente(de), to: [to], subject, text, html, ...(replyTo ? { reply_to: replyTo } : {}) }),
         signal: AbortSignal.timeout(TEMPO_LIMITE_MS)
     });
 
@@ -90,9 +90,9 @@ function obterTransporter() {
     return transporter;
 }
 
-async function enviarPorSmtp({ to, subject, text, html }) {
+async function enviarPorSmtp({ to, subject, text, html, replyTo }) {
     const de = process.env.EMAIL_FROM || process.env.EMAIL_USER;
-    await obterTransporter().sendMail({ from: formatarRemetente(de), to, subject, text, html });
+    await obterTransporter().sendMail({ from: formatarRemetente(de), to, subject, text, html, replyTo });
 }
 
 // Traduz o erro do SMTP/API em uma orientação objetiva.
@@ -136,7 +136,7 @@ function explicarErro(erro) {
  * Envia um e-mail com versão em texto e em HTML.
  * Nunca lança exceção: retorna true se enviou e false se falhou
  * (o motivo é registrado no log do servidor).
- * @param {{ to: string, subject: string, text: string, html: string }} email
+ * @param {{ to: string, subject: string, text: string, html: string, replyTo?: string }} email
  * @returns {Promise<boolean>}
  */
 async function enviarEmail(email) {
