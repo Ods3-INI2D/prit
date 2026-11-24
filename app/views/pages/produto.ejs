@@ -76,17 +76,41 @@
             </article>
         </section>
 
-        <section class="frete-container">
-            <h2 class="titulo-secao">Cálculo de Frete e Prazo</h2>
+        <section class="frete-container" aria-labelledby="titulo-frete">
+            <h2 class="titulo-secao" id="titulo-frete">Cálculo de Frete e Prazo</h2>
             
             <output class="descricao-frete">Insira seu CEP para calcular o frete e o prazo para entrega do produto</output>
             
-            <form class="form-frete">
+            <form class="form-frete" id="form-frete" action="/produto/<%= produto.id %>/frete" method="get" novalidate>
                 <label for="cep">
-                    <input type="text" name="cep" id="cep" placeholder="Digite seu CEP" maxlength="8">
+                    <span class="visually-hidden">CEP de entrega</span>
+                    <input type="text" name="cep" id="cep" placeholder="Digite seu CEP" maxlength="9"
+                           inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}-?[0-9]{3}"
+                           required aria-describedby="frete-status">
                 </label>
                 <button type="submit" class="btn-calcular">Calcular</button>
             </form>
+
+            <output class="frete-status" id="frete-status" for="cep"></output>
+
+            <section class="frete-resultado" id="frete-resultado" aria-labelledby="frete-resultado-titulo" hidden>
+                <h3 class="frete-resultado-titulo" id="frete-resultado-titulo">Entrega para <span id="frete-destino"></span></h3>
+                <dl class="frete-resultado-lista">
+                    <div class="frete-linha">
+                        <dt>Frete</dt>
+                        <dd id="frete-valor"></dd>
+                    </div>
+                    <div class="frete-linha">
+                        <dt>Prazo</dt>
+                        <dd id="frete-prazo"></dd>
+                    </div>
+                    <div class="frete-linha" id="frete-linha-endereco" hidden>
+                        <dt>Endereço</dt>
+                        <dd id="frete-endereco"></dd>
+                    </div>
+                </dl>
+                <small class="frete-observacao" id="frete-observacao"></small>
+            </section>
         </section>
 
         <hr class="divisor">
@@ -227,6 +251,7 @@
 
     <%- include('../partial/footer.ejs') %>
 
+    <script src="/js/frete.js" defer></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('erro') === 'carrinho') {
