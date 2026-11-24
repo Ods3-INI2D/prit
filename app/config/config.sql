@@ -142,5 +142,7 @@ CREATE TABLE IF NOT EXISTS `banners` (
     `imagem`     VARCHAR(255) NOT NULL,
     `legenda`    VARCHAR(150) NOT NULL DEFAULT '',
     `link`       VARCHAR(200) NOT NULL DEFAULT '/home',
+    `faixa_etaria` VARCHAR(10) NULL DEFAULT NULL,
+    `sexo`         VARCHAR(12) NULL DEFAULT NULL,
     PRIMARY KEY (`id_banner`)
 );

@@ -1,6 +1,32 @@
 const pool = require('../config/pool_conexoes');
 const mockStore = require('../config/mock_store');
 
+// As colunas faixa_etaria e sexo foram adicionadas à tabela banners depois da criação
+// inicial dela. Em bancos antigos elas não existem e o INSERT/UPDATE falha com
+// "Unknown column". Aqui elas são criadas uma única vez, sem tocar em bancos já migrados.
+let colunasPublico = null;
+function garantirColunasPublico() {
+    if (!colunasPublico) {
+        const adicionar = async (ddl) => {
+            try {
+                await pool.query(ddl);
+            } catch (erro) {
+                if (erro.code !== 'ER_DUP_FIELDNAME') throw erro;
+            }
+        };
+        colunasPublico = (async () => {
+            await adicionar('ALTER TABLE banners ADD COLUMN faixa_etaria VARCHAR(10) NULL DEFAULT NULL');
+            await adicionar('ALTER TABLE banners ADD COLUMN sexo VARCHAR(12) NULL DEFAULT NULL');
+        })().catch((erro) => {
+            colunasPublico = null;
+            console.error('[banners] Não foi possível criar as colunas faixa_etaria/sexo automaticamente. ' +
+                'Execute app/config/banners/banners_migrations.sql no banco.', erro.message);
+            throw erro;
+        });
+    }
+    return colunasPublico;
+}
+
 const bannersModel = {
 
     findAll: async () => {
@@ -43,6 +69,7 @@ const bannersModel = {
             return { insertId: id_banner, affectedRows: 1 };
         }
         try {
+            await garantirColunasPublico();
             const [result] = await pool.query(
                 'INSERT INTO banners (imagem, legenda, link, faixa_etaria, sexo) VALUES (?, ?, ?, ?, ?)',
                 [dados.imagem, dados.legenda || '', dados.link || '/home',
@@ -50,6 +77,7 @@ const bannersModel = {
             );
             return result;
         } catch (erro) {
+            console.error('[banners] Erro ao criar banner:', erro.message);
             return erro;
         }
     },
@@ -69,6 +97,7 @@ const bannersModel = {
             return { affectedRows: 1 };
         }
         try {
+            await garantirColunasPublico();
             const [result] = await pool.query(
                 'UPDATE banners SET imagem = ?, legenda = ?, link = ?, faixa_etaria = ?, sexo = ? WHERE id_banner = ?',
                 [dados.imagem, dados.legenda, dados.link,
@@ -76,6 +105,7 @@ const bannersModel = {
             );
             return result;
         } catch (erro) {
+            console.error('[banners] Erro ao editar banner:', erro.message);
             return erro;
         }
     },
