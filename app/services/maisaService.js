@@ -1,187 +1,14 @@
 const { GoogleGenAI, Type } = require('@google/genai');
 const { calcularIdade, pontuar, ordenarPorRelevancia } = require('../helpers/personalizacao');
+const {
+    obterBaseConhecimentoCategorias,
+    normalizarTextoBasico
+} = require('./categoriaConhecimentoService');
 
-// Modelos da camada GRATUITA da Gemini API (não exigem faturamento), do mais novo ao mais antigo.
-// O modelo anterior ('gemini-4-hydrogen') pertence à família Gemini 4, que é paga.
-// Para forçar um modelo específico, defina GEMINI_MODEL no .env (ele passa a ser tentado primeiro).
-const MODELOS_GRATUITOS = [
-    'gemini-3.8-flash',
-    'gemini-3.6-flash',
-    'gemini-3.5-flash-lite',
-    'gemini-3.1-flash-lite'
-];
-
-function listarModelosMaisa() {
-    const preferido = String(process.env.GEMINI_MODEL || '').trim();
-    const lista = preferido ? [preferido, ...MODELOS_GRATUITOS] : MODELOS_GRATUITOS.slice();
-    return Array.from(new Set(lista));
-}
-
-// Erros que indicam problema com AQUELE modelo (inexistente, sem acesso/faturamento, cota esgotada),
-// e não com a requisição em si. Nesses casos vale tentar o próximo modelo da lista.
-function erroDeModeloIndisponivel(erro) {
-    const status = Number(erro && (erro.status || erro.code));
-    const msg = String((erro && erro.message) || '');
-    if (status === 404 || status === 403 || status === 429) return true;
-    if (status === 400 && /billing|faturamento|not available|not supported|not found|FAILED_PRECONDITION|free tier/i.test(msg)) return true;
-    return /RESOURCE_EXHAUSTED|NOT_FOUND|PERMISSION_DENIED|FAILED_PRECONDITION/i.test(msg);
-}
-
-// ── Provedores de reserva (todos com camada gratuita, via API compatível com OpenAI) ──────────
-// Usados automaticamente quando o Gemini falha (chave bloqueada, 403, cota, etc.).
-// Configure no .env pelo menos UM destes (todos opcionais):
-//   GROQ_API_KEY=...        (console.groq.com/keys)        GROQ_MODEL=llama-3.3-70b-versatile
-//   OPENROUTER_API_KEY=...  (openrouter.ai/keys)           OPENROUTER_MODEL=<modelo ":free">
-//   LLM_FALLBACK_URL=http://localhost:11434/v1/chat/completions  (ex.: Ollama local, 100% grátis e offline)
-//   LLM_FALLBACK_MODEL=llama3.1   LLM_FALLBACK_KEY=(opcional)
-function listarModelosEnv(valor) {
-    return String(valor || '').split(',').map(m => m.trim()).filter(Boolean);
-}
-
-function listarProvedoresReserva() {
-    const lista = [];
-    if (process.env.GROQ_API_KEY) {
-        // O Groq aposenta modelos com frequência (ex.: llama-3.3-70b-versatile saiu da camada gratuita
-        // em ago/2026). Tentamos vários, em ordem; GROQ_MODEL (aceita lista separada por vírgula) vem primeiro.
-        lista.push({
-            nome: 'groq',
-            url: 'https://api.groq.com/openai/v1/chat/completions',
-            chave: process.env.GROQ_API_KEY,
-            modelos: Array.from(new Set([
-                ...listarModelosEnv(process.env.GROQ_MODEL),
-                'openai/gpt-oss-120b',
-                'openai/gpt-oss-20b',
-                'qwen/qwen3.6-27b',
-                'llama-3.3-70b-versatile'
-            ]))
-        });
-    }
-    if (process.env.OPENROUTER_API_KEY && process.env.OPENROUTER_MODEL) {
-        lista.push({
-            nome: 'openrouter',
-            url: 'https://openrouter.ai/api/v1/chat/completions',
-            chave: process.env.OPENROUTER_API_KEY,
-            modelos: listarModelosEnv(process.env.OPENROUTER_MODEL)
-        });
-    }
-    if (process.env.LLM_FALLBACK_URL && process.env.LLM_FALLBACK_MODEL) {
-        lista.push({
-            nome: 'personalizado',
-            url: process.env.LLM_FALLBACK_URL,
-            chave: process.env.LLM_FALLBACK_KEY || '',
-            modelos: listarModelosEnv(process.env.LLM_FALLBACK_MODEL)
-        });
-    }
-    return lista;
-}
-
-function limparErroParaLog(erro) {
-    return String((erro && erro.message) || erro || 'erro desconhecido')
-        .replace(/AIza[0-9A-Za-z_-]+/g, '[REDACTED]')
-        .replace(/gsk_[0-9A-Za-z]+/g, '[REDACTED]')
-        .replace(/sk-[0-9A-Za-z_-]+/g, '[REDACTED]')
-        .slice(0, 300);
-}
-
-const modeloReservaQueFuncionou = new Map();
-
-function modeloReservaIndisponivel(erro) {
-    return Number(erro && erro.status) === 404 ||
-        /model_not_found|does not exist|decommissioned|no longer supported|not have access/i.test(String((erro && erro.message) || ''));
-}
-
-async function chamarModeloReserva(prov, modelo, messages, usarModoJson) {
-    const headers = { 'Content-Type': 'application/json' };
-    if (prov.chave) headers.Authorization = `Bearer ${prov.chave}`;
-    const corpoReq = { model: modelo, messages, temperature: 0.9 };
-    if (usarModoJson) corpoReq.response_format = { type: 'json_object' };
-
-    const resp = await fetch(prov.url, {
-        method: 'POST',
-        headers,
-        signal: AbortSignal.timeout(30000),
-        body: JSON.stringify(corpoReq)
-    });
-    if (!resp.ok) {
-        const corpo = await resp.text().catch(() => '');
-        const erro = new Error(`HTTP ${resp.status} ${corpo.slice(0, 200)}`);
-        erro.status = resp.status;
-        throw erro;
-    }
-    const json = await resp.json();
-    const texto = json && json.choices && json.choices[0] && json.choices[0].message
-        ? json.choices[0].message.content
-        : '';
-    if (!texto || !String(texto).trim()) throw new Error('resposta vazia');
-    return String(texto);
-}
-
-async function chamarProvedorReserva(prov, { systemInstruction, contents, quantidadeSugestoes }) {
-    const formato = [
-        'FORMATO OBRIGATÓRIO: responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSON) com exatamente estas chaves:',
-        '{"tem_relacao_com_catalogo": boolean, "resposta": string, "produtos_recomendados": [{"id_produto": number, "motivo": string}], ' +
-            `"sugestoes_perguntas": [string x${quantidadeSugestoes}]}`
-    ].join('\n');
-
-    const messages = [
-        { role: 'system', content: `${systemInstruction}\n\n${formato}` },
-        ...contents.map(c => ({
-            role: c.role === 'model' ? 'assistant' : 'user',
-            content: (c.parts || []).map(x => x.text || '').join('\n')
-        }))
-    ];
-
-    const lembrado = modeloReservaQueFuncionou.get(prov.nome);
-    const ordem = lembrado ? [lembrado, ...prov.modelos.filter(m => m !== lembrado)] : prov.modelos.slice();
-    let ultimoErro = null;
-
-    for (const modelo of ordem) {
-        try {
-            let texto;
-            try {
-                texto = await chamarModeloReserva(prov, modelo, messages, true);
-            } catch (erro) {
-                // alguns modelos não aceitam response_format: repete sem ele (o prompt já exige JSON)
-                if (Number(erro.status) === 400 && /response_format|json/i.test(erro.message)) {
-                    texto = await chamarModeloReserva(prov, modelo, messages, false);
-                } else {
-                    throw erro;
-                }
-            }
-            modeloReservaQueFuncionou.set(prov.nome, modelo);
-            return { texto, modelo };
-        } catch (erro) {
-            ultimoErro = erro;
-            if (lembrado === modelo) modeloReservaQueFuncionou.delete(prov.nome);
-            if (!modeloReservaIndisponivel(erro)) throw erro;
-            console.warn(`[maisa] ${prov.nome}: modelo "${modelo}" indisponível; tentando o próximo.`);
-        }
-    }
-    throw ultimoErro || new Error('nenhum modelo disponível');
-}
-
-function removerCercaMarkdown(texto) {
-    return String(texto || '')
-        .trim()
-        .replace(/^```(?:json)?\s*/i, '')
-        .replace(/\s*```$/i, '')
-        .trim();
-}
-
+const MODELO_MAISA = 'gemini-4-hydrogen';
 
 let clienteGemini = null;
 let chaveEmCache = null;
-
-// Quando o PROJETO inteiro não tem acesso (ex.: "free tier is not available for this project"),
-// todos os modelos falham do mesmo jeito. Pausamos o Gemini por alguns minutos e vamos direto
-// aos provedores de reserva, sem perder tempo nem poluir o log a cada mensagem.
-const PAUSA_PROJETO_BLOQUEADO_MS = 10 * 60 * 1000;
-let geminiPausadoAte = 0;
-
-function erroDeProjetoBloqueado(erro) {
-    const msg = String((erro && erro.message) || '');
-    return /free tier is not available for this project|project has been denied access|reported as leaked|set up billing/i.test(msg);
-}
 
 function obterClienteGemini() {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -286,13 +113,25 @@ function resumirCatalogo(produtos, categorias, perfilAlvo) {
         };
     });
 
-    const listaCategorias = categoriasOrdenadas.map(c => ({
-        nome: c.nome,
-        slug: c.slug,
-        faixa_etaria: c.faixa_etaria || 'Todas as idades',
-        sexo: c.sexo || 'todos',
-        pontuacao_relevancia: pontuar(c, perfilAlvo)
-    }));
+    const baseConhecimento = obterBaseConhecimentoCategorias(categoriasOrdenadas);
+    const mapaConhecimento = new Map(
+        baseConhecimento.map(item => [normalizarTextoBasico(item.nome), item])
+    );
+
+    const listaCategorias = categoriasOrdenadas.map(c => {
+        const info = mapaConhecimento.get(normalizarTextoBasico(c.nome));
+        return {
+            nome: c.nome,
+            slug: c.slug,
+            faixa_etaria: c.faixa_etaria || 'Todas as idades',
+            sexo: c.sexo || 'todos',
+            pontuacao_relevancia: pontuar(c, perfilAlvo),
+            termos_relacionados: info ? info.termos_relacionados : [],
+            problemas_atendidos: info ? info.problemas_atendidos : [],
+            frases_indiretas: info ? info.frases_indiretas : [],
+            orientacao_cuidado: info ? info.orientacao_cuidado : ''
+        };
+    });
 
     return { listaProdutos, listaCategorias };
 }
@@ -419,19 +258,24 @@ function construirInstrucaoSistema({ produtos, categorias, usuario, perfilAlvo, 
         '- Dê preferência aos itens com maior `pontuacao_relevancia` (>= 0). Considere as necessidades recorrentes da faixa etária e sexo do perfil quando estiverem disponíveis, adaptando a escolha ao que existe no catálogo.',
         '- Nunca diagnostique doenças nem prescreva medicamentos.',
         '',
-        'SUGESTÕES DE CONTINUAÇÃO COERENTES (`sugestoes_perguntas`):',
-        `- Forneça EXATAMENTE ${quantidadeSugestoes} sugestões curtas e distintas para continuar a conversa.`,
+        'SUGESTÕES DE CONTINUAÇÃO COERENTES DO USUÁRIO PARA A IA (`sugestoes_perguntas`):',
+        `- Forneça EXATAMENTE ${quantidadeSugestoes} sugestões curtas e distintas que serão exibidas como botões clicáveis para o USUÁRIO enviar como próxima mensagem para você (Maisa).`,
+        '- OBRIGATÓRIO: escreva TODAS as sugestões em 1ª PESSOA / perspectiva do USUÁRIO falando com a Maisa, sempre coerentes com o assunto atual da conversa.',
+        '- Exemplos CERTOS (usuário -> Maisa): "Quero opções mais em conta", "Como evitar quedas no banheiro?", "Tem algo mais fácil de segurar?", "Quais cuidados devo ter no dia a dia?"',
+        '- PROIBIDO: nunca escreva perguntas da IA entrevistando o usuário (ex.: "Você sente dor há quanto tempo?", "Quer que eu mostre outras opções?", "Qual é a sua idade?", "Posso te ajudar com mais algo?").',
         instrucaoPrioridadeSugestoes,
-        '- As sugestões devem seguir o rumo da conversa atual (ex.: explorar um cuidado próximo ao problema citado, tirar dúvida sobre uso, filtrar conforto/rotina dentro do mesmo assunto).',
         '- NUNCA coloque sugestões genéricas fora do contexto (como "Ver promoções" se o assunto não for preço).',
-        `- Se \`tem_relacao_com_catalogo\` for false, gere exatamente ${quantidadeSugestoes} caminhos baseados nas categorias reais existentes no site para ajudar o cliente a voltar ao catálogo.`,
+        `- Se \`tem_relacao_com_catalogo\` for false, gere exatamente ${quantidadeSugestoes} pedidos naturais do usuário explorando categorias reais existentes no site (ex.: "Quero ver opções de <categoria>").`,
         '',
         'REGRAS DOS MOTIVOS DOS PRODUTOS:',
         '- Em cada item de `produtos_recomendados`, escreva um `motivo` único e específico em 1 frase curta explicando por que aquele produto ajuda no problema apresentado pelo cliente (evite motivos padronizados ou repetidos entre os 3 itens).',
         '- Use EXCLUSIVAMENTE `id_produto` existente no catálogo JSON abaixo.',
         '',
+        'USO DA BASE AUTOMÁTICA DE CATEGORIAS:',
+        '- Cada categoria abaixo traz `termos_relacionados`, `problemas_atendidos`, `frases_indiretas` e `orientacao_cuidado` gerados automaticamente (inclusive para categorias recém-criadas). Use esses dados para conectar necessidades diretas ou indiretas do usuário às categorias e produtos da loja.',
+        '',
         contextoUsuario,
-        `Categorias existentes no site (ordenadas por relevância): ${JSON.stringify(listaCategorias)}`,
+        `Categorias existentes e sua base de conhecimento (ordenadas por relevância): ${JSON.stringify(listaCategorias)}`,
         `Catálogo atual de produtos da +Saúde (ordenado por relevância): ${JSON.stringify(listaProdutos)}`
     ].join('\n');
 }
@@ -472,7 +316,7 @@ function criarSchemaRespostaMaisa(quantidadeSugestoes = 4) {
                 type: Type.ARRAY,
                 minItems: String(qtd),
                 maxItems: String(qtd),
-                description: `Exatamente ${qtd} sugestões curtas, ordenadas da mais aderente ao perfil (faixa etária e sexo, se logado) e ao rumo da conversa.`,
+                description: `Exatamente ${qtd} sugestões curtas escritas como mensagens do USUÁRIO para a IA (1ª pessoa/pedido do cliente, nunca perguntas da IA para o usuário), ligadas ao tema atual e ordenadas pelo perfil (faixa etária e sexo, se logado).`,
                 items: {
                     type: Type.STRING
                 }
@@ -665,14 +509,57 @@ const EXPANSOES_BUSCA = {
     incontinencia: ['intima', 'geriatrico', 'absorcao']
 };
 
-function extrairTermosBusca(texto) {
+function construirIndicesConhecimentoCategorias(categorias = []) {
+    const base = obterBaseConhecimentoCategorias(Array.isArray(categorias) ? categorias : []);
+    return base.map(entry => {
+        const palavrasExtras = [
+            ...(Array.isArray(entry.termos_relacionados) ? entry.termos_relacionados : []),
+            ...(Array.isArray(entry.problemas_atendidos) ? entry.problemas_atendidos : []),
+            ...(Array.isArray(entry.frases_indiretas) ? entry.frases_indiretas : [])
+        ]
+            .flatMap(bloco => normalizarTexto(bloco).split(/\s+/))
+            .filter(t => t.length >= 3 && !STOP_WORDS_BUSCA.has(t));
+
+        const termosUnicos = Array.from(new Set([
+            ...normalizarTexto(entry.nome).split(/\s+/).filter(t => t.length >= 3 && !STOP_WORDS_BUSCA.has(t)),
+            ...palavrasExtras
+        ]));
+
+        return {
+            entry,
+            nomeNorm: normalizarTexto(entry.nome),
+            termos: termosUnicos,
+            corpus: normalizarTexto([
+                entry.nome,
+                ...(entry.termos_relacionados || []),
+                ...(entry.problemas_atendidos || []),
+                ...(entry.frases_indiretas || [])
+            ].join(' '))
+        };
+    });
+}
+
+function extrairTermosBusca(texto, categorias = []) {
     const textoNorm = normalizarTexto(texto);
     const termosBase = textoNorm
         .split(/\s+/)
         .filter(t => (t.length >= 3 || Object.prototype.hasOwnProperty.call(EXPANSOES_BUSCA, t)) && !STOP_WORDS_BUSCA.has(t));
-    return Array.from(new Set(
+
+    const expandidos = new Set(
         termosBase.flatMap(t => [t, ...(EXPANSOES_BUSCA[t] || [])])
-    ));
+    );
+
+    if (Array.isArray(categorias) && categorias.length > 0 && termosBase.length > 0) {
+        const indicesCat = construirIndicesConhecimentoCategorias(categorias);
+        for (const item of indicesCat) {
+            const bate = termosBase.some(t => contemTermo(item.corpus, t));
+            if (bate) {
+                item.termos.forEach(t => expandidos.add(t));
+            }
+        }
+    }
+
+    return Array.from(expandidos);
 }
 
 function contemTermo(textoNorm, termo) {
@@ -687,12 +574,13 @@ function mensagemTemRelacaoComCatalogo(mensagem = '', historico = [], produtos =
         ...(Array.isArray(historico)
             ? historico.filter(h => h && h.role === 'user').slice(-2).map(h => h.texto)
             : [])
-    ].join(' '));
+    ].join(' '), categorias);
     if (termos.length === 0) return false;
 
+    const indicesCat = construirIndicesConhecimentoCategorias(categorias);
     const corpus = [
         ...(Array.isArray(produtos) ? produtos.map(p => normalizarTexto(`${p.nome} ${p.descricao} ${p.categoria}`)) : []),
-        ...(Array.isArray(categorias) ? categorias.map(c => normalizarTexto(c.nome)) : [])
+        ...indicesCat.map(item => item.corpus)
     ];
 
     return termos.some(termo => corpus.some(texto => contemTermo(texto, termo)));
@@ -711,7 +599,7 @@ function gerarMotivoCurto(produto, index = 0) {
     return variacoes[index % variacoes.length];
 }
 
-function garantirTresProdutos({ recomendados = [], mensagem = '', historico = [], produtos = [], perfilAlvo = null }) {
+function garantirTresProdutos({ recomendados = [], mensagem = '', historico = [], produtos = [], categorias = [], perfilAlvo = null }) {
     const listaCatalogo = ordenarPorRelevancia(Array.isArray(produtos) ? produtos : [], perfilAlvo);
     const mapa = new Map(listaCatalogo.map(p => [Number(p.id_produto), p]));
     const selecionados = [];
@@ -740,7 +628,11 @@ function garantirTresProdutos({ recomendados = [], mensagem = '', historico = []
             ? historico.filter(h => h && h.role === 'user').slice(-2).map(h => h.texto)
             : [])
     ].join(' '));
-    const termos = extrairTermosBusca(textoBusca);
+    const termos = extrairTermosBusca(textoBusca, categorias);
+    const indicesCat = construirIndicesConhecimentoCategorias(categorias);
+    const categoriasCasadas = indicesCat.filter(item =>
+        termos.some(t => contemTermo(item.corpus, t))
+    );
     const querPromocao = /\b(promocao|promocoes|desconto|barato|oferta|economia|menor preco)\b/.test(textoBusca);
 
     const candidatos = listaCatalogo
@@ -749,11 +641,19 @@ function garantirTresProdutos({ recomendados = [], mensagem = '', historico = []
             const nomeNorm = normalizarTexto(p.nome);
             const catNorm = normalizarTexto(p.categoria);
             const descNorm = normalizarTexto(p.descricao);
+            const idsArr = String(p.ids_categorias || '').split(',').map(s => Number(s.trim())).filter(Boolean);
             let score = (p.status !== 'fora-de-estoque' ? 100 : 0) + (pontuar(p, perfilAlvo) * 4);
             for (const termo of termos) {
                 if (contemTermo(nomeNorm, termo)) score += 16;
                 if (contemTermo(catNorm, termo)) score += 10;
                 if (contemTermo(descNorm, termo)) score += 6;
+            }
+            for (const catItem of categoriasCasadas) {
+                const idCat = Number(catItem.entry && catItem.entry.id_categoria);
+                if ((Number.isFinite(idCat) && idCat > 0 && idsArr.includes(idCat)) ||
+                    (catItem.nomeNorm && catNorm.includes(catItem.nomeNorm))) {
+                    score += 24;
+                }
             }
             if (querPromocao && p.preco_desconto && Number(p.preco_desconto) > 0) {
                 score += 10;
@@ -780,13 +680,16 @@ function pontuarSugestaoPorPerfil(textoSugestao, { usuario = null, produtos = []
     if (!usuarioPossuiPerfil(usuario)) return 0;
 
     const textoNorm = normalizarTexto(textoSugestao);
-    const termos = extrairTermosBusca(textoSugestao);
+    const termos = extrairTermosBusca(textoSugestao, categorias);
+    const indicesCat = construirIndicesConhecimentoCategorias(categorias);
     let melhorScore = 0;
 
-    for (const cat of Array.isArray(categorias) ? categorias : []) {
+    for (let i = 0; i < (Array.isArray(categorias) ? categorias.length : 0); i++) {
+        const cat = categorias[i];
+        const idxCat = indicesCat.find(item => normalizarTexto(cat && cat.nome) === item.nomeNorm);
         const catNorm = normalizarTexto(cat && cat.nome);
         const bateCat = (catNorm && textoNorm.includes(catNorm)) ||
-            termos.some(t => contemTermo(catNorm, t));
+            termos.some(t => contemTermo(catNorm, t) || (idxCat && contemTermo(idxCat.corpus, t)));
         if (bateCat) {
             const s = pontuar(cat, usuario);
             if (s > melhorScore) melhorScore = s;
@@ -815,6 +718,19 @@ function pontuarSugestaoPorPerfil(textoSugestao, { usuario = null, produtos = []
     return melhorScore;
 }
 
+function ehPerguntaDaIaParaUsuario(texto) {
+    const s = String(texto || '').trim();
+    if (!s) return true;
+    const norm = normalizarTexto(s);
+    if (!norm) return true;
+
+    if (/^(voce|o senhor|a senhora|vc)\b/.test(norm)) return true;
+    if (/^(quer que eu|gostaria que eu|deseja que eu|posso (mostrar|ajudar|indicar|sugerir|explicar|te ajudar|te mostrar))\b/.test(norm)) return true;
+    if (/\b(voce|o senhor|a senhora)\s+(sente|tem|usa|prefere|quer|precisa|gostaria|consegue|costuma|esta|ja|pode)\b/.test(norm)) return true;
+    if (/^(qual|quais|como|ha quanto|quanto tempo|onde|quando)\b/.test(norm) && /\b(seu|sua|seus|suas|voce|senhor|senhora)\b/.test(norm)) return true;
+    return false;
+}
+
 function priorizarEGarantirSugestoes({ sugestoes = [], quantidade = 4, usuario = null, produtos = [], categorias = [] }) {
     const qtd = normalizarLimiteSugestoes(quantidade);
     const unicas = [];
@@ -824,6 +740,7 @@ function priorizarEGarantirSugestoes({ sugestoes = [], quantidade = 4, usuario =
         if (typeof s !== 'string') continue;
         const limpo = s.trim();
         if (!limpo) continue;
+        if (ehPerguntaDaIaParaUsuario(limpo)) continue;
         const chave = limpo.toLowerCase();
         if (vistas.has(chave)) continue;
         vistas.add(chave);
@@ -847,7 +764,7 @@ function priorizarEGarantirSugestoes({ sugestoes = [], quantidade = 4, usuario =
             if (ordenadas.length >= qtd) break;
             const nome = cat && cat.nome ? String(cat.nome).trim() : '';
             if (!nome) continue;
-            const opcao = `Ver ${nome}`;
+            const opcao = `Quero ver opções de ${nome}`;
             if (!vistas.has(opcao.toLowerCase())) {
                 vistas.add(opcao.toLowerCase());
                 ordenadas.push(opcao);
@@ -855,10 +772,25 @@ function priorizarEGarantirSugestoes({ sugestoes = [], quantidade = 4, usuario =
         }
     }
 
+    const reservasUsuarioParaIa = [
+        'Quero opções mais fáceis de usar no dia a dia',
+        'Tem alternativas mais em conta para isso?',
+        'Quais cuidados combinam com essa necessidade?',
+        'Quero ver outros produtos recomendados'
+    ];
+    for (const reserva of reservasUsuarioParaIa) {
+        if (ordenadas.length >= qtd) break;
+        if (!vistas.has(reserva.toLowerCase())) {
+            vistas.add(reserva.toLowerCase());
+            ordenadas.push(reserva);
+        }
+    }
+
     return ordenadas.slice(0, qtd);
 }
 
 async function consultarMaisa({ mensagem, historico = [], produtos = [], categorias = [], usuario = null, limiteSugestoes = 4 }) {
+    const ai = obterClienteGemini();
     const quantidadeSugestoes = normalizarLimiteSugestoes(limiteSugestoes);
     const perfilAlvo = resolverPerfilAlvo(usuario, mensagem, historico);
     const systemInstruction = construirInstrucaoSistema({
@@ -877,82 +809,22 @@ async function consultarMaisa({ mensagem, historico = [], produtos = [], categor
         }
     ];
 
-    let textoBruto = null;
-    let modoEmergencia = false;
-
-    // 1) Gemini (modelos gratuitos, com fallback entre eles)
-    try {
-        if (Date.now() < geminiPausadoAte) {
-            throw new Error('Gemini pausado temporariamente (projeto sem acesso à camada gratuita).');
-        }
-        const ai = obterClienteGemini();
-        let ultimoErro = null;
-        for (const modelo of listarModelosMaisa()) {
-            try {
-                const response = await executarComRetry(() =>
-                    ai.models.generateContent({
-                        model: modelo,
-                        contents,
-                        config: {
-                            systemInstruction,
-                            temperature: 0.9,
-                            responseMimeType: 'application/json',
-                            responseSchema: criarSchemaRespostaMaisa(quantidadeSugestoes)
-                        }
-                    })
-                );
-                textoBruto = (response && response.text ? response.text : '').trim();
-                if (textoBruto) break;
-            } catch (erro) {
-                ultimoErro = erro;
-                console.warn(`[maisa] Gemini "${modelo}" falhou (${(erro && (erro.status || erro.code)) || 'erro'}): ${limparErroParaLog(erro)}`);
-                if (erroDeProjetoBloqueado(erro)) {
-                    geminiPausadoAte = Date.now() + PAUSA_PROJETO_BLOQUEADO_MS;
-                    console.warn('[maisa] O projeto do Gemini não tem acesso à camada gratuita; pausando o Gemini por 10 min e usando reservas.');
-                    break;
-                }
-                if (!erroDeModeloIndisponivel(erro)) break;
+    const response = await executarComRetry(() =>
+        ai.models.generateContent({
+            model: MODELO_MAISA,
+            contents,
+            config: {
+                systemInstruction,
+                temperature: 0.9,
+                responseMimeType: 'application/json',
+                responseSchema: criarSchemaRespostaMaisa(quantidadeSugestoes)
             }
-        }
-        if (!textoBruto && ultimoErro) throw ultimoErro;
-    } catch (erro) {
-        console.warn('[maisa] Gemini indisponível, tentando provedores de reserva:', limparErroParaLog(erro));
-    }
+        })
+    );
 
-    // 2) Provedores de reserva gratuitos (Groq, OpenRouter, Ollama/servidor próprio...)
-    if (!textoBruto) {
-        for (const prov of listarProvedoresReserva()) {
-            try {
-                const { texto, modelo } = await chamarProvedorReserva(prov, { systemInstruction, contents, quantidadeSugestoes });
-                textoBruto = removerCercaMarkdown(texto);
-                if (textoBruto) {
-                    console.info(`[maisa] Resposta gerada pelo provedor de reserva "${prov.nome}" (${modelo}).`);
-                    break;
-                }
-            } catch (erro) {
-                console.warn(`[maisa] Provedor "${prov.nome}" falhou: ${limparErroParaLog(erro)}`);
-            }
-        }
-    }
-
-    // 3) Modo de emergência: nenhuma IA respondeu. Usa a busca por palavras-chave do próprio catálogo.
-    if (!textoBruto) {
-        modoEmergencia = true;
-        console.warn('[maisa] Nenhum provedor de IA respondeu; usando modo de emergência (busca por palavras-chave).');
-    }
-
+    const textoBruto = (response && response.text ? response.text : '').trim();
     let dados;
-    if (modoEmergencia) {
-        const possuiRelacaoEmerg = mensagemTemRelacaoComCatalogo(mensagem, historico, produtos, categorias);
-        dados = {
-            tem_relacao_com_catalogo: possuiRelacaoEmerg,
-            resposta: possuiRelacaoEmerg
-                ? 'Entendi o que você procura. Separei algumas opções da nossa loja que podem ajudar no seu dia a dia. Se o desconforto continuar ou for forte, vale conversar com um médico de confiança.'
-                : 'Posso ajudar com produtos de saúde e bem-estar da +Saúde. Escolha uma das categorias abaixo ou me conte o que você procura.',
-            produtos_recomendados: [],
-            sugestoes_perguntas: []
-        };
-    } else try {
+    try {
         dados = JSON.parse(textoBruto);
     } catch (_) {
         const possuiRelacao = mensagemTemRelacaoComCatalogo(mensagem, historico, produtos, categorias);
@@ -975,6 +847,7 @@ async function consultarMaisa({ mensagem, historico = [], produtos = [], categor
             mensagem,
             historico,
             produtos,
+            categorias,
             perfilAlvo
         })
         : [];
@@ -1003,5 +876,6 @@ module.exports = {
     garantirTresProdutos,
     mensagemTemRelacaoComCatalogo,
     priorizarEGarantirSugestoes,
-    normalizarLimiteSugestoes
+    normalizarLimiteSugestoes,
+    ehPerguntaDaIaParaUsuario
 };

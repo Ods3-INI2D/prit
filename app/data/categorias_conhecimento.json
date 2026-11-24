@@ -1,0 +1,197 @@
+{
+  "cabelo": {
+    "id_categoria": 5,
+    "nome": "Cabelo",
+    "slug": "cabelo",
+    "faixa_etaria": null,
+    "sexo": "todos",
+    "termos_relacionados": [
+      "cabelo",
+      "cabelos",
+      "capilar",
+      "shampoo",
+      "fios",
+      "grisalhos",
+      "queda de cabelo",
+      "couro cabeludo"
+    ],
+    "problemas_atendidos": [
+      "fios finos e quebradiços",
+      "couro cabeludo sensível",
+      "ressecamento capilar"
+    ],
+    "frases_indiretas": [
+      "o cabelo está caindo muito no pente",
+      "o couro cabeludo fica irritado com shampoo comum"
+    ],
+    "orientacao_cuidado": "Usar limpeza suave e fortificante com frascos fáceis de abrir.",
+    "origem": "automatica",
+    "atualizado_em": "2026-11-24T18:56:19.839Z"
+  },
+  "cuidados-com-a-pele": {
+    "id_categoria": 3,
+    "nome": "Cuidados com a Pele",
+    "slug": "cuidados-com-a-pele",
+    "faixa_etaria": "40+",
+    "sexo": "todos",
+    "termos_relacionados": [
+      "pele",
+      "hidratante",
+      "locao",
+      "sabonete",
+      "protetor solar",
+      "ressecada",
+      "coceira",
+      "sensivel",
+      "madura",
+      "ureia"
+    ],
+    "problemas_atendidos": [
+      "ressecamento intenso",
+      "coceira e sensibilidade",
+      "proteção contra o sol em pele fina"
+    ],
+    "frases_indiretas": [
+      "a pele dele descasca muito",
+      "coça os braços à noite",
+      "cheiro forte dá alergia nela"
+    ],
+    "orientacao_cuidado": "Preferir fórmulas neutras, sem fragrância agressiva e fáceis de espalhar.",
+    "origem": "automatica",
+    "atualizado_em": "2026-11-24T18:56:19.839Z"
+  },
+  "higiene-bucal": {
+    "id_categoria": 4,
+    "nome": "Higiene Bucal",
+    "slug": "higiene-bucal",
+    "faixa_etaria": null,
+    "sexo": "todos",
+    "termos_relacionados": [
+      "bucal",
+      "dente",
+      "dentes",
+      "gengiva",
+      "protese",
+      "dentadura",
+      "boca seca",
+      "escova",
+      "enxaguante"
+    ],
+    "problemas_atendidos": [
+      "sensibilidade na gengiva",
+      "fixação e limpeza de prótese",
+      "boca seca causada por medicamentos"
+    ],
+    "frases_indiretas": [
+      "a dentadura fica saindo do lugar",
+      "acorda com a boca toda seca",
+      "a escova normal machuca a gengiva"
+    ],
+    "orientacao_cuidado": "Garantir higiene suave sem álcool ou abrasivos fortes e apoio confortável para próteses.",
+    "origem": "automatica",
+    "atualizado_em": "2026-11-24T18:56:19.840Z"
+  },
+  "monitoramento-e-saude": {
+    "id_categoria": 6,
+    "nome": "Monitoramento e Saúde",
+    "slug": "monitoramento-e-saude",
+    "faixa_etaria": "60+",
+    "sexo": "todos",
+    "termos_relacionados": [
+      "monitoramento",
+      "aparelho de pressao",
+      "termometro",
+      "oximetro",
+      "glicosimetro",
+      "visor grande",
+      "memoria",
+      "organizador de comprimidos",
+      "febre",
+      "batimentos"
+    ],
+    "problemas_atendidos": [
+      "acompanhar sinais vitais em casa",
+      "enxergar resultados com facilidade",
+      "organizar horários de remédios"
+    ],
+    "frases_indiretas": [
+      "meu pai anda meio tonto às vezes",
+      "não enxergo os números pequenos",
+      "ele sempre esquece se já tomou o remédio",
+      "acho que está com febre"
+    ],
+    "orientacao_cuidado": "Indicar aparelhos de leitura fácil e organizadores práticos para rotina segura em casa.",
+    "origem": "automatica",
+    "atualizado_em": "2026-11-24T18:56:19.840Z"
+  },
+  "terceira-idade": {
+    "id_categoria": 1,
+    "nome": "Terceira Idade",
+    "slug": "terceira-idade",
+    "faixa_etaria": "60+",
+    "sexo": "todos",
+    "termos_relacionados": [
+      "terceira",
+      "idade",
+      "mobilidade",
+      "locomocao",
+      "bengala",
+      "andador",
+      "muleta",
+      "cadeira de rodas",
+      "caminhar",
+      "equilibrio",
+      "apoio",
+      "firmeza",
+      "terceira idade"
+    ],
+    "problemas_atendidos": [
+      "insegurança ao caminhar",
+      "perda de equilíbrio",
+      "dificuldade para levantar ou andar sozinho"
+    ],
+    "frases_indiretas": [
+      "meu vô caiu",
+      "ele anda meio bambo",
+      "tem medo de sair andando sozinho pela casa",
+      "cansa rápido ao caminhar"
+    ],
+    "orientacao_cuidado": "Priorizar estabilidade e autonomia segura ao caminhar e levantar, evitando quedas.",
+    "origem": "automatica",
+    "atualizado_em": "2026-11-24T18:56:19.840Z"
+  },
+  "vitaminas-e-suplementos": {
+    "id_categoria": 2,
+    "nome": "Vitaminas e Suplementos",
+    "slug": "vitaminas-e-suplementos",
+    "faixa_etaria": "50+",
+    "sexo": "todos",
+    "termos_relacionados": [
+      "vitaminas",
+      "suplementos",
+      "alimentacao",
+      "nutricao",
+      "suplemento",
+      "vitamina",
+      "proteina",
+      "calcio",
+      "ferro",
+      "disposicao",
+      "apetite",
+      "fraqueza"
+    ],
+    "problemas_atendidos": [
+      "falta de apetite ou energia",
+      "perda de massa muscular",
+      "reforço nutricional na terceira idade"
+    ],
+    "frases_indiretas": [
+      "ela não quer comer direito e está fraca",
+      "anda sem disposição o dia todo",
+      "o médico pediu reforço de vitaminas"
+    ],
+    "orientacao_cuidado": "Complementar a alimentação diária com praticidade, mantendo acompanhamento médico ou nutricional.",
+    "origem": "automatica",
+    "atualizado_em": "2026-11-24T18:56:19.840Z"
+  }
+}
