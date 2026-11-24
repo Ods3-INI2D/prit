@@ -13,13 +13,23 @@
     <script src="/js/theme.js"></script>
 </head>
 <body>
+    <%
+        var isoData = function (valor) {
+            var d = new Date(valor);
+            return isNaN(d) ? '' : d.toISOString().slice(0, 10);
+        };
+    %>
     <header>
         <img src="/imagens/logo-branco.svg" alt="Logotipo da Farmácia" class="logo">
         <h1 class="titulo">Conta do Usuário</h1>
+        <button type="button" class="theme-toggle">
+            <img src="/imagens/lua-branca.svg" alt="" aria-hidden="true" class="theme-icon">
+            <span class="theme-text">Tema Escuro</span>
+        </button>
     </header>
 
     <main>
-        <nav aria-label="Navegação de retorno" style="margin-bottom:1.5rem;">
+        <nav class="navegacao-retorno" aria-label="Navegação de retorno">
             <a href="/admin?tab=usuarios" class="link-footer">← Voltar ao Painel</a>
         </nav>
 
@@ -27,18 +37,18 @@
         <section aria-labelledby="titulo-dados-usuario">
             <h2 id="titulo-dados-usuario" class="subtitulo">Dados da Conta</h2>
 
-            <article class="card-stats" style="display:flex;flex-direction:column;gap:.6rem;">
-                <dl>
+            <article class="card-stats">
+                <dl class="card-dados">
                     <dt class="stat-titulo">Nome</dt>
                     <dd><output><%= usuario.nome %></output></dd>
 
-                    <dt class="stat-titulo" style="margin-top:.75rem;">E-mail</dt>
+                    <dt class="stat-titulo">E-mail</dt>
                     <dd><output><%= usuario.email %></output></dd>
 
-                    <dt class="stat-titulo" style="margin-top:.75rem;">CPF</dt>
+                    <dt class="stat-titulo">CPF</dt>
                     <dd><output><%= usuario.cpf %></output></dd>
 
-                    <dt class="stat-titulo" style="margin-top:.75rem;">Telefone</dt>
+                    <dt class="stat-titulo">Telefone</dt>
                     <dd>
                         <output>
                             <% if (usuario.ddd && usuario.tel) { %>
@@ -49,14 +59,14 @@
                         </output>
                     </dd>
 
-                    <dt class="stat-titulo" style="margin-top:.75rem;">Data de Nascimento</dt>
+                    <dt class="stat-titulo">Data de Nascimento</dt>
                     <dd>
-                        <time datetime="<%= usuario.nasc %>">
+                        <time datetime="<%= isoData(usuario.nasc) %>">
                             <%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %>
                         </time>
                     </dd>
 
-                    <dt class="stat-titulo" style="margin-top:.75rem;">Sexo</dt>
+                    <dt class="stat-titulo">Sexo</dt>
                     <dd>
                         <output><%=
                             ({ masculino: 'Masculino', feminino: 'Feminino', 'prefiro-nao-dizer': 'Prefiro Não Dizer' })[usuario.sexo]
@@ -64,9 +74,9 @@
                         %></output>
                     </dd>
 
-                    <dt class="stat-titulo" style="margin-top:.75rem;">Membro desde</dt>
+                    <dt class="stat-titulo">Membro desde</dt>
                     <dd>
-                        <time datetime="<%= usuario.criado_em %>">
+                        <time datetime="<%= isoData(usuario.criado_em) %>">
                             <%= new Date(usuario.criado_em).toLocaleDateString('pt-BR') %>
                         </time>
                     </dd>
@@ -75,10 +85,10 @@
         </section>
 
         <%# ── Pedidos do usuário ── %>
-        <section aria-labelledby="titulo-pedidos-usuario" style="margin-top:2rem;">
+        <section class="secao-pedidos" aria-labelledby="titulo-pedidos-usuario">
             <h2 id="titulo-pedidos-usuario" class="subtitulo">
                 Pedidos
-                <output style="font-size:1rem;color:#888;font-weight:400;">
+                <output class="contagem-pedidos">
                     (<%= pedidos.length %> encontrado<%= pedidos.length !== 1 ? 's' : '' %>)
                 </output>
             </h2>
@@ -173,7 +183,7 @@
                                     %>
                                         <li class="item-pedido">
                                             <figure class="item-imagem-container">
-                                                <img src="<%= item.imagem || '/imagens/foto.jpg' %>"
+                                                <img src="<%= item.imagem || '/imagens/foto.svg' %>"
                                                      alt="<%= item.nome %>"
                                                      class="item-imagem"
                                                      loading="lazy">
@@ -209,7 +219,7 @@
                                 <dl class="pagamento-detalhes">
                                     <% if (enderecoEntrega) { %>
                                         <dt>Endereço</dt>
-                                        <dd><address style="font-style:normal;"><%= enderecoEntrega %></address></dd>
+                                        <dd><address><%= enderecoEntrega %></address></dd>
                                     <% } %>
                                     <% if (pedido.pagamento && pedido.pagamento.forma) { %>
                                         <dt>Forma de Pagamento</dt>
@@ -250,13 +260,9 @@
     </main>
 
     <footer>
-        <nav aria-label="Navegação do rodapé"
-             style="display:flex;justify-content:space-between;align-items:center;
-                    flex-wrap:wrap;gap:1rem;padding:1rem 2%;">
+        <nav class="rodape-admin" aria-label="Navegação do rodapé">
             <a href="/admin?tab=usuarios" class="link-footer">Voltar ao Painel</a>
-            <a href="/logout" class="link-footer" style="color:#ff6b6b;font-weight:600;">
-                Sair da Conta de Administrador
-            </a>
+            <a href="/logout" class="link-footer link-sair">Sair da Conta de Administrador</a>
         </nav>
     </footer>
 </body>
