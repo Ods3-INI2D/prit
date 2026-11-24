@@ -193,5 +193,180 @@
     "orientacao_cuidado": "Complementar a alimentação diária com praticidade, mantendo acompanhamento médico ou nutricional.",
     "origem": "automatica",
     "atualizado_em": "2026-11-24T18:56:19.840Z"
+  },
+  "mobilidade-e-locomocao": {
+    "id_categoria": 6,
+    "nome": "Mobilidade e Locomoção",
+    "slug": "mobilidade-e-locomocao",
+    "faixa_etaria": "60+",
+    "sexo": "masculino",
+    "termos_relacionados": [
+      "mobilidade",
+      "locomocao",
+      "bengala",
+      "andador",
+      "muleta",
+      "cadeira de rodas",
+      "caminhar",
+      "equilibrio",
+      "apoio",
+      "firmeza",
+      "terceira idade"
+    ],
+    "problemas_atendidos": [
+      "insegurança ao caminhar",
+      "perda de equilíbrio",
+      "dificuldade para levantar ou andar sozinho"
+    ],
+    "frases_indiretas": [
+      "meu vô caiu",
+      "ele anda meio bambo",
+      "tem medo de sair andando sozinho pela casa",
+      "cansa rápido ao caminhar"
+    ],
+    "orientacao_cuidado": "Priorizar estabilidade e autonomia segura ao caminhar e levantar, evitando quedas.",
+    "origem": "automatica",
+    "atualizado_em": "2026-11-24T19:06:48.326Z"
+  },
+  "ortopedia-e-conforto": {
+    "id_categoria": 8,
+    "nome": "Ortopedia e Conforto",
+    "slug": "ortopedia-e-conforto",
+    "faixa_etaria": "60+",
+    "sexo": "masculino",
+    "termos_relacionados": [
+      "ortopedia",
+      "conforto",
+      "ortopedico",
+      "ortopedica",
+      "coluna",
+      "lombar",
+      "costas",
+      "postura",
+      "almofada",
+      "encosto",
+      "joelheira",
+      "tala",
+      "munhequeira",
+      "assento"
+    ],
+    "problemas_atendidos": [
+      "dor nas costas ou lombar",
+      "desconforto ao ficar sentado muito tempo",
+      "apoio para articulações e postura"
+    ],
+    "frases_indiretas": [
+      "minhas costas doem quando fico sentado",
+      "acorda travado da coluna",
+      "o joelho falha ao subir escada"
+    ],
+    "orientacao_cuidado": "Indicar apoios ergonômicos que aliviem a sobrecarga em coluna, quadris e articulações.",
+    "origem": "automatica",
+    "atualizado_em": "2026-11-24T19:06:48.327Z"
+  },
+  "seguranca": {
+    "id_categoria": 10,
+    "nome": "Segurança",
+    "slug": "seguranca",
+    "faixa_etaria": null,
+    "sexo": "masculino",
+    "termos_relacionados": [
+      "seguranca",
+      "banheiro",
+      "residencial",
+      "barra",
+      "apoio",
+      "antiderrapante",
+      "tapete",
+      "queda",
+      "tombo",
+      "escorregar",
+      "corrimao",
+      "grade"
+    ],
+    "problemas_atendidos": [
+      "risco de escorregar no banho",
+      "quedas dentro de casa",
+      "levantar do vaso ou da cama com segurança"
+    ],
+    "frases_indiretas": [
+      "minha vó tem medo de tomar banho sozinha",
+      "o chão do banheiro é muito liso",
+      "ele levanta no escuro de madrugada",
+      "meu vô caiu ontem"
+    ],
+    "orientacao_cuidado": "Reforçar prevenção de tombos e escorregões nos pontos mais críticos da casa, especialmente banheiro e quarto.",
+    "origem": "automatica",
+    "atualizado_em": "2026-11-24T19:06:48.328Z"
+  },
+  "seguranca-no-banheiro": {
+    "id_categoria": 7,
+    "nome": "Segurança no banheiro",
+    "slug": "seguranca-no-banheiro",
+    "faixa_etaria": "60+",
+    "sexo": "masculino",
+    "termos_relacionados": [
+      "seguranca",
+      "banheiro",
+      "residencial",
+      "barra",
+      "apoio",
+      "antiderrapante",
+      "tapete",
+      "queda",
+      "tombo",
+      "escorregar",
+      "corrimao",
+      "grade"
+    ],
+    "problemas_atendidos": [
+      "risco de escorregar no banho",
+      "quedas dentro de casa",
+      "levantar do vaso ou da cama com segurança"
+    ],
+    "frases_indiretas": [
+      "minha vó tem medo de tomar banho sozinha",
+      "o chão do banheiro é muito liso",
+      "ele levanta no escuro de madrugada",
+      "meu vô caiu ontem"
+    ],
+    "orientacao_cuidado": "Reforçar prevenção de tombos e escorregões nos pontos mais críticos da casa, especialmente banheiro e quarto.",
+    "origem": "automatica",
+    "atualizado_em": "2026-11-24T19:06:48.329Z"
+  },
+  "seguranca-residencial": {
+    "id_categoria": 9,
+    "nome": "Segurança Residencial",
+    "slug": "seguranca-residencial",
+    "faixa_etaria": "60+",
+    "sexo": "masculino",
+    "termos_relacionados": [
+      "seguranca",
+      "residencial",
+      "banheiro",
+      "barra",
+      "apoio",
+      "antiderrapante",
+      "tapete",
+      "queda",
+      "tombo",
+      "escorregar",
+      "corrimao",
+      "grade"
+    ],
+    "problemas_atendidos": [
+      "risco de escorregar no banho",
+      "quedas dentro de casa",
+      "levantar do vaso ou da cama com segurança"
+    ],
+    "frases_indiretas": [
+      "minha vó tem medo de tomar banho sozinha",
+      "o chão do banheiro é muito liso",
+      "ele levanta no escuro de madrugada",
+      "meu vô caiu ontem"
+    ],
+    "orientacao_cuidado": "Reforçar prevenção de tombos e escorregões nos pontos mais críticos da casa, especialmente banheiro e quarto.",
+    "origem": "automatica",
+    "atualizado_em": "2026-11-24T19:06:48.330Z"
   }
 }
