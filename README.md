@@ -4,9 +4,9 @@ npm install dotenv --save
 
 adm:
 
-maisaudeods3@gmail.com
+admin@maisaudebrasileiro.com.br
 
-+SaudeINI2D
++SaudeINI3D
 
 Contas de Teste:
 
