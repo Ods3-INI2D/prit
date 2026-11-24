@@ -1,0 +1,47 @@
+textarea {
+    display: block;
+    width: 100%;
+    min-height: 9rem;
+    padding: 0.75rem 1rem;
+    font: inherit;
+    color: inherit;
+    background: inherit;
+    border: 0.0625rem solid var(--border, #8a8a8a);
+    border-radius: 0.5rem;
+    resize: vertical;
+}
+
+textarea:focus-visible {
+    outline: 0.125rem solid var(--border-focus, #4da6ff);
+    outline-offset: 0.1875rem;
+}
+
+textarea.error {
+    border-color: var(--error, #d93025);
+}
+
+textarea.success {
+    border-color: var(--success, #1e8e3e);
+}
+
+.contato-retorno {
+    display: block;
+    margin-bottom: 1.3125rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.5rem;
+    border: 0.0625rem solid currentColor;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+}
+
+.contato-retorno[hidden] {
+    display: none;
+}
+
+.contato-retorno--ok {
+    color: var(--success, #1e8e3e);
+}
+
+.contato-retorno--erro {
+    color: var(--error, #d93025);
+}
