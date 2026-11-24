@@ -278,6 +278,101 @@ main {
     background-color: #0d1f42;
 }
 
+.form-frete label {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+}
+
+.form-frete input {
+    width: 100%;
+    min-width: 0;
+}
+
+.btn-calcular:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.frete-status {
+    display: block;
+    margin-top: 0.78125rem;
+    font-size: 0.875rem;
+    color: var(--text-tertiary);
+}
+
+.frete-status:empty {
+    display: none;
+}
+
+.frete-status[data-estado="erro"] {
+    color: var(--error-text);
+    font-weight: 600;
+}
+
+.frete-resultado {
+    margin-top: 0.9375rem;
+    padding: 0.9375rem;
+    border: 0.125rem solid var(--border-light);
+    border-radius: 0.625rem;
+    background-color: var(--bg-tertiary);
+}
+
+.frete-resultado[hidden],
+.frete-linha[hidden] {
+    display: none;
+}
+
+.frete-resultado-titulo {
+    margin-bottom: 0.78125rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.frete-linha {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.9375rem;
+    padding: 0.4375rem 0;
+    font-size: 0.9375rem;
+}
+
+.frete-linha dt {
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.frete-linha dd {
+    color: var(--text-primary);
+    font-weight: 700;
+    text-align: right;
+}
+
+.frete-linha dd.frete-valor-gratis {
+    color: var(--success-text);
+}
+
+.frete-observacao {
+    display: block;
+    margin-top: 0.78125rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 /* divisor */
 .divisor {
     border: none;
@@ -664,6 +759,26 @@ main {
     .btn-calcular {
         font-size: 1.1rem;
         padding: 1.2rem 1.6rem;
+    }
+
+    .frete-status {
+        font-size: 1.1rem;
+    }
+
+    .frete-resultado {
+        padding: 1.5rem;
+    }
+
+    .frete-resultado-titulo {
+        font-size: 1.3rem;
+    }
+
+    .frete-linha {
+        font-size: 1.1rem;
+    }
+
+    .frete-observacao {
+        font-size: 1rem;
     }
 
     .nome-descricao {

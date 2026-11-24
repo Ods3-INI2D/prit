@@ -26,6 +26,7 @@ const { pedidosModel   } = require('../models/pedidosmodel');
 // validacoes
 var { valCPF, valDDD, valTel, valNasc, valSenha, valCsenha } = require('../helpers/validacoes');
 const { compareSenha } = require('../helpers/auth');
+const { ORIGEM, FRETE_GRATIS_A_PARTIR_DE, normalizarCep, formatarCep, consultarCep, calcularFrete } = require('../helpers/frete');
 
 // ativacao de conta por e-mail
 const { verificarTokenAtivacao } = require('../helpers/tokenAtivacao');
@@ -68,7 +69,6 @@ const uploadFoto = multer({
 // sessao
 router.use(sessaoComConsentimento);
 router.use(rotasCookies);
-
 
 // ── Multer: memória (sem disco) ───────────────────────────────────────────────
 
@@ -483,7 +483,7 @@ router.post('/login',
     body('email').isEmail().withMessage('E-mail inválido!'),
     body('senha').notEmpty().withMessage('Senha obrigatória!'),
     async (req, res) => {
-                if (!req.cookiesAceitos) {
+                if (!req.cookieitos) {
             res.locals.cookiesAviso = true;
             return res.render('pages/login', {
                 erro:     'Para entrar, aceite o uso do cookie de sessão.',
@@ -828,6 +828,47 @@ router.get('/produto/:id', async (req, res) => {
     });
 });
 
+// ── Produto: cálculo de frete e prazo (ViaCEP) ────────────
+router.get('/produto/:id/frete', async (req, res) => {
+    const cep = normalizarCep(req.query.cep);
+    if (!cep) {
+        return res.status(400).json({ ok: false, erro: 'cep_invalido', mensagem: 'CEP inválido! Digite os 8 números do CEP.' });
+    }
+
+    try {
+        const produto = await produtosModel.findById(req.params.id);
+        if (!produto) {
+            return res.status(404).json({ ok: false, erro: 'produto_nao_encontrado', mensagem: 'Produto não encontrado!' });
+        }
+
+        const endereco = await consultarCep(cep);
+        if (!endereco) {
+            return res.status(404).json({ ok: false, erro: 'cep_nao_encontrado', mensagem: 'CEP não encontrado. Confira os números e tente novamente.' });
+        }
+
+        const preco    = parseFloat(produto.preco) || 0;
+        const desconto = produto.preco_desconto ? parseFloat(produto.preco_desconto) : null;
+        const frete    = calcularFrete(endereco, desconto || preco);
+
+        res.json({
+            ok:       true,
+            cep:      formatarCep(cep),
+            endereco: {
+                logradouro: endereco.logradouro,
+                bairro:     endereco.bairro,
+                localidade: endereco.localidade,
+                uf:         endereco.uf
+            },
+            frete,
+            gratisAPartirDe: FRETE_GRATIS_A_PARTIR_DE,
+            origem:          { cidade: ORIGEM.cidade, uf: ORIGEM.uf }
+        });
+    } catch (erro) {
+        console.error('frete erro:', erro.message);
+        res.status(503).json({ ok: false, erro: 'servico_indisponivel', mensagem: 'Não foi possível calcular o frete agora. Tente novamente em instantes.' });
+    }
+});
+
 router.post('/produto/:id/adicionar-carrinho', exigirCookies, blockAdmin, async (req, res) => {
     const produto = await produtosModel.findById(req.params.id);
     if (!produto || produto.status === 'fora-de-estoque') {
@@ -890,7 +931,7 @@ async function aplicarPagamentoMP(pagamentoMP) {
 
     const pedido = await pedidosModel.findById(idPedido);
     const pagamentoLocal = await pedidosModel.findPagamentoByPedido(idPedido);
-    const valorPago = Math.round(Number(pagamentoMP.transaction_amount) * 100);
+    const valorPago = Math.round(Number(pagamentoMP.tration_amount) * 100);
     const valorPedido = pedido ? Math.round(Number(pedido.valor_total) * 100) : NaN;
     const valorLocal = pagamentoLocal ? Math.round(Number(pagamentoLocal.valor) * 100) : NaN;
 
@@ -1719,7 +1760,7 @@ router.post('/api/maisa/adicionar-carrinho/:id', async (req, res) => {
                 erro: 'Contas de administrador não adicionam itens ao carrinho.'
             });
         }
-        if (!req.cookiesAceitos) {
+        if (!req.cookieitos) {
             return res.status(409).json({
                 ok: false,
                 needsCookies: true,
