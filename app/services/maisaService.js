@@ -1,5 +1,9 @@
 const { GoogleGenAI, Type } = require('@google/genai');
 const { calcularIdade, pontuar, ordenarPorRelevancia } = require('../helpers/personalizacao');
+const {
+    obterBaseConhecimentoCategorias,
+    normalizarTextoBasico
+} = require('./categoriaConhecimentoService');
 
 // Modelos da camada GRATUITA da Gemini API (não exigem faturamento), do mais novo ao mais antigo.
 // O modelo anterior ('gemini-4-hydrogen') pertence à família Gemini 4, que é paga.
@@ -286,13 +290,25 @@ function resumirCatalogo(produtos, categorias, perfilAlvo) {
         };
     });
 
-    const listaCategorias = categoriasOrdenadas.map(c => ({
-        nome: c.nome,
-        slug: c.slug,
-        faixa_etaria: c.faixa_etaria || 'Todas as idades',
-        sexo: c.sexo || 'todos',
-        pontuacao_relevancia: pontuar(c, perfilAlvo)
-    }));
+    const baseConhecimento = obterBaseConhecimentoCategorias(categoriasOrdenadas);
+    const mapaConhecimento = new Map(
+        baseConhecimento.map(item => [normalizarTextoBasico(item.nome), item])
+    );
+
+    const listaCategorias = categoriasOrdenadas.map(c => {
+        const info = mapaConhecimento.get(normalizarTextoBasico(c.nome));
+        return {
+            nome: c.nome,
+            slug: c.slug,
+            faixa_etaria: c.faixa_etaria || 'Todas as idades',
+            sexo: c.sexo || 'todos',
+            pontuacao_relevancia: pontuar(c, perfilAlvo),
+            termos_relacionados: info ? info.termos_relacionados : [],
+            problemas_atendidos: info ? info.problemas_atendidos : [],
+            frases_indiretas: info ? info.frases_indiretas : [],
+            orientacao_cuidado: info ? info.orientacao_cuidado : ''
+        };
+    });
 
     return { listaProdutos, listaCategorias };
 }
@@ -419,19 +435,24 @@ function construirInstrucaoSistema({ produtos, categorias, usuario, perfilAlvo, 
         '- Dê preferência aos itens com maior `pontuacao_relevancia` (>= 0). Considere as necessidades recorrentes da faixa etária e sexo do perfil quando estiverem disponíveis, adaptando a escolha ao que existe no catálogo.',
         '- Nunca diagnostique doenças nem prescreva medicamentos.',
         '',
-        'SUGESTÕES DE CONTINUAÇÃO COERENTES (`sugestoes_perguntas`):',
-        `- Forneça EXATAMENTE ${quantidadeSugestoes} sugestões curtas e distintas para continuar a conversa.`,
+        'SUGESTÕES DE CONTINUAÇÃO COERENTES DO USUÁRIO PARA A IA (`sugestoes_perguntas`):',
+        `- Forneça EXATAMENTE ${quantidadeSugestoes} sugestões curtas e distintas que serão exibidas como botões clicáveis para o USUÁRIO enviar como próxima mensagem para você (Maisa).`,
+        '- OBRIGATÓRIO: escreva TODAS as sugestões em 1ª PESSOA / perspectiva do USUÁRIO falando com a Maisa, sempre coerentes com o assunto atual da conversa.',
+        '- Exemplos CERTOS (usuário -> Maisa): "Quero opções mais em conta", "Como evitar quedas no banheiro?", "Tem algo mais fácil de segurar?", "Quais cuidados devo ter no dia a dia?"',
+        '- PROIBIDO: nunca escreva perguntas da IA entrevistando o usuário (ex.: "Você sente dor há quanto tempo?", "Quer que eu mostre outras opções?", "Qual é a sua idade?", "Posso te ajudar com mais algo?").',
         instrucaoPrioridadeSugestoes,
-        '- As sugestões devem seguir o rumo da conversa atual (ex.: explorar um cuidado próximo ao problema citado, tirar dúvida sobre uso, filtrar conforto/rotina dentro do mesmo assunto).',
         '- NUNCA coloque sugestões genéricas fora do contexto (como "Ver promoções" se o assunto não for preço).',
-        `- Se \`tem_relacao_com_catalogo\` for false, gere exatamente ${quantidadeSugestoes} caminhos baseados nas categorias reais existentes no site para ajudar o cliente a voltar ao catálogo.`,
+        `- Se \`tem_relacao_com_catalogo\` for false, gere exatamente ${quantidadeSugestoes} pedidos naturais do usuário explorando categorias reais existentes no site (ex.: "Quero ver opções de <categoria>").`,
         '',
         'REGRAS DOS MOTIVOS DOS PRODUTOS:',
         '- Em cada item de `produtos_recomendados`, escreva um `motivo` único e específico em 1 frase curta explicando por que aquele produto ajuda no problema apresentado pelo cliente (evite motivos padronizados ou repetidos entre os 3 itens).',
         '- Use EXCLUSIVAMENTE `id_produto` existente no catálogo JSON abaixo.',
         '',
+        'USO DA BASE AUTOMÁTICA DE CATEGORIAS:',
+        '- Cada categoria abaixo traz `termos_relacionados`, `problemas_atendidos`, `frases_indiretas` e `orientacao_cuidado` gerados automaticamente (inclusive para categorias recém-criadas). Use esses dados para conectar necessidades diretas ou indiretas do usuário às categorias e produtos da loja.',
+        '',
         contextoUsuario,
-        `Categorias existentes no site (ordenadas por relevância): ${JSON.stringify(listaCategorias)}`,
+        `Categorias existentes e sua base de conhecimento (ordenadas por relevância): ${JSON.stringify(listaCategorias)}`,
         `Catálogo atual de produtos da +Saúde (ordenado por relevância): ${JSON.stringify(listaProdutos)}`
     ].join('\n');
 }
@@ -472,7 +493,7 @@ function criarSchemaRespostaMaisa(quantidadeSugestoes = 4) {
                 type: Type.ARRAY,
                 minItems: String(qtd),
                 maxItems: String(qtd),
-                description: `Exatamente ${qtd} sugestões curtas, ordenadas da mais aderente ao perfil (faixa etária e sexo, se logado) e ao rumo da conversa.`,
+                description: `Exatamente ${qtd} sugestões curtas escritas como mensagens do USUÁRIO para a IA (1ª pessoa/pedido do cliente, nunca perguntas da IA para o usuário), ligadas ao tema atual e ordenadas pelo perfil (faixa etária e sexo, se logado).`,
                 items: {
                     type: Type.STRING
                 }
@@ -665,14 +686,57 @@ const EXPANSOES_BUSCA = {
     incontinencia: ['intima', 'geriatrico', 'absorcao']
 };
 
-function extrairTermosBusca(texto) {
+function construirIndicesConhecimentoCategorias(categorias = []) {
+    const base = obterBaseConhecimentoCategorias(Array.isArray(categorias) ? categorias : []);
+    return base.map(entry => {
+        const palavrasExtras = [
+            ...(Array.isArray(entry.termos_relacionados) ? entry.termos_relacionados : []),
+            ...(Array.isArray(entry.problemas_atendidos) ? entry.problemas_atendidos : []),
+            ...(Array.isArray(entry.frases_indiretas) ? entry.frases_indiretas : [])
+        ]
+            .flatMap(bloco => normalizarTexto(bloco).split(/\s+/))
+            .filter(t => t.length >= 3 && !STOP_WORDS_BUSCA.has(t));
+
+        const termosUnicos = Array.from(new Set([
+            ...normalizarTexto(entry.nome).split(/\s+/).filter(t => t.length >= 3 && !STOP_WORDS_BUSCA.has(t)),
+            ...palavrasExtras
+        ]));
+
+        return {
+            entry,
+            nomeNorm: normalizarTexto(entry.nome),
+            termos: termosUnicos,
+            corpus: normalizarTexto([
+                entry.nome,
+                ...(entry.termos_relacionados || []),
+                ...(entry.problemas_atendidos || []),
+                ...(entry.frases_indiretas || [])
+            ].join(' '))
+        };
+    });
+}
+
+function extrairTermosBusca(texto, categorias = []) {
     const textoNorm = normalizarTexto(texto);
     const termosBase = textoNorm
         .split(/\s+/)
         .filter(t => (t.length >= 3 || Object.prototype.hasOwnProperty.call(EXPANSOES_BUSCA, t)) && !STOP_WORDS_BUSCA.has(t));
-    return Array.from(new Set(
+
+    const expandidos = new Set(
         termosBase.flatMap(t => [t, ...(EXPANSOES_BUSCA[t] || [])])
-    ));
+    );
+
+    if (Array.isArray(categorias) && categorias.length > 0 && termosBase.length > 0) {
+        const indicesCat = construirIndicesConhecimentoCategorias(categorias);
+        for (const item of indicesCat) {
+            const bate = termosBase.some(t => contemTermo(item.corpus, t));
+            if (bate) {
+                item.termos.forEach(t => expandidos.add(t));
+            }
+        }
+    }
+
+    return Array.from(expandidos);
 }
 
 function contemTermo(textoNorm, termo) {
@@ -687,12 +751,13 @@ function mensagemTemRelacaoComCatalogo(mensagem = '', historico = [], produtos =
         ...(Array.isArray(historico)
             ? historico.filter(h => h && h.role === 'user').slice(-2).map(h => h.texto)
             : [])
-    ].join(' '));
+    ].join(' '), categorias);
     if (termos.length === 0) return false;
 
+    const indicesCat = construirIndicesConhecimentoCategorias(categorias);
     const corpus = [
         ...(Array.isArray(produtos) ? produtos.map(p => normalizarTexto(`${p.nome} ${p.descricao} ${p.categoria}`)) : []),
-        ...(Array.isArray(categorias) ? categorias.map(c => normalizarTexto(c.nome)) : [])
+        ...indicesCat.map(item => item.corpus)
     ];
 
     return termos.some(termo => corpus.some(texto => contemTermo(texto, termo)));
@@ -711,7 +776,7 @@ function gerarMotivoCurto(produto, index = 0) {
     return variacoes[index % variacoes.length];
 }
 
-function garantirTresProdutos({ recomendados = [], mensagem = '', historico = [], produtos = [], perfilAlvo = null }) {
+function garantirTresProdutos({ recomendados = [], mensagem = '', historico = [], produtos = [], categorias = [], perfilAlvo = null }) {
     const listaCatalogo = ordenarPorRelevancia(Array.isArray(produtos) ? produtos : [], perfilAlvo);
     const mapa = new Map(listaCatalogo.map(p => [Number(p.id_produto), p]));
     const selecionados = [];
@@ -740,7 +805,11 @@ function garantirTresProdutos({ recomendados = [], mensagem = '', historico = []
             ? historico.filter(h => h && h.role === 'user').slice(-2).map(h => h.texto)
             : [])
     ].join(' '));
-    const termos = extrairTermosBusca(textoBusca);
+    const termos = extrairTermosBusca(textoBusca, categorias);
+    const indicesCat = construirIndicesConhecimentoCategorias(categorias);
+    const categoriasCasadas = indicesCat.filter(item =>
+        termos.some(t => contemTermo(item.corpus, t))
+    );
     const querPromocao = /\b(promocao|promocoes|desconto|barato|oferta|economia|menor preco)\b/.test(textoBusca);
 
     const candidatos = listaCatalogo
@@ -749,11 +818,19 @@ function garantirTresProdutos({ recomendados = [], mensagem = '', historico = []
             const nomeNorm = normalizarTexto(p.nome);
             const catNorm = normalizarTexto(p.categoria);
             const descNorm = normalizarTexto(p.descricao);
+            const idsArr = String(p.ids_categorias || '').split(',').map(s => Number(s.trim())).filter(Boolean);
             let score = (p.status !== 'fora-de-estoque' ? 100 : 0) + (pontuar(p, perfilAlvo) * 4);
             for (const termo of termos) {
                 if (contemTermo(nomeNorm, termo)) score += 16;
                 if (contemTermo(catNorm, termo)) score += 10;
                 if (contemTermo(descNorm, termo)) score += 6;
+            }
+            for (const catItem of categoriasCasadas) {
+                const idCat = Number(catItem.entry && catItem.entry.id_categoria);
+                if ((Number.isFinite(idCat) && idCat > 0 && idsArr.includes(idCat)) ||
+                    (catItem.nomeNorm && catNorm.includes(catItem.nomeNorm))) {
+                    score += 24;
+                }
             }
             if (querPromocao && p.preco_desconto && Number(p.preco_desconto) > 0) {
                 score += 10;
@@ -780,13 +857,16 @@ function pontuarSugestaoPorPerfil(textoSugestao, { usuario = null, produtos = []
     if (!usuarioPossuiPerfil(usuario)) return 0;
 
     const textoNorm = normalizarTexto(textoSugestao);
-    const termos = extrairTermosBusca(textoSugestao);
+    const termos = extrairTermosBusca(textoSugestao, categorias);
+    const indicesCat = construirIndicesConhecimentoCategorias(categorias);
     let melhorScore = 0;
 
-    for (const cat of Array.isArray(categorias) ? categorias : []) {
+    for (let i = 0; i < (Array.isArray(categorias) ? categorias.length : 0); i++) {
+        const cat = categorias[i];
+        const idxCat = indicesCat.find(item => normalizarTexto(cat && cat.nome) === item.nomeNorm);
         const catNorm = normalizarTexto(cat && cat.nome);
         const bateCat = (catNorm && textoNorm.includes(catNorm)) ||
-            termos.some(t => contemTermo(catNorm, t));
+            termos.some(t => contemTermo(catNorm, t) || (idxCat && contemTermo(idxCat.corpus, t)));
         if (bateCat) {
             const s = pontuar(cat, usuario);
             if (s > melhorScore) melhorScore = s;
@@ -815,6 +895,19 @@ function pontuarSugestaoPorPerfil(textoSugestao, { usuario = null, produtos = []
     return melhorScore;
 }
 
+function ehPerguntaDaIaParaUsuario(texto) {
+    const s = String(texto || '').trim();
+    if (!s) return true;
+    const norm = normalizarTexto(s);
+    if (!norm) return true;
+
+    if (/^(voce|o senhor|a senhora|vc)\b/.test(norm)) return true;
+    if (/^(quer que eu|gostaria que eu|deseja que eu|posso (mostrar|ajudar|indicar|sugerir|explicar|te ajudar|te mostrar))\b/.test(norm)) return true;
+    if (/\b(voce|o senhor|a senhora)\s+(sente|tem|usa|prefere|quer|precisa|gostaria|consegue|costuma|esta|ja|pode)\b/.test(norm)) return true;
+    if (/^(qual|quais|como|ha quanto|quanto tempo|onde|quando)\b/.test(norm) && /\b(seu|sua|seus|suas|voce|senhor|senhora)\b/.test(norm)) return true;
+    return false;
+}
+
 function priorizarEGarantirSugestoes({ sugestoes = [], quantidade = 4, usuario = null, produtos = [], categorias = [] }) {
     const qtd = normalizarLimiteSugestoes(quantidade);
     const unicas = [];
@@ -824,6 +917,7 @@ function priorizarEGarantirSugestoes({ sugestoes = [], quantidade = 4, usuario =
         if (typeof s !== 'string') continue;
         const limpo = s.trim();
         if (!limpo) continue;
+        if (ehPerguntaDaIaParaUsuario(limpo)) continue;
         const chave = limpo.toLowerCase();
         if (vistas.has(chave)) continue;
         vistas.add(chave);
@@ -847,11 +941,25 @@ function priorizarEGarantirSugestoes({ sugestoes = [], quantidade = 4, usuario =
             if (ordenadas.length >= qtd) break;
             const nome = cat && cat.nome ? String(cat.nome).trim() : '';
             if (!nome) continue;
-            const opcao = `Ver ${nome}`;
+            const opcao = `Quero ver opções de ${nome}`;
             if (!vistas.has(opcao.toLowerCase())) {
                 vistas.add(opcao.toLowerCase());
                 ordenadas.push(opcao);
             }
+        }
+    }
+
+    const reservasUsuarioParaIa = [
+        'Quero opções mais fáceis de usar no dia a dia',
+        'Tem alternativas mais em conta para isso?',
+        'Quais cuidados combinam com essa necessidade?',
+        'Quero ver outros produtos recomendados'
+    ];
+    for (const reserva of reservasUsuarioParaIa) {
+        if (ordenadas.length >= qtd) break;
+        if (!vistas.has(reserva.toLowerCase())) {
+            vistas.add(reserva.toLowerCase());
+            ordenadas.push(reserva);
         }
     }
 
@@ -975,6 +1083,7 @@ async function consultarMaisa({ mensagem, historico = [], produtos = [], categor
             mensagem,
             historico,
             produtos,
+            categorias,
             perfilAlvo
         })
         : [];
@@ -1003,5 +1112,6 @@ module.exports = {
     garantirTresProdutos,
     mensagemTemRelacaoComCatalogo,
     priorizarEGarantirSugestoes,
-    normalizarLimiteSugestoes
+    normalizarLimiteSugestoes,
+    ehPerguntaDaIaParaUsuario
 };

@@ -1,5 +1,10 @@
 const pool = require('../config/pool_conexoes');
 const mockStore = require('../config/mock_store');
+const {
+    registrarConhecimentoCategoria,
+    atualizarPerfilCategoriaConhecimento,
+    removerConhecimentoCategoria
+} = require('../services/categoriaConhecimentoService');
 
 const produtosModel = {
 
@@ -442,13 +447,15 @@ const produtosModel = {
                 slug = slugBase + '-' + sufixo++;
             }
             const id_categoria = mockStore.seq.categoria++;
-            mockStore.categorias.push({
+            const novaCategoria = {
                 id_categoria,
                 nome,
                 slug,
                 faixa_etaria: faixaEtaria || null,
                 sexo: sexo || null
-            });
+            };
+            mockStore.categorias.push(novaCategoria);
+            registrarConhecimentoCategoria(novaCategoria);
             return { insertId: id_categoria, slug, affectedRows: 1 };
         }
         try {
@@ -482,6 +489,14 @@ const produtosModel = {
                 return { erro: true, mensagem: 'Categoria já existe ou não foi possível criar.' };
             }
 
+            registrarConhecimentoCategoria({
+                id_categoria: result.insertId,
+                nome,
+                slug,
+                faixa_etaria: faixaEtaria || null,
+                sexo: sexo || null
+            });
+
             return { insertId: result.insertId, slug, affectedRows: result.affectedRows };
         } catch (erro) {
             console.error('createCategoria erro:', erro);
@@ -496,12 +511,18 @@ const produtosModel = {
                 p.ids_categorias = (p.ids_categorias || []).filter(cid => cid !== idNum);
             });
             const idx = mockStore.categorias.findIndex(c => c.id_categoria === idNum);
-            if (idx !== -1) mockStore.categorias.splice(idx, 1);
+            if (idx !== -1) {
+                mockStore.categorias.splice(idx, 1);
+                removerConhecimentoCategoria(idNum);
+            }
             return { affectedRows: idx !== -1 ? 1 : 0 };
         }
         try {
             await pool.query('DELETE FROM produto_categorias WHERE id_categoria = ?', [id]);
             const [result] = await pool.query('DELETE FROM categorias WHERE id_categoria = ?', [id]);
+            if (result && result.affectedRows > 0) {
+                removerConhecimentoCategoria(id);
+            }
             return result;
         } catch (erro) {
             console.error('deleteCategoria erro:', erro);
@@ -515,6 +536,7 @@ const produtosModel = {
             if (!cat) return { affectedRows: 0 };
             cat.faixa_etaria = faixa_etaria || null;
             cat.sexo = sexo || null;
+            atualizarPerfilCategoriaConhecimento(id, faixa_etaria, sexo);
             return { affectedRows: 1 };
         }
         try {
@@ -522,6 +544,9 @@ const produtosModel = {
                 'UPDATE categorias SET faixa_etaria = ?, sexo = ? WHERE id_categoria = ?',
                 [faixa_etaria || null, sexo || null, id]
             );
+            if (result && result.affectedRows > 0) {
+                atualizarPerfilCategoriaConhecimento(id, faixa_etaria, sexo);
+            }
             return result;
         } catch (erro) {
             console.error('updateCategoria erro:', erro);

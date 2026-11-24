@@ -160,6 +160,91 @@
         input.focus();
     });
 
+    let vozesDisponiveis = [];
+
+    function atualizarListaVozes() {
+        if ('speechSynthesis' in window && typeof window.speechSynthesis.getVoices === 'function') {
+            vozesDisponiveis = window.speechSynthesis.getVoices() || [];
+        }
+    }
+
+    if ('speechSynthesis' in window) {
+        atualizarListaVozes();
+        if (typeof window.speechSynthesis.addEventListener === 'function') {
+            window.speechSynthesis.addEventListener('voiceschanged', atualizarListaVozes);
+        } else if ('onvoiceschanged' in window.speechSynthesis) {
+            window.speechSynthesis.onvoiceschanged = atualizarListaVozes;
+        }
+    }
+
+    const NOMES_VOZ_FEMININA = [
+        'francisca', 'thalita', 'maria', 'luciana', 'leila', 'leticia', 'heloisa',
+        'raquel', 'camila', 'vitoria', 'fernanda', 'clara', 'ana',
+        'sofia', 'julia', 'beatriz', 'yara', 'joana', 'ines',
+        'catarina', 'brenda', 'manuela', 'giovanna', 'female', 'feminina',
+        'mulher', 'woman', 'google portugues do brasil'
+    ];
+
+    const NOMES_VOZ_MASCULINA = [
+        'daniel', 'antonio', 'ricardo', 'thiago', 'tiago', 'felipe',
+        'fabio', 'humberto', 'julio', 'nicolau', 'duarte',
+        'cristiano', 'valerio', 'male', 'masculino', 'masculina', 'homem', 'man'
+    ];
+
+    function normalizarNomeVoz(str) {
+        return String(str || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9\s]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    function contemPalavraVoz(nomeNorm, termo) {
+        return (' ' + nomeNorm + ' ').indexOf(' ' + termo + ' ') !== -1;
+    }
+
+    function selecionarVozFemininaPtBr() {
+        if (vozesDisponiveis.length === 0) atualizarListaVozes();
+        const ptVoices = vozesDisponiveis.filter(function (v) {
+            return v && typeof v.lang === 'string' && v.lang.toLowerCase().indexOf('pt') === 0;
+        });
+        if (ptVoices.length === 0) return { voz: null, femininaConfirmada: false };
+
+        let melhorVoz = null;
+        let melhorScore = -999;
+        let femininaConfirmada = false;
+
+        ptVoices.forEach(function (v) {
+            const langNorm = String(v.lang || '').toLowerCase();
+            const nomeNorm = normalizarNomeVoz((v.name || '') + ' ' + (v.voiceURI || ''));
+            let score = langNorm === 'pt-br' ? 20 : 10;
+
+            const ehFem = NOMES_VOZ_FEMININA.some(function (n) {
+                return contemPalavraVoz(nomeNorm, n);
+            });
+            const ehMasc = NOMES_VOZ_MASCULINA.some(function (n) {
+                return contemPalavraVoz(nomeNorm, n);
+            });
+
+            if (ehFem) score += 100;
+            if (ehMasc) score -= 120;
+            if (contemPalavraVoz(nomeNorm, 'natural') || contemPalavraVoz(nomeNorm, 'neural') || contemPalavraVoz(nomeNorm, 'google')) {
+                score += 15;
+            }
+            if (v.localService) score += 2;
+
+            if (score > melhorScore) {
+                melhorScore = score;
+                melhorVoz = v;
+                femininaConfirmada = ehFem;
+            }
+        });
+
+        return { voz: melhorVoz, femininaConfirmada: femininaConfirmada };
+    }
+
     function pararLeituraVoz() {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
@@ -177,8 +262,16 @@
         if (jaFalando) return;
 
         const utterance = new SpeechSynthesisUtterance(texto);
-        utterance.lang = 'pt-BR';
-        utterance.rate = 0.9;
+        const escolha = selecionarVozFemininaPtBr();
+        if (escolha.voz) {
+            utterance.voice = escolha.voz;
+            utterance.lang = escolha.voz.lang || 'pt-BR';
+        } else {
+            utterance.lang = 'pt-BR';
+        }
+        utterance.rate = 0.92;
+        utterance.pitch = escolha.femininaConfirmada ? 1.04 : 1.18;
+
         btn.dataset.speaking = 'true';
         btn.textContent = 'Parar';
         utterance.onend = function () {
