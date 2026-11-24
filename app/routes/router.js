@@ -129,8 +129,8 @@ function deleteCloudinaryImage(url) {
 }
 
 // constantes admin
-const ADMIN_EMAIL    = process.env.EMAIL_USER || 'maisaudeods3@gmail.com';
-const ADMIN_PASSWORD = '+SaudeINI2D';
+const ADMIN_EMAIL    = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || 'maisaudeods3@gmail.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 // mensagens para o painel admin
 const MSGS_SUCESSO = {
@@ -498,7 +498,7 @@ router.post('/login',
             });
         }
 
-        if (req.body.email === ADMIN_EMAIL && req.body.senha === ADMIN_PASSWORD) {
+        if (ADMIN_PASSWORD && req.body.email === ADMIN_EMAIL && req.body.senha === ADMIN_PASSWORD) {
             req.session.usuarioEmail = ADMIN_EMAIL;
             req.session.isAdmin      = true;
             req.session.notificacao = {
