@@ -719,8 +719,31 @@ html[data-theme="light"] .maisa-input::placeholder {
         font-size: 0.9rem;
     }
 
+    /* Balão da IA um pouco maior no celular: mais largura útil e mais respiro interno */
+    .maisa-messages {
+        padding: 1.1rem 0.6rem;
+    }
+
+    .maisa-msg-bot .maisa-bubble {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 1.05rem 1.2rem;
+        line-height: 1.6;
+    }
+
+    /* Botões "Ver produto" e "Adicionar ao carrinho" um pouco menores (48px de altura: confortável para tocar) */
     .maisa-product-actions {
         flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .maisa-card-link,
+    .maisa-card-cart {
+        flex: 0 0 auto;
+        min-height: 3rem;
+        padding: 0.45rem 0.8rem;
+        border-radius: 0.55rem;
+        font-size: calc(var(--maisa-font-small) - 1px);
     }
 }
 
