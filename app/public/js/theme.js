@@ -32,6 +32,10 @@
         return savedTheme;
     }
 
+    // aplica o tema salvo assim que o script roda (ele fica no <head>), antes da
+    // primeira pintura: evita o flash do tema escuro padrão e as transições de cor
+    loadTheme();
+
     function updateImages(theme) {
         const imgs = imagens[theme];
         

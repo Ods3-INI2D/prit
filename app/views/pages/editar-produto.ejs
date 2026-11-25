@@ -7,44 +7,18 @@
     <title>Editar Produto - <%= produto.nome %></title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/admin-extended.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
-    <style>
-        .categorias-grupo-admin {
-            display: flex;
-            flex-direction: column;
-            gap: .6rem;
-            margin-top: .5rem;
-        }
-        .checkbox-item-admin {
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-        }
-        .checkbox-input-admin {
-            width: 1.1rem;
-            height: 1.1rem;
-            accent-color: #4da6ff;
-            cursor: pointer;
-        }
-        .checkbox-label-admin {
-            color: #d9d9d9;
-            font-size: .95rem;
-            cursor: pointer;
-        }
-        @media (min-width: 901px) {
-            .categorias-grupo-admin {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: .8rem;
-            }
-        }
-    </style>
 </head>
 <body>
     <header>
-        <img src="/imagens/logo.svg" alt="Logotipo da Farmácia" class="logo">
+        <img src="/imagens/logo-branco.svg" alt="Logotipo da Farmácia" class="logo">
         <h1 class="titulo">Editar Produto</h1>
+        <button type="button" class="theme-toggle">
+            <img src="/imagens/lua-branca.svg" alt="" aria-hidden="true" class="theme-icon">
+            <span class="theme-text">Tema Escuro</span>
+        </button>
     </header>
 
     <main>
@@ -85,7 +59,7 @@
                 </fieldset>
 
                 <fieldset>
-                    <legend class="label-titulo">Categorias <output style="color:#ff6b6b">*</output> (selecione uma ou mais)</legend>
+                    <legend class="label-titulo">Categorias <span class="obrigatorio" aria-hidden="true">*</span> (selecione uma ou mais)</legend>
                     <% if (categorias && categorias.length > 0) { %>
                         <section class="categorias-grupo-admin">
                             <% categorias.forEach(function(cat) {
@@ -98,7 +72,7 @@
                                            value="<%= cat.id_categoria %>"
                                            class="checkbox-input-admin"
                                            <%= marcado ? 'checked' : '' %>>
-                                    <output class="checkbox-label-admin"><%= cat.nome %></output>
+                                    <span class="checkbox-label-admin"><%= cat.nome %></span>
                                 </label>
                             <% }); %>
                         </section>
@@ -135,24 +109,24 @@
                 </fieldset>
                 <fieldset>
                     <legend class="label-titulo">Público-Alvo (Sexo)</legend>
-                    <label for="sexo-add">
-                        <select id="sexo-add" name="sexo">
-                            <option value="masculino">Masculino</option>
-                            <option value="feminino">Feminino</option>
-                            <option value="todos">N/A</option>
+                    <label for="sexo">
+                        <select id="sexo" name="sexo">
+                            <option value="masculino" <%= produto.sexo === 'masculino' ? 'selected' : '' %>>Masculino</option>
+                            <option value="feminino"  <%= produto.sexo === 'feminino'  ? 'selected' : '' %>>Feminino</option>
+                            <option value="todos"     <%= (!produto.sexo || produto.sexo === 'todos') ? 'selected' : '' %>>N/A</option>
                         </select>
                     </label>
                 </fieldset>
                 <fieldset class="campo-imagem">
                     <legend class="label-titulo">Imagem Atual</legend>
                     <figure class="preview-container">
-                        <img src="<%= produto.imagem %>" alt="Imagem atual do produto" class="preview-img" style="display:block;">
+                        <img src="<%= produto.imagem %>" alt="Imagem atual do produto" class="preview-img">
                         <figcaption class="preview-caption">Imagem atual</figcaption>
                     </figure>
                 </fieldset>
 
                 <fieldset class="campo-imagem">
-                    <legend class="label-titulo">Nova Imagem SVG (opcional)</legend>
+                    <legend class="label-titulo">Nova Imagem (opcional)</legend>
                     <label for="imagem" class="label-arquivo">
                         <input type="file" id="imagem" name="imagem"
                             accept="image/svg+xml,image/png,image/jpeg,image/webp"
@@ -161,7 +135,7 @@
                             Formatos aceitos: SVG, PNG, JPG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
                         </output>
                     </label>
-                    <output id="preview-imagem" class="preview-container" role="status" aria-live="polite"></output>
+                    <div id="preview-imagem" class="preview-container" role="status" aria-live="polite"></div>
                 </fieldset>
 
                 <fieldset>
@@ -172,16 +146,13 @@
                 </fieldset>
 
                 <button type="submit" class="btn-adicionar">Salvar Alterações</button>
-                <a href="/admin" class="btn-adicionar"
-                   style="display:inline-block;text-align:center;text-decoration:none;background-color:#555;margin-top:1rem;">
-                    Cancelar
-                </a>
+                <a href="/admin" class="btn-adicionar btn-cancelar">Cancelar</a>
             </form>
         </section>
     </main>
 
     <footer>
-        <nav aria-label="Navegação do rodapé">
+        <nav class="rodape-admin" aria-label="Navegação do rodapé">
             <a href="/admin" class="link-footer">Voltar ao Painel</a>
         </nav>
     </footer>
@@ -192,19 +163,23 @@
             var previewContainer   = document.getElementById('preview-imagem');
             var infoArquivo        = document.getElementById('imagem-info');
 
+            function marcarInfo(texto, tipo) {
+                infoArquivo.textContent = texto;
+                infoArquivo.classList.remove('info-ok', 'info-erro');
+                infoArquivo.classList.add('info-' + tipo);
+            }
+
             if (inputImagem) {
                 inputImagem.addEventListener('change', function(e) {
                     var arquivo = e.target.files[0];
                     if (!arquivo) { previewContainer.innerHTML = ''; return; }
 
                     if (arquivo.size > 5 * 1024 * 1024) {
-                        infoArquivo.textContent = 'Erro: A imagem deve ter no máximo 5MB';
-                        infoArquivo.style.color = '#d93025';
+                        marcarInfo('Erro: A imagem deve ter no máximo 5MB', 'erro');
                         previewContainer.innerHTML = ''; inputImagem.value = ''; return;
                     }
                     if (!['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp'].includes(arquivo.type)) {
-                        infoArquivo.textContent = 'Erro: Formato não suportado. Use SVG, PNG, JPG ou WEBP';
-                        infoArquivo.style.color = '#d93025';
+                        marcarInfo('Erro: Formato não suportado. Use SVG, PNG, JPG ou WEBP', 'erro');
                         previewContainer.innerHTML = ''; inputImagem.value = ''; return;
                     } 
                     var reader = new FileReader();
@@ -217,7 +192,7 @@
                         cap.textContent = arquivo.name; cap.className = 'preview-caption';
                         fig.appendChild(img); fig.appendChild(cap);
                         previewContainer.innerHTML = ''; previewContainer.appendChild(fig);
-                        infoArquivo.textContent = 'Imagem SVG selecionada!'; infoArquivo.style.color = '#4da6ff';
+                        marcarInfo('Imagem selecionada!', 'ok');
                     };
                     reader.readAsDataURL(arquivo);
                 });
