@@ -1,0 +1,462 @@
+.categorias-rapidas {
+    display: none;
+}
+
+@media (max-width: 640px) {
+
+    .categorias-rapidas {
+        display: block;
+        margin-top: 1rem;
+    }
+
+    .categorias-rapidas-lista {
+        display: flex;
+        gap: 0.5rem;
+        margin: 0;
+        padding: 0.25rem 1rem;
+        list-style: none;
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        scroll-padding-inline: 1rem;
+        scrollbar-width: none;
+    }
+
+    .categorias-rapidas-lista::-webkit-scrollbar {
+        display: none;
+    }
+
+    .categorias-rapidas-lista li {
+        flex: 0 0 auto;
+        scroll-snap-align: start;
+    }
+
+    .categoria-rapida {
+        display: flex;
+        align-items: center;
+        min-height: 2.75rem;
+        padding: 0 1rem;
+        border: 1px solid var(--accent-primary);
+        border-radius: 999px;
+        background-color: var(--bg-secondary);
+        color: var(--accent-primary);
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .categoria-rapida:focus-visible {
+        outline: 0.1875rem solid var(--border-focus, #d97706);
+        outline-offset: 0.125rem;
+    }
+
+    .titulo-categoria {
+        scroll-margin-top: 4.5rem;
+    }
+
+    .carrossel-produtos {
+        margin-top: 1.5rem;
+    }
+
+    main .secao-notificacao {
+        margin: 0.75rem 1rem 0;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+    }
+
+    main .secao-notificacao .notif-titulo {
+        margin-bottom: 0.125rem;
+        font-size: 1rem;
+    }
+
+    main .secao-notificacao .notif-mensagem {
+        font-size: 0.9375rem;
+        line-height: 1.4;
+    }
+
+    .banners-destaque .banner-figura {
+        background-color: #163069;
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+
+    .banners-destaque .banner-imagem {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 15rem;
+        aspect-ratio: auto;
+        object-fit: contain;
+    }
+
+    .banners-destaque .banners-btn {
+        align-self: end;
+        width: 2.75rem;
+        height: 2.75rem;
+        margin: 0 0.5rem 0.5rem;
+        font-size: 1rem;
+        z-index: 2;
+    }
+
+    .banners-destaque .banners-btn-ant {
+        justify-self: start;
+    }
+
+    .banners-destaque .banners-btn-prox {
+        justify-self: end;
+    }
+
+    .carrossel-produtos {
+        padding: 0 1rem;
+    }
+
+    .header-categoria {
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        padding: 0;
+    }
+
+    .titulo-categoria {
+        font-size: 1.375rem;
+        line-height: 1.25;
+    }
+
+    .link-ver-mais {
+        flex-shrink: 0;
+        min-height: 2.75rem;
+        padding: 0 0.25rem 0 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .seta-ver-mais {
+        width: 1.125rem;
+    }
+
+    .carrossel-produtos-trilho {
+        grid-auto-columns: 76%;
+        gap: 0.75rem;
+        margin-inline: -1rem;
+        padding: 0.25rem 1rem 0.75rem;
+        scroll-padding-inline: 1rem;
+        scrollbar-width: none;
+    }
+
+    .carrossel-produtos-trilho::-webkit-scrollbar {
+        display: none;
+    }
+
+    .carrossel-produtos-btn {
+        display: none;
+    }
+
+    .item-carrossel {
+        scroll-snap-stop: always;
+    }
+
+    .bloco-produto-home {
+        border: 1px solid var(--border-light, #e5e7eb);
+        border-radius: 0.75rem;
+    }
+
+    .imagem-produto-home {
+        background-color: #ffffff;
+        object-fit: contain;
+    }
+
+    .nome-produto-home {
+        margin-bottom: 0.25rem;
+        padding: 0.75rem 0.875rem 0;
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+
+    .preco-container-home,
+    .preco-unico-home {
+        padding: 0.25rem 0.875rem 0;
+    }
+
+    .preco-desconto-home,
+    .preco-unico-home {
+        font-size: 1.1875rem;
+    }
+
+    .preco-original-home {
+        font-size: 0.875rem;
+    }
+
+    .percentual-home {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .categoria-home {
+        padding: 0.375rem 0.875rem 0.25rem;
+        font-size: 0.8125rem;
+    }
+
+    .faixa-etaria-home {
+        padding: 0.125rem 0.875rem 0.875rem;
+        color: var(--accent-primary);
+        font-size: 0.8125rem;
+        font-weight: 600;
+    }
+
+    .estrelas-home {
+        padding: 0.375rem 0.875rem 0.75rem;
+    }
+
+    .estrela-home {
+        width: 0.875rem;
+    }
+
+    .voltar {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 2.75rem;
+    }
+
+    .pagamento-detalhes {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+    }
+
+    .pagamento-detalhes dt {
+        margin-top: 0.875rem;
+        color: var(--text-muted);
+        font-size: 0.8125rem;
+        font-weight: 600;
+    }
+
+    .pagamento-detalhes dt:first-child {
+        margin-top: 0;
+    }
+
+    .pagamento-detalhes dd {
+        margin: 0.125rem 0 0;
+        font-size: 1rem;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+    .pagamento-detalhes a[href^="tel:"] {
+        display: inline-block;
+        padding-block: 0.375rem;
+        font-weight: 600;
+    }
+
+    .endereco-parte {
+        display: block;
+    }
+
+    .endereco-separador {
+        display: none;
+    }
+
+    .sem-itens-pedido {
+        display: block;
+        padding: 1rem;
+        font-size: 0.9375rem;
+        line-height: 1.45;
+        text-align: center;
+    }
+
+    .pedido-totais {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+        margin: 0 0 0.75rem;
+    }
+
+    .pedido-totais dt {
+        font-size: 1rem;
+    }
+
+    .pedido-totais dd {
+        margin: 0;
+    }
+
+    .valor-destaque {
+        font-size: 1.375rem;
+    }
+
+    .pedido-acoes {
+        display: grid;
+        gap: 0.5rem;
+    }
+
+    .pedido-acoes form {
+        width: 100%;
+    }
+
+    .pedido-acoes .btn-acao-secundaria,
+    .paginacao .btn-acao-secundaria {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 3rem;
+        font-size: 1rem;
+    }
+
+    .paginacao {
+        display: grid;
+        gap: 0.75rem;
+        text-align: center;
+    }
+
+    .produto-detalhes .imagem-produto {
+        width: 100%;
+        max-height: 22rem;
+        background-color: #ffffff;
+        border-radius: 0.75rem;
+        object-fit: contain;
+    }
+
+    .info-principal {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .info-principal .faixa-etaria-produto {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .info-principal .preco-produto,
+    .info-principal .preco-desconto {
+        font-size: 1.75rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .info-principal .preco-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+
+    .info-principal form {
+        margin-top: 0.5rem;
+    }
+
+    .btn-comprar {
+        width: 100%;
+        min-height: 3.5rem;
+        font-size: 1.125rem;
+    }
+
+    .form-frete {
+        display: flex;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .form-frete label {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .form-frete input {
+        width: 100%;
+        min-height: 3.25rem;
+        font-size: 1rem;
+    }
+
+    .btn-calcular {
+        flex-shrink: 0;
+        min-width: 6.5rem;
+        min-height: 3.25rem;
+        font-size: 1rem;
+    }
+
+    .pagina-cadastro > header {
+        height: auto;
+        min-height: 0;
+        padding: 1rem;
+    }
+
+    .pagina-cadastro > header .icon {
+        width: auto;
+        max-width: 12rem;
+        height: 3.5rem;
+    }
+
+    .pagina-cadastro form fieldset {
+        min-width: 0;
+        margin: 0 0 1rem;
+        padding: 0;
+        border: 0;
+    }
+
+    .pagina-cadastro form legend {
+        margin-bottom: 0.375rem;
+        padding: 0;
+    }
+
+    .pagina-cadastro form legend h2 {
+        font-size: 1.0625rem;
+        font-weight: 600;
+    }
+
+    .pagina-cadastro form input[type="text"],
+    .pagina-cadastro form input[type="date"],
+    .pagina-cadastro form input[type="email"],
+    .pagina-cadastro form input[type="password"],
+    .pagina-cadastro form input[type="tel"] {
+        width: 100%;
+        min-height: 3.25rem;
+        font-size: 1rem;
+    }
+
+    .grupo-opcoes {
+        display: grid;
+        gap: 0.5rem;
+    }
+
+    .opcao-radio {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        min-height: 3rem;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border-color, #94a3b8);
+        border-radius: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .opcao-radio input[type="radio"] {
+        flex: none;
+        width: 1.5rem;
+        height: 1.5rem;
+        margin: 0;
+    }
+
+    .pagina-cadastro #senhan-dica {
+        color: var(--text-muted) !important;
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+
+    .pagina-cadastro #btn {
+        width: 100%;
+        min-height: 3.25rem;
+        font-size: 1.125rem;
+    }
+
+    .pagina-cadastro .signup-prompt a {
+        display: inline-block;
+        padding-block: 0.75rem;
+    }
+}
+
+@media (max-width: 640px) and (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
