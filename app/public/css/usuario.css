@@ -320,14 +320,6 @@ body.dark-mode .menu-usuario {
     gap: 1rem;
 }
 
-.notif-foto-usuario {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-    border: 2px solid inherit;
-}
 /* responsividade para desktops */
 @media (min-width: 901px) {
     .titulo-perfil {

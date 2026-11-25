@@ -457,6 +457,20 @@ body.pagina-auth .signup-prompt .link {
     font-weight: 600;
 }
 
+/* "Não tem uma conta? / Já tem uma conta?": texto em cima e a ação embaixo.
+   O link é um bloco flex em coluna, para o <strong> (display:block) não ficar
+   ao lado do texto como acontecia com inline-flex em linha. */
+body.pagina-auth .signup-prompt .link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    text-align: center;
+}
+
+body.pagina-auth .signup-prompt .link2 { margin-top: 0; }
+
 body.pagina-auth button#btn,
 body.pagina-auth button#btn-login {
     min-height: 3.5rem;
