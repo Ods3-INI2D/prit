@@ -6,7 +6,12 @@
 }
 
 :root {
-    font-size: 16px; 
+    font-size: 16px;
+    color-scheme: dark;
+}
+
+[data-theme="light"] {
+    color-scheme: light;
 }
 
 body {
@@ -17,8 +22,9 @@ body {
     min-height: 100vh;
 }
 
-/* header */
-header {
+/* header (apenas o cabeçalho da página, sem afetar <header> dentro de cards) */
+body > header {
+    position: relative;
     background-color: #163069;
     width: 100%;
     min-height: 14vh;
@@ -43,6 +49,48 @@ header {
     text-align: center;
 }
 
+/* o título fica sempre sobre o azul do cabeçalho, nos dois temas */
+body > header .titulo {
+    color: #ffffff;
+}
+
+/* alternância de tema */
+body > header .theme-toggle {
+    order: -1;
+    align-self: flex-end;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: auto;
+    margin-bottom: 0.575rem;
+    padding: 0.5rem 0.95rem;
+    background-color: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 2rem;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+body > header .theme-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+body > header .theme-toggle:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+body > header .theme-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    filter: brightness(0) invert(1);
+}
+
 /* main content & containers */
 main {
     width: 90%; 
@@ -65,7 +113,7 @@ main {
 
 /* cards & form base */
 .card-stats, .form-produto {
-    background-color: #2a2a2a;
+    background-color: var(--bg-secondary, #2a2a2a);
     padding: 1.35rem 1.15rem; 
     border-radius: 0.575rem; 
     margin-bottom: 1.05rem; 
@@ -81,6 +129,7 @@ main {
 }
 
 .stat-valor {
+    display: block;
     font-size: 1.9rem; 
     font-weight: 700;
     color: #4da6ff;
@@ -89,6 +138,7 @@ main {
 /* mensagens de erro/sucesso */
 .mensagem-erro,
 .mensagem-sucesso {
+    display: block;
     padding: 0.95rem;
     border-radius: 0.45rem;
     margin-bottom: 1.35rem;
@@ -152,6 +202,10 @@ select {
     padding-right: 2.3rem;
 }
 
+[data-theme="light"] select {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23333333" d="M7 10l5 5 5-5z"/></svg>');
+}
+
 input:focus, select:focus, textarea:focus {
     border-color: #4da6ff;
     outline: none;
@@ -176,8 +230,16 @@ input:focus, select:focus, textarea:focus {
 .info-arquivo {
     display: block;
     font-size: 0.825rem;
-    color: #888;
+    color: var(--text-muted, #888);
     margin-top: 0.45rem;
+}
+
+.info-arquivo.info-ok {
+    color: var(--success-text);
+}
+
+.info-arquivo.info-erro {
+    color: var(--error-text);
 }
 
 .preview-container {
@@ -191,6 +253,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .preview-img {
+    display: block;
     width: 100%;
     height: auto;
     border-radius: 0.45rem;
@@ -199,7 +262,7 @@ input:focus, select:focus, textarea:focus {
 
 .preview-caption {
     font-size: 0.825rem;
-    color: #888;
+    color: var(--text-muted, #888);
     text-align: center;
 }
 
@@ -222,10 +285,26 @@ input:focus, select:focus, textarea:focus {
     background-color: #0d1f42;
 }
 
+a.btn-adicionar {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-adicionar.btn-cancelar {
+    margin-top: 1rem;
+    background-color: #555555;
+}
+
+.btn-adicionar.btn-cancelar:hover {
+    background-color: #3d3d3d;
+}
+
 /* lista de produtos */
 .mensagem-vazia {
+    display: block;
     text-align: center;
-    color: #888;
+    color: var(--text-muted, #888);
     font-size: 0.95rem; 
     padding: 1.35rem 0; 
 }
@@ -237,7 +316,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .produto-item {
-    background-color: #2a2a2a;
+    background-color: var(--bg-secondary, #2a2a2a);
     padding: 1.35rem 1.15rem; 
     border-radius: 0.575rem;
     margin-bottom: 1.05rem; 
@@ -254,20 +333,21 @@ input:focus, select:focus, textarea:focus {
 }
 
 .produto-info {
+    display: block;
     font-size: 0.825rem;
     color: #d9d9d9;
     margin-bottom: 0.225rem;
 }
 
 .produto-info.desconto {
-    color: #4da6ff;
+    color: var(--accent-primary);
     font-weight: 600;
 }
 
-.produto-preco {
+.produto-info.produto-preco {
     font-size: 0.95rem;
     font-weight: 600;
-    color: #4da6ff;
+    color: var(--accent-primary);
     margin-bottom: 0.45rem;
 }
 
@@ -307,8 +387,14 @@ input:focus, select:focus, textarea:focus {
     background-color: #a3241b;
 }
 
-/* footer */
-footer {
+/* texto branco no botão vermelho nos dois temas */
+button.btn-excluir,
+a.btn-excluir {
+    color: #ffffff;
+}
+
+/* footer (apenas o rodapé da página, sem afetar <footer> dentro de cards) */
+body > footer {
     margin-top: 1.8rem;
     padding: 0.95rem;
     text-align: center;
@@ -325,11 +411,104 @@ footer {
     color: #6bb5ff;
 }
 
+/* links sobre o azul do rodapé: branco nos dois temas */
+body > footer .link-footer {
+    color: #ffffff;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+body > footer .link-footer:hover {
+    color: #cfe5ff;
+}
+
+body > footer .link-footer.link-sair {
+    color: #ffb4ab;
+    font-weight: 600;
+}
+
+body > footer .link-footer.link-sair:hover {
+    color: #ffd2cc;
+}
+
+.rodape-admin {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 2%;
+}
+
+.rodape-admin .btn-adicionar,
+.rodape-admin .btn-excluir {
+    display: inline-block;
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 0;
+    margin-top: 0;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.45rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+}
+
+/* seleção de categorias do produto */
+.categorias-grupo-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+}
+
+.checkbox-item-admin {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkbox-input-admin {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin: 0;
+    accent-color: var(--accent-primary);
+    cursor: pointer;
+}
+
+.checkbox-label-admin {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.adicionar-categoria {
+    margin-bottom: 1rem;
+}
+
+.subtitulo.subtitulo-secundario {
+    font-size: 1.2rem;
+}
+
 /* responsividade pra desktops */
 @media (min-width: 901px) {
-    header {
+    body > header {
         min-height: 17vh;
         padding: 1.7rem 1.2rem;
+    }
+
+    body > header .theme-toggle {
+        position: absolute;
+        top: 1rem;
+        right: 1.5rem;
+        margin-bottom: 0;
+    }
+
+    .categorias-grupo-admin {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.8rem;
     }
 
     .logo {

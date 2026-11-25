@@ -10,45 +10,21 @@
     <link rel="stylesheet" href="/css/admin-extended.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
-    <style>
-        .categorias-grupo-admin {
-            display: flex;
-            flex-direction: column;
-            gap: .6rem;
-            margin-top: .5rem;
-        }
-        .checkbox-item-admin {
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-        }
-        .checkbox-input-admin {
-            width: 1.1rem;
-            height: 1.1rem;
-            accent-color: #4da6ff;
-            cursor: pointer;
-        }
-        .checkbox-label-admin {
-            color: #d9d9d9;
-            font-size: .95rem;
-            cursor: pointer;
-        }
-        .adicionar-categoria {
-            margin-bottom: 1rem;
-        }
-        @media (min-width: 901px) {
-            .categorias-grupo-admin {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: .8rem;
-            }
-        }
-    </style>
 </head>
 <body>
+    <%
+        var isoData = function (valor) {
+            var d = new Date(valor);
+            return isNaN(d) ? '' : d.toISOString().slice(0, 10);
+        };
+    %>
     <header>
         <img src="/imagens/logo-branco.svg" alt="Logotipo da Farmácia" class="logo">
         <h1 class="titulo">Painel Administrativo</h1>
+        <button type="button" class="theme-toggle">
+            <img src="/imagens/lua-branca.svg" alt="" aria-hidden="true" class="theme-icon">
+            <span class="theme-text">Tema Escuro</span>
+        </button>
     </header>
  
     <main>
@@ -88,29 +64,29 @@
         </section>
 
         <section class="tabs-container">
-            <nav class="tabs-header" role="tablist">
+            <div class="tabs-header" role="tablist" aria-label="Seções do painel">
                 <button class="tab-button active" data-tab="adicionar"   role="tab" aria-selected="true"  aria-controls="tab-adicionar">Adicionar Produto</button>
                 <button class="tab-button"         data-tab="produtos"   role="tab" aria-selected="false" aria-controls="tab-produtos">Produtos</button>
                 <button class="tab-button"         data-tab="categorias" role="tab" aria-selected="false" aria-controls="tab-categorias">Categorias</button>
                 <button class="tab-button"         data-tab="usuarios"   role="tab" aria-selected="false" aria-controls="tab-usuarios">Usuários</button>
                 <button class="tab-button"         data-tab="banners"    role="tab" aria-selected="false" aria-controls="tab-banners">Banners</button>
-            </nav>
+            </div>
 
             <%# adicionar produto%>
-            <article class="tab-content active" id="tab-adicionar" role="tabpanel" aria-labelledby="titulo-adicionar">
+            <section class="tab-content active" id="tab-adicionar" role="tabpanel" aria-labelledby="titulo-adicionar">
                 <section class="adicionar-produto">
                     <h2 id="titulo-adicionar" class="subtitulo">Adicionar Novo Produto</h2>
                     
                     <form method="POST" action="/admin/adicionar-produto" class="form-produto" enctype="multipart/form-data" aria-label="Formulário de cadastro de produto">
                         <fieldset>
-                            <legend class="label-titulo">Nome do Produto <output style="color:#ff6b6b">*</output></legend>
+                            <legend class="label-titulo">Nome do Produto <span class="obrigatorio" aria-hidden="true">*</span></legend>
                             <label for="nome-add">
                                 <input type="text" id="nome-add" name="nome" placeholder="Digite o nome do produto" required aria-required="true">
                             </label>
                         </fieldset>
 
                         <fieldset>
-                            <legend class="label-titulo">Preço (R$) <output style="color:#ff6b6b">*</output></legend>
+                            <legend class="label-titulo">Preço (R$) <span class="obrigatorio" aria-hidden="true">*</span></legend>
                             <label for="preco-add">
                                 <input type="number" id="preco-add" name="preco" placeholder="0.00" step="0.01" min="0" required aria-required="true">
                             </label>
@@ -124,7 +100,7 @@
                         </fieldset>
 
                         <fieldset>
-                            <legend class="label-titulo">Categorias <output style="color:#ff6b6b">*</output> (selecione uma ou mais)</legend>
+                            <legend class="label-titulo">Categorias <span class="obrigatorio" aria-hidden="true">*</span> (selecione uma ou mais)</legend>
                             <% if (categorias && categorias.length > 0) { %>
                                 <section class="categorias-grupo-admin">
                                     <% categorias.forEach(function(cat) { %>
@@ -133,7 +109,7 @@
                                                    name="categorias"
                                                    value="<%= cat.id_categoria %>"
                                                    class="checkbox-input-admin">
-                                            <output class="checkbox-label-admin"><%= cat.nome %></output>
+                                            <span class="checkbox-label-admin"><%= cat.nome %></span>
                                         </label>
                                     <% }); %>
                                 </section>
@@ -143,7 +119,7 @@
                         </fieldset>
 
                         <fieldset>
-                            <legend class="label-titulo">Status do Produto <output style="color:#ff6b6b">*</output></legend>
+                            <legend class="label-titulo">Status do Produto <span class="obrigatorio" aria-hidden="true">*</span></legend>
                             <label for="status-add">
                                 <select id="status-add" name="status" required aria-required="true">
                                     <option value="em-estoque">Em Estoque</option>
@@ -189,11 +165,11 @@
                                     aria-describedby="imagem-add-info">
                                 <output id="imagem-add-info" class="info-arquivo">Formatos aceitos: SVG, PNG, JPG, WEBP (máx. 5MB)</output>
                             </label>
-                            <output id="preview-imagem-add" class="preview-container" role="status" aria-live="polite"></output>
+                            <div id="preview-imagem-add" class="preview-container" role="status" aria-live="polite"></div>
                         </fieldset>
 
                         <fieldset>
-                            <legend class="label-titulo">Descrição do Produto <output style="color:#ff6b6b">*</output></legend>
+                            <legend class="label-titulo">Descrição do Produto <span class="obrigatorio" aria-hidden="true">*</span></legend>
                             <label for="descricao-add">
                                 <textarea id="descricao-add" name="descricao" placeholder="Digite a descrição do produto" rows="5" required aria-required="true"></textarea>
                             </label>
@@ -202,10 +178,10 @@
                         <button type="submit" class="btn-adicionar">Adicionar Produto</button>
                     </form>
                 </section>
-            </article>
+            </section>
 
             <%# produtos %>
-            <article class="tab-content" id="tab-produtos" role="tabpanel" aria-labelledby="titulo-lista">
+            <section class="tab-content" id="tab-produtos" role="tabpanel" aria-labelledby="titulo-lista">
                 <section class="lista-produtos">
                     <h2 id="titulo-lista" class="subtitulo">Produtos Cadastrados</h2>
 
@@ -231,9 +207,9 @@
                                     </article>
                                     <nav class="acoes-produto" aria-label="Ações do produto <%= produto.nome %>">
                                         <a href="/admin/editar-produto/<%= produto.id %>" class="btn-editar" aria-label="Editar produto <%= produto.nome %>">Editar</a>
-                                        <form method="POST" action="/admin/excluir-produto/<%= produto.id %>" class="form-inline">
+                                        <form method="POST" action="/admin/excluir-produto/<%= produto.id %>" class="form-inline"
+                                              data-confirmar="Tem certeza que deseja excluir este produto?">
                                             <button class="btn-excluir" type="submit"
-                                                    onclick="return confirm('Tem certeza que deseja excluir este produto?')"
                                                     aria-label="Excluir produto <%= produto.nome %>">Excluir</button>
                                         </form>
                                     </nav>
@@ -242,18 +218,18 @@
                         </ul>
                     <% } %>
                 </section>
-            </article>
+            </section>
 
             <%# categorias%>
-            <article class="tab-content" id="tab-categorias" role="tabpanel" aria-labelledby="titulo-categorias">
+            <section class="tab-content" id="tab-categorias" role="tabpanel" aria-labelledby="titulo-categorias">
                 <section class="lista-categorias-section">
                     <h2 id="titulo-categorias" class="subtitulo">Gerenciar Categorias</h2>
 
                     <section class="adicionar-categoria">
-                        <h3 class="subtitulo" style="font-size:1.2rem;">Criar Nova Categoria</h3>
+                        <h3 class="subtitulo subtitulo-secundario">Criar Nova Categoria</h3>
                         <form method="POST" action="/admin/criar-categoria" class="form-produto" aria-label="Formulário de criação de categoria">
                             <fieldset>
-                                <legend class="label-titulo">Nome da Categoria <output style="color:#ff6b6b">*</output></legend>
+                                <legend class="label-titulo">Nome da Categoria <span class="obrigatorio" aria-hidden="true">*</span></legend>
                                 <label for="nome_categoria">
                                     <input type="text" id="nome_categoria" name="nome_categoria"
                                            placeholder="Ex: Medicamentos, Bebê, Dermocosméticos..."
@@ -292,7 +268,7 @@
                     </section>
 
                     <% if (categorias && categorias.length > 0) { %>
-                        <ul class="usuarios-lista" role="list" style="margin-top:2rem;">
+                        <ul class="usuarios-lista lista-apos-formulario" role="list">
                             <% categorias.forEach(function(cat) { %>
                                 <li class="usuario-item" role="listitem">
                                     <article class="usuario-info-container">
@@ -346,9 +322,9 @@
                                         </form>
                                         <a href="/categoria/<%= cat.slug %>" class="btn-editar" target="_blank" rel="noopener noreferrer"
                                            aria-label="Ver página da categoria <%= cat.nome %>">Ver Página</a>
-                                        <form method="POST" action="/admin/excluir-categoria/<%= cat.id_categoria %>" class="form-inline">
+                                        <form method="POST" action="/admin/excluir-categoria/<%= cat.id_categoria %>" class="form-inline"
+                                              data-confirmar="Excluir a categoria “<%= cat.nome %>”? Produtos vinculados perderão esta categoria.">
                                             <button class="btn-excluir" type="submit"
-                                                onclick="return confirm('Excluir categoria \'<%= cat.nome %>\'? Produtos vinculados perderão esta categoria.')"
                                                 aria-label="Excluir categoria <%= cat.nome %>">Excluir</button>
                                         </form>
                                     </nav>
@@ -356,13 +332,13 @@
                             <% }); %>
                         </ul>
                     <% } else { %>
-                        <output class="mensagem-vazia" style="margin-top:1rem;">Nenhuma categoria cadastrada ainda.</output>
+                        <output class="mensagem-vazia">Nenhuma categoria cadastrada ainda.</output>
                     <% } %>
                 </section>
-            </article>
+            </section>
 
             <%# usuarios %>
-            <article class="tab-content" id="tab-usuarios" role="tabpanel" aria-labelledby="titulo-usuarios">
+            <section class="tab-content" id="tab-usuarios" role="tabpanel" aria-labelledby="titulo-usuarios">
                 <section class="lista-usuarios-section">
                     <h2 id="titulo-usuarios" class="subtitulo">Usuários Cadastrados</h2>
 
@@ -379,7 +355,7 @@
                                         </figure>
                                         <output class="usuario-info">CPF: <%= usuario.cpf %></output>
                                         <output class="usuario-info">Telefone: (<%= usuario.ddd || '00' %>) <%= usuario.tel %></output>
-                                        <time class="usuario-info" datetime="<%= usuario.nasc %>">
+                                        <time class="usuario-info" datetime="<%= isoData(usuario.nasc) %>">
                                             Nascimento: <%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %>
                                         </time>
                                         <output class="usuario-info">
@@ -390,9 +366,9 @@
                                         <a href="/admin/usuario/<%= encodeURIComponent(usuario.email) %>"
                                            class="btn-editar"
                                            aria-label="Ver conta de <%= usuario.email %>">Ver Conta</a>
-                                        <form method="POST" action="/admin/excluir-usuario/<%= encodeURIComponent(usuario.email) %>" class="form-inline">
+                                        <form method="POST" action="/admin/excluir-usuario/<%= encodeURIComponent(usuario.email) %>" class="form-inline"
+                                              data-confirmar="Tem certeza que deseja excluir este usuário?">
                                             <button class="btn-excluir" type="submit"
-                                                    onclick="return confirm('Tem certeza que deseja excluir este usuário?')"
                                                     aria-label="Excluir usuário <%= usuario.email %>">Excluir</button>
                                         </form>
                                     </nav>
@@ -401,19 +377,19 @@
                         </ul>
                     <% } %>
                 </section>
-            </article>
+            </section>
 
             <%# banners %>
-            <article class="tab-content" id="tab-banners" role="tabpanel" aria-labelledby="titulo-banners">
+            <section class="tab-content" id="tab-banners" role="tabpanel" aria-labelledby="titulo-banners">
                 <section class="lista-banners-section">
                     <h2 id="titulo-banners" class="subtitulo">Gerenciar Banners de Destaque</h2>  <%# [ALTERADO] era "...do Carrossel" %>
 
                     <%# --- Formulário de criar novo banner --- %>
-                    <section class="adicionar-categoria" style="margin-bottom:2rem;">
-                        <h3 class="subtitulo" style="font-size:1.2rem;">Adicionar Novo Banner</h3>
+                    <section class="adicionar-categoria adicionar-banner">
+                        <h3 class="subtitulo subtitulo-secundario">Adicionar Novo Banner</h3>
                         <form method="POST" action="/admin/criar-banner" class="form-produto" enctype="multipart/form-data" aria-label="Formulário de criação de banner">
                             <fieldset>
-                                <legend class="label-titulo">Legenda do Banner <output style="color:#ff6b6b">*</output></legend>
+                                <legend class="label-titulo">Legenda do Banner <span class="obrigatorio" aria-hidden="true">*</span></legend>
                                 <label for="legenda-novo-banner">
                                     <input type="text" id="legenda-novo-banner" name="legenda"
                                            placeholder="Ex: Promoções de Verão"
@@ -428,7 +404,7 @@
                                 <label for="link-novo-banner">
                                     <input type="text" id="link-novo-banner" name="link"
                                            placeholder="/home ou /categoria/nome-da-categoria"
-                                           aria-describedby="link-novo-info">
+                                           maxlength="200" aria-describedby="link-novo-info">
                                 </label>
                                 <output id="link-novo-info" class="info-arquivo">Exemplos: /home, /categoria/cuidados-com-a-pele, /produto/123</output>
                             </fieldset>
@@ -464,7 +440,7 @@
                             </fieldset>
 
                             <fieldset class="campo-imagem">
-                                <legend><strong class="label-titulo">Imagem do Banner <output style="color:#ff6b6b">*</output></strong></legend>
+                                <legend><strong class="label-titulo">Imagem do Banner <span class="obrigatorio" aria-hidden="true">*</span></strong></legend>
                                 <label for="imagem-novo-banner" class="label-arquivo">
                                     <input type="file" id="imagem-novo-banner" name="imagem"
                                         accept="image/svg+xml,image/png,image/jpeg,image/webp"
@@ -472,7 +448,7 @@
                                         aria-describedby="imagem-novo-info">
                                     <output id="imagem-novo-info" class="info-arquivo">Formatos aceitos: SVG, PNG, JPG, WEBP (máx. 5MB). Recomendado: proporção 16:9.</output>
                                 </label>
-                                <output id="preview-novo-banner" class="preview-container" role="status" aria-live="polite"></output>
+                                <div id="preview-novo-banner" class="preview-container" role="status" aria-live="polite"></div>
                             </fieldset>
 
                             <button type="submit" class="btn-adicionar">Adicionar Banner</button>
@@ -480,7 +456,7 @@
                     </section>
 
                     <%# --- Lista de banners existentes --- %>
-                    <h3 class="subtitulo" style="font-size:1.2rem;">Banners Existentes</h3>
+                    <h3 class="subtitulo subtitulo-secundario">Banners Existentes</h3>
 
                     <output class="mensagem-info" role="status">
                         Edite ou exclua os banners de destaque da página inicial. A home mostra 3 banners no desktop e 2 no mobile, escolhidos pelo mesmo critério de relevância da faixa "Para Você".  <%# [ALTERADO] texto %>
@@ -492,8 +468,7 @@
                                 <li class="usuario-item" role="listitem">
                                     <article class="usuario-info-container">
                                         <figure>
-                                            <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>"
-                                                 style="max-width:200px;height:auto;border-radius:.5rem;margin-bottom:.5rem;">
+                                            <img src="<%= banner.imagem %>" alt="<%= banner.legenda %>">
                                             <figcaption class="usuario-info">Banner <%= index + 1 %></figcaption>
                                         </figure>
                                         <output class="usuario-info">Legenda: <%= banner.legenda %></output>
@@ -510,9 +485,9 @@
                                                 data-banner-faixa="<%= banner.faixa_etaria || '' %>"
                                                 data-banner-sexo="<%= banner.sexo || 'todos' %>"
                                                 aria-label="Editar banner <%= index + 1 %>">Editar</button>
-                                        <form method="POST" action="/admin/excluir-banner/<%= banner.id_banner %>" class="form-inline">
+                                        <form method="POST" action="/admin/excluir-banner/<%= banner.id_banner %>" class="form-inline"
+                                              data-confirmar="Tem certeza que deseja excluir este banner?">
                                             <button class="btn-excluir" type="submit"
-                                                    onclick="return confirm('Tem certeza que deseja excluir este banner?')"
                                                     aria-label="Excluir banner <%= index + 1 %>">Excluir</button>
                                         </form>
                                     </nav>
@@ -523,28 +498,19 @@
                         <output class="mensagem-vazia">Nenhum banner cadastrado ainda. Adicione um acima!</output>
                     <% } %>
                 </section>
-            </article>
+            </section>
         </section>
     </main>
  
     <footer>
-    <nav aria-label="Navegação do rodapé"
-         style="display:flex;justify-content:space-between;align-items:center;
-                flex-wrap:wrap;gap:1rem;padding:1rem 2%;">
-        <a href="/home" class="btn-adicionar"
-           style="width:auto;padding:.75rem 1.5rem;text-decoration:none;display:inline-block;">
-            Voltar ao Site
-        </a>
-        <a href="/logout" class="btn-excluir"
-           style="padding:.75rem 1.5rem;text-decoration:none;display:inline-block;
-                  border-radius:.45rem;font-weight:600;color:white;">
-            Sair da Conta de Administrador
-        </a>
-    </nav>
-</footer>
+        <nav class="rodape-admin" aria-label="Navegação do rodapé">
+            <a href="/home" class="btn-adicionar">Voltar ao Site</a>
+            <a href="/logout" class="btn-excluir">Sair da Conta de Administrador</a>
+        </nav>
+    </footer>
 
     <%# Modal de edição de banner %>
-    <aside id="modal-banner" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+    <dialog id="modal-banner" class="modal-dialogo" aria-labelledby="modal-titulo">
         <article class="modal-content">
             <h2 class="subtitulo" id="modal-titulo">Editar Banner de Destaque</h2>  <%# [ALTERADO] era "...do Carrossel" %>
             <form method="POST" id="form-editar-banner" enctype="multipart/form-data" class="form-produto" aria-label="Formulário de edição de banner">
@@ -553,7 +519,7 @@
                     <label for="legenda-banner">
                         <input type="text" id="legenda-banner" name="legenda"
                                placeholder="Ex: Promoções Especiais" required aria-required="true"
-                               aria-describedby="legenda-info">
+                               maxlength="150" aria-describedby="legenda-info">
                     </label>
                     <output id="legenda-info" class="info-arquivo">A legenda aparecerá sobreposta na imagem do banner.</output>
                 </fieldset>
@@ -563,7 +529,7 @@
                     <label for="link-banner">
                         <input type="text" id="link-banner" name="link"
                                placeholder="/home ou /categoria/nome" required aria-required="true"
-                               aria-describedby="link-info">
+                               maxlength="200" aria-describedby="link-info">
                     </label>
                     <output id="link-info" class="info-arquivo">Exemplos: /home, /categoria/cuidados-com-a-pele, /produto/123</output>
                 </fieldset>
@@ -608,38 +574,46 @@
                             Formatos aceitos: SVG, PNG, JPG, WEBP (máx. 5MB). Deixe em branco para manter a imagem atual.
                         </output>
                     </label>
-                    <output id="preview-banner" class="preview-container" role="status" aria-live="polite"></output>
+                    <div id="preview-banner" class="preview-container" role="status" aria-live="polite"></div>
                 </fieldset>
 
                 <button type="submit" class="btn-adicionar">Salvar Alterações do Banner</button>
-                <button type="button" class="btn-adicionar" id="btn-fechar-modal"
-                        style="background-color:#555;margin-top:1rem;">Cancelar</button>
+                <button type="button" class="btn-adicionar btn-cancelar" id="btn-fechar-modal">Cancelar</button>
             </form>
         </article>
-    </aside>
+    </dialog>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            // tabs
-            var tabButtons  = document.querySelectorAll('.tab-button');
-            var tabContents = document.querySelectorAll('.tab-content');
+            // confirmação de exclusão (texto em data-confirmar, sem JS dentro do atributo)
+            document.addEventListener('submit', function(e) {
+                var mensagem = e.target.getAttribute && e.target.getAttribute('data-confirmar');
+                if (mensagem && !window.confirm(mensagem)) e.preventDefault();
+            });
 
-            function ativarTab(tabId) {
+            // tabs
+            var tabsHeader  = document.querySelector('.tabs-header');
+            var tabButtons  = Array.prototype.slice.call(document.querySelectorAll('.tab-button'));
+            var tabContents = Array.prototype.slice.call(document.querySelectorAll('.tab-content'));
+
+            function existeTab(tabId) {
+                return tabButtons.some(function(btn) { return btn.getAttribute('data-tab') === tabId; })
+                    && !!document.getElementById('tab-' + tabId);
+            }
+
+            function ativarTab(tabId, focar) {
+                if (!existeTab(tabId)) return;
                 tabButtons.forEach(function(btn) {
-                    btn.classList.remove('active');
-                    btn.setAttribute('aria-selected', 'false');
+                    var ativo = btn.getAttribute('data-tab') === tabId;
+                    btn.classList.toggle('active', ativo);
+                    btn.setAttribute('aria-selected', ativo ? 'true' : 'false');
+                    btn.setAttribute('tabindex', ativo ? '0' : '-1');
+                    if (ativo && focar) btn.focus();
                 });
                 tabContents.forEach(function(content) {
-                    content.classList.remove('active');
+                    content.classList.toggle('active', content.id === 'tab-' + tabId);
                 });
-                var targetBtn = document.querySelector('[data-tab="' + tabId + '"]');
-                var targetContent = document.getElementById('tab-' + tabId);
-                if (targetBtn && targetContent) {
-                    targetBtn.classList.add('active');
-                    targetBtn.setAttribute('aria-selected', 'true');
-                    targetContent.classList.add('active');
-                }
             }
 
             tabButtons.forEach(function(button) {
@@ -647,13 +621,33 @@
                     ativarTab(this.getAttribute('data-tab'));
                 });
             });
-            var params   = new URLSearchParams(window.location.search);
-            var tabParam = params.get('tab');
-            if (tabParam) {
-                ativarTab(tabParam);
-            }
+
+            // navegação por teclado entre as abas (setas, Home e End)
+            tabsHeader.addEventListener('keydown', function(e) {
+                var atual = tabButtons.indexOf(document.activeElement);
+                if (atual < 0) return;
+                var proxima;
+                if (e.key === 'ArrowRight')     proxima = (atual + 1) % tabButtons.length;
+                else if (e.key === 'ArrowLeft') proxima = (atual - 1 + tabButtons.length) % tabButtons.length;
+                else if (e.key === 'Home')      proxima = 0;
+                else if (e.key === 'End')       proxima = tabButtons.length - 1;
+                else return;
+                e.preventDefault();
+                ativarTab(tabButtons[proxima].getAttribute('data-tab'), true);
+            });
+
+            // aba inicial: ?tab=... quando válida; caso contrário, a primeira
+            var tabParam = new URLSearchParams(window.location.search).get('tab');
+            ativarTab(existeTab(tabParam) ? tabParam : tabButtons[0].getAttribute('data-tab'));
 
             // preview da imagem
+            function marcarInfo(info, texto, tipo) {
+                if (!info) return;
+                info.textContent = texto;
+                info.classList.remove('info-ok', 'info-erro');
+                if (tipo) info.classList.add('info-' + tipo);
+            }
+
             function setupPreview(inputId, previewId, infoId, tiposAceitos) {
                 var input   = document.getElementById(inputId);
                 var preview = document.getElementById(previewId);
@@ -665,11 +659,11 @@
                     if (!arquivo) { preview.innerHTML = ''; return; }
 
                     if (arquivo.size > 5 * 1024 * 1024) {
-                        if (info) { info.textContent = 'Erro: máximo 5MB'; info.style.color = '#d93025'; }
+                        marcarInfo(info, 'Erro: máximo 5MB', 'erro');
                         preview.innerHTML = ''; input.value = ''; return;
                     }
                     if (!tiposAceitos.includes(arquivo.type)) {
-                        if (info) { info.textContent = 'Erro: formato não permitido'; info.style.color = '#d93025'; }
+                        marcarInfo(info, 'Erro: formato não permitido', 'erro');
                         preview.innerHTML = ''; input.value = ''; return;
                     }
                     var reader = new FileReader();
@@ -682,43 +676,45 @@
                         cap.textContent = arquivo.name; cap.className = 'preview-caption';
                         fig.appendChild(img); fig.appendChild(cap);
                         preview.innerHTML = ''; preview.appendChild(fig);
-                        if (info) { info.textContent = 'Imagem selecionada!'; info.style.color = '#4da6ff'; }
+                        marcarInfo(info, 'Imagem selecionada!', 'ok');
                     };
                     reader.readAsDataURL(arquivo);
                 });
             }
 
-            setupPreview('imagem-add',        'preview-imagem-add',  'imagem-add-info',  ['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp']);
-            setupPreview('imagem-novo-banner', 'preview-novo-banner', 'imagem-novo-info', ['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp']);
-            setupPreview('imagem-banner',      'preview-banner',      'banner-info',      ['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp']);
-            // ediçao de banner
+            var tiposImagem = ['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp'];
+            setupPreview('imagem-add',         'preview-imagem-add',  'imagem-add-info',  tiposImagem);
+            setupPreview('imagem-novo-banner', 'preview-novo-banner', 'imagem-novo-info', tiposImagem);
+            setupPreview('imagem-banner',      'preview-banner',      'banner-info',      tiposImagem);
+
+            // edição de banner (<dialog>: foco, Esc e fundo inerte são nativos)
             var modal        = document.getElementById('modal-banner');
             var form         = document.getElementById('form-editar-banner');
             var btnFechar    = document.getElementById('btn-fechar-modal');
             var inputLegenda = document.getElementById('legenda-banner');
             var inputLink    = document.getElementById('link-banner');
-            var selectFaixa  = document.getElementById('faixa-banner');   // [NOVO]
-            var selectSexo   = document.getElementById('sexo-banner');    // [NOVO]
+            var selectFaixa  = document.getElementById('faixa-banner');
+            var selectSexo   = document.getElementById('sexo-banner');
 
-            function abrirModal(bannerId, legenda, link, faixa, sexo) {   // [ALTERADO] +faixa, +sexo
+            function abrirModal(bannerId, legenda, link, faixa, sexo) {
                 form.action = '/admin/editar-banner/' + bannerId;
                 inputLegenda.value = legenda || '';
                 inputLink.value    = link    || '/home';
-                selectFaixa.value  = faixa   || '';        // [NOVO]
-                selectSexo.value   = sexo    || 'todos';   // [NOVO]
+                selectFaixa.value  = faixa   || '';
+                selectSexo.value   = sexo    || 'todos';
                 document.getElementById('imagem-banner').value = '';
                 document.getElementById('preview-banner').innerHTML = '';
-                modal.classList.add('active');
+                modal.showModal();
                 document.body.style.overflow = 'hidden';
                 inputLegenda.focus();
             }
 
-            function fecharModal() {
+            // roda ao fechar por qualquer meio (botão, Esc, clique no fundo)
+            modal.addEventListener('close', function() {
                 form.reset();
                 document.getElementById('preview-banner').innerHTML = '';
-                modal.classList.remove('active');
                 document.body.style.overflow = '';
-            }
+            });
 
             document.querySelectorAll('[data-banner-id]').forEach(function(btn) {
                 btn.addEventListener('click', function() {
@@ -726,17 +722,14 @@
                         this.getAttribute('data-banner-id'),
                         this.getAttribute('data-banner-legenda'),
                         this.getAttribute('data-banner-link'),
-                        this.getAttribute('data-banner-faixa'),   // [NOVO]
-                        this.getAttribute('data-banner-sexo')     // [NOVO]
+                        this.getAttribute('data-banner-faixa'),
+                        this.getAttribute('data-banner-sexo')
                     );
                 });
             });
 
-            if (btnFechar) btnFechar.addEventListener('click', fecharModal);
-            if (modal)     modal.addEventListener('click', function(e) { if (e.target === modal) fecharModal(); });
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && modal && modal.classList.contains('active')) fecharModal();
-            });
+            btnFechar.addEventListener('click', function() { modal.close(); });
+            modal.addEventListener('click', function(e) { if (e.target === modal) modal.close(); });
         });
     </script>
 </body>

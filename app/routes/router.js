@@ -483,7 +483,7 @@ router.post('/login',
     body('email').isEmail().withMessage('E-mail inválido!'),
     body('senha').notEmpty().withMessage('Senha obrigatória!'),
     async (req, res) => {
-                if (!req.cookieitos) {
+                if (!req.cookiesAceitos) {
             res.locals.cookiesAviso = true;
             return res.render('pages/login', {
                 erro:     'Para entrar, aceite o uso do cookie de sessão.',
@@ -1497,25 +1497,37 @@ function lerPublicoBanner(body) {
     };
 }
 
+// Limites das colunas da tabela banners (legenda VARCHAR(150), link VARCHAR(200))
+const MAX_LEGENDA_BANNER = 150;
+const MAX_LINK_BANNER    = 200;
+
+function lerLinkBanner(body) {
+    let link = (body.link || '/home').trim();
+    if (!link.startsWith('/')) link = '/' + link;
+    return link.slice(0, MAX_LINK_BANNER);
+}
+
 // ── Admin: criar banner (com Cloudinary) ─────────────────
 router.post('/admin/criar-banner', requireAdmin, (req, res) => {
     uploadBanner.single('imagem')(req, res, async (err) => {
         if (err) return res.redirect('/admin?erro=criar_banner&tab=banners');
+        let imagemUrl = null;
         try {
             if (!req.file) return res.redirect('/admin?erro=imagem_obrigatoria&tab=banners');
 
-            const imagemUrl = await uploadBufferToCloudinary(req.file.buffer, 'mais-saude/banners');
+            imagemUrl = await uploadBufferToCloudinary(req.file.buffer, 'mais-saude/banners');
 
-            const legenda = (req.body.legenda || '').trim() || 'Novo Banner';
-            let   link    = (req.body.link    || '/home').trim();
-            if (!link.startsWith('/')) link = '/' + link;
+            const legenda = ((req.body.legenda || '').trim() || 'Novo Banner').slice(0, MAX_LEGENDA_BANNER);
+            const link    = lerLinkBanner(req.body);
 
             // [ALTERADO] inclui faixa_etaria e sexo vindos do formulário
             const result = await bannersModel.create({ imagem: imagemUrl, legenda, link, ...lerPublicoBanner(req.body) });
-            if (result && result.errno) return res.redirect('/admin?erro=criar_banner&tab=banners');
+            if (result && result.errno) throw result;
             res.redirect('/admin?sucesso=banner_criado&tab=banners');
         } catch (e) {
             console.error('Erro ao criar banner:', e);
+            // Banner não foi gravado: remove a imagem enviada para não deixá-la órfã no Cloudinary
+            if (imagemUrl) await deleteCloudinaryImage(imagemUrl).catch(() => {});
             res.redirect('/admin?erro=criar_banner&tab=banners');
         }
     });
@@ -1525,6 +1537,8 @@ router.post('/admin/criar-banner', requireAdmin, (req, res) => {
 router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
     uploadBanner.single('imagem')(req, res, async (err) => {
         if (err) return res.redirect('/admin?erro=editar_banner&tab=banners');
+        let novaImagemUrl = null;
+        let gravado       = false;
         try {
             const bannerId = parseInt(req.params.id);
             const banner   = await bannersModel.findById(bannerId);
@@ -1532,22 +1546,30 @@ router.post('/admin/editar-banner/:id', requireAdmin, (req, res) => {
 
             let imagemUrl = banner.imagem;
 
-            // Se veio um novo arquivo, faz upload e apaga o anterior no Cloudinary
+            // Se veio um novo arquivo, faz upload (a imagem anterior só é apagada depois de gravar no banco)
             if (req.file) {
-                imagemUrl = await uploadBufferToCloudinary(req.file.buffer, 'mais-saude/banners');
-                await deleteCloudinaryImage(banner.imagem);
+                novaImagemUrl = await uploadBufferToCloudinary(req.file.buffer, 'mais-saude/banners');
+                imagemUrl     = novaImagemUrl;
             }
 
-            let legenda = (req.body.legenda || '').trim() || banner.legenda;
-            let link    = (req.body.link    || '/home').trim();
-            if (!link.startsWith('/')) link = '/' + link;
+            const legenda = ((req.body.legenda || '').trim() || banner.legenda).slice(0, MAX_LEGENDA_BANNER);
+            const link    = lerLinkBanner(req.body);
 
             // [ALTERADO] inclui faixa_etaria e sexo vindos do formulário
-            await bannersModel.update(bannerId, { imagem: imagemUrl, legenda, link, ...lerPublicoBanner(req.body) });
+            const result = await bannersModel.update(bannerId, { imagem: imagemUrl, legenda, link, ...lerPublicoBanner(req.body) });
+            if (result && result.errno) throw result;
+            gravado = true;
+
+            if (novaImagemUrl) await deleteCloudinaryImage(banner.imagem);
             res.redirect('/admin?sucesso=banner_editado&tab=banners');
         } catch (e) {
             console.error('Erro ao editar banner:', e);
-            res.redirect('/admin?erro=editar_banner&tab=banners');
+            // Se nada foi gravado, descarta a imagem nova e mantém a atual intacta.
+            if (novaImagemUrl && !gravado) await deleteCloudinaryImage(novaImagemUrl).catch(() => {});
+            // Falha ao apagar a imagem antiga não desfaz a edição, que já foi salva.
+            res.redirect(gravado
+                ? '/admin?sucesso=banner_editado&tab=banners'
+                : '/admin?erro=editar_banner&tab=banners');
         }
     });
 });
@@ -1760,7 +1782,7 @@ router.post('/api/maisa/adicionar-carrinho/:id', async (req, res) => {
                 erro: 'Contas de administrador não adicionam itens ao carrinho.'
             });
         }
-        if (!req.cookieitos) {
+        if (!req.cookiesAceitos) {
             return res.status(409).json({
                 ok: false,
                 needsCookies: true,
