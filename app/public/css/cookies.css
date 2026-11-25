@@ -100,3 +100,61 @@ html[data-theme="light"] .cookies-preferencias .cookies-link {
     color: #005ea8;
     border-color: #b8c2cc;
 }
+
+@media (max-width: 640px) {
+    footer:empty {
+        display: none;
+    }
+
+    .cookies-banner {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        max-width: none;
+        padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+        border-width: 1px 0 0;
+        border-radius: 1rem 1rem 0 0;
+    }
+
+    .cookies-titulo {
+        font-size: 1.0625rem;
+    }
+
+    .cookies-texto {
+        margin-bottom: 0.75rem;
+        font-size: 0.9375rem;
+    }
+
+    .cookies-acoes {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+    .cookies-btn {
+        width: 100%;
+        min-height: 3rem;
+        padding: 0.5rem 0.75rem;
+        font-size: 1rem;
+    }
+
+    .cookies-preferencias {
+        position: static;
+        display: flex;
+        justify-content: center;
+        width: auto;
+        max-width: none;
+        margin: 0;
+        padding: 1rem;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .cookies-link {
+        min-height: 2.75rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.9375rem;
+    }
+}

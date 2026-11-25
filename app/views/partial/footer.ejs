@@ -1,10 +1,8 @@
 <footer>
-
-  <%- include('cookies.ejs') %>
-  
     <section class="footer-content-group">
         <h2 class="footer-item">Central de Atendimento</h2>
         <a class="footer-text-secondary" href="/reclamacao">Envie sua reclamação ou dúvida</a>
+        <%- include('cookies.ejs') %>
     </section>
 </footer>
 <%- include('maisa.ejs') %>
@@ -19,7 +17,35 @@
 
 <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
 <script>
-  new window.VLibras.Widget('https://vlibras.gov.br/app');
+  (function () {
+    var raiz = 'https://vlibras.gov.br/app';
+    if (!window.matchMedia('(max-width: 640px)').matches) {
+      new window.VLibras.Widget(raiz);
+      return;
+    }
+    new window.VLibras.Widget({ rootPath: raiz, position: 'L' });
+    var tentativas = 0;
+    var espera = setInterval(function () {
+      tentativas += 1;
+      var botao = window.VLibrasWidget && window.VLibrasWidget.initBtn;
+      if (botao) {
+        clearInterval(espera);
+        var alvos = [botao, botao.parentElement];
+        var origem = botao.getRootNode();
+        if (origem && origem.host) { alvos.push(origem.host); }
+        alvos.forEach(function (el) {
+          if (!el) { return; }
+          el.style.setProperty('top', 'auto', 'important');
+          el.style.setProperty('right', 'auto', 'important');
+          el.style.setProperty('left', '0.75rem', 'important');
+          el.style.setProperty('bottom', '0.75rem', 'important');
+          el.style.setProperty('transform', 'none', 'important');
+        });
+      } else if (tentativas > 50) {
+        clearInterval(espera);
+      }
+    }, 200);
+  })();
 </script>
 
 </body>

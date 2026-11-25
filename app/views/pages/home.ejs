@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <link rel="stylesheet" href="/css/notificacao.css">
+    <link rel="stylesheet" href="/css/mobile.css">
     <script src="/js/theme.js"></script>
 </head>
 <body>
@@ -119,6 +120,16 @@
             }
         %>
 
+        <% if (faixas.length > 1) { %>
+            <nav class="categorias-rapidas" aria-label="Ir para uma seção da página">
+                <ul class="categorias-rapidas-lista">
+                    <% faixas.forEach(function(faixa) { %>
+                        <li><a class="categoria-rapida" href="#titulo-<%= faixa.id %>"><%= faixa.titulo %></a></li>
+                    <% }); %>
+                </ul>
+            </nav>
+        <% } %>
+
         <% if (faixas.length > 0) { %>
             <%# [ALTERADO] um <section> por categoria; data-carrossel é o gancho do JS (um carrossel independente por faixa) %>
             <% faixas.forEach(function(faixa) { %>
@@ -136,7 +147,7 @@
                     </header>
 
                     <%# [NOVO] palco: agrupa os botões e o trilho para posicionar ◀ ▶ nas extremidades da faixa %>
-                    <div class="carrossel-produtos-palco">
+                    <section class="carrossel-produtos-palco">
                         <%# [ALTERADO] botões saíram do cabeçalho: ◀ na extremidade esquerda, ▶ na direita (ver ordem do DOM = ordem de tabulação) %>
                         <button type="button" class="carrossel-produtos-btn carrossel-produtos-btn-ant" data-direcao="-1"
                                 aria-controls="trilho-<%= faixa.id %>"
@@ -154,7 +165,7 @@
                         <button type="button" class="carrossel-produtos-btn carrossel-produtos-btn-prox" data-direcao="1"
                                 aria-controls="trilho-<%= faixa.id %>"
                                 aria-label="Próximos produtos de <%= faixa.titulo %>">▶</button>
-                    </div>
+                    </section>
                 </section>
             <% }); %>
         <% } else { %>

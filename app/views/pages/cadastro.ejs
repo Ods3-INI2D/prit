@@ -12,9 +12,10 @@
     <link rel="stylesheet" href="/css/validacao-frontend.css">
     <link rel="stylesheet" href="/css/notificacao.css">
     <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/mobile.css">
     <script src="/js/theme.js"></script>
 </head>
-<body>
+<body class="pagina-cadastro">
     <%
     var cssErro = { nome:"", nasc:"", cpf:"", ddd:"", tel:"", email:"", senhan:"", csenha:"", sexo:""};
     var msgErro = { nome:"", nasc:"", cpf:"", ddd:"", tel:"", email:"", senhan:"", csenha:"", sexo:""};
@@ -168,22 +169,24 @@
                 
                 <fieldset>
                     <legend><h2>Sexo</h2></legend>
-                    <label for="sexo-masc">
+                    <section class="grupo-opcoes">
+                    <label class="opcao-radio" for="sexo-masc">
                         <input type="radio" id="sexo-masc" name="sexo" value="masculino"
                             required aria-required="true"
                             <%= valores.sexo === 'masculino' ? 'checked' : '' %>>
                         Masculino
                     </label>
-                    <label for="sexo-fem">
+                    <label class="opcao-radio" for="sexo-fem">
                         <input type="radio" id="sexo-fem" name="sexo" value="feminino"
                             <%= valores.sexo === 'feminino' ? 'checked' : '' %>>
                         Feminino
                     </label>
-                    <label for="sexo-nd">
+                    <label class="opcao-radio" for="sexo-nd">
                         <input type="radio" id="sexo-nd" name="sexo" value="prefiro-nao-dizer"
                             <%= valores.sexo === 'prefiro-nao-dizer' ? 'checked' : '' %>>
                         Prefiro Não Dizer
                     </label>
+                    </section>
                     <% if (msgErro.sexo) { %>
                         <output class="error-message" id="sexo-error" role="alert" aria-live="polite" style="display:block">
                             <%= msgErro.sexo %>
@@ -277,7 +280,9 @@
         </section>
     </main>
 
-    <footer></footer>
+    <footer>
+        <%- include('../partial/cookies.ejs') %>
+    </footer>
 
     <script src="/js/validacao.js"></script>
     <script>
@@ -299,7 +304,5 @@
         });
     </script>
 
-    <%- include('../partial/cookies.ejs') %>
-    
 </body>
 </html>

@@ -1,10 +1,10 @@
 <link rel="stylesheet" href="/css/maisa.css">
 
-<div id="maisa-chatbot"
-     class="maisa-root"
-     data-maisa-size="normal"
-     data-user-name="<%= (typeof usuario !== 'undefined' && usuario && !isAdmin) ? usuario.nome : '' %>"
-     data-is-admin="<%= (typeof isAdmin !== 'undefined' && isAdmin) ? 'true' : 'false' %>">
+<aside id="maisa-chatbot"
+       class="maisa-root"
+       data-maisa-size="normal"
+       data-user-name="<%= (typeof usuario !== 'undefined' && usuario && !isAdmin) ? usuario.nome : '' %>"
+       data-is-admin="<%= (typeof isAdmin !== 'undefined' && isAdmin) ? 'true' : 'false' %>">
 
     <button type="button"
             id="maisa-launcher"
@@ -16,7 +16,7 @@
         <span class="maisa-launcher-label">Ajuda da Maisa</span>
     </button>
 
-    <div id="maisa-backdrop" class="maisa-backdrop" hidden></div>
+    <span id="maisa-backdrop" class="maisa-backdrop" hidden></span>
 
     <section id="maisa-panel"
              class="maisa-panel"
@@ -25,12 +25,12 @@
              aria-labelledby="maisa-dialog-title"
              hidden>
         <header class="maisa-header">
-            <div class="maisa-header-info">
+            <section class="maisa-header-info">
                 <img src="/imagens/maisa-avatar.svg" alt="Maisa" class="maisa-avatar-img">
                 <h2 id="maisa-dialog-title" class="maisa-title">Maisa</h2>
-            </div>
+            </section>
 
-            <div class="maisa-header-actions">
+            <nav class="maisa-header-actions" aria-label="Ações da conversa">
                 <button type="button"
                         id="maisa-font-toggle"
                         class="maisa-header-btn"
@@ -45,17 +45,18 @@
                         id="maisa-close"
                         class="maisa-header-btn maisa-close-btn"
                         aria-label="Fechar conversa">Fechar ✕</button>
-            </div>
+            </nav>
         </header>
 
-        <div id="maisa-messages"
-             class="maisa-messages"
-             aria-live="polite"
-             aria-label="Conversa com a Maisa"></div>
+        <section id="maisa-messages"
+                 class="maisa-messages"
+                 role="log"
+                 aria-live="polite"
+                 aria-label="Conversa com a Maisa"></section>
 
         <form id="maisa-form" class="maisa-form">
             <label for="maisa-input" class="maisa-sr-only">Digite o que você procura</label>
-            <div class="maisa-input-row">
+            <section class="maisa-input-row">
                 <textarea id="maisa-input"
                           class="maisa-input"
                           rows="1"
@@ -69,13 +70,13 @@
                 <button type="submit"
                         id="maisa-send"
                         class="maisa-send-btn">Enviar</button>
-            </div>
+            </section>
             <p id="maisa-voice-status" class="maisa-voice-status" role="status" hidden>
                 Ouvindo... pode falar.
             </p>
         </form>
     </section>
-</div>
+</aside>
 
 <script type="application/json" id="maisa-categorias-data"><%- JSON.stringify((typeof categoriasMenu !== 'undefined' && Array.isArray(categoriasMenu) ? categoriasMenu : []).map(function (c) { return { nome: c.nome, slug: c.slug }; })).replace(/</g, '\\u003c') %></script>
 <script src="/js/maisa.js" defer></script>

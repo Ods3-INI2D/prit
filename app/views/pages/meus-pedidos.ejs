@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <link rel="stylesheet" href="/css/meus-pedidos.css">
+    <link rel="stylesheet" href="/css/mobile.css">
     <script src="/js/theme.js"></script>
 </head>
 <body>
@@ -206,7 +207,7 @@
                                 <% if (enderecoEntrega) { %>
                                     <dd>
                                         <address style="font-style:normal;">
-                                            <%= enderecoEntrega %>
+                                            <% String(enderecoEntrega).split('|').forEach(function(parte, i) { %><% if (i > 0) { %><span class="endereco-separador" aria-hidden="true"> | </span><% } %><span class="endereco-parte"><%= parte.trim() %></span><% }); %>
                                         </address>
                                     </dd>
                                 <% } else { %>
