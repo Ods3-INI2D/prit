@@ -885,7 +885,7 @@ async function aplicarPagamentoMP(pagamentoMP) {
 
     const pedido = await pedidosModel.findById(idPedido);
     const pagamentoLocal = await pedidosModel.findPagamentoByPedido(idPedido);
-    const valorPago = Math.round(Number(pagamentoMP.tration_amount) * 100);
+    const valorPago = Math.round(Number(pagamentoMP.transaction_amount) * 100);
     const valorPedido = pedido ? Math.round(Number(pedido.valor_total) * 100) : NaN;
     const valorLocal = pagamentoLocal ? Math.round(Number(pagamentoLocal.valor) * 100) : NaN;
 
