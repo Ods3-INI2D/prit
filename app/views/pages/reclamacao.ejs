@@ -14,11 +14,15 @@
     <link rel="stylesheet" href="/css/contato.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="/css/acessibilidade-idosos.css">
+    <script src="/js/acessibilidade-idosos.js"></script>
 </head>
-<body>
+<body class="pagina-auth">
     <header>
-        <img class="icon" src="/imagens/logo-branco.svg" alt="Logo +Saúde">
+        <a href="/home" class="icon-link" aria-label="+Saúde: voltar para a página inicial"><img class="icon" src="/imagens/logo-branco.svg" alt="Logo +Saúde"></a>
     </header>
+
+    <%- include('../partial/ajuste-texto.ejs') %>
 
     <main>
         <section class="txt" aria-labelledby="reclamacao-titulo">
@@ -33,26 +37,26 @@
 
             <form method="POST" action="/reclamacao" novalidate aria-label="Formulário de reclamação">
                 <fieldset>
-                    <legend><h2>Nome</h2></legend>
-                    <label for="nome">
+                    <label for="nome" class="rotulo-campo">Nome</label>
+                    <div class="campo">
                         <input type="text" id="nome" name="nome" placeholder="Seu nome" autocomplete="name" aria-describedby="nome-error" required>
-                    </label>
+                    </div>
                     <output class="error-message" id="nome-error" role="alert" aria-live="polite"></output>
                 </fieldset>
 
                 <fieldset>
-                    <legend><h2>E-mail</h2></legend>
-                    <label for="email">
+                    <label for="email" class="rotulo-campo">E-mail</label>
+                    <div class="campo">
                         <input type="email" id="email" name="email" placeholder="exemplo@dominio.com" autocomplete="email" aria-describedby="email-error" required>
-                    </label>
+                    </div>
                     <output class="error-message" id="email-error" role="alert" aria-live="polite"></output>
                 </fieldset>
 
                 <fieldset>
-                    <legend><h2>Mensagem</h2></legend>
-                    <label for="mensagem">
+                    <label for="mensagem" class="rotulo-campo">Mensagem</label>
+                    <div class="campo">
                         <textarea id="mensagem" name="mensagem" rows="6" maxlength="2000" placeholder="Descreva sua reclamação ou dúvida" aria-describedby="mensagem-error" required></textarea>
-                    </label>
+                    </div>
                     <output class="error-message" id="mensagem-error" role="alert" aria-live="polite"></output>
                 </fieldset>
 

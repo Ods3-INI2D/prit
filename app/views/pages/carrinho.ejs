@@ -16,19 +16,27 @@
     <style>
         .item-fora-estoque { opacity: 0.65; }
     </style>
+    <link rel="stylesheet" href="/css/acessibilidade-idosos.css">
+    <script src="/js/acessibilidade-idosos.js"></script>
 </head>
 <body>
     <header>
         <%- include('../partial/grid.ejs') %>
     </header>
 
+    <%- include('../partial/ajuste-texto.ejs') %>
+
     <main>
         <section class="carrinho-container">
             <h1 class="titulo-carrinho">Meu Carrinho</h1>
 
+            <% if (typeof aviso !== 'undefined' && aviso) { %>
+                <output class="aviso-sucesso" role="status"><%= aviso %></output>
+            <% } %>
+
             <% if (carrinho.length === 0) { %>
                 <article class="carrinho-vazio">
-                    <output class="mensagem-vazio">Seu carrinho está vazio!</output>
+                    <p class="mensagem-vazio">Seu carrinho está vazio. Que tal escolher alguns produtos?</p>
                     <a href="/home" class="btn-continuar">Continuar Comprando</a>
                 </article>
             <% } else { %>
@@ -49,7 +57,7 @@
 
                 <% if (temItemForaEstoque) { %>
                     <output class="mensagem-aviso" role="alert" aria-live="assertive">
-                        ⚠️ Há itens fora de estoque no seu carrinho. Remova-os para continuar.
+                        ⚠️ Há produtos sem estoque no seu carrinho. Toque em "Remover" nesses produtos para continuar.
                     </output>
                 <% } %>
 
@@ -71,28 +79,28 @@
                                 const subtotal      = precoFinal * (parseInt(produto.quantidade) || 1);
                                 const foraEstoque   = produto.status === 'fora-de-estoque';
                             %>
-                                <li class="item-carrinho<%= foraEstoque ? ' item-fora-estoque' : '' %>">
+                                <li id="item-<%= produto.id_produto || produto.id %>" class="item-carrinho<%= foraEstoque ? ' item-fora-estoque' : '' %>">
                                     <img src="<%= produto.imagem %>"
                                          alt="<%= produto.nome %>"
                                          class="imagem-produto">
 
                                     <article class="info-produto">
                                         <h2 class="nome-produto"><%= produto.nome %></h2>
-                                        <output class="categoria-produto"><%= produto.categoria %></output>
+                                        <span class="categoria-produto"><%= produto.categoria %></span>
 
                                         <% if (foraEstoque) { %>
                                             <output class="mensagem-fora-estoque" role="alert"
-                                                    style="font-size:0.85rem;padding:0.5rem 0.75rem;margin-bottom:0.5rem;">
-                                                Produto fora de estoque
+                                                   >
+                                                Produto sem estoque no momento
                                             </output>
                                         <% } %>
 
                                         <p class="preco-container">
                                             <% if (precoDesconto !== null && precoDesconto > 0) { %>
-                                                <output class="preco-original">R$ <%= preco.toFixed(2) %></output>
-                                                <output class="preco-desconto">R$ <%= precoDesconto.toFixed(2) %></output>
+                                                <span class="preco-original">R$ <%= preco.toFixed(2) %></span>
+                                                <span class="preco-desconto">R$ <%= precoDesconto.toFixed(2) %></span>
                                             <% } else { %>
-                                                <output class="preco-produto">R$ <%= preco.toFixed(2) %></output>
+                                                <span class="preco-produto">R$ <%= preco.toFixed(2) %></span>
                                             <% } %>
                                         </p>
 
@@ -102,7 +110,8 @@
                                                 <legend style="display:none;">Quantidade</legend>
                                                 <form method="POST"
                                                       action="/carrinho/atualizar/<%= produto.id_produto || produto.id %>"
-                                                      class="form-quantidade">
+                                                      class="form-quantidade"
+                                                      <%- (parseInt(produto.quantidade) || 1) <= 1 ? 'data-confirmar="Tirar ' + produto.nome.replace(/"/g, '&quot;') + ' do carrinho?"' : '' %>>
                                                     <input type="hidden"
                                                            name="quantidade"
                                                            value="<%= (parseInt(produto.quantidade) || 1) - 1 %>">
@@ -141,7 +150,8 @@
                                                class="btn-avaliar">Avaliar Produto</a>
                                         <% } %>
                                         <form method="POST"
-                                              action="/carrinho/remover/<%= produto.id_produto || produto.id %>">
+                                              action="/carrinho/remover/<%= produto.id_produto || produto.id %>"
+                                              data-confirmar="Tirar <%= produto.nome %> do carrinho?">
                                             <button type="submit"
                                                     class="btn-remover"
                                                     aria-label="Remover <%= produto.nome %> do carrinho">
@@ -163,7 +173,7 @@
                             <dd>R$ <%= subtotalGeral.toFixed(2) %></dd>
 
                             <dt><strong>Frete</strong></dt>
-                            <dd>A calcular</dd>
+                            <dd>Calculado na próxima etapa</dd>
                         </dl>
 
                         <%# ERRO 2 CORRIGIDO: era <output class="total-resumo"> contendo <strong> e
@@ -176,9 +186,8 @@
                         </p>
 
                         <% if (temItemForaEstoque) { %>
-                            <output class="mensagem-erro" role="alert"
-                                    style="margin-bottom:1rem;display:block;text-align:center;font-size:0.9rem;">
-                                Remova os itens fora de estoque para finalizar.
+                            <output class="mensagem-erro aviso-resumo" role="alert">
+                                Para continuar, toque em "Remover" nos produtos que estão sem estoque.
                             </output>
                         <% } else if (usuarioLogado) { %>
                             <a href="/finalizar-compra"

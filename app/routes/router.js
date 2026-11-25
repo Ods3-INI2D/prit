@@ -250,30 +250,30 @@ router.get('/cadastro', (req, res) => {
 });
 
 router.post('/cadastro',
-    body('nome').isLength({ min: 3, max: 50 }).withMessage('Nome deve conter de 3 a 50 caracteres!'),
-    body('cpf').isLength({ min: 11, max: 11 }).withMessage('CPF deve ter 11 dígitos!')
-        .custom(v => { if (!valCPF(v)) throw new Error('CPF inválido!'); return true; }),
-    body('nasc').isISO8601().withMessage('Data inválida!')
-        .custom(v => { if (!valNasc(v)) throw new Error('Data de nascimento inválida!'); return true; }),
-    body('ddd').isLength({ min: 2, max: 2 }).withMessage('DDD deve ter 2 dígitos!')
-        .custom(v => { if (!valDDD(v)) throw new Error('DDD inválido!'); return true; }),
-    body('tel').isLength({ min: 9, max: 9 }).withMessage('Telefone deve ter 9 dígitos!')
-        .custom(v => { if (!valTel(v)) throw new Error('Telefone inválido!'); return true; }),
-    body('email').isEmail().withMessage('E-mail inválido!')
+    body('nome').isLength({ min: 3, max: 50 }).withMessage('O nome precisa ter de 3 a 50 letras. Exemplo: Maria da Silva.'),
+    body('cpf').isLength({ min: 11, max: 11 }).withMessage('O CPF precisa ter 11 números. Confira e tente de novo.')
+        .custom(v => { if (!valCPF(v)) throw new Error('Esse CPF não parece certo. Confira os números e tente de novo.'); return true; }),
+    body('nasc').isISO8601().withMessage('Essa data não parece certa. Confira o dia, o mês e o ano.')
+        .custom(v => { if (!valNasc(v)) throw new Error('Essa data não parece certa. Confira o dia, o mês e o ano.'); return true; }),
+    body('ddd').isLength({ min: 2, max: 2 }).withMessage('Digite o DDD com 2 números. Exemplo: 11.')
+        .custom(v => { if (!valDDD(v)) throw new Error('Esse DDD não existe. Confira e tente de novo.'); return true; }),
+    body('tel').isLength({ min: 9, max: 9 }).withMessage('O telefone precisa ter 9 números, sem o DDD. Exemplo: 99999-9999.')
+        .custom(v => { if (!valTel(v)) throw new Error('Esse telefone não parece certo. Confira os números.'); return true; }),
+    body('email').isEmail().withMessage('Esse e-mail não parece certo. Exemplo: nome@email.com.')
         .custom(async v => {
             const existe = await usuariosModel.findByEmail(v);
             if (existe) throw new Error('E-mail já cadastrado!');
             return true;
         }),
-    body('senhan').isLength({ min: 6, max: 20 }).withMessage('Senha deve ter de 6 a 20 caracteres!')
+    body('senhan').isLength({ min: 6, max: 20 }).withMessage('A senha precisa ter de 6 a 20 caracteres.')
         .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
-        .withMessage('Senha precisa de maiúscula, número e caractere especial!'),
+        .withMessage('Falta algo na senha: use uma letra maiúscula, um número e um símbolo (! @ # $ % ^ & *).'),
     body('csenha').custom((v, { req }) => {
-        if (v !== req.body.senhan) throw new Error('As senhas não conferem!');
+        if (v !== req.body.senhan) throw new Error('As duas senhas estão diferentes. Digite a mesma senha nos dois campos.');
         return true;
     }),
-    body('sexo').notEmpty().withMessage('Sexo é obrigatório!')
-        .isIn(['masculino','feminino','prefiro-nao-dizer']).withMessage('Sexo inválido!'),
+    body('sexo').notEmpty().withMessage('Escolha uma das opções.')
+        .isIn(['masculino','feminino','prefiro-nao-dizer']).withMessage('Escolha uma das opções.'),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -340,7 +340,7 @@ router.get('/reenviar-ativacao', (req, res) => {
 });
  
 router.post('/reenviar-ativacao',
-    body('email').trim().isEmail().withMessage('Informe um e-mail válido!'),
+    body('email').trim().isEmail().withMessage('Digite um e-mail válido. Exemplo: nome@email.com.'),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -377,11 +377,11 @@ function redirecionarSeLogado(req, res, next) {
 
 // regras da nova senha: as mesmas do cadastro
 const regrasNovaSenha = [
-    body('senhan').isLength({ min: 6, max: 20 }).withMessage('Senha deve ter de 6 a 20 caracteres!')
+    body('senhan').isLength({ min: 6, max: 20 }).withMessage('A senha precisa ter de 6 a 20 caracteres.')
         .matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
-        .withMessage('Senha precisa de maiúscula, número e caractere especial!'),
+        .withMessage('Falta algo na senha: use uma letra maiúscula, um número e um símbolo (! @ # $ % ^ & *).'),
     body('csenha').custom((v, { req }) => {
-        if (v !== req.body.senhan) throw new Error('As senhas não conferem!');
+        if (v !== req.body.senhan) throw new Error('As duas senhas estão diferentes. Digite a mesma senha nos dois campos.');
         return true;
     })
 ];
@@ -398,7 +398,7 @@ router.get('/recuperar-senha', redirecionarSeLogado, (req, res) => {
 });
 
 router.post('/recuperar-senha', redirecionarSeLogado,
-    body('email').trim().isEmail().withMessage('Informe um e-mail válido!'),
+    body('email').trim().isEmail().withMessage('Digite um e-mail válido. Exemplo: nome@email.com.'),
     (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -480,20 +480,20 @@ router.get('/login', (req, res) => {
 });
 
 router.post('/login',
-    body('email').isEmail().withMessage('E-mail inválido!'),
-    body('senha').notEmpty().withMessage('Senha obrigatória!'),
+    body('email').isEmail().withMessage('Esse e-mail não parece certo. Exemplo: nome@email.com.'),
+    body('senha').notEmpty().withMessage('Digite a sua senha.'),
     async (req, res) => {
                 if (!req.cookiesAceitos) {
             res.locals.cookiesAviso = true;
             return res.render('pages/login', {
-                erro:     'Para entrar, aceite o uso do cookie de sessão.',
+                erro:     'Para entrar, aceite o aviso de cookies que aparece na parte de baixo da tela.',
                 redirect: req.body.redirect || '/home'
             });
         };
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render('pages/login', {
-                erro:     'E-mail ou senha inválidos!',
+                erro:     'Não encontramos essa combinação de e-mail e senha. Confira os dados e tente de novo, ou use "Esqueci minha senha".',
                 redirect: req.body.redirect || '/home'
             });
         }
@@ -525,7 +525,7 @@ router.post('/login',
         // senha correta, mas e-mail ainda não confirmado
         if (usuario && senhaConfere && Number(usuario.ativo) === 0) {
             return res.status(403).render('pages/login', {
-                erro:          'Sua conta ainda não foi ativada. Confira o e-mail que enviamos no cadastro.',
+                erro:          'Sua conta ainda não foi ativada. Abra o e-mail que enviamos no cadastro e clique no link (veja também a caixa de spam).',
                 emailPendente: true,
                 redirect:      req.body.redirect || '/home'
             });
@@ -546,7 +546,7 @@ router.post('/login',
         }
 
         return res.render('pages/login', {
-            erro:     'E-mail ou senha inválidos!',
+            erro:     'Não encontramos essa combinação de e-mail e senha. Confira os dados e tente de novo, ou use "Esqueci minha senha".',
             redirect: req.body.redirect || '/home'
         });
     }
@@ -629,7 +629,7 @@ router.get('/usuario', async (req, res) => {
 
 router.post('/usuario/atualizar-campo', requireLogin,
     body('campo').isIn(['nome', 'nasc', 'cpf', 'ddd', 'tel']).withMessage('Campo inválido!'),
-    body('valor').notEmpty().withMessage('Valor obrigatório!'),
+    body('valor').notEmpty().withMessage('Preencha o campo antes de salvar.'),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -639,15 +639,15 @@ router.post('/usuario/atualizar-campo', requireLogin,
         const { campo, valor } = req.body;
 
         if (campo === 'nome' && (valor.length < 3 || valor.length > 50))
-            return res.redirect('/usuario?erro=' + encodeURIComponent('Nome deve ter entre 3 e 50 caracteres!'));
+            return res.redirect('/usuario?erro=' + encodeURIComponent('O nome precisa ter de 3 a 50 letras. Exemplo: Maria da Silva.'));
         if (campo === 'cpf'  && !valCPF(valor))
-            return res.redirect('/usuario?erro=' + encodeURIComponent('CPF inválido!'));
+            return res.redirect('/usuario?erro=' + encodeURIComponent('Esse CPF não parece certo. Confira os números e tente de novo.'));
         if (campo === 'nasc' && !valNasc(valor))
-            return res.redirect('/usuario?erro=' + encodeURIComponent('Data de nascimento inválida!'));
+            return res.redirect('/usuario?erro=' + encodeURIComponent('Essa data não parece certa. Confira o dia, o mês e o ano.'));
         if (campo === 'ddd'  && !valDDD(valor))
-            return res.redirect('/usuario?erro=' + encodeURIComponent('DDD inválido!'));
+            return res.redirect('/usuario?erro=' + encodeURIComponent('Esse DDD não existe. Confira e tente de novo.'));
         if (campo === 'tel'  && !valTel(valor))
-            return res.redirect('/usuario?erro=' + encodeURIComponent('Telefone inválido!'));
+            return res.redirect('/usuario?erro=' + encodeURIComponent('Esse telefone não parece certo. Confira os números.'));
 
         await usuariosModel.updateCampo(req.session.usuarioEmail, campo, valor);
         const labels = { nome: 'Nome', nasc: 'Data de nascimento', cpf: 'CPF', ddd: 'DDD', tel: 'Telefone', sexo: 'Sexo' };
@@ -659,11 +659,11 @@ router.post('/usuario/atualizar-campo', requireLogin,
 router.post('/usuario/atualizar-foto', requireLogin, (req, res) => {
     uploadFoto.single('foto')(req, res, async (err) => {
         if (err) {
-            return res.redirect('/usuario?erro=' + encodeURIComponent('Erro ao fazer upload da foto!'));
+            return res.redirect('/usuario?erro=' + encodeURIComponent('Não conseguimos enviar a foto. Tente outra imagem ou tente de novo em instantes.'));
         }
         try {
             if (!req.file) {
-                return res.redirect('/usuario?erro=' + encodeURIComponent('Selecione uma imagem!'));
+                return res.redirect('/usuario?erro=' + encodeURIComponent('Escolha uma foto antes de enviar.'));
             }
 
             let fotoUrl = null;
@@ -682,7 +682,7 @@ router.post('/usuario/atualizar-foto', requireLogin, (req, res) => {
             res.redirect('/usuario');
         } catch (err) {
             console.error('Erro ao atualizar foto:', err);
-            res.redirect('/usuario?erro=' + encodeURIComponent('Erro ao atualizar foto!'));
+            res.redirect('/usuario?erro=' + encodeURIComponent('Não conseguimos salvar a foto. Tente de novo em instantes.'));
         }
     });
 });
@@ -904,22 +904,32 @@ router.get('/carrinho', blockAdmin, async (req, res) => {
         };
     });
 
+    const AVISOS_CARRINHO = {
+        removido:   'Pronto! O produto foi retirado do carrinho.',
+        atualizado: 'Pronto! A quantidade foi atualizada.'
+    };
+
     res.render('pages/carrinho', {
         carrinho,
-        usuarioLogado: !!req.session.usuarioEmail
+        usuarioLogado: !!req.session.usuarioEmail,
+        aviso: AVISOS_CARRINHO[req.query.aviso] || null
     });
 });
 
 router.post('/carrinho/atualizar/:id', exigirCookies, blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
-    await carrinhoModel.updateQuantidade(req.params.id, id_usuario, session_id, parseInt(req.body.quantidade));
-    res.redirect('/carrinho');
+    const novaQtd = parseInt(req.body.quantidade);
+    await carrinhoModel.updateQuantidade(req.params.id, id_usuario, session_id, novaQtd);
+    // volta para o mesmo item (a pessoa não perde o lugar na lista)
+    res.redirect(novaQtd > 0
+        ? '/carrinho?aviso=atualizado#item-' + encodeURIComponent(req.params.id)
+        : '/carrinho?aviso=removido');
 });
 
 router.post('/carrinho/remover/:id', exigirCookies, blockAdmin, async (req, res) => {
     const { id_usuario, session_id } = getIdentificador(req);
     await carrinhoModel.removerProduto(req.params.id, id_usuario, session_id);
-    res.redirect('/carrinho');
+    res.redirect('/carrinho?aviso=removido');
 });
 
 // ── Finalizar Compra ──────────────────────────────────────
@@ -1046,16 +1056,16 @@ router.get('/finalizar-compra', requireLogin, blockAdmin, async (req, res) => {
 });
 
 router.post('/finalizar-compra', requireLogin, blockAdmin,
-    body('cep').notEmpty().withMessage('CEP obrigatório!')
-        .matches(/^\d{5}-?\d{3}$/).withMessage('CEP inválido!'),
-    body('rua').notEmpty().isLength({ min: 3, max: 150 }).withMessage('Rua obrigatória!'),
-    body('numero').notEmpty().withMessage('Número obrigatório!'),
-    body('bairro').notEmpty().isLength({ min: 2, max: 80 }).withMessage('Bairro obrigatório!'),
-    body('cidade').notEmpty().isLength({ min: 2, max: 80 }).withMessage('Cidade obrigatória!'),
-    body('estado').notEmpty().isLength({ min: 2, max: 2 }).withMessage('Estado obrigatório!'),
+    body('cep').notEmpty().withMessage('Digite o seu CEP (8 números).')
+        .matches(/^\d{5}-?\d{3}$/).withMessage('Esse CEP não parece certo. Digite os 8 números.'),
+    body('rua').notEmpty().isLength({ min: 3, max: 150 }).withMessage('Digite o nome da rua.'),
+    body('numero').notEmpty().withMessage('Digite o número da casa ou do prédio. Se não tiver, escreva "s/n".'),
+    body('bairro').notEmpty().isLength({ min: 2, max: 80 }).withMessage('Digite o nome do bairro.'),
+    body('cidade').notEmpty().isLength({ min: 2, max: 80 }).withMessage('Digite o nome da cidade.'),
+    body('estado').notEmpty().isLength({ min: 2, max: 2 }).withMessage('Escolha o estado.'),
     body('forma_pagamento').notEmpty()
         .isIn(['cartao_credito', 'cartao_debito', 'pix', 'boleto'])
-        .withMessage('Forma de pagamento inválida!'),
+        .withMessage('Escolha uma forma de pagamento.'),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -1819,9 +1829,9 @@ router.get('/reclamacao', (req, res) => {
 });
 
 router.post('/reclamacao',
-    body('nome').trim().notEmpty().withMessage('Informe seu nome!'),
-    body('email').trim().isEmail().withMessage('Informe um e-mail válido!'),
-    body('mensagem').trim().isLength({ min: 10, max: 2000 }).withMessage('Escreva sua reclamação (mínimo 10 caracteres).'),
+    body('nome').trim().notEmpty().withMessage('Escreva o seu nome.'),
+    body('email').trim().isEmail().withMessage('Digite um e-mail válido. Exemplo: nome@email.com.'),
+    body('mensagem').trim().isLength({ min: 10, max: 2000 }).withMessage('Escreva um pouco mais: a mensagem precisa ter pelo menos 10 letras.'),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

@@ -13,17 +13,21 @@
     <link rel="stylesheet" href="/css/theme.css">
     <link rel="stylesheet" href="/css/mobile.css">
     <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="/css/acessibilidade-idosos.css">
+    <script src="/js/acessibilidade-idosos.js"></script>
 </head>
 <body>
     <header>
         <%- include('../partial/grid.ejs') %>
     </header>
 
+    <%- include('../partial/ajuste-texto.ejs') %>
+
     <main>
         <nav class="navegacao">
             <a href="/home" class="voltar">
-                <img src="/imagens/setae.svg" alt="Voltar" class="seta-voltar">
-                <output>Voltar</output>
+                <img src="/imagens/setae.svg" alt="" class="seta-voltar">
+                <span>Voltar</span>
             </a>
         </nav>
 
@@ -33,22 +37,22 @@
             <article class="info-principal">
                 <h1 class="nome-produto"><%= produto.nome %></h1>
                 
-                <output class="categoria-produto"><%= produto.categoria %></output>
+                <span class="categoria-produto"><%= produto.categoria %></span>
 
                 <% if (produto.faixa_etaria) { %>
-                    <output class="faixa-etaria-produto">Recomendado para: <%= produto.faixa_etaria %></output>
+                    <span class="faixa-etaria-produto">Recomendado para: <%= produto.faixa_etaria %></span>
                 <% } %>
                 
                 <% if(produto.precoDesconto) { %>
                     <section class="preco-container com-desconto">
-                        <output class="preco-original">R$ <%= produto.preco.toFixed(2) %></output>
-                        <output class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></output>
-                        <output class="percentual-desconto">
+                        <span class="sr-only">Preço original: </span><span class="preco-original">R$ <%= produto.preco.toFixed(2) %></span>
+                        <span class="sr-only">Preço com desconto: </span><span class="preco-desconto">R$ <%= produto.precoDesconto.toFixed(2) %></span>
+                        <span class="percentual-desconto">
                             -<%= Math.round(((produto.preco - produto.precoDesconto) / produto.preco) * 100) %>%
-                        </output>
+                        </span>
                     </section>
                 <% } else { %>
-                    <output class="preco-produto">R$ <%= produto.preco.toFixed(2) %></output>
+                    <span class="preco-produto">R$ <%= produto.preco.toFixed(2) %></span>
                 <% } %>
 
                 <% if(produto.status === 'fora-de-estoque') { %>
@@ -71,7 +75,7 @@
 
                 <% if(typeof erro !== 'undefined' && erro === 'fora_de_estoque') { %>
                     <output class="mensagem-erro-avaliacao" role="alert" aria-live="assertive">
-                        Não é possível adicionar este produto ao carrinho pois está fora de estoque!
+                        Este produto está sem estoque agora, por isso não foi colocado no carrinho. Escolha outro produto abaixo.
                     </output>
                 <% } %>
             </article>
@@ -80,16 +84,16 @@
         <section class="frete-container" aria-labelledby="titulo-frete">
             <h2 class="titulo-secao" id="titulo-frete">Cálculo de Frete e Prazo</h2>
             
-            <output class="descricao-frete">Insira seu CEP para calcular o frete e o prazo para entrega do produto</output>
+            <span class="descricao-frete">Insira seu CEP para calcular o frete e o prazo para entrega do produto</span>
             
             <form class="form-frete" id="form-frete" action="/produto/<%= produto.id %>/frete" method="get" novalidate>
                 <label for="cep">
-                    <span class="visually-hidden">CEP de entrega</span>
-                    <input type="text" name="cep" id="cep" placeholder="Digite seu CEP" maxlength="9"
+                    <span class="rotulo-campo">CEP de entrega</span>
+                    <input type="text" name="cep" id="cep" placeholder="Somente números" maxlength="9"
                            inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}-?[0-9]{3}"
                            required aria-describedby="frete-status">
                 </label>
-                <button type="submit" class="btn-calcular">Calcular</button>
+                <button type="submit" class="btn-calcular">Calcular frete</button>
             </form>
 
             <output class="frete-status" id="frete-status" for="cep"></output>
@@ -119,7 +123,7 @@
         <section class="descricao-container">
             <h2 class="titulo-secao">Descrição do Produto</h2>
             <h3 class="nome-descricao"><%= produto.nome %></h3>
-            <output class="texto-descricao"><%= produto.descricao %></output>
+            <span class="texto-descricao"><%= produto.descricao %></span>
         </section>
 
         <hr class="divisor">
@@ -129,7 +133,7 @@
             
             <% if(produto.avaliacoes && produto.avaliacoes.length > 0) { %>
                 <article class="nota-media">
-                    <h3 class="label-nota">Nota Média</h3>
+                    <h3 class="label-nota">Nota média dos clientes</h3>
                     <% 
                     let somaNotas = 0;
                     produto.avaliacoes.forEach(function(avaliacao) {
@@ -138,34 +142,34 @@
                     let media = (somaNotas / produto.avaliacoes.length).toFixed(1);
                     let notaArredondada = Math.round(media);
                     %>
-                    <section class="estrelas-media">
+                    <section class="estrelas-media" role="img" aria-label="Nota média <%= notaArredondada %> de 5 estrelas">
                         <% for(let i = 1; i <= 5; i++) { %>
                             <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.svg" 
                                  class="estrela" 
-                                 alt="Estrela <%= i <= notaArredondada ? 'preenchida' : 'vazia' %>">
+                                 alt="">
                         <% } %>
                     </section>
-                    <output class="valor-media"><%= media %></output>
+                    <span class="valor-media"><%= media %></span>
                 </article>
 
-                <a href="#form-avaliacao" class="ver-mais">Ver todas as avaliações</a>
+                <a href="#form-avaliacao" class="ver-mais">Escrever a minha avaliação</a>
 
                 <ul class="lista-avaliacoes">
                     <% produto.avaliacoes.forEach(function(avaliacao) { %>
                         <li class="item-avaliacao">
-                            <section class="estrelas-avaliacao">
+                            <section class="estrelas-avaliacao" role="img" aria-label="Nota <%= avaliacao.nota %> de 5 estrelas">
                                 <% for(let i = 1; i <= 5; i++) { %>
                                     <img src="/imagens/estr<%= i <= avaliacao.nota ? '' : 'v' %>.svg" 
                                          class="estrela-pequena" 
-                                         alt="Estrela">
+                                         alt="">
                                 <% } %>
                             </section>
-                            <output class="texto-avaliacao"><%= avaliacao.texto %></output>
+                            <span class="texto-avaliacao"><%= avaliacao.texto %></span>
                         </li>
                     <% }); %>
                 </ul>
             <% } else { %>
-                <output class="sem-avaliacoes">Ainda não há avaliações para este produto.</output>
+                <span class="sem-avaliacoes">Ainda não há avaliações para este produto.</span>
             <% } %>
 
             <article class="form-avaliacao-container" id="form-avaliacao">
@@ -177,8 +181,8 @@
                     </output>
                 <% } else if(!usuarioLogado) { %>
                     <output class="mensagem-aviso" role="alert">
-                        Você precisa estar logado para avaliar este produto.
-                        <a href="/login?redirect=/produto/<%= produto.id %>" style="color: #ffc107; text-decoration: underline;">Fazer login</a>
+                        Para avaliar, você precisa entrar na sua conta.
+                        <a href="/login?redirect=/produto/<%= produto.id %>" class="link-aviso">Entrar na minha conta</a>
                     </output>
                 <% } else if(!temProdutoNoCarrinho) { %>
                     <output class="mensagem-aviso" role="alert">
@@ -188,7 +192,7 @@
 
                 <% if(typeof erro !== 'undefined' && erro === 'carrinho') { %>
                     <output class="mensagem-erro-avaliacao" role="alert">
-                        Erro: Você precisa ter este produto no carrinho para avaliá-lo!
+                        Para avaliar, adicione este produto ao carrinho primeiro.
                     </output>
                 <% } %>
                 
@@ -198,6 +202,7 @@
                     <fieldset>
                         <legend class="label-avaliacao">Nota (0 a 5 estrelas)</legend>
                         <label for="nota">
+                            <span class="sr-only">Nota de 0 a 5 estrelas</span>
                             <select name="nota" id="nota" required <%= (isAdmin || !usuarioLogado || !temProdutoNoCarrinho) ? 'disabled' : '' %>>
                                 <option value="">Selecione</option>
                                 <option value="0">0 estrelas</option>
@@ -213,6 +218,7 @@
                     <fieldset>
                         <legend class="label-avaliacao">Seu comentário</legend>
                         <label for="texto">
+                            <span class="sr-only">Seu comentário</span>
                             <textarea name="texto" 
                                       id="texto" 
                                       placeholder="Escreva sua avaliação" 
@@ -242,7 +248,7 @@
                         <a href="/produto/<%= outroProduto.id %>" class="link-produto">
                             <img src="<%= outroProduto.imagem %>" class="img-produto-bloco" alt="<%= outroProduto.nome %>">
                             <h3 class="nome-produto-bloco"><%= outroProduto.nome %></h3>
-                            <output class="preco-produto-bloco">R$ <%= (outroProduto.precoDesconto || outroProduto.preco).toFixed(2) %></output>
+                            <span class="preco-produto-bloco">R$ <%= (outroProduto.precoDesconto || outroProduto.preco).toFixed(2) %></span>
                         </a>
                     </article>
             <% }
