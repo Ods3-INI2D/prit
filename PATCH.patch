@@ -1,0 +1,236 @@
+diff --git a/app/public/css/acessibilidade-idosos.css b/app/public/css/acessibilidade-idosos.css
+index c742545..00ec981 100644
+--- a/app/public/css/acessibilidade-idosos.css
++++ b/app/public/css/acessibilidade-idosos.css
+@@ -457,6 +457,20 @@ body.pagina-auth .signup-prompt .link {
+     font-weight: 600;
+ }
+ 
++/* "Não tem uma conta? / Já tem uma conta?": texto em cima e a ação embaixo.
++   O link é um bloco flex em coluna, para o <strong> (display:block) não ficar
++   ao lado do texto como acontecia com inline-flex em linha. */
++body.pagina-auth .signup-prompt .link {
++    display: flex;
++    flex-direction: column;
++    align-items: center;
++    justify-content: center;
++    gap: 0.25rem;
++    text-align: center;
++}
++
++body.pagina-auth .signup-prompt .link2 { margin-top: 0; }
++
+ body.pagina-auth button#btn,
+ body.pagina-auth button#btn-login {
+     min-height: 3.5rem;
+diff --git a/app/public/css/cookies.css b/app/public/css/cookies.css
+index a683084..f5dad3a 100644
+--- a/app/public/css/cookies.css
++++ b/app/public/css/cookies.css
+@@ -26,6 +26,19 @@
+     line-height: 1.45;
+ }
+ 
++/* Os formulários do banner não herdam o estilo global de "form" das páginas de
++   login/cadastro (cad.css: padding, borda e margem), que inflava o banner para
++   ~300px e cobria os links "Cadastre-se aqui" / "Entre aqui". */
++.cookies-banner .cookies-acoes,
++.cookies-preferencias {
++    margin: 0;
++    padding: 0;
++    border: 0;
++    border-radius: 0;
++    background: transparent;
++    max-width: none;
++}
++
+ .cookies-acoes {
+     display: flex;
+     gap: 0.6rem;
+diff --git a/app/public/css/mobile.css b/app/public/css/mobile.css
+index e4597d5..6d91606 100644
+--- a/app/public/css/mobile.css
++++ b/app/public/css/mobile.css
+@@ -447,11 +447,6 @@
+         min-height: 3.25rem;
+         font-size: 1.125rem;
+     }
+-
+-    .pagina-cadastro .signup-prompt a {
+-        display: inline-block;
+-        padding-block: 0.75rem;
+-    }
+ }
+ 
+ @media (max-width: 640px) and (prefers-reduced-motion: no-preference) {
+diff --git a/app/public/css/toggle-senha.css b/app/public/css/toggle-senha.css
+index f89950b..266521b 100644
+--- a/app/public/css/toggle-senha.css
++++ b/app/public/css/toggle-senha.css
+@@ -13,8 +13,13 @@
+ .btn-toggle-senha {
+     position: absolute;
+     right: 0.7rem;
+-    top: 50%;
+-    transform: translateY(-50%);
++    /* centraliza na vertical SEM transform: top/bottom = 0 estica o botão à
++       altura do campo. Com translateY(-50%) o botão "pulava" ao ser pressionado
++       (a regra global button:active sobrescrevia o transform), saía de baixo do
++       cursor e o clique nunca chegava nele. */
++    top: 0;
++    bottom: 0;
++    transform: none;
+     background: none;
+     border: none;
+     cursor: pointer;
+@@ -39,8 +44,9 @@
+     opacity: 1;
+ }
+ 
+-.btn-toggle-senha:active {
+-    transform: translateY(-50%) scale(0.95);
++/* seletor com especificidade maior que "button:active:not(:disabled)" */
++.campo-senha .btn-toggle-senha:active:not(:disabled) {
++    transform: scale(0.95);
+ }
+ 
+ /* Ícone do botão */
+diff --git a/app/public/css/usuario.css b/app/public/css/usuario.css
+index 7d8a21e..5533e8b 100644
+--- a/app/public/css/usuario.css
++++ b/app/public/css/usuario.css
+@@ -320,14 +320,6 @@ body.dark-mode .menu-usuario {
+     gap: 1rem;
+ }
+ 
+-.notif-foto-usuario {
+-    width: 50px;
+-    height: 50px;
+-    border-radius: 50%;
+-    object-fit: cover;
+-    flex-shrink: 0;
+-    border: 2px solid inherit;
+-}
+ /* responsividade para desktops */
+ @media (min-width: 901px) {
+     .titulo-perfil {
+diff --git a/app/public/js/toggle-senha.js b/app/public/js/toggle-senha.js
+new file mode 100644
+index 0000000..ff83f6e
+--- /dev/null
++++ b/app/public/js/toggle-senha.js
+@@ -0,0 +1,15 @@
++/* Alterna a visibilidade de campos de senha.
++   Uso: <button type="button" class="btn-toggle-senha" data-target="id-do-input"
++                aria-label="Mostrar senha"></button> */
++document.addEventListener('DOMContentLoaded', function () {
++    document.querySelectorAll('.btn-toggle-senha').forEach(function (btn) {
++        btn.addEventListener('click', function () {
++            const input = document.getElementById(this.getAttribute('data-target'));
++            if (!input) return;
++
++            const mostrar = input.type === 'password';
++            input.type = mostrar ? 'text' : 'password';
++            this.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
++        });
++    });
++});
+diff --git a/app/views/pages/cadastro.ejs b/app/views/pages/cadastro.ejs
+index 8a497ff..4bf9731 100644
+--- a/app/views/pages/cadastro.ejs
++++ b/app/views/pages/cadastro.ejs
+@@ -273,13 +273,12 @@
+ 
+                 <button id="btn" type="submit">Cadastrar</button>
+ 
+-                <nav class="signup-prompt">
+-                    <p>
+-                        <a href="/login" class="link">Já tem uma conta?
+-                            <strong class="link2">Entre aqui</strong>
+-                        </a>
+-                    </p>
+-                </nav>
++                <p class="signup-prompt">
++                    <a href="/login" class="link">
++                        Já tem uma conta?
++                        <strong class="link2">Entre aqui</strong>
++                    </a>
++                </p>
+             </form>
+         </section>
+     </main>
+@@ -289,24 +288,7 @@
+     </footer>
+ 
+     <script src="/js/validacao.js"></script>
+-    <script>
+-        /* toggle de visibilidade da senha */
+-        document.addEventListener('DOMContentLoaded', function () {
+-            document.querySelectorAll('.btn-toggle-senha').forEach(function (btn) {
+-                btn.addEventListener('click', function () {
+-                    const targetId = this.getAttribute('data-target');
+-                    const input    = document.getElementById(targetId);
+-                    if (input.type === 'password') {
+-                        input.type = 'text';
+-                        this.setAttribute('aria-label', 'Ocultar senha');
+-                    } else {
+-                        input.type = 'password';
+-                        this.setAttribute('aria-label', 'Mostrar senha');
+-                    }
+-                });
+-            });
+-        });
+-    </script>
++    <script src="/js/toggle-senha.js"></script>
+ 
+ </body>
+ </html>
+diff --git a/app/views/pages/login.ejs b/app/views/pages/login.ejs
+index 7ebd2a6..8a9105c 100644
+--- a/app/views/pages/login.ejs
++++ b/app/views/pages/login.ejs
+@@ -93,13 +93,12 @@
+ 
+                 <button id="btn-login" type="submit">Entrar</button>
+ 
+-                <nav class="signup-prompt">
+-                    <p>
+-                        <a href="/cadastro" class="link">Não tem uma conta?
+-                            <strong class="link2">Cadastre-se aqui</strong>
+-                        </a>
+-                    </p>
+-                </nav>
++                <p class="signup-prompt">
++                    <a href="/cadastro" class="link">
++                        Não tem uma conta?
++                        <strong class="link2">Cadastre-se aqui</strong>
++                    </a>
++                </p>
+             </form>
+         </section>
+     </main>
+@@ -107,23 +106,7 @@
+     <footer></footer>
+ 
+     <script src="/js/validacao.js"></script>
+-    <script>
+-        document.addEventListener('DOMContentLoaded', function () {
+-            document.querySelectorAll('.btn-toggle-senha').forEach(function (btn) {
+-                btn.addEventListener('click', function () {
+-                    const targetId = this.getAttribute('data-target');
+-                    const input    = document.getElementById(targetId);
+-                    if (input.type === 'password') {
+-                        input.type = 'text';
+-                        this.setAttribute('aria-label', 'Ocultar senha');
+-                    } else {
+-                        input.type = 'password';
+-                        this.setAttribute('aria-label', 'Mostrar senha');
+-                    }
+-                });
+-            });
+-        });
+-    </script>
++    <script src="/js/toggle-senha.js"></script>
+ 
+     <%- include('../partial/cookies.ejs') %>
+     
