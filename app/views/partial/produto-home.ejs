@@ -7,6 +7,8 @@
     if (temDesconto && precoAtual > 0) {
         percentual = Math.round(((precoAtual - precoComDesconto) / precoAtual) * 100);
     }
+    // [NOVO] formato brasileiro (39,90). Antes: toFixed(2) -> "39.90" (ponto), estranho para o público
+    var moeda = function (v) { return 'R$ ' + Number(v).toFixed(2).replace('.', ','); };
     var avaliacoes = produto.avaliacoes || [];
     var temAvals   = avaliacoes.length > 0;
     var notaMedia  = 0;
@@ -29,12 +31,13 @@
 
             <% if (temDesconto) { %>
                 <p class="preco-container-home">
-                    <del class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></del>
-                    <strong class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></strong>
-                    <span class="badge-desconto"><span class="percentual-home">-<%= percentual %>%</span></span>
+                    <%# [ALTERADO] rótulos só p/ leitor de tela: "riscado" não é lido; e o selo ganha o texto "de desconto" (linguagem clara) %>
+                    <del class="preco-original-home"><span class="sr-only">Preço original: </span><%= moeda(precoAtual) %></del>
+                    <strong class="preco-desconto-home"><span class="sr-only">Preço com desconto: </span><%= moeda(precoComDesconto) %></strong>
+                    <span class="badge-desconto"><span class="percentual-home"><%= percentual %>% de desconto</span></span>
                 </p>
             <% } else { %>
-                <p class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></p>
+                <p class="preco-unico-home"><span class="sr-only">Preço: </span><%= moeda(precoAtual) %></p>
             <% } %>
 
             <p class="categoria-home"><%= produto.categoria %></p>
@@ -48,8 +51,12 @@
                     <% for (var i = 1; i <= 5; i++) { %>
                         <img src="/imagens/estr<%= i <= notaMedia ? '' : 'v' %>.svg" alt="" class="estrela-home">
                     <% } %>
+                    <%# [NOVO] nota por extenso (o aria-label do <p> já a anuncia, por isso aria-hidden aqui) %>
+                    <span class="nota-texto-home" aria-hidden="true"><%= notaMedia %> de 5</span>
                 </p>
             <% } %>
+            <%# [NOVO] pista de que o cartão inteiro é um link (reconhecer em vez de adivinhar) %>
+            <span class="ver-detalhes-home" aria-hidden="true">Ver detalhes ›</span>
         </div>
     </a>
 </article>

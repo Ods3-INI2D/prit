@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>+Saúde | Farmácia online — Página inicial</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/estilo.css">
     <link rel="stylesheet" href="/css/grid.css">
@@ -17,14 +17,27 @@
     <link rel="stylesheet" href="/css/theme.css">
     <link rel="stylesheet" href="/css/notificacao.css">
     <link rel="stylesheet" href="/css/mobile.css">
+    <%# [NOVO] usabilidade/acessibilidade p/ idosos NA HOME (mobile primeiro). Tem de ser o ÚLTIMO <link>. Não altera a Maisa. %>
+    <link rel="stylesheet" href="/css/home-idosos.css">
     <script src="/js/theme.js"></script>
+    <%# [NOVO] aplica o tamanho de letra salvo antes da 1ª pintura (sem "pulo" de layout) e liga os controles %>
+    <script src="/js/home-idosos.js"></script>
 </head>
-<body>
+<body class="pagina-home">
+    <%# [NOVO] 1º elemento focável: quem usa teclado/leitor de tela pula o cabeçalho (heurística 7) %>
+    <a class="pular-conteudo" href="#conteudo-principal">Pular para o conteúdo principal</a>
+
     <header>
         <%- include('../partial/grid.ejs') %>
     </header>
 
-    <main>
+    <%# [NOVO] A / A+ / A++ : o próprio usuário controla o tamanho do texto (heurística 3 e 7). Mesmo partial das demais páginas %>
+    <%- include('../partial/ajuste-texto.ejs') %>
+
+    <main id="conteudo-principal" tabindex="-1">
+        <%# [NOVO] a home não tinha <h1>: título da página para leitores de tela (oculto visualmente) %>
+        <h1 class="sr-only">+Saúde: farmácia e cuidados de saúde para você</h1>
+
         <% if (typeof notificacao !== 'undefined' && notificacao) { %>
             <section class="secao-notificacao notif-<%= notificacao.tipo %>" role="status" aria-live="polite">
                 <h2 class="notif-titulo"><%= notificacao.titulo %></h2>
@@ -75,6 +88,11 @@
                 <button type="button" class="banners-btn banners-btn-prox" data-banners-direcao="1"
                         aria-controls="banners-trilho" aria-label="Próximos banners" hidden>▶</button>
 
+                <%# [NOVO] faixa de status do carrossel de banners. Começa hidden: o JS só a mostra se houver mais de um banner %>
+                <div class="banners-controles" data-banners-controles hidden>
+                    <p class="banners-posicao" data-banners-posicao aria-hidden="true">Destaque 1 de <%= bannersExibidos.length %></p>
+                    <button type="button" class="banners-pausa" data-banners-pausa>Pausar destaques</button>
+                </div>
             </section>
         <% } %>
 
@@ -100,7 +118,7 @@
                 return p.precoDesconto !== null && p.precoDesconto > 0;
             });
             if (comDesconto.length > 0) {
-                faixas.push({ id: 'descontos', titulo: 'Descontos', link: '/home',
+                faixas.push({ id: 'descontos', titulo: 'Descontos', link: null,   // [ALTERADO] era '/home' (link para a própria página)
                               itens: comDesconto.slice(0, LIMITE_POR_CARROSSEL) });
             }
 
@@ -121,7 +139,9 @@
         %>
 
         <% if (faixas.length > 1) { %>
-            <nav class="categorias-rapidas" aria-label="Ir para uma seção da página">
+            <nav class="categorias-rapidas" aria-labelledby="rotulo-categorias-rapidas">
+                <%# [NOVO] rótulo visível: o usuário entende para que servem os botões sem precisar adivinhar %>
+                <p class="categorias-rapidas-rotulo" id="rotulo-categorias-rapidas">Ir direto para:</p>
                 <ul class="categorias-rapidas-lista">
                     <% faixas.forEach(function(faixa) { %>
                         <li><a class="categoria-rapida" href="#titulo-<%= faixa.id %>"><%= faixa.titulo %></a></li>
@@ -139,7 +159,7 @@
 
                         <% if (faixa.link) { %>
                             <a href="<%= faixa.link %>" class="link-ver-mais">
-                                <span>Ver mais</span>
+                                <span>Ver mais<span class="sr-only"> de <%= faixa.titulo %></span></span>
                                 <img src="/imagens/setal.svg" alt="" class="seta-ver-mais">
                             </a>
                         <% } %>
@@ -147,11 +167,11 @@
                     </header>
 
                     <%# [NOVO] palco: agrupa os botões e o trilho para posicionar ◀ ▶ nas extremidades da faixa %>
-                    <section class="carrossel-produtos-palco">
+                    <div class="carrossel-produtos-palco">
                         <%# [ALTERADO] botões saíram do cabeçalho: ◀ na extremidade esquerda, ▶ na direita (ver ordem do DOM = ordem de tabulação) %>
                         <button type="button" class="carrossel-produtos-btn carrossel-produtos-btn-ant" data-direcao="-1"
                                 aria-controls="trilho-<%= faixa.id %>"
-                                aria-label="Produtos anteriores de <%= faixa.titulo %>">◀</button>
+                                aria-label="Produtos anteriores de <%= faixa.titulo %>"><span aria-hidden="true">◀</span><span class="carrossel-produtos-btn__texto">Anteriores</span></button>
 
                         <ul class="carrossel-produtos-trilho" id="trilho-<%= faixa.id %>" tabindex="0"
                             aria-labelledby="titulo-<%= faixa.id %>">
@@ -162,15 +182,19 @@
                             <% }); %>
                         </ul>
 
+                        <%# [NOVO] "Produto X de N": só visual (o leitor de tela já conta os itens da lista) %>
+                        <p class="carrossel-produtos-posicao" data-posicao aria-hidden="true">Produto 1 de <%= faixa.itens.length %></p>
+
                         <button type="button" class="carrossel-produtos-btn carrossel-produtos-btn-prox" data-direcao="1"
                                 aria-controls="trilho-<%= faixa.id %>"
-                                aria-label="Próximos produtos de <%= faixa.titulo %>">▶</button>
-                    </section>
+                                aria-label="Próximos produtos de <%= faixa.titulo %>"><span class="carrossel-produtos-btn__texto">Próximos</span><span aria-hidden="true">▶</span></button>
+                    </div>
                 </section>
             <% }); %>
         <% } else { %>
             <article class="sem-produtos">
                 <p class="mensagem-vazio">Nenhum produto disponível no momento.</p>
+                <p class="mensagem-vazio-dica">Tente novamente em alguns minutos ou use o campo de busca no topo da página.</p>
                 <% if(isAdmin) { %>
                     <a href="/admin" class="btn-admin">Gerenciar o Site</a>
                 <% } %>

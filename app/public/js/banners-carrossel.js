@@ -15,6 +15,12 @@
         var btnProx  = carrossel.querySelector('[data-banners-direcao="1"]');
         if (!trilho || !btnAnt || !btnProx) return;
 
+        // [NOVO] faixa com a posição ("Destaque 1 de N") e o botão de pausa (WCAG 2.2.2 / heurística 3)
+        var controles = carrossel.querySelector('[data-banners-controles]');
+        var posicao   = carrossel.querySelector('[data-banners-posicao]');
+        var btnPausa  = carrossel.querySelector('[data-banners-pausa]');
+        var pausadoPeloUsuario = false;   // [NOVO] a pessoa tocou em "Pausar troca automática"
+
         var reduzirMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         var temporizador = null;
         var pausadoPeloMouse   = false;   // mouse sobre o carrossel
@@ -68,6 +74,7 @@
                 && temMaisQueUmaPagina()
                 && !pausadoPeloMouse
                 && !pausadoPeloFoco
+                && !pausadoPeloUsuario
                 && !document.hidden;
         }
 
@@ -89,7 +96,42 @@
             var visivel = temMaisQueUmaPagina();
             btnAnt.hidden  = !visivel;
             btnProx.hidden = !visivel;
+            if (controles) { controles.hidden = !visivel; }
+            // sem movimento automático (preferência do sistema) não há o que pausar
+            if (btnPausa)  { btnPausa.hidden = reduzirMovimento; }
+            atualizarPosicao();
             reagendar();
+        }
+
+        // [NOVO] "Destaque 2 de 5" (ou "Destaques 1 a 2 de 5" quando cabem vários na tela)
+        function atualizarPosicao() {
+            if (!posicao) return;
+            var total    = trilho.querySelectorAll('.banner-item').length;
+            var passo    = larguraDoPasso();
+            var porVez   = bannersPorPagina();
+            var primeiro = Math.min(total, Math.round(trilho.scrollLeft / passo) + 1);
+            var ultimo   = Math.min(total, primeiro + porVez - 1);
+            posicao.textContent = porVez > 1
+                ? 'Destaques ' + primeiro + ' a ' + ultimo + ' de ' + total
+                : 'Destaque ' + primeiro + ' de ' + total;
+        }
+
+        var quadroPosicao = null;
+        trilho.addEventListener('scroll', function () {
+            if (quadroPosicao) return;
+            quadroPosicao = window.requestAnimationFrame(function () {
+                quadroPosicao = null;
+                atualizarPosicao();
+            });
+        }, { passive: true });
+
+        // [NOVO] a pessoa decide se a troca automática continua (conteúdo em movimento = controle do usuário)
+        if (btnPausa) {
+            btnPausa.addEventListener('click', function () {
+                pausadoPeloUsuario = !pausadoPeloUsuario;
+                btnPausa.textContent = pausadoPeloUsuario ? 'Retomar destaques' : 'Pausar destaques';
+                reagendar();
+            });
         }
 
         btnAnt.addEventListener('click', function () { mover(-1); reagendar(); });

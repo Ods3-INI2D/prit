@@ -1,0 +1,738 @@
+/* =============================================================================
+   HOME — USABILIDADE E ACESSIBILIDADE PARA O PÚBLICO IDOSO  (prioridade: celular)
+   -----------------------------------------------------------------------------
+   Carregado SÓ por pages/home.ejs, como o ÚLTIMO <link> do <head>.
+   Todas as regras ficam sob  body.pagina-home  e só atingem o cabeçalho, o <main>
+   e o rodapé da home.
+
+   A MAISA NÃO É ALTERADA: ela usa rem e fica dentro do <body>, por isso este
+   arquivo NÃO muda o font-size da raiz (:root) e NÃO usa seletores genéricos como
+   "body.pagina-home button". A escala de texto é uma variável própria (--esc).
+
+   Base (slides 07 e 08 — Usabilidade e 10 heurísticas de Nielsen):
+     H1 status visível ........ posição "Destaque 1 de N", "Mostrando 1 de N", ✓ no A+ ativo
+     H2 mundo real ............ "Menu / Conta / Carrinho" escritos; preço "39,90"; "de desconto"
+     H3 controle e liberdade .. pausar a troca automática; A / A+ / A++; fechar menu (Esc e X)
+     H4 consistência .......... mesmas regras da página de busca/cadastro (acessibilidade-idosos.css)
+     H5 prevenção de erros .... alvos de toque ≥ 48 px; sem rolagem lateral escondida
+     H6 reconhecer > memorizar  botões com texto (não só ícone); chips visíveis; "Ver detalhes"
+     H7 eficiência ............ link "Pular para o conteúdo principal"
+     H8 minimalismo ........... um único estilo de botão; "Ver mais" sem link redundante
+   ========================================================================== */
+
+
+/* ---------- 1. TOKENS E ESCALA DE TEXTO ---------------------------------- */
+:root {
+    --esc: 1;                               /* escala do texto (só elementos da home) */
+    --fs-base: calc(1rem * var(--esc));
+    --fs-med:  calc(1.125rem * var(--esc));
+    --fs-gde:  calc(1.375rem * var(--esc));
+    --fs-tit:  calc(1.625rem * var(--esc));
+
+    --idoso-alvo: 3rem;                     /* área de toque mínima ≈ 48 px            */
+    --idoso-foco: #ffd54f;                  /* anel de foco - tema escuro              */
+    --idoso-destaque: #8ec5ff;              /* links e preços em destaque - escuro     */
+    --idoso-texto-suave: #d6d6d6;           /* texto secundário (≥ 7:1 sobre #1a1a1a)  */
+    --idoso-botao: #0b3d91;                 /* botão de ação (texto branco ≥ 10:1)     */
+    --idoso-selo: #c62828;                  /* selo de desconto (texto branco ≥ 5:1)   */
+}
+
+[data-theme="light"] {
+    --idoso-foco: #0b3d91;
+    --idoso-destaque: #0b3d91;
+    --idoso-texto-suave: #404040;           /* antes #777 (≈ 4,5:1) → ≈ 10:1            */
+}
+
+@media (max-width: 900px) {
+    :root                       { --esc: 1.125; }   /* 18 px, respeitando o navegador */
+    :root[data-texto="grande"]  { --esc: 1.3125; }  /* escolha do usuário (A+)        */
+    :root[data-texto="enorme"]  { --esc: 1.5; }     /* escolha do usuário (A++)       */
+}
+
+
+/* ---------- 2. UTILITÁRIOS ------------------------------------------------ */
+/* texto só para leitor de tela */
+body.pagina-home .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* .sr-only é position:absolute: dentro de um cartão que está FORA da tela (trilho rolável) ele escaparia do
+   overflow do trilho e alargaria a página. Com position:relative no "pai" ele fica contido e cortado. */
+body.pagina-home .bloco-produto-home,
+body.pagina-home .link-ver-mais {
+    position: relative;
+}
+
+/* o atributo hidden precisa vencer qualquer "display" definido abaixo */
+body.pagina-home [hidden] {
+    display: none !important;
+}
+
+/* link "Pular para o conteúdo principal": só aparece com o foco do teclado/leitor */
+body.pagina-home .pular-conteudo {
+    position: absolute;
+    top: -5rem;
+    left: 0.5rem;
+    z-index: 2000;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--idoso-alvo);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background-color: #ffd54f;
+    color: #111111;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+body.pagina-home .pular-conteudo:focus {
+    top: 0.5rem;
+    outline: 0.25rem solid #111111;
+    outline-offset: 0.125rem;
+}
+
+/* <main tabindex="-1"> recebe o foco do "pular"; não precisa de contorno */
+body.pagina-home main:focus {
+    outline: none;
+}
+
+@media (max-width: 900px) {
+    body.pagina-home {
+        line-height: 1.5;                   /* reset.css deixava line-height: 1 */
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+}
+
+
+/* ---------- 3. FOCO VISÍVEL (teclado, leitor de tela, mouse) -------------- */
+body.pagina-home main a:focus-visible,
+body.pagina-home main button:focus-visible,
+body.pagina-home main ul[tabindex]:focus-visible,
+body.pagina-home .ajuste-texto button:focus-visible,
+body.pagina-home > footer a:focus-visible,
+body.pagina-home .opcoes a:focus-visible,
+body.pagina-home .opcoes button:focus-visible,
+body.pagina-home .opcoes [role="button"]:focus-visible {
+    outline: 0.25rem solid var(--idoso-foco);
+    outline-offset: 0.1875rem;
+}
+
+/* o cabeçalho é azul-escuro nos dois temas: o anel claro é o que contrasta */
+body.pagina-home .nav-principal a:focus-visible,
+body.pagina-home .nav-principal button:focus-visible,
+body.pagina-home .nav-principal input:focus-visible {
+    outline: 0.25rem solid #ffd54f;
+    outline-offset: 0.125rem;
+}
+
+
+/* ---------- 4. AJUSTE DO TAMANHO DAS LETRAS (partial ajuste-texto.ejs) ---- */
+/* só faz sentido onde a escala é aplicada (≤ 900 px) */
+body.pagina-home .ajuste-texto {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    body.pagina-home .ajuste-texto {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.25rem 0.75rem;
+        padding: 0.5rem 0.75rem;
+        background-color: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-primary);
+    }
+
+    body.pagina-home .ajuste-texto__titulo {
+        margin: 0;
+        font-size: 1rem;                   /* fixo: o título cabe na mesma linha dos botões */
+        font-weight: 700;
+    }
+
+    body.pagina-home .ajuste-texto__botoes {
+        display: flex;
+        gap: 0.5rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    body.pagina-home .ajuste-texto__botoes button {
+        min-width: var(--idoso-alvo);
+        min-height: var(--idoso-alvo);
+        padding: 0.25rem 0.625rem;
+        border: 2px solid var(--idoso-destaque);
+        border-radius: 0.5rem;
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    /* o próprio botão "mostra" o tamanho que ele aplica */
+    body.pagina-home .ajuste-texto__botoes li:nth-child(1) button { font-size: 1rem; }
+    body.pagina-home .ajuste-texto__botoes li:nth-child(2) button { font-size: 1.25rem; }
+    body.pagina-home .ajuste-texto__botoes li:nth-child(3) button { font-size: 1.5rem; }
+
+    /* ativo: cor + marca ✓ (não depende só da cor) */
+    body.pagina-home .ajuste-texto__botoes button[aria-pressed="true"] {
+        border-color: var(--idoso-botao);
+        background-color: var(--idoso-botao);
+        color: #ffffff;
+    }
+
+    body.pagina-home .ajuste-texto__botoes button[aria-pressed="true"]::before {
+        content: "✓ ";
+    }
+}
+
+
+/* ---------- 5. CABEÇALHO MOBILE (grid.ejs, só quando aparece na home) -----
+   Duas linhas:  [Menu] [logo] [Conta] [Carrinho]
+                 [ campo de busca  +  botão Buscar ]
+   Cada ícone ganha um RÓTULO escrito (reconhecer em vez de memorizar).       */
+@media (max-width: 1023px) {
+
+    body.pagina-home .nav-principal {
+        grid-template-columns: auto 1fr auto auto;
+        grid-template-areas:
+            "menu logo conta carrinho"
+            "busca busca busca busca";
+        align-items: center;
+        gap: 0.5rem 0.25rem;
+        padding: 0.5rem 0.75rem 0.75rem;
+    }
+
+    body.pagina-home .nav-principal > a {          /* único <a> filho direto: o logo */
+        grid-area: logo;
+        justify-self: start;
+        padding: 0.25rem;
+    }
+
+    body.pagina-home .nav-principal .logo { width: 5.5rem; }
+
+    body.pagina-home .busca-container { display: contents; }
+
+    body.pagina-home .busca-form {
+        grid-area: busca;
+        max-width: none;
+        gap: 0.5rem;
+    }
+
+    /* ícone com texto embaixo, área de toque ≥ 56 px */
+    body.pagina-home .hamburger,
+    body.pagina-home .link-usuario-mobile,
+    body.pagina-home .link-carrinho {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.125rem;
+        min-width: 3.5rem;
+        min-height: 3.5rem;
+        padding: 0.25rem;
+        border-radius: 0.5rem;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    body.pagina-home .hamburger           { grid-area: menu;     width: auto; height: auto; gap: 0.1875rem; }
+    body.pagina-home .link-usuario-mobile { grid-area: conta; }
+    body.pagina-home .link-carrinho       { grid-area: carrinho; }
+
+    body.pagina-home .hamburger hr {
+        width: 1.75rem;
+        height: 0.1875rem;
+        border-radius: 0.125rem;
+    }
+
+    body.pagina-home .link-usuario-mobile .user,
+    body.pagina-home .link-carrinho .cart {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+
+    /* rótulos escritos (grid.css os esconde por padrão) */
+    body.pagina-home .nav-principal .rotulo-acao,
+    body.pagina-home .link-carrinho .desktop-action-label,
+    body.pagina-home .lupa-btn .desktop-action-label {
+        display: block;
+        color: #ffffff;
+        font-size: calc(0.875rem * min(var(--esc), 1.15));   /* rótulo de ícone não cresce demais */
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    /* busca: campo grande + botão com texto "Buscar" */
+    body.pagina-home .busca-form input[type="text"] {
+        min-height: 3.25rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        color: #111111;
+        font-size: 1.125rem;
+    }
+
+    body.pagina-home .busca-form input[type="text"]::placeholder { color: #4a4a4a; }
+
+    body.pagina-home .lupa-btn {
+        flex-direction: row;
+        gap: 0.375rem;
+        min-height: 3.25rem;
+        padding: 0 0.875rem;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        border-radius: 0.5rem;
+        background-color: rgba(255, 255, 255, 0.16);
+    }
+
+    body.pagina-home .lupa-btn .desktop-action-label { font-size: 1rem; }
+    body.pagina-home .lupa { width: 1.5rem; height: 1.5rem; }
+
+
+    /* ---------- 6. MENU LATERAL (abre pelo botão "Menu") ----------------- */
+    body.pagina-home .opcoes {
+        --menu-width: 88vw;
+        --menu-max-width: 22rem;
+    }
+
+    /* "X" de fechar: o JS o transforma em botão (Enter/Espaço/Esc) — saída de emergência */
+    body.pagina-home .opcoes .plogo {
+        box-sizing: content-box;
+        top: 0.25rem;
+        right: 0.25rem;
+        width: 1.5rem;
+        padding: 0.75rem;
+    }
+
+    body.pagina-home .opcoes .user { width: 4rem; height: 4rem; }
+
+    body.pagina-home .opcoes .nome { font-size: 1.25rem; }
+
+    body.pagina-home .opcoes .conta {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--idoso-alvo);
+        padding: 0.5rem 0.75rem;
+        font-size: 1.0625rem;
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+    }
+
+    body.pagina-home .opcoes .tit {
+        padding: 0.75rem 1rem 0.5rem;
+        font-size: 1rem;
+    }
+
+    body.pagina-home .opcoes .menu-item > a,
+    body.pagina-home .opcoes .linkhp,
+    body.pagina-home .opcoes .submenu a {
+        display: flex;
+        align-items: center;
+        min-height: 3.5rem;
+        padding: 0.75rem 1rem;
+        font-size: 1.125rem;
+        line-height: 1.3;
+    }
+
+    body.pagina-home .opcoes .theme-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        width: 100%;
+        min-height: 3.5rem;
+        padding: 0.75rem 1rem;
+        font-size: 1.125rem;
+    }
+}
+
+
+/* ---------- 7. NOTIFICAÇÃO (ex.: "conta ativada") ------------------------- */
+@media (max-width: 900px) {
+    body.pagina-home main .secao-notificacao .notif-titulo {
+        font-size: var(--fs-med);
+    }
+
+    body.pagina-home main .secao-notificacao .notif-mensagem {
+        font-size: var(--fs-base);
+        line-height: 1.5;
+    }
+}
+
+
+/* ---------- 8. BANNERS: botões grandes, posição e PAUSA ------------------- */
+@media (max-width: 900px) {
+    body.pagina-home .banners-destaque .banners-btn {
+        width: var(--idoso-alvo);
+        height: var(--idoso-alvo);
+        border: 2px solid var(--idoso-destaque);
+        font-size: 1.125rem;
+    }
+
+    /* a legenda nunca fica sob os botões ◀ ▶ */
+    body.pagina-home .banner-legenda {
+        padding-inline: 4.25rem;
+        font-size: var(--fs-med);
+        line-height: 1.3;
+    }
+}
+
+
+/* controle de pausa + posição: em todas as larguras (WCAG 2.2.2: conteúdo em movimento precisa de pausa) */
+body.pagina-home .banners-controles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 0.75rem;
+    padding: 0.5rem 0.25rem 0;
+}
+
+body.pagina-home .banners-posicao {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: var(--fs-base);
+    font-weight: 600;
+}
+
+body.pagina-home .banners-pausa {
+    min-height: var(--idoso-alvo);
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--idoso-destaque);
+    border-radius: 0.5rem;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: var(--fs-base);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+
+/* ---------- 9. ATALHOS DE CATEGORIA: todos visíveis, sem rolagem escondida - */
+@media (max-width: 640px) {
+    body.pagina-home .categorias-rapidas-rotulo {
+        margin: 0 0 0.5rem;
+        padding: 0 1rem;
+        color: var(--text-primary);
+        font-size: var(--fs-base);
+        font-weight: 700;
+    }
+
+    /* antes: uma fileira que rolava de lado e cortava o 2º/3º botão */
+    body.pagina-home .categorias-rapidas-lista {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        overflow: visible;
+        padding: 0 1rem;
+    }
+
+    body.pagina-home .categoria-rapida {
+        min-height: var(--idoso-alvo);
+        padding: 0.5rem 1rem;
+        border-width: 2px;
+        border-color: var(--idoso-destaque);
+        color: var(--idoso-destaque);
+        font-size: var(--fs-base);
+        line-height: 1.25;
+        text-align: center;
+        white-space: normal;
+    }
+}
+
+
+/* ---------- 10. TÍTULOS DE SEÇÃO E "VER MAIS" ----------------------------- */
+@media (max-width: 640px) {
+    body.pagina-home .header-categoria {
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.25rem 0.75rem;
+    }
+
+    body.pagina-home .titulo-categoria {
+        font-size: var(--fs-tit);
+        line-height: 1.25;
+    }
+
+    body.pagina-home .link-ver-mais {
+        gap: 0.375rem;
+        min-height: var(--idoso-alvo);
+        padding: 0 0.25rem 0 0;
+        color: var(--idoso-destaque);
+        font-size: var(--fs-med);
+        font-weight: 700;
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+    }
+
+    body.pagina-home .link-ver-mais span { color: inherit; }
+
+    body.pagina-home .mensagem-vazio,
+    body.pagina-home .mensagem-vazio-dica {
+        font-size: var(--fs-med);
+        line-height: 1.5;
+        text-align: center;
+    }
+
+    body.pagina-home .mensagem-vazio-dica {
+        margin-top: 0.5rem;
+        color: var(--idoso-texto-suave);
+        font-size: var(--fs-base);
+    }
+}
+
+
+/* ---------- 11. CARTÃO DE PRODUTO ----------------------------------------- */
+@media (max-width: 640px) {
+    /* cartões da mesma altura: o botão "Ver detalhes" fica sempre alinhado embaixo */
+    body.pagina-home .item-carrossel { display: flex; }
+
+    body.pagina-home .bloco-produto-home {
+        flex: 1 1 auto;
+        min-width: 0;
+        border: 2px solid var(--border-color);
+    }
+
+    body.pagina-home .link-produto-home {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    body.pagina-home .info-produto-home {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+    }
+
+    /* antes: cortado em 2 linhas com "…" (a dose/quantidade costuma vir no fim do nome) */
+    body.pagina-home .nome-produto-home {
+        display: block;
+        margin: 0;
+        padding: 0.75rem 1rem 0;
+        overflow: visible;
+        -webkit-line-clamp: unset;
+        font-size: var(--fs-med);
+        font-weight: 700;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+    }
+
+    body.pagina-home .preco-container-home {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.25rem 0.5rem;
+        margin: 0;
+        padding: 0.5rem 1rem 0;
+    }
+
+    body.pagina-home .preco-unico-home {
+        margin: 0;
+        padding: 0.5rem 1rem 0;
+    }
+
+    body.pagina-home .preco-desconto-home,
+    body.pagina-home .preco-unico-home {
+        color: var(--idoso-destaque);
+        font-size: var(--fs-gde);
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    body.pagina-home .preco-original-home {
+        color: var(--idoso-texto-suave);
+        font-size: var(--fs-base);
+    }
+
+    /* selo: texto branco sobre vermelho + escrito "de desconto" */
+    body.pagina-home .badge-desconto {
+        display: inline-block;
+        padding: 0;
+        border: 0;
+        border-radius: 0.375rem;
+        background-color: var(--idoso-selo);
+    }
+
+    body.pagina-home .percentual-home {
+        display: block;
+        padding: 0.25rem 0.5rem;
+        background: none;
+        color: #ffffff;
+        font-size: var(--fs-base);
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    body.pagina-home .categoria-home {
+        margin: 0;
+        padding: 0.5rem 1rem 0;
+        color: var(--idoso-texto-suave);
+        font-size: var(--fs-base);
+        line-height: 1.35;
+    }
+
+    body.pagina-home .faixa-etaria-home {
+        margin: 0;
+        padding: 0.25rem 1rem 0;
+        color: var(--idoso-destaque);
+        font-size: var(--fs-base);
+        font-weight: 700;
+    }
+
+    body.pagina-home .estrelas-home {
+        display: flex;
+        align-items: center;
+        gap: 0.125rem;
+        margin: 0;
+        padding: 0.5rem 1rem 0;
+    }
+
+    body.pagina-home .estrela-home { width: 1.25rem; }
+
+    body.pagina-home .nota-texto-home {
+        margin-left: 0.5rem;
+        color: var(--text-primary);
+        font-size: var(--fs-base);
+        font-weight: 600;
+    }
+
+    /* "botão" que mostra que o cartão inteiro leva à página do produto */
+    body.pagina-home .ver-detalhes-home {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: var(--idoso-alvo);
+        margin: auto 1rem 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        background-color: var(--idoso-botao);
+        color: #ffffff;
+        font-size: var(--fs-base);
+        font-weight: 700;
+    }
+
+    /* respiro entre o último texto do cartão e o botão (margin:auto não cria espaço mínimo) */
+    body.pagina-home .info-produto-home > :nth-last-child(2) { margin-bottom: 0.75rem; }
+}
+
+
+/* ---------- 12. CARROSSEL DE PRODUTOS: ◀ ▶ com TEXTO, embaixo do trilho ---
+   Antes: no celular os botões eram escondidos (display:none) e só restava o
+   gesto de arrastar, que muitos idosos não descobrem. Agora ficam visíveis,
+   grandes, com "Anteriores / Próximos" e um indicador "Mostrando X de N".    */
+body.pagina-home .carrossel-produtos-btn__texto { display: none; }   /* desktop: só a seta */
+
+@media (max-width: 640px) {
+    body.pagina-home .carrossel-produtos-palco {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);   /* minmax(0,…): o trilho rolável não alarga a página */
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    body.pagina-home .carrossel-produtos-trilho {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        min-width: 0;
+    }
+
+    body.pagina-home .carrossel-produtos-btn {
+        position: static;
+        grid-row: 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: auto;
+        height: auto;
+        min-height: 3.25rem;
+        padding: 0.5rem 0.75rem;
+        border: 2px solid var(--idoso-destaque);
+        border-radius: 0.5rem;
+        background-color: var(--bg-secondary);
+        box-shadow: none;
+        color: var(--text-primary);
+        font-size: var(--fs-base);
+        font-weight: 700;
+        transform: none;
+    }
+
+    body.pagina-home .carrossel-produtos-btn:hover:not(:disabled) { transform: none; }
+
+    body.pagina-home .carrossel-produtos-btn-ant  { grid-column: 1; }
+    body.pagina-home .carrossel-produtos-btn-prox { grid-column: 2; }
+
+    /* nas pontas o botão fica apagado, mas continua no lugar (layout estável) */
+    body.pagina-home .carrossel-produtos-btn:disabled {
+        opacity: 0.45;
+        pointer-events: none;
+    }
+
+    body.pagina-home .carrossel-produtos-btn__texto { display: inline; }
+
+    body.pagina-home .carrossel-produtos-posicao {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        margin: 0;
+        color: var(--text-primary);
+        font-size: var(--fs-base);
+        font-weight: 600;
+        text-align: center;
+    }
+}
+
+/* indicador só no celular (nos demais tamanhos há os botões circulares do desktop) */
+@media (min-width: 641px) {
+    body.pagina-home .carrossel-produtos-posicao { display: none; }
+}
+
+
+/* ---------- 13. RODAPÉ ---------------------------------------------------- */
+@media (max-width: 900px) {
+    /* espaço no fim: os botões flutuantes (Maisa à direita, Libras à esquerda) não cobrem o link */
+    body.pagina-home > footer {
+        padding-bottom: 5rem;
+    }
+
+    body.pagina-home > footer .footer-item {
+        color: var(--text-footer);
+        font-size: var(--fs-gde);
+    }
+
+    /* "Envie sua reclamação ou dúvida": de texto minúsculo para link grande e sublinhado */
+    body.pagina-home > footer .footer-text-secondary {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--idoso-alvo);
+        color: var(--text-footer);
+        font-size: var(--fs-med);
+        font-weight: 600;
+        line-height: 1.35;
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+    }
+}
+
+
+/* ---------- 14. MOVIMENTO REDUZIDO ---------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    body.pagina-home main *,
+    body.pagina-home .opcoes,
+    body.pagina-home .hamburger hr {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    body.pagina-home .banner-link:hover .banner-figura { transform: none; }
+}
