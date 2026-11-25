@@ -24,7 +24,7 @@ function validarCadastro(form) {
     const inputTel            = form.querySelector('#tel');
     const inputEmail          = form.querySelector('#email');
     const inputSenha          = form.querySelector('#senhan');
-    const inputConfirmarSenha = form.querySelector('#senha');
+    const inputConfirmarSenha = form.querySelector('#csenha');
 
     /* masscara CPF: exibe 000.000.000-00 */
     if (inputCPF) {
@@ -224,7 +224,11 @@ function mostrarErro(input, mensagem) {
         out.className = 'error-message';
         out.setAttribute('role', 'alert');
         out.setAttribute('aria-live', 'polite');
-        input.parentNode.insertBefore(out, input.nextSibling);
+        /* se o campo está dentro de um wrapper (ex.: .campo-senha, que é flex e
+           tem o botão de mostrar senha), a mensagem vai DEPOIS do wrapper; senão
+           ela viraria item flex ao lado do input e o espremeria. */
+        const ref = input.closest('.campo-senha') || input;
+        ref.parentNode.insertBefore(out, ref.nextSibling);
     }
     out.textContent   = mensagem;
     out.style.display = 'block';
