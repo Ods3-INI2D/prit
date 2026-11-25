@@ -532,20 +532,7 @@ body.pagina-auth .opcao-radio {
 /* painel de edição não pode cortar o conteúdo quando as letras crescem */
 .form-edicao-campo.expandido { max-height: 44rem; }
 
-.form-edicao-campo input[type="tel"],
-.form-edicao-campo input[type="text"],
-.form-edicao-campo input[type="date"],
-.form-edicao-campo input[type="file"] { font-size: 1.125rem; }
-
-.form-edicao-campo input[type="file"]::file-selector-button {
-    min-height: var(--alvo-minimo);
-    margin-right: 0.75rem;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    font-weight: 700;
-    border-radius: 0.5rem;
-    cursor: pointer;
-}
+.form-edicao-campo input[type="tel"] { font-size: 1.125rem; }
 
 .btn-salvar-campo,
 .btn-cancelar-campo {

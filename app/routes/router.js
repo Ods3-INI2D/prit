@@ -49,23 +49,6 @@ const { consultarMaisa, gerarSugestoesPersonalizadas } = require('../services/ma
 const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
 
-// Multer upload de foto de perfil 
-const uploadFoto = multer({
-    storage: multer.memoryStorage(),
-    limits: { fileSize: 5 * 1024 * 1024 },
-    fileFilter: (req, file, cb) => {
-        const ext  = path.extname(file.originalname).toLowerCase();
-        const mime = file.mimetype;
-        const extsPermitidas  = ['.svg', '.png', '.jpg', '.jpeg', '.webp'];
-        const mimesPermitidos = ['image/svg+xml', 'image/svg', 'image/png', 'image/jpeg', 'image/webp'];
-        if (extsPermitidas.includes(ext) && mimesPermitidos.includes(mime)) {
-            cb(null, true);
-        } else {
-            cb(new Error('Apenas imagens SVG, PNG, JPG ou WEBP são permitidas!'));
-        }
-    }
-});
-
 // sessao
 router.use(sessaoComConsentimento);
 router.use(rotasCookies);
@@ -627,65 +610,26 @@ router.get('/usuario', async (req, res) => {
     });
 });
 
+// Único dado editável pelo usuário no perfil: telefone
 router.post('/usuario/atualizar-campo', requireLogin,
-    body('campo').isIn(['nome', 'nasc', 'cpf', 'ddd', 'tel']).withMessage('Campo inválido!'),
-    body('valor').notEmpty().withMessage('Preencha o campo antes de salvar.'),
+    body('campo').equals('tel').withMessage('Só é possível alterar o telefone.'),
+    body('valor').trim().notEmpty().withMessage('Preencha o campo antes de salvar.'),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.redirect('/usuario?erro=' + encodeURIComponent(errors.array()[0].msg));
         }
 
-        const { campo, valor } = req.body;
+        const { valor } = req.body;
 
-        if (campo === 'nome' && (valor.length < 3 || valor.length > 50))
-            return res.redirect('/usuario?erro=' + encodeURIComponent('O nome precisa ter de 3 a 50 letras. Exemplo: Maria da Silva.'));
-        if (campo === 'cpf'  && !valCPF(valor))
-            return res.redirect('/usuario?erro=' + encodeURIComponent('Esse CPF não parece certo. Confira os números e tente de novo.'));
-        if (campo === 'nasc' && !valNasc(valor))
-            return res.redirect('/usuario?erro=' + encodeURIComponent('Essa data não parece certa. Confira o dia, o mês e o ano.'));
-        if (campo === 'ddd'  && !valDDD(valor))
-            return res.redirect('/usuario?erro=' + encodeURIComponent('Esse DDD não existe. Confira e tente de novo.'));
-        if (campo === 'tel'  && !valTel(valor))
+        if (!valTel(valor))
             return res.redirect('/usuario?erro=' + encodeURIComponent('Esse telefone não parece certo. Confira os números.'));
 
-        await usuariosModel.updateCampo(req.session.usuarioEmail, campo, valor);
-        const labels = { nome: 'Nome', nasc: 'Data de nascimento', cpf: 'CPF', ddd: 'DDD', tel: 'Telefone', sexo: 'Sexo' };
-        res.redirect('/usuario?sucesso=' + encodeURIComponent(labels[campo] + ' atualizado com sucesso!'));
+        await usuariosModel.updateCampo(req.session.usuarioEmail, 'tel', valor);
+        res.redirect('/usuario?sucesso=' + encodeURIComponent('Telefone atualizado com sucesso!'));
     }
 );
 
-// ── Atualizar Foto de Perfil 
-router.post('/usuario/atualizar-foto', requireLogin, (req, res) => {
-    uploadFoto.single('foto')(req, res, async (err) => {
-        if (err) {
-            return res.redirect('/usuario?erro=' + encodeURIComponent('Não conseguimos enviar a foto. Tente outra imagem ou tente de novo em instantes.'));
-        }
-        try {
-            if (!req.file) {
-                return res.redirect('/usuario?erro=' + encodeURIComponent('Escolha uma foto antes de enviar.'));
-            }
-
-            let fotoUrl = null;
-            if (req.file) {
-                fotoUrl = await uploadBufferToCloudinary(req.file.buffer, 'mais-saude/perfil');
-            }
-
-            // Adiciona 'foto_perfil' à lista de campos permitidos
-            await usuariosModel.updateCampo(req.session.usuarioEmail, 'foto_perfil', fotoUrl);
-            
-            req.session.notificacao = {
-                titulo: "Foto Atualizada!",
-                mensagem: "Sua foto de perfil foi atualizada com sucesso!",
-                tipo: "success"
-            };
-            res.redirect('/usuario');
-        } catch (err) {
-            console.error('Erro ao atualizar foto:', err);
-            res.redirect('/usuario?erro=' + encodeURIComponent('Não conseguimos salvar a foto. Tente de novo em instantes.'));
-        }
-    });
-});
 // ── Meus Pedidos 
 router.get('/meus-pedidos', requireLogin, blockAdmin, async (req, res) => {
     try {

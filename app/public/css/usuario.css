@@ -69,6 +69,10 @@ body.dark-mode .info-usuario {
     border-bottom: none;
 }
 
+.campo-info-somente-leitura {
+    padding: 1rem 0;
+}
+
 .campo-header {
     display: flex;
     justify-content: space-between;
@@ -150,10 +154,7 @@ body.dark-mode .info-usuario {
     display: block;
 }
 
-.form-edicao-campo input[type="tel"],
-.form-edicao-campo input[type="text"],
-.form-edicao-campo input[type="date"],
-.form-edicao-campo input[type="file"] {
+.form-edicao-campo input[type="tel"] {
     width: 100%;
     padding: 0.875rem 1rem;
     margin-bottom: 0.5rem;
@@ -166,10 +167,7 @@ body.dark-mode .info-usuario {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.form-edicao-campo input[type="tel"]:focus,
-.form-edicao-campo input[type="text"]:focus,
-.form-edicao-campo input[type="date"]:focus,
-.form-edicao-campo input[type="file"]:focus {
+.form-edicao-campo input[type="tel"]:focus {
     border-color: #4da6ff;
     outline: none;
     box-shadow: 0 0 0.5rem rgba(77, 166, 255, 0.4);
@@ -358,10 +356,7 @@ body.dark-mode .menu-usuario {
         font-size: 0.9375rem;
     }
 
-    .form-edicao-campo input[type="tel"],
-    .form-edicao-campo input[type="text"],
-    .form-edicao-campo input[type="date"],
-    .form-edicao-campo input[type="file"] {
+    .form-edicao-campo input[type="tel"] {
         padding: 0.875rem 1rem;
         font-size: 0.9375rem;
     }
