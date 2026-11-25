@@ -97,7 +97,7 @@ function validarLogin(form) {
     if (inputEmail) inputEmail.addEventListener('blur', () => validarEmail(inputEmail));
     if (inputSenha) inputSenha.addEventListener('blur', function () {
         if (!inputSenha.value || inputSenha.value.length < 6) {
-            mostrarErro(inputSenha, 'Senha deve ter no mínimo 6 caracteres!');
+            mostrarErro(inputSenha, 'Digite a sua senha. Ela tem pelo menos 6 caracteres.');
         } else {
             mostrarSucesso(inputSenha);
         }
@@ -108,7 +108,7 @@ function validarLogin(form) {
         let valido = true;
         if (inputEmail && !validarEmail(inputEmail)) valido = false;
         if (inputSenha && (!inputSenha.value || inputSenha.value.length < 6)) {
-            mostrarErro(inputSenha, 'Senha deve ter no mínimo 6 caracteres!');
+            mostrarErro(inputSenha, 'Digite a sua senha. Ela tem pelo menos 6 caracteres.');
             valido = false;
         }
         if (!valido) e.preventDefault();
@@ -119,29 +119,29 @@ function validarLogin(form) {
 
 function validarNome(input) {
     const v = input.value.trim();
-    if (!v)                               { mostrarErro(input, 'Nome é obrigatório!'); return false; }
-    if (!/^[a-zA-ZÀ-ÿ\s]{3,50}$/.test(v)) { mostrarErro(input, 'Nome deve conter apenas letras e ter de 3 a 50 caracteres!'); return false; }
+    if (!v)                               { mostrarErro(input, 'Escreva o seu nome completo.'); return false; }
+    if (!/^[a-zA-ZÀ-ÿ\s]{3,50}$/.test(v)) { mostrarErro(input, 'Use só letras no nome, de 3 a 50 caracteres. Exemplo: Maria da Silva.'); return false; }
     mostrarSucesso(input); return true;
 }
 
 function validarDataNasc(input) {
     const v = input.value;
-    if (!v) { mostrarErro(input, 'Data de nascimento é obrigatória!'); return false; }
+    if (!v) { mostrarErro(input, 'Escolha a sua data de nascimento.'); return false; }
     const dataNasc = new Date(v);
     const hoje = new Date();
     const limite = new Date();
     limite.setFullYear(hoje.getFullYear() - 110);
     if (isNaN(dataNasc.getTime()) || dataNasc > hoje || dataNasc < limite) {
-        mostrarErro(input, 'Data de nascimento inválida!'); return false;
+        mostrarErro(input, 'Essa data não parece certa. Confira o dia, o mês e o ano.'); return false;
     }
     mostrarSucesso(input); return true;
 }
 
 function validarCPF(input) {
     const cpf = input.value.replace(/\D/g, ''); /* remove pontos e hífen da máscara */
-    if (!cpf)            { mostrarErro(input, 'CPF é obrigatório!'); return false; }
-    if (cpf.length !== 11) { mostrarErro(input, 'CPF deve ter 11 dígitos!'); return false; }
-    if (!isValidCPF(cpf))  { mostrarErro(input, 'CPF inválido!'); return false; }
+    if (!cpf)            { mostrarErro(input, 'Digite o seu CPF (11 números).'); return false; }
+    if (cpf.length !== 11) { mostrarErro(input, 'O CPF precisa ter 11 números. Confira e tente de novo.'); return false; }
+    if (!isValidCPF(cpf))  { mostrarErro(input, 'Esse CPF não parece certo. Confira os números e tente de novo.'); return false; }
     mostrarSucesso(input); return true;
 }
 
@@ -159,39 +159,39 @@ function validarDDD(input) {
         '81','82','83','84','85','86','87','88','89',
         '91','92','93','94','95','96','97','98','99'
     ];
-    if (!v || v.length !== 2)      { mostrarErro(input, 'DDD deve ter 2 dígitos!'); return false; }
-    if (!dddsValidos.includes(v))  { mostrarErro(input, 'DDD inválido!'); return false; }
+    if (!v || v.length !== 2)      { mostrarErro(input, 'Digite o DDD com 2 números. Exemplo: 11.'); return false; }
+    if (!dddsValidos.includes(v))  { mostrarErro(input, 'Esse DDD não existe. Confira e tente de novo.'); return false; }
     mostrarSucesso(input); return true;
 }
 
 function validarTelefone(input) {
     const v = input.value.replace(/\D/g, ''); /* remove o hífen da máscara */
-    if (!v)              { mostrarErro(input, 'Telefone é obrigatório!'); return false; }
-    if (v.length !== 9)  { mostrarErro(input, 'Telefone deve ter 9 dígitos!'); return false; }
-    if (/^(\d)\1{8}$/.test(v)) { mostrarErro(input, 'Telefone inválido!'); return false; }
+    if (!v)              { mostrarErro(input, 'Digite o seu telefone.'); return false; }
+    if (v.length !== 9)  { mostrarErro(input, 'O telefone precisa ter 9 números, sem o DDD. Exemplo: 99999-9999.'); return false; }
+    if (/^(\d)\1{8}$/.test(v)) { mostrarErro(input, 'Esse telefone não parece certo. Confira os números.'); return false; }
     mostrarSucesso(input); return true;
 }
 
 function validarEmail(input) {
     const v = input.value.trim();
-    if (!v)                                     { mostrarErro(input, 'E-mail é obrigatório!'); return false; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { mostrarErro(input, 'E-mail inválido!'); return false; }
+    if (!v)                                     { mostrarErro(input, 'Digite o seu e-mail.'); return false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { mostrarErro(input, 'Esse e-mail não parece certo. Exemplo: nome@email.com.'); return false; }
     mostrarSucesso(input); return true;
 }
 
 function validarSenha(input) {
     const v = input.value;
-    if (!v)                          { mostrarErro(input, 'Senha é obrigatória!'); return false; }
-    if (v.length < 6 || v.length > 20) { mostrarErro(input, 'Senha deve ter de 6 a 20 caracteres!'); return false; }
+    if (!v)                          { mostrarErro(input, 'Digite a sua senha.'); return false; }
+    if (v.length < 6 || v.length > 20) { mostrarErro(input, 'A senha precisa ter de 6 a 20 caracteres.'); return false; }
     if (!/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,20}$/.test(v)) {
-        mostrarErro(input, 'Senha deve incluir letra maiúscula, número e símbolo (!@#$%^&*)!'); return false;
+        mostrarErro(input, 'Falta algo na senha: use uma letra maiúscula, um número e um símbolo (! @ # $ % ^ & *).'); return false;
     }
     mostrarSucesso(input); return true;
 }
 
 function validarConfirmaSenha(inputSenha, inputConfirmar) {
-    if (!inputConfirmar.value)                    { mostrarErro(inputConfirmar, 'Confirmação de senha é obrigatória!'); return false; }
-    if (inputSenha.value !== inputConfirmar.value) { mostrarErro(inputConfirmar, 'As senhas não conferem!'); return false; }
+    if (!inputConfirmar.value)                    { mostrarErro(inputConfirmar, 'Digite a senha de novo para confirmar.'); return false; }
+    if (inputSenha.value !== inputConfirmar.value) { mostrarErro(inputConfirmar, 'As duas senhas estão diferentes. Digite a mesma senha nos dois campos.'); return false; }
     mostrarSucesso(inputConfirmar); return true;
 }
 

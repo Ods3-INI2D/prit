@@ -14,11 +14,15 @@
     <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="/css/acessibilidade-idosos.css">
+    <script src="/js/acessibilidade-idosos.js"></script>
 </head>
 <body>
     <header>
         <%- include('../partial/grid.ejs') %>
     </header>
+
+    <%- include('../partial/ajuste-texto.ejs') %>
 
     <main>
         <section class="perfil-container">
@@ -70,9 +74,9 @@
                                 data-campo="foto">
                             <section class="campo-info-principal">
                                 <h3 class="label-info">Foto de Perfil</h3>
-                                <output class="valor-info">Clique para alterar</output>
+                                <span class="valor-info">Escolher outra foto</span>
                             </section>
-                            <output class="seta-expansao" aria-hidden="true">›</output>
+                            <span class="seta-expansao" aria-hidden="true">›</span>
                         </header>
                         <form method="POST" 
                               action="/usuario/atualizar-foto" 
@@ -108,9 +112,9 @@
                                 data-campo="nasc">
                             <section class="campo-info-principal">
                                 <h3 class="label-info">Data de Nascimento</h3>
-                                <output class="valor-info" id="valor-nasc"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></output>
+                                <span class="valor-info" id="valor-nasc"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></span>
                             </section>
-                            <output class="seta-expansao" aria-hidden="true">›</output>
+                            <span class="seta-expansao" aria-hidden="true">›</span>
                         </header>
                         <form method="POST" 
                               action="/usuario/atualizar-campo" 
@@ -145,9 +149,9 @@
                                 data-campo="cpf">
                             <section class="campo-info-principal">
                                 <h3 class="label-info">CPF</h3>
-                                <output class="valor-info" id="valor-cpf"><%= usuario.cpf %></output>
+                                <span class="valor-info" id="valor-cpf"><%= usuario.cpf %></span>
                             </section>
-                            <output class="seta-expansao" aria-hidden="true">›</output>
+                            <span class="seta-expansao" aria-hidden="true">›</span>
                         </header>
                         <form method="POST" 
                               action="/usuario/atualizar-campo" 
@@ -184,9 +188,9 @@
                                 data-campo="ddd">
                             <section class="campo-info-principal">
                                 <h3 class="label-info">DDD</h3>
-                                <output class="valor-info" id="valor-ddd"><%= usuario.ddd || 'Não cadastrado' %></output>
+                                <span class="valor-info" id="valor-ddd"><%= usuario.ddd || 'Não cadastrado' %></span>
                             </section>
-                            <output class="seta-expansao" aria-hidden="true">›</output>
+                            <span class="seta-expansao" aria-hidden="true">›</span>
                         </header>
                         <form method="POST" 
                               action="/usuario/atualizar-campo" 
@@ -223,9 +227,9 @@
                                 data-campo="tel">
                             <section class="campo-info-principal">
                                 <h3 class="label-info">Telefone</h3>
-                                <output class="valor-info" id="valor-tel"><%= usuario.tel || 'Não cadastrado' %></output>
+                                <span class="valor-info" id="valor-tel"><%= usuario.tel || 'Não cadastrado' %></span>
                             </section>
-                            <output class="seta-expansao" aria-hidden="true">›</output>
+                            <span class="seta-expansao" aria-hidden="true">›</span>
                         </header>
                         <form method="POST" 
                               action="/usuario/atualizar-campo" 
@@ -256,17 +260,17 @@
                     <article class="campo-info">
                         <section class="campo-info-principal" style="padding: 1rem 0;">
                             <h3 class="label-info">Sexo</h3>
-                            <output class="valor-info"><%=
+                            <span class="valor-info"><%=
                                 ({ masculino: 'Masculino', feminino: 'Feminino', 'prefiro-nao-dizer': 'Prefiro Não Dizer' })[usuario.sexo]
                                 || 'Não informado'
-                            %></output>
+                            %></span>
                         </section>
                     </article>
 
                     <article class="campo-info">
                         <section class="campo-info-principal" style="padding: 1rem 0;">
                             <h3 class="label-info">E-mail</h3>
-                            <output class="valor-info"><%= usuario.email %></output>
+                            <span class="valor-info"><%= usuario.email %></span>
                         </section>
                     </article>
                 </article>
@@ -281,7 +285,7 @@
 
             <% } else { %>
                 <article class="sem-usuario">
-                    <output class="mensagem-login">Você precisa estar logado para ver esta página.</output>
+                    <p class="mensagem-login">Você precisa entrar na sua conta para ver esta página.</p>
                     <a href="/login" class="btn-login">Fazer Login</a>
                 </article>
             <% } %>

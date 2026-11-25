@@ -1,0 +1,802 @@
+/* =============================================================================
+   ACESSIBILIDADE E USABILIDADE PARA PÚBLICO IDOSO  (prioridade: celulares)
+   -----------------------------------------------------------------------------
+   ATENÇÃO: este arquivo NÃO deve ser carregado em home.ejs nem em admin*.ejs.
+   Deve ser o ÚLTIMO <link> do <head>, para vencer as folhas anteriores.
+
+   Fundamentos (slides 07 e 08): facilidade de aprendizado, eficiência, memorização,
+   poucos erros e satisfação; heurísticas de Nielsen 1-10.
+   ========================================================================== */
+
+
+/* ---------- 1. TOKENS ---------------------------------------------------- */
+:root {
+    --alvo-minimo: 3rem;                 /* área de toque mínima (≈ 48 px)   */
+    --foco-anel: #ffd54f;                /* anel de foco - tema escuro        */
+    --texto-leitura: 1.0625rem;
+    --espaco-toque: 0.75rem;
+    --text-muted: #c4c4c4;               /* contraste ≥ 7:1 sobre o escuro    */
+}
+
+[data-theme="light"] {
+    --foco-anel: #0b3d91;                /* contraste ≥ 7:1 sobre o claro     */
+    --text-muted: #565656;               /* antes #777 (4,2:1) → agora 7:1    */
+    --text-tertiary: #444444;
+    --warning-text: #7a4300;             /* antes #ea8600 (2,9:1)             */
+    --error-text: #b3150f;
+}
+
+
+/* ---------- 2. LEITURA: tamanho e espaçamento ---------------------------- */
+body {
+    line-height: 1.6;                    /* reset.css deixava line-height: 1  */
+    font-size: var(--texto-leitura);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+@media (max-width: 900px) {
+    :root { font-size: 112.5%; }         /* 18 px, respeitando o navegador    */
+}
+
+/* ajuste escolhido pelo próprio usuário (partial ajuste-texto.ejs) */
+:root[data-texto="grande"] { font-size: 125%; }
+:root[data-texto="enorme"] { font-size: 137.5%; }
+
+h1 { line-height: 1.25; }
+h2, h3 { line-height: 1.3; }
+
+p, li, dd, label, legend, td, th {
+    overflow-wrap: anywhere;             /* nunca estoura a tela              */
+}
+
+img, svg, video { max-width: 100%; height: auto; }
+
+
+/* ---------- 3. LINKS: sempre reconhecíveis (não só pela cor) ------------- */
+main a:not([class]),
+.link,
+.link2,
+.footer-text-secondary {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 0.09em;
+}
+
+
+/* ---------- 4. FOCO VISÍVEL (teclado, leitor de tela, mouse) ------------- */
+body :is(a, button, summary, [tabindex]):focus-visible,
+body :is(input, select, textarea):focus,
+body :is(input, select, textarea):focus-visible {
+    outline: 0.1875rem solid var(--foco-anel);
+    outline-offset: 0.1875rem;
+}
+
+.nav-principal :is(a, button, input):focus-visible,
+.nav-principal input:focus {
+    outline-color: #ffeb3b;              /* amarelo sobre o azul do cabeçalho */
+}
+
+
+/* ---------- 5. BOTÕES E ALVOS DE TOQUE ----------------------------------- */
+button,
+input[type="submit"],
+input[type="button"],
+a[class*="btn"],
+a[class*="botao"] {
+    min-height: var(--alvo-minimo);
+    min-width: var(--alvo-minimo);
+    font-size: 1.0625rem;
+    cursor: pointer;
+    touch-action: manipulation;          /* sem atraso nem zoom duplo toque   */
+}
+
+button:disabled,
+input:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+button:active:not(:disabled) {
+    transform: translateY(1px);          /* retorno imediato ao toque         */
+}
+
+button[data-enviando="true"] {
+    cursor: progress;
+    opacity: 0.85;
+}
+
+
+/* ---------- 6. FORMULÁRIOS ------------------------------------------------ */
+label, legend {
+    font-size: 1.0625rem;
+    font-weight: 600;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]),
+select,
+textarea {
+    min-height: 3.25rem;
+    font-size: 1.125rem;                 /* ≥ 16 px: iOS não dá zoom no foco  */
+    line-height: 1.4;
+    padding: 0.75rem 0.875rem;
+}
+
+textarea { min-height: 8rem; }
+
+input[type="checkbox"],
+input[type="radio"] {
+    width: 1.5rem;
+    height: 1.5rem;
+    accent-color: var(--accent-primary);
+}
+
+::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+}
+
+/* mensagens de erro: tamanho legível + ícone (não depende só da cor) */
+.erro,
+.error-message,
+.mensagem-erro {
+    font-size: 1rem;
+    line-height: 1.45;
+    font-weight: 600;
+    color: var(--error-text);
+}
+
+.erro:not(:empty)::before,
+.error-message:not(:empty)::before {
+    content: "⚠ ";
+}
+
+
+/* ---------- 7. CABEÇALHO MOBILE (grid.ejs) -------------------------------
+   Duas linhas:  [Menu] [logo] [Conta] [Carrinho]
+                 [ campo de busca + botão Buscar ]
+   Cada ícone ganha um RÓTULO escrito (reconhecer em vez de memorizar).    */
+@media (max-width: 1023px) {
+
+    :root { --menu-max-width: 22rem; --menu-width: 88vw; }
+
+    .nav-principal {
+        grid-template-columns: auto 1fr auto auto;
+        grid-template-areas:
+            "menu logo conta carrinho"
+            "busca busca busca busca";
+        gap: 0.5rem 0.25rem;
+        padding: 0.5rem 0.75rem 0.75rem;
+        align-items: center;
+    }
+
+    .nav-principal > a:has(> .logo) { grid-area: logo; justify-self: start; padding: 0.25rem; }
+    .logo { width: 5.5rem; }
+
+    .busca-container { display: contents; }
+    .busca-form      { grid-area: busca; max-width: none; gap: 0.5rem; }
+
+    /* ícones com texto embaixo */
+    .hamburger,
+    .link-usuario-mobile,
+    .link-carrinho {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.125rem;
+        min-width: 3.5rem;
+        min-height: 3.5rem;
+        padding: 0.25rem;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 0.5rem;
+    }
+
+    .hamburger          { grid-area: menu;     width: auto; height: auto; gap: 0.1875rem; }
+    .link-usuario-mobile{ grid-area: conta; }
+    .link-carrinho      { grid-area: carrinho; }
+
+    .hamburger hr { width: 1.75rem; height: 0.1875rem; border-radius: 0.125rem; }
+    .hamburger[aria-expanded="true"] hr { width: 1.75rem; }
+
+    .user, .cart { width: 1.75rem; height: 1.75rem; }
+
+    .rotulo-acao,
+    .link-carrinho .desktop-action-label,
+    .lupa-btn .desktop-action-label {
+        display: block;
+        font-size: 0.8125rem;
+        font-weight: 700;
+        line-height: 1.1;
+        color: #ffffff;
+    }
+
+    /* busca: campo grande + botão com texto */
+    .busca-form input[type="text"] {
+        min-height: 3.25rem;
+        font-size: 1.125rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        color: #111111;
+    }
+    .busca-form input[type="text"]::placeholder { color: #4a4a4a; }
+
+    .lupa-btn {
+        flex-direction: row;
+        gap: 0.375rem;
+        min-height: 3.25rem;
+        padding: 0 0.875rem;
+        border-radius: 0.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        background-color: rgba(255, 255, 255, 0.16);
+    }
+    .lupa-btn .desktop-action-label { font-size: 1rem; }
+    .lupa { width: 1.5rem; height: 1.5rem; }
+
+
+    /* ---------- 8. MENU LATERAL (menu.ejs / grid.ejs) -------------------- */
+    .opcoes .plogo {
+        width: 1.5rem;                   /* botão de fechar (ver .js)         */
+        padding: 0.75rem;
+        box-sizing: content-box;
+        top: 0.25rem;
+        right: 0.25rem;
+    }
+
+    .opcoes .user { width: 4rem; height: 4rem; }
+
+    .nome  { font-size: 1.25rem; }
+
+    .conta {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--alvo-minimo);
+        padding: 0.5rem 0.75rem;
+        font-size: 1.0625rem;
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+    }
+
+    .tit { font-size: 1rem; padding: 0.75rem 1rem 0.5rem; }
+
+    .menu-item > a,
+    .linkhp,
+    .submenu a {
+        display: flex;
+        align-items: center;
+        min-height: 3.5rem;
+        padding: 0.75rem 1rem;
+        font-size: 1.125rem;
+        line-height: 1.3;
+    }
+
+    .opcoes .theme-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        min-height: 3.5rem;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1.125rem;
+    }
+}
+
+
+/* ---------- 9. AJUSTE DO TAMANHO DAS LETRAS (partial ajuste-texto.ejs) --- */
+.ajuste-texto {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.ajuste-texto__titulo {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.ajuste-texto__botoes {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+}
+
+.ajuste-texto__botoes button {
+    min-width: 3.5rem;
+    min-height: var(--alvo-minimo);
+    padding: 0.25rem 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    background-color: var(--bg-tertiary);
+    border: 2px solid var(--border-focus);
+    border-radius: 0.5rem;
+}
+
+.ajuste-texto__botoes button[aria-pressed="true"] {
+    background-color: var(--btn-primary-bg);
+    color: #ffffff;
+    border-color: var(--btn-primary-bg);
+}
+
+.ajuste-texto__botoes button[aria-pressed="true"]::before { content: "✓ "; }
+
+
+/* ---------- 10. COOKIES / WIDGETS FLUTUANTES ------------------------------ */
+.cookies-banner {
+    left: 0.5rem;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+.cookies-titulo { font-size: 1.25rem; }
+.cookies-texto  { font-size: 1.0625rem; line-height: 1.5; }
+.cookies-acoes  { gap: 0.75rem; }
+.cookies-btn    { flex: 1 1 8rem; min-height: var(--alvo-minimo); font-size: 1.0625rem; }
+
+@media (max-width: 900px) {
+    /* o botão fixo de preferências ficava em cima do VLibras: volta ao fluxo */
+    .cookies-preferencias {
+        position: static;
+        display: flex;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+    }
+    .cookies-link {
+        min-height: var(--alvo-minimo);
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        text-decoration: underline;
+    }
+
+    /* reserva espaço para VLibras (esq.) e Maisa (dir.) não cobrirem o rodapé */
+    body > footer { padding-bottom: 5.5rem; }
+}
+
+
+/* ---------- 11. MOVIMENTO REDUZIDO --------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+
+/* =============================================================================
+   12. TELAS DE AUTENTICAÇÃO  (login, cadastro, recuperar/redefinir senha,
+       reclamação)  -  body.pagina-auth
+   ========================================================================== */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.rotulo-campo {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.campo { display: block; }
+
+.icon-link { display: block; border-radius: 0.5rem; }
+
+output.dica-campo,
+.rec-dica {
+    display: block;
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--text-muted);
+}
+
+/* o ícone ⚠ não vale para dicas (só para erros) */
+.error-message.dica-campo::before { content: none; }
+
+/* senha: botão "Mostrar/Ocultar" com TEXTO visível e contraste alto */
+.btn-toggle-senha {
+    width: auto;
+    height: auto;
+    min-width: var(--alvo-minimo);
+    min-height: var(--alvo-minimo);
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    right: 0.25rem;
+    opacity: 1;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    border-radius: 0.5rem;
+}
+.btn-toggle-senha::after { content: "Mostrar"; }
+.btn-toggle-senha[aria-label*="Ocultar"]::after { content: "Ocultar"; }
+.campo-senha input { padding-right: 7rem; }
+
+body.pagina-auth .login-recuperar { margin: 0 0 0.5rem; text-align: left; }
+body.pagina-auth .login-recuperar .link,
+body.pagina-auth .rec-acoes .link,
+body.pagina-auth .signup-prompt .link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--alvo-minimo);
+    padding: 0.5rem 0;
+    font-size: 1.0625rem;
+    font-weight: 600;
+}
+
+body.pagina-auth button#btn,
+body.pagina-auth button#btn-login {
+    min-height: 3.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+body.pagina-auth .erro-login,
+body.pagina-auth .secao-notificacao {
+    padding: 1rem;
+}
+body.pagina-auth .mensagem-erro,
+body.pagina-auth .notif-mensagem,
+body.pagina-auth .ativacao-detalhe { font-size: 1.0625rem; line-height: 1.5; }
+body.pagina-auth .notif-titulo { font-size: 1.25rem; }
+
+/* grupo de rádios (sexo): alvo de toque grande */
+body.pagina-auth .opcao-radio {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: var(--alvo-minimo);
+    padding: 0.5rem 0;
+    font-size: 1.0625rem;
+    font-weight: 500;
+}
+
+@media (max-width: 900px) {
+    body.pagina-auth > header {
+        min-height: 6.5rem;              /* formulário aparece sem rolar tanto */
+        padding: 1rem;
+    }
+    body.pagina-auth img.icon { width: 55%; max-width: 12rem; }
+    body.pagina-auth main { padding: 1.25rem 0.75rem 2rem; }
+    body.pagina-auth form { padding: 1.25rem 1rem; margin: 1rem auto; }
+    body.pagina-auth h1.tit { font-size: 2rem; }
+    body.pagina-auth section.txt,
+    body.pagina-auth section.login-module { max-width: 30rem; }
+}
+
+
+/* =============================================================================
+   13. MINHA CONTA  (/usuario)
+   ========================================================================== */
+.titulo-perfil { font-size: 1.75rem; line-height: 1.25; }
+.subtitulo     { font-size: 1.25rem; }
+
+.label-info,
+.form-edicao-campo .label-form {
+    font-size: 1rem;
+    color: var(--text-muted);            /* antes #888 fixo (ruim no claro)   */
+}
+.valor-info { font-size: 1.125rem; overflow-wrap: anywhere; }
+
+/* linha clicável: alvo grande + dica escrita do que ela faz */
+.campo-header {
+    min-height: 4rem;
+    gap: 0.75rem;
+}
+.campo-header .seta-expansao {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 1rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.campo-header .seta-expansao::before { content: "Alterar"; }
+.campo-header[aria-expanded="true"] .seta-expansao { transform: none; }
+.campo-header[aria-expanded="true"] .seta-expansao::before { content: "Fechar"; }
+
+/* painel de edição não pode cortar o conteúdo quando as letras crescem */
+.form-edicao-campo.expandido { max-height: 44rem; }
+
+.form-edicao-campo input[type="tel"],
+.form-edicao-campo input[type="text"],
+.form-edicao-campo input[type="date"],
+.form-edicao-campo input[type="file"] { font-size: 1.125rem; }
+
+.form-edicao-campo input[type="file"]::file-selector-button {
+    min-height: var(--alvo-minimo);
+    margin-right: 0.75rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.btn-salvar-campo,
+.btn-cancelar-campo {
+    min-height: 3.25rem;
+    font-size: 1.0625rem;
+}
+
+.opcao-menu {
+    min-height: 3.5rem;
+    font-size: 1.125rem;
+    display: flex;
+    align-items: center;
+}
+
+.btn-login {
+    display: inline-flex;
+    align-items: center;
+    min-height: 3.5rem;
+    font-size: 1.125rem;
+}
+.mensagem-login { font-size: 1.25rem; color: var(--text-secondary); }
+
+/* sucesso / erro: ícone + texto, não só cor */
+.mensagem-sucesso,
+.mensagem-erro { font-size: 1.0625rem; line-height: 1.5; }
+.mensagem-sucesso::before { content: "✔ "; }
+.mensagem-erro::before    { content: "⚠ "; }
+
+@media (max-width: 480px) {
+    .acoes-campo { flex-direction: column; }
+    .info-usuario { padding: 1rem 0.875rem; }
+}
+
+
+/* =============================================================================
+   14. PRODUTO, CATEGORIA E BUSCA
+   ========================================================================== */
+:root[data-theme="light"] { --accent-primary: #0b57d0; --accent-hover: #0842a0; }
+
+.voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: var(--alvo-minimo);
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+.seta-voltar { width: 1.25rem; }
+
+.titulo-categoria { font-size: 1.75rem; line-height: 1.25; }
+.resultado-contagem { text-align: center; margin-bottom: 1rem; font-size: 1.0625rem; color: var(--text-secondary); }
+.mensagem-vazio { font-size: 1.1875rem; line-height: 1.5; }
+.dica-busca { font-size: 1.0625rem; line-height: 1.5; margin: 0.5rem 0 1rem; color: var(--text-secondary); }
+
+.btn-voltar-home {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+/* cartões de produto: letras que dá para ler */
+.nome-produto-home      { font-size: 1.0625rem; line-height: 1.35; font-weight: 700; }
+.preco-unico-home,
+.preco-desconto-home    { font-size: 1.375rem; font-weight: 800; }
+.preco-original-home    { font-size: 1rem; }
+.categoria-home,
+.faixa-etaria-home      { font-size: 1rem; }
+.percentual-home        { font-size: 0.9375rem; font-weight: 700; }
+.badge-desconto         { display: inline-block; }
+.estrela-home           { width: 1.25rem; height: 1.25rem; }
+.link-produto-home      { display: block; }
+
+@media (max-width: 480px) {
+    .produtos-container { grid-template-columns: 1fr; gap: 1rem; }
+}
+
+/* página do produto */
+.nome-produto    { font-size: 1.5rem; line-height: 1.3; }
+.categoria-produto,
+.faixa-etaria-produto { font-size: 1.0625rem; }
+.preco-produto,
+.preco-desconto  { font-size: 1.75rem; }
+.preco-original  { font-size: 1.1875rem; }
+.percentual-desconto { font-size: 1rem; }
+
+.mensagem-aviso,
+.mensagem-erro-avaliacao,
+.mensagem-fora-estoque,
+.mensagem-admin-bloqueio { font-size: 1.0625rem; line-height: 1.5; }
+.link-aviso {
+    color: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+.btn-comprar {
+    min-height: 3.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.titulo-secao   { font-size: 1.3125rem; }
+.descricao-frete,
+.texto-descricao,
+.texto-avaliacao,
+.frete-linha,
+.frete-observacao { font-size: 1.0625rem; line-height: 1.6; }
+.frete-status   { font-size: 1.0625rem; font-weight: 600; }
+.frete-observacao { color: var(--text-secondary); }
+.nome-descricao { font-size: 1.1875rem; }
+
+.form-frete { gap: 0.75rem; align-items: stretch; }
+.form-frete label { flex-direction: column; flex: 1; }
+.btn-calcular { min-height: 3.25rem; font-size: 1.0625rem; font-weight: 700; }
+@media (max-width: 480px) {
+    .form-frete { flex-direction: column; }
+    .btn-calcular { width: 100%; }
+}
+
+.estrela          { width: 1.75rem; }
+.estrela-pequena  { width: 1.375rem; }
+.valor-media      { font-size: 1.5rem; }
+.ver-mais {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--alvo-minimo);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+.btn-enviar-avaliacao { min-height: 3.25rem; font-size: 1.0625rem; font-weight: 700; }
+.label-avaliacao { font-size: 1.0625rem; font-weight: 600; }
+.form-avaliacao-desabilitado { opacity: 0.7; }
+
+/* Outros produtos */
+.titulo-outros { font-size: 1.375rem; }
+.nome-produto-bloco { font-size: 1.0625rem; line-height: 1.35; }
+.preco-produto-bloco { font-size: 1.125rem; font-weight: 700; }
+
+
+/* =============================================================================
+   15. CARRINHO E CHECKOUT
+   ========================================================================== */
+.aviso-sucesso {
+    display: block;
+    position: sticky;
+    top: 0.5rem;
+    z-index: 20;
+    margin: 0 0 1rem;
+    padding: 1rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    color: var(--success-text);
+    background-color: var(--bg-secondary);
+    border: 2px solid var(--success-border);
+    border-radius: 0.625rem;
+    animation: aviso-some 0s linear 8s forwards;   /* some sozinho após 8 s */
+}
+.aviso-sucesso::before { content: "✔ "; }
+@keyframes aviso-some { to { opacity: 0; visibility: hidden; height: 0; padding: 0; margin: 0; border-width: 0; } }
+
+.aviso-resumo { display: block; margin-bottom: 1rem; text-align: center; font-size: 1.0625rem; line-height: 1.45; }
+
+.titulo-carrinho,
+.titulo-checkout { font-size: 1.75rem; line-height: 1.25; }
+
+.item-carrinho { scroll-margin-top: 4rem; }
+.item-carrinho .nome-produto { font-size: 1.1875rem; }
+.subtotal-item { font-size: 1.125rem; font-weight: 700; }
+
+.btn-quantidade {
+    min-width: 3.25rem;
+    min-height: 3.25rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border-radius: 0.5rem;
+}
+.quantidade-atual { min-width: 2.5rem; text-align: center; font-size: 1.25rem; font-weight: 700; }
+
+.btn-remover,
+.btn-avaliar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0.5rem 1rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+}
+.btn-remover { text-decoration: underline; text-underline-offset: 0.2em; }
+
+.btn-finalizar,
+.btn-continuar,
+.btn-finalizar-pedido {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.titulo-resumo,
+.resumo-titulo,
+.secao-titulo { font-size: 1.3125rem; }
+.linhas-resumo,
+.resumo-linha,
+.total-resumo { font-size: 1.125rem; }
+.total-resumo,
+.resumo-total { font-size: 1.375rem; font-weight: 800; }
+
+/* checkout */
+.checkout-steps .step-label { font-size: 0.9375rem; font-weight: 600; }
+.step-numero { font-size: 1.125rem; font-weight: 700; }
+
+.label-checkout { font-size: 1.0625rem; font-weight: 600; }
+.obrigatorio { font-size: 0.9375rem; font-weight: 700; color: var(--error-text); margin-left: 0.25rem; }
+.opcional    { font-size: 0.9375rem; font-weight: 500; color: var(--text-muted); margin-left: 0.25rem; }
+.info-campo,
+.info-seguranca { font-size: 1rem; line-height: 1.5; color: var(--text-secondary); }
+
+.input-checkout,
+.select-checkout { min-height: 3.25rem; font-size: 1.125rem; }
+
+/* forma de pagamento: cada opção é um botão grande e inteiro tocável */
+.opcao-pagamento {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    min-height: 4rem;
+    padding: 1rem;
+    cursor: pointer;
+}
+.opcao-pagamento input[type="radio"] { flex: 0 0 auto; margin-top: 0.125rem; }
+.pagamento-info { display: block; }
+.pagamento-nome { display: block; font-size: 1.1875rem; font-weight: 700; }
+.pagamento-descricao { display: block; font-size: 1rem; line-height: 1.45; color: var(--text-secondary); }
+.opcao-pagamento:has(input:checked) { outline: 3px solid var(--border-focus); outline-offset: -3px; }
+
+.valor-desconto { color: var(--accent-primary); font-weight: 700; }
+
+.resumo-item-nome { font-size: 1.0625rem; font-weight: 600; }
+.resumo-item-qtd  { font-size: 1rem; }
+.resumo-item-preco{ font-size: 1.0625rem; font-weight: 700; }
+
+#erro-checkout {
+    margin: 0 0 1rem;
+    padding: 1rem;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    border: 2px solid var(--error-border);
+    border-radius: 0.625rem;
+    background-color: var(--error-bg);
+}
+#erro-checkout[hidden] { display: none; }

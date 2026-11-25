@@ -18,11 +18,15 @@
     <link rel="stylesheet" href="/css/recuperar-senha.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="/css/acessibilidade-idosos.css">
+    <script src="/js/acessibilidade-idosos.js"></script>
 </head>
-<body>
+<body class="pagina-auth">
     <header>
-        <img class="icon" src="/imagens/logo-branco.svg" alt="Logo +Saúde">
+        <a href="/home" class="icon-link" aria-label="+Saúde: voltar para a página inicial"><img class="icon" src="/imagens/logo-branco.svg" alt="Logo +Saúde"></a>
     </header>
+
+    <%- include('../partial/ajuste-texto.ejs') %>
 
     <main>
         <section class="txt" aria-labelledby="resetar-titulo">
@@ -41,8 +45,8 @@
                 <input type="hidden" name="token" value="<%= token %>">
 
                 <fieldset>
-                    <legend><h2>Nova senha</h2></legend>
-                    <label for="senhan" class="campo-senha">
+                    <label for="senhan" class="rotulo-campo">Nova senha</label>
+                    <div class="campo-senha">
                         <input
                             type="password"
                             id="senhan"
@@ -54,7 +58,7 @@
                             <% if (erros.senhan) { %>aria-invalid="true"<% } %>
                             required>
                         <button type="button" class="btn-toggle-senha" aria-label="Mostrar senha" data-target="senhan"></button>
-                    </label>
+                    </div>
                     <output id="senhan-dica" class="rec-dica">
                         De 6 a 20 caracteres, com letra maiúscula, número e caractere especial (!@#$%^&amp;*).
                     </output>
@@ -62,8 +66,8 @@
                 </fieldset>
 
                 <fieldset>
-                    <legend><h2>Confirmar nova senha</h2></legend>
-                    <label for="csenha" class="campo-senha">
+                    <label for="csenha" class="rotulo-campo">Confirmar nova senha</label>
+                    <div class="campo-senha">
                         <input
                             type="password"
                             id="csenha"
@@ -75,7 +79,7 @@
                             <% if (erros.csenha) { %>aria-invalid="true"<% } %>
                             required>
                         <button type="button" class="btn-toggle-senha" aria-label="Mostrar senha" data-target="csenha"></button>
-                    </label>
+                    </div>
                     <output class="error-message" id="csenha-error" role="alert" aria-live="polite"<% if (erros.csenha) { %> style="display:block"<% } %>><%= erros.csenha || '' %></output>
                 </fieldset>
 

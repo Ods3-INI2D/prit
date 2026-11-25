@@ -6,6 +6,7 @@
         <hr class="linha1">
         <hr class="linha2">
         <hr class="linha3">
+        <span class="rotulo-acao">Menu</span>
     </button>
 
     <a href="/home"><img src="/imagens/logo-branco.svg" alt="logo" class="logo"></a>
@@ -27,7 +28,7 @@
             </button>
         </form>
 
-        <a class="link-usuario-mobile" href="<%= isAdmin ? '/admin' : (usuario ? '/usuario' : '/login') %>" aria-label="Minha conta"><img src="/imagens/user-branco.svg" alt="user" class="user"></a>
+        <a class="link-usuario-mobile" href="<%= isAdmin ? '/admin' : (usuario ? '/usuario' : '/login') %>" aria-label="Minha conta"><img src="/imagens/user-branco.svg" alt="user" class="user"><span class="rotulo-acao">Conta</span></a>
 
         <% if(!isAdmin) { %>
             <a href="/carrinho" class="link-carrinho" aria-label="Ir para o carrinho">

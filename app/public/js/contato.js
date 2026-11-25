@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const formReclamacao = document.querySelector('form[action="/reclamacao"]');
 
-    if (formReclamacao) configurarContato(formReclamacao, 'nome', 'Nome é obrigatório!');
+    if (formReclamacao) configurarContato(formReclamacao, 'nome', 'Escreva o seu nome completo.');
 });
 
 function validarMensagem(textarea) {

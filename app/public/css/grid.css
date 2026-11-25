@@ -222,3 +222,7 @@ body {
         height: 1.45rem;
     }
 }
+/* rótulos escritos dos ícones: ocultos por padrão (só aparecem nas páginas que carregam acessibilidade-idosos.css) */
+.rotulo-acao {
+    display: none;
+}

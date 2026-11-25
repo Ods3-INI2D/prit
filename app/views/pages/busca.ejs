@@ -12,17 +12,21 @@
     <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="/css/acessibilidade-idosos.css">
+    <script src="/js/acessibilidade-idosos.js"></script>
 </head>
 <body>
     <header>
         <%- include('../partial/grid.ejs') %>
     </header>
 
+    <%- include('../partial/ajuste-texto.ejs') %>
+
     <main>
         <nav class="navegacao" aria-label="Navegação de retorno">
             <a href="/home" class="voltar">
-                <img src="/imagens/setae.svg" alt="Voltar" class="seta-voltar">
-                <output>Voltar</output>
+                <img src="/imagens/setae.svg" alt="" class="seta-voltar">
+                <span>Voltar</span>
             </a>
         </nav>
 
@@ -33,13 +37,14 @@
 
             <% if (produtos.length === 0) { %>
                 <article class="categoria-vazia">
-                    <output class="mensagem-vazio">Nenhum produto encontrado para "<%= termo %>".</output>
-                    <a href="/home" class="btn-voltar-home">Voltar para Home</a>
+                    <p class="mensagem-vazio">Não encontramos nenhum produto para "<%= termo %>".</p>
+                    <p class="dica-busca">Confira se escreveu certinho ou tente uma palavra mais simples, como o nome do remédio ou da categoria.</p>
+                    <a href="/home" class="btn-voltar-home">Voltar para o início</a>
                 </article>
             <% } else { %>
-                <output style="display:block;text-align:center;color:#888;margin-bottom:1rem;">
+                <p class="resultado-contagem" role="status">
                     <%= produtos.length %> produto<%= produtos.length !== 1 ? 's' : '' %> encontrado<%= produtos.length !== 1 ? 's' : '' %>
-                </output>
+                </p>
                 <section class="produtos-container">
                     <% produtos.forEach(function(produto) {
                         var precoAtual = produto.preco || 0;
@@ -58,17 +63,17 @@
 
                                 <% if (temDesconto) { %>
                                     <section class="preco-container-home">
-                                        <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></output>
-                                        <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></output>
-                                        <aside class="badge-desconto">
-                                            <output class="percentual-home">-<%= percentualDesconto %>%</output>
+                                        <span class="sr-only">Preço original: </span><span class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></span>
+                                        <span class="sr-only">Preço com desconto: </span><span class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></span>
+                                        <span class="badge-desconto">
+                                            <span class="percentual-home">-<%= percentualDesconto %>%</span>
                                         </aside>
                                     </section>
                                 <% } else { %>
-                                    <output class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                    <span class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></span>
                                 <% } %>
 
-                                <output class="categoria-home"><%= produto.categoria || '' %></output>
+                                <span class="categoria-home"><%= produto.categoria || '' %></span>
                             </a>
                         </article>
                     <% }); %>

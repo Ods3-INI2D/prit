@@ -13,17 +13,21 @@
     <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="/css/acessibilidade-idosos.css">
+    <script src="/js/acessibilidade-idosos.js"></script>
 </head>
 <body>
     <header>
         <%- include('../partial/grid.ejs') %>
     </header>
 
+    <%- include('../partial/ajuste-texto.ejs') %>
+
     <main>
         <nav class="navegacao">
             <a href="/home" class="voltar">
-                <img src="/imagens/setae.svg" alt="Voltar" class="seta-voltar">
-                <output>Voltar</output>
+                <img src="/imagens/setae.svg" alt="" class="seta-voltar">
+                <span>Voltar</span>
             </a>
         </nav>
 
@@ -32,8 +36,8 @@
 
             <% if(produtos.length === 0) { %>
                 <article class="categoria-vazia">
-                    <output class="mensagem-vazio">Nenhum produto encontrado nesta categoria.</output>
-                    <a href="/home" class="btn-voltar-home">Voltar para Home</a>
+                    <p class="mensagem-vazio">Ainda não há produtos nesta categoria.</p>
+                    <a href="/home" class="btn-voltar-home">Voltar para o início</a>
                 </article>
             <% } else { %>
                 <section class="produtos-container">
@@ -67,24 +71,24 @@
 
                                 <% if(temDesconto) { %>
                                     <section class="preco-container-home">
-                                        <output class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></output>
-                                        <output class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></output>
-                                        <aside class="badge-desconto">
-                                            <output class="percentual-home">-<%= percentualDesconto %>%</output>
+                                        <span class="sr-only">Preço original: </span><span class="preco-original-home">R$ <%= precoAtual.toFixed(2) %></span>
+                                        <span class="sr-only">Preço com desconto: </span><span class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></span>
+                                        <span class="badge-desconto">
+                                            <span class="percentual-home">-<%= percentualDesconto %>%</span>
                                         </aside>
                                     </section>
                                 <% } else { %>
-                                    <output class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></output>
+                                    <span class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></span>
                                 <% } %>
 
-                                <output class="categoria-home"><%= produto.categoria %></output>
+                                <span class="categoria-home"><%= produto.categoria %></span>
                                 <% if (produto.faixa_etaria) { %>
-                                    <output class="faixa-etaria-home"><%= produto.faixa_etaria %></output>
+                                    <span class="faixa-etaria-home"><%= produto.faixa_etaria %></span>
                                 <% } %>
                                 <% if(temAvaliacoes) { %>
-                                    <section class="estrelas-home">
+                                    <section class="estrelas-home" role="img" aria-label="Nota <%= notaArredondada %> de 5 estrelas">
                                         <% for(var i = 1; i <= 5; i++) { %>
-                                            <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.svg" alt="Estrela" class="estrela-home">
+                                            <img src="/imagens/estr<%= i <= notaArredondada ? '' : 'v' %>.svg" alt="" class="estrela-home">
                                         <% } %>
                                     </section>
                                 <% } %>
