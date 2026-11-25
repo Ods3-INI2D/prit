@@ -447,11 +447,6 @@
         min-height: 3.25rem;
         font-size: 1.125rem;
     }
-
-    .pagina-cadastro .signup-prompt a {
-        display: inline-block;
-        padding-block: 0.75rem;
-    }
 }
 
 @media (max-width: 640px) and (prefers-reduced-motion: no-preference) {

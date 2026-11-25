@@ -273,13 +273,12 @@
 
                 <button id="btn" type="submit">Cadastrar</button>
 
-                <nav class="signup-prompt">
-                    <p>
-                        <a href="/login" class="link">Já tem uma conta?
-                            <strong class="link2">Entre aqui</strong>
-                        </a>
-                    </p>
-                </nav>
+                <p class="signup-prompt">
+                    <a href="/login" class="link">
+                        Já tem uma conta?
+                        <strong class="link2">Entre aqui</strong>
+                    </a>
+                </p>
             </form>
         </section>
     </main>
@@ -289,24 +288,7 @@
     </footer>
 
     <script src="/js/validacao.js"></script>
-    <script>
-        /* toggle de visibilidade da senha */
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.btn-toggle-senha').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    const targetId = this.getAttribute('data-target');
-                    const input    = document.getElementById(targetId);
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        this.setAttribute('aria-label', 'Ocultar senha');
-                    } else {
-                        input.type = 'password';
-                        this.setAttribute('aria-label', 'Mostrar senha');
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="/js/toggle-senha.js"></script>
 
 </body>
 </html>

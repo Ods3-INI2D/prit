@@ -93,13 +93,12 @@
 
                 <button id="btn-login" type="submit">Entrar</button>
 
-                <nav class="signup-prompt">
-                    <p>
-                        <a href="/cadastro" class="link">Não tem uma conta?
-                            <strong class="link2">Cadastre-se aqui</strong>
-                        </a>
-                    </p>
-                </nav>
+                <p class="signup-prompt">
+                    <a href="/cadastro" class="link">
+                        Não tem uma conta?
+                        <strong class="link2">Cadastre-se aqui</strong>
+                    </a>
+                </p>
             </form>
         </section>
     </main>
@@ -107,23 +106,7 @@
     <footer></footer>
 
     <script src="/js/validacao.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.btn-toggle-senha').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    const targetId = this.getAttribute('data-target');
-                    const input    = document.getElementById(targetId);
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        this.setAttribute('aria-label', 'Ocultar senha');
-                    } else {
-                        input.type = 'password';
-                        this.setAttribute('aria-label', 'Mostrar senha');
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="/js/toggle-senha.js"></script>
 
     <%- include('../partial/cookies.ejs') %>
     

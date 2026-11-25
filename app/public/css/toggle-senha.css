@@ -13,8 +13,13 @@
 .btn-toggle-senha {
     position: absolute;
     right: 0.7rem;
-    top: 50%;
-    transform: translateY(-50%);
+    /* centraliza na vertical SEM transform: top/bottom = 0 estica o botão à
+       altura do campo. Com translateY(-50%) o botão "pulava" ao ser pressionado
+       (a regra global button:active sobrescrevia o transform), saía de baixo do
+       cursor e o clique nunca chegava nele. */
+    top: 0;
+    bottom: 0;
+    transform: none;
     background: none;
     border: none;
     cursor: pointer;
@@ -39,8 +44,9 @@
     opacity: 1;
 }
 
-.btn-toggle-senha:active {
-    transform: translateY(-50%) scale(0.95);
+/* seletor com especificidade maior que "button:active:not(:disabled)" */
+.campo-senha .btn-toggle-senha:active:not(:disabled) {
+    transform: scale(0.95);
 }
 
 /* Ícone do botão */

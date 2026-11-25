@@ -26,6 +26,19 @@
     line-height: 1.45;
 }
 
+/* Os formulários do banner não herdam o estilo global de "form" das páginas de
+   login/cadastro (cad.css: padding, borda e margem), que inflava o banner para
+   ~300px e cobria os links "Cadastre-se aqui" / "Entre aqui". */
+.cookies-banner .cookies-acoes,
+.cookies-preferencias {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    max-width: none;
+}
+
 .cookies-acoes {
     display: flex;
     gap: 0.6rem;
