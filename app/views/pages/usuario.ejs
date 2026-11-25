@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="/css/menu.css">
     <link rel="stylesheet" href="/css/usuario.css">
     <link rel="stylesheet" href="/css/notificacao.css">
-    <link rel="stylesheet" href="/css/foto-perfil.css">
     <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/theme.css">
     <script src="/js/theme.js"></script>
@@ -28,27 +27,6 @@
         <section class="perfil-container">
             <h1 class="titulo-perfil">Minha Conta</h1>
 
-            <% if(usuario) { %>
-                <section class="secao-foto-perfil">
-                    <header>
-                        <h2 class="titulo-foto">Foto de Perfil</h2>
-                    </header>
-                    <% if(usuario.foto_perfil) { %>
-                        <figure class="figura-foto">
-                            <img src="<%= usuario.foto_perfil %>" alt="Foto de perfil de <%= usuario.nome %>" class="foto-perfil">
-                            <figcaption class="caption-foto">Sua foto de perfil</figcaption>
-                        </figure>
-                    <% } else { %>
-                        <figure class="figura-foto">
-                            <output class="foto-perfil-placeholder" aria-label="Iniciais do seu nome">
-                                <span class="iniciais"><%= usuario.nome.charAt(0).toUpperCase() %></span>
-                            </output>
-                            <figcaption class="caption-foto">Sem foto de perfil</figcaption>
-                        </figure>
-                    <% } %>
-                </section>
-            <% } %>
-
             <% if(typeof mensagemSucesso !== 'undefined' && mensagemSucesso) { %>
                 <output class="mensagem-sucesso" role="status" aria-live="polite">
                     <%= mensagemSucesso %>
@@ -64,164 +42,32 @@
             <% if(usuario) { %>
                 <article class="info-usuario">
                     <h2 class="subtitulo">Informações Pessoais</h2>
-                    
-                                        <article class="campo-info campo-info-foto">
-                        <header class="campo-header" 
-                                role="button" 
-                                tabindex="0" 
-                                aria-expanded="false"
-                                aria-controls="editar-foto"
-                                data-campo="foto">
-                            <section class="campo-info-principal">
-                                <h3 class="label-info">Foto de Perfil</h3>
-                                <span class="valor-info">Escolher outra foto</span>
-                            </section>
-                            <span class="seta-expansao" aria-hidden="true">›</span>
-                        </header>
-                        <form method="POST" 
-                              action="/usuario/atualizar-foto" 
-                              enctype="multipart/form-data"
-                              class="form-edicao-campo" 
-                              id="editar-foto"
-                              aria-hidden="true">
-                            <fieldset>
-                                <legend>Alterar Foto de Perfil</legend>
-                                <label for="input-foto" class="label-form">
-                                    Escolher Imagem (SVG, PNG, JPG, WEBP - máx. 5MB)
-                                    <input type="file" 
-                                           id="input-foto" 
-                                           name="foto" 
-                                           accept="image/svg+xml,image/png,image/jpeg,image/webp"
-                                           required>
-                                </label>
-                            </fieldset>
-                            <nav class="acoes-campo">
-                                <button type="submit" class="btn-salvar-campo">Enviar Foto</button>
-                                <button type="button" class="btn-cancelar-campo" data-campo="foto">Cancelar</button>
-                            </nav>
-                        </form>
+
+                    <article class="campo-info campo-info-somente-leitura">
+                        <section class="campo-info-principal">
+                            <h3 class="label-info">Data de Nascimento</h3>
+                            <span class="valor-info"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></span>
+                        </section>
                     </article>
 
+                    <article class="campo-info campo-info-somente-leitura">
+                        <section class="campo-info-principal">
+                            <h3 class="label-info">CPF</h3>
+                            <span class="valor-info"><%= usuario.cpf %></span>
+                        </section>
+                    </article>
 
-                    <article class="campo-info">
-                        <header class="campo-header" 
-                                role="button" 
-                                tabindex="0" 
-                                aria-expanded="false"
-                                aria-controls="editar-nasc"
-                                data-campo="nasc">
-                            <section class="campo-info-principal">
-                                <h3 class="label-info">Data de Nascimento</h3>
-                                <span class="valor-info" id="valor-nasc"><%= new Date(usuario.nasc).toLocaleDateString('pt-BR') %></span>
-                            </section>
-                            <span class="seta-expansao" aria-hidden="true">›</span>
-                        </header>
-                        <form method="POST" 
-                              action="/usuario/atualizar-campo" 
-                              class="form-edicao-campo" 
-                              id="editar-nasc"
-                              aria-hidden="true">
-                            <input type="hidden" name="campo" value="nasc">
-                            <fieldset>
-                                <legend>Editar Data de Nascimento</legend>
-                                <label for="input-nasc" class="label-form">
-                                    Nova Data de Nascimento
-                                    <input type="date" 
-                                           id="input-nasc" 
-                                           name="valor" 
-                                           value="<%= usuario.nasc %>" 
-                                           required>
-                                </label>
-                            </fieldset>
-                            <nav class="acoes-campo">
-                                <button type="submit" class="btn-salvar-campo">Salvar</button>
-                                <button type="button" class="btn-cancelar-campo" data-campo="nasc">Cancelar</button>
-                            </nav>
-                        </form>
+                    <article class="campo-info campo-info-somente-leitura">
+                        <section class="campo-info-principal">
+                            <h3 class="label-info">DDD</h3>
+                            <span class="valor-info"><%= usuario.ddd || 'Não cadastrado' %></span>
+                        </section>
                     </article>
 
                     <article class="campo-info">
-                        <header class="campo-header" 
-                                role="button" 
-                                tabindex="0" 
-                                aria-expanded="false"
-                                aria-controls="editar-cpf"
-                                data-campo="cpf">
-                            <section class="campo-info-principal">
-                                <h3 class="label-info">CPF</h3>
-                                <span class="valor-info" id="valor-cpf"><%= usuario.cpf %></span>
-                            </section>
-                            <span class="seta-expansao" aria-hidden="true">›</span>
-                        </header>
-                        <form method="POST" 
-                              action="/usuario/atualizar-campo" 
-                              class="form-edicao-campo" 
-                              id="editar-cpf"
-                              aria-hidden="true">
-                            <input type="hidden" name="campo" value="cpf">
-                            <fieldset>
-                                <legend>Editar CPF</legend>
-                                <label for="input-cpf" class="label-form">
-                                    Novo CPF
-                                    <input type="text" 
-                                           id="input-cpf" 
-                                           name="valor" 
-                                           value="<%= usuario.cpf %>" 
-                                           placeholder="Digite seu CPF"
-                                           maxlength="11"
-                                           required>
-                                </label>
-                            </fieldset>
-                            <nav class="acoes-campo">
-                                <button type="submit" class="btn-salvar-campo">Salvar</button>
-                                <button type="button" class="btn-cancelar-campo" data-campo="cpf">Cancelar</button>
-                            </nav>
-                        </form>
-                    </article>
-
-                    <article class="campo-info">
-                        <header class="campo-header" 
-                                role="button" 
-                                tabindex="0" 
-                                aria-expanded="false"
-                                aria-controls="editar-ddd"
-                                data-campo="ddd">
-                            <section class="campo-info-principal">
-                                <h3 class="label-info">DDD</h3>
-                                <span class="valor-info" id="valor-ddd"><%= usuario.ddd || 'Não cadastrado' %></span>
-                            </section>
-                            <span class="seta-expansao" aria-hidden="true">›</span>
-                        </header>
-                        <form method="POST" 
-                              action="/usuario/atualizar-campo" 
-                              class="form-edicao-campo" 
-                              id="editar-ddd"
-                              aria-hidden="true">
-                            <input type="hidden" name="campo" value="ddd">
-                            <fieldset>
-                                <legend>Editar DDD</legend>
-                                <label for="input-ddd" class="label-form">
-                                    Novo DDD
-                                    <input type="text" 
-                                           id="input-ddd" 
-                                           name="valor" 
-                                           value="<%= usuario.ddd || '' %>" 
-                                           placeholder="Digite seu DDD"
-                                           maxlength="2"
-                                           required>
-                                </label>
-                            </fieldset>
-                            <nav class="acoes-campo">
-                                <button type="submit" class="btn-salvar-campo">Salvar</button>
-                                <button type="button" class="btn-cancelar-campo" data-campo="ddd">Cancelar</button>
-                            </nav>
-                        </form>
-                    </article>
-
-                    <article class="campo-info">
-                        <header class="campo-header" 
-                                role="button" 
-                                tabindex="0" 
+                        <header class="campo-header"
+                                role="button"
+                                tabindex="0"
                                 aria-expanded="false"
                                 aria-controls="editar-tel"
                                 data-campo="tel">
@@ -231,22 +77,26 @@
                             </section>
                             <span class="seta-expansao" aria-hidden="true">›</span>
                         </header>
-                        <form method="POST" 
-                              action="/usuario/atualizar-campo" 
-                              class="form-edicao-campo" 
+                        <form method="POST"
+                              action="/usuario/atualizar-campo"
+                              class="form-edicao-campo"
                               id="editar-tel"
                               aria-hidden="true">
                             <input type="hidden" name="campo" value="tel">
                             <fieldset>
                                 <legend>Editar Telefone</legend>
                                 <label for="input-tel" class="label-form">
-                                    Novo Telefone
-                                    <input type="tel" 
-                                           id="input-tel" 
-                                           name="valor" 
-                                           value="<%= usuario.tel || '' %>" 
+                                    Novo Telefone (9 números, sem o DDD)
+                                    <input type="tel"
+                                           id="input-tel"
+                                           name="valor"
+                                           value="<%= usuario.tel || '' %>"
                                            placeholder="Digite seu telefone"
+                                           inputmode="numeric"
+                                           autocomplete="tel-national"
+                                           minlength="9"
                                            maxlength="9"
+                                           pattern="[0-9]{9}"
                                            required>
                                 </label>
                             </fieldset>
@@ -257,8 +107,8 @@
                         </form>
                     </article>
 
-                    <article class="campo-info">
-                        <section class="campo-info-principal" style="padding: 1rem 0;">
+                    <article class="campo-info campo-info-somente-leitura">
+                        <section class="campo-info-principal">
                             <h3 class="label-info">Sexo</h3>
                             <span class="valor-info"><%=
                                 ({ masculino: 'Masculino', feminino: 'Feminino', 'prefiro-nao-dizer': 'Prefiro Não Dizer' })[usuario.sexo]
@@ -267,8 +117,8 @@
                         </section>
                     </article>
 
-                    <article class="campo-info">
-                        <section class="campo-info-principal" style="padding: 1rem 0;">
+                    <article class="campo-info campo-info-somente-leitura">
+                        <section class="campo-info-principal">
                             <h3 class="label-info">E-mail</h3>
                             <span class="valor-info"><%= usuario.email %></span>
                         </section>
@@ -336,7 +186,7 @@
                     formulario.classList.add('expandido');
                     formulario.setAttribute('aria-hidden', 'false');
                     
-                    const input = formulario.querySelector('input[type="text"], input[type="tel"], input[type="date"]');
+                    const input = formulario.querySelector('input[type="tel"]');
                     if (input) {
                         setTimeout(function() {
                             input.focus();

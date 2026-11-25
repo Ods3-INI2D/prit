@@ -55,7 +55,7 @@
     }
 
     .carrossel-produtos {
-        margin-top: 1.5rem;
+        margin-top: 2rem;         /* [ALTERADO] era 1.5rem: mais respiro entre as faixas de produtos */
     }
 
     main .secao-notificacao {
@@ -112,7 +112,7 @@
 
     .header-categoria {
         gap: 0.5rem;
-        margin-bottom: 0.75rem;
+        margin-bottom: 1rem;      /* [ALTERADO] era 0.75rem */
         padding: 0;
     }
 
@@ -134,7 +134,7 @@
     }
 
     .carrossel-produtos-trilho {
-        grid-auto-columns: 76%;
+        grid-auto-columns: 58%;   /* [ALTERADO] era 76%: cartões menores (≈ 1,7 visíveis), como nas farmácias online */
         gap: 0.75rem;
         margin-inline: -1rem;
         padding: 0.25rem 1rem 0.75rem;

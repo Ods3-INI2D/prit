@@ -280,7 +280,6 @@ async function garantirUsuarioDemo() {
         email: 'cliente@maisaude.com.br',
         senhan: senhaHash,
         sexo: 'feminino',
-        foto_perfil: null,
         ativo: 1,
         ativado_em: new Date('2026-01-01T09:00:00Z'),
         criado_em: new Date('2026-01-01T09:00:00Z')

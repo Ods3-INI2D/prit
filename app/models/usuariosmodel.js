@@ -101,7 +101,6 @@ const usuariosModel = {
                 email: dados.email,
                 senhan: senhaHasheada,
                 sexo: dados.sexo || null,
-                foto_perfil: null,
                 ativo: emailConfigurado ? 0 : 1,
                 ativado_em: emailConfigurado ? null : new Date(),
                 criado_em: new Date()
@@ -224,7 +223,7 @@ const usuariosModel = {
     },
 
     updateCampo: async (email, campo, valor) => {
-        const camposPermitidos = ['nome', 'nasc', 'cpf', 'ddd', 'tel', 'sexo', 'foto_perfil'];
+        const camposPermitidos = ['tel'];
         if (!camposPermitidos.includes(campo)) return null;
         if (pool.isMock) {
             const u = mockStore.usuarios.find(user => user.email.toLowerCase() === String(email || '').toLowerCase());

@@ -351,6 +351,30 @@
     }
 }
 
+/* [NOVO] CELULAR/TABLET (≤ 1023 px): o botão do menu fica no lado DIREITO do cabeçalho, então a gaveta também
+   abre pela direita. Fechada, fica com visibility:hidden (links fora da tela não recebem foco do teclado). */
+@media (max-width: 1023px) {
+    .opcoes {
+        left: auto;
+        right: 0;
+        transform: translateX(100%);
+        visibility: hidden;
+        transition: transform 0.3s ease-out, visibility 0s linear 0.3s;
+    }
+
+    .opcoes.is-open {
+        transform: translateX(0);
+        visibility: visible;
+        transition-delay: 0s;
+    }
+
+    /* faixa escurecida (só existe de 901 a 1023 px): passa para o lado esquerdo, oposto ao da gaveta */
+    .opcoes.is-open::before {
+        left: 0;
+        right: min(var(--menu-width), var(--menu-max-width));
+    }
+}
+
 @media (min-width: 1024px) {
     .hamburger,
     .opcoes {
