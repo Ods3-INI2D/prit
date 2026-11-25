@@ -1254,6 +1254,34 @@ router.get('/categoria/:slug', async (req, res) => {
     res.render('pages/categoria', { categoria: nomeExibicao, slug, produtos: produtosNorm });
 });
 
+// ── Descontos (todos os produtos com preço promocional) ───
+// [NOVO] destino do "Ver mais" da faixa "Descontos" da home. Mesmo critério da home:
+// precoDesconto definido e maior que zero. Reaproveita a view de categoria.
+router.get('/descontos', async (req, res) => {
+    const produtos = await produtosModel.findAll();
+
+    const comDesconto = (Array.isArray(produtos) ? produtos : [])
+        .map(p => ({
+            ...p,
+            id:            p.id_produto,
+            preco:         parseFloat(p.preco) || 0,
+            precoDesconto: p.preco_desconto ? parseFloat(p.preco_desconto) : null
+        }))
+        .filter(p => p.precoDesconto !== null && p.precoDesconto > 0);
+
+    let usuarioCompleto = null;
+    if (req.session.usuarioEmail && !req.session.isAdmin) {
+        usuarioCompleto = await usuariosModel.findByEmail(req.session.usuarioEmail);
+    }
+
+    res.render('pages/categoria', {
+        categoria:     'Descontos',
+        slug:          'descontos',
+        produtos:      ordenarPorRelevancia(comDesconto, usuarioCompleto),
+        mensagemVazia: 'No momento não há produtos com desconto.'
+    });
+});
+
 // ── Busca ─────────────────────────────────────────────────
 router.get('/busca', async (req, res) => {
     const termo = (req.query.q || '').trim();

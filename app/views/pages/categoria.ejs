@@ -36,7 +36,7 @@
 
             <% if(produtos.length === 0) { %>
                 <article class="categoria-vazia">
-                    <p class="mensagem-vazio">Ainda não há produtos nesta categoria.</p>
+                    <p class="mensagem-vazio"><%= (typeof mensagemVazia !== 'undefined' && mensagemVazia) ? mensagemVazia : 'Ainda não há produtos nesta categoria.' %></p>
                     <a href="/home" class="btn-voltar-home">Voltar para o início</a>
                 </article>
             <% } else { %>
@@ -75,7 +75,7 @@
                                         <span class="sr-only">Preço com desconto: </span><span class="preco-desconto-home">R$ <%= precoComDesconto.toFixed(2) %></span>
                                         <span class="badge-desconto">
                                             <span class="percentual-home">-<%= percentualDesconto %>%</span>
-                                        </aside>
+                                        </span>
                                     </section>
                                 <% } else { %>
                                     <span class="preco-unico-home">R$ <%= precoAtual.toFixed(2) %></span>

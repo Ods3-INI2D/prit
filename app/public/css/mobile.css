@@ -90,10 +90,10 @@
     }
 
     .banners-destaque .banners-btn {
-        align-self: end;
+        align-self: center;   /* [ALTERADO] era "end" (setas ficavam no rodapé); agora centralizadas na altura do banner */
         width: 2.75rem;
         height: 2.75rem;
-        margin: 0 0.5rem 0.5rem;
+        margin: 0 0.5rem;
         font-size: 1rem;
         z-index: 2;
     }
@@ -146,9 +146,8 @@
         display: none;
     }
 
-    .carrossel-produtos-btn {
-        display: none;
-    }
+    /* [REMOVIDO] .carrossel-produtos-btn { display: none; }
+       No celular as setas ◀ ▶ agora aparecem nas extremidades do carrossel, como nos banners (ver home.css e home-idosos.css). */
 
     .item-carrossel {
         scroll-snap-stop: always;
