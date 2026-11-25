@@ -60,7 +60,7 @@
 
         <% if (bannersExibidos.length > 0) { %>
             <%# [ALTERADO] ganhou data-banners-carrossel (gancho do JS); aria-roledescription anuncia "carrossel" a leitores de tela %>
-            <section class="banners-destaque" aria-label="Destaques" aria-roledescription="carrossel" data-banners-carrossel>
+            <section class="banners-destaque" aria-label="Banners" aria-roledescription="carrossel" data-banners-carrossel>
                 <%#
                     [NOVO] sem elemento de apoio: o próprio <section> é um grid (ver banners.css) em que o trilho e os
                     botões ◀ ▶ ocupam a mesma célula.
@@ -70,7 +70,7 @@
                         aria-controls="banners-trilho" aria-label="Banners anteriores" hidden>◀</button>
 
                 <%# [ALTERADO] era <ul class="banners-lista"> (grade). Agora é o trilho rolável; tabindex="0" permite rolar com as setas do teclado %>
-                <ul class="banners-trilho" id="banners-trilho" tabindex="0" aria-label="Lista de destaques">
+                <ul class="banners-trilho" id="banners-trilho" tabindex="0" aria-label="Lista de banners">
                     <% bannersExibidos.forEach(function(banner, indice) { %>
                         <li class="banner-item">
                             <%# a legenda (figcaption) já nomeia o link, por isso o alt da imagem fica vazio %>
@@ -88,11 +88,7 @@
                 <button type="button" class="banners-btn banners-btn-prox" data-banners-direcao="1"
                         aria-controls="banners-trilho" aria-label="Próximos banners" hidden>▶</button>
 
-                <%# [NOVO] faixa de status do carrossel de banners. Começa hidden: o JS só a mostra se houver mais de um banner %>
-                <div class="banners-controles" data-banners-controles hidden>
-                    <p class="banners-posicao" data-banners-posicao aria-hidden="true">Destaque 1 de <%= bannersExibidos.length %></p>
-                    <button type="button" class="banners-pausa" data-banners-pausa>Pausar destaques</button>
-                </div>
+                <%# [REMOVIDO] faixa "Destaque X de N" + botão "Pausar destaques": informação em excesso na home (a rotação ainda pausa com mouse, foco de teclado, aba oculta e movimento reduzido) %>
             </section>
         <% } %>
 
@@ -118,7 +114,7 @@
                 return p.precoDesconto !== null && p.precoDesconto > 0;
             });
             if (comDesconto.length > 0) {
-                faixas.push({ id: 'descontos', titulo: 'Descontos', link: null,   // [ALTERADO] era '/home' (link para a própria página)
+                faixas.push({ id: 'descontos', titulo: 'Descontos', link: '/descontos',   // [ALTERADO] antes sem link: não havia página com TODOS os produtos em desconto
                               itens: comDesconto.slice(0, LIMITE_POR_CARROSSEL) });
             }
 
@@ -168,10 +164,10 @@
 
                     <%# [NOVO] palco: agrupa os botões e o trilho para posicionar ◀ ▶ nas extremidades da faixa %>
                     <div class="carrossel-produtos-palco">
-                        <%# [ALTERADO] botões saíram do cabeçalho: ◀ na extremidade esquerda, ▶ na direita (ver ordem do DOM = ordem de tabulação) %>
+                        <%# [ALTERADO] igual ao carrossel de banners: ◀ centralizado na extremidade esquerda, ▶ na direita (ordem do DOM = ordem de tabulação); sem texto "Anteriores/Próximos" %>
                         <button type="button" class="carrossel-produtos-btn carrossel-produtos-btn-ant" data-direcao="-1"
                                 aria-controls="trilho-<%= faixa.id %>"
-                                aria-label="Produtos anteriores de <%= faixa.titulo %>"><span aria-hidden="true">◀</span><span class="carrossel-produtos-btn__texto">Anteriores</span></button>
+                                aria-label="Produtos anteriores de <%= faixa.titulo %>"><span aria-hidden="true">◀</span></button>
 
                         <ul class="carrossel-produtos-trilho" id="trilho-<%= faixa.id %>" tabindex="0"
                             aria-labelledby="titulo-<%= faixa.id %>">
@@ -182,12 +178,11 @@
                             <% }); %>
                         </ul>
 
-                        <%# [NOVO] "Produto X de N": só visual (o leitor de tela já conta os itens da lista) %>
-                        <p class="carrossel-produtos-posicao" data-posicao aria-hidden="true">Produto 1 de <%= faixa.itens.length %></p>
+                        <%# [REMOVIDO] indicador "Produto X de N": informação em excesso (o leitor de tela já conta os itens da lista) %>
 
                         <button type="button" class="carrossel-produtos-btn carrossel-produtos-btn-prox" data-direcao="1"
                                 aria-controls="trilho-<%= faixa.id %>"
-                                aria-label="Próximos produtos de <%= faixa.titulo %>"><span class="carrossel-produtos-btn__texto">Próximos</span><span aria-hidden="true">▶</span></button>
+                                aria-label="Próximos produtos de <%= faixa.titulo %>"><span aria-hidden="true">▶</span></button>
                     </div>
                 </section>
             <% }); %>

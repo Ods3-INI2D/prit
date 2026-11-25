@@ -6,7 +6,6 @@
         var trilho  = carrossel.querySelector('.carrossel-produtos-trilho');
         var btnAnt  = carrossel.querySelector('[data-direcao="-1"]');
         var btnProx = carrossel.querySelector('[data-direcao="1"]');
-        var posicao = carrossel.querySelector('[data-posicao]');   // [NOVO] indicador "Produto X de N"
         if (!trilho || !btnAnt || !btnProx) return;   // [ALTERADO] não há mais um contêiner de controles
 
         var quadro = null;
@@ -34,15 +33,7 @@
             btnProx.hidden = cabeTudo;
             btnAnt.disabled  = trilho.scrollLeft <= 1;
             btnProx.disabled = trilho.scrollLeft >= maximo - 1;
-
-            // [NOVO] heurística 1 (status visível): em que produto a pessoa está. Some se tudo cabe na tela.
-            if (posicao) {
-                var total   = trilho.querySelectorAll('.item-carrossel').length;
-                var passo   = larguraDoItem();
-                var primeiro = Math.min(total, Math.round(trilho.scrollLeft / passo) + 1);
-                posicao.textContent = 'Produto ' + primeiro + ' de ' + total;
-                posicao.hidden = cabeTudo;
-            }
+            // [REMOVIDO] indicador "Produto X de N" (informação em excesso)
         }
 
         function agendarAtualizacao() {
