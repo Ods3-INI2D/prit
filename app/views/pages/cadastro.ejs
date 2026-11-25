@@ -249,18 +249,18 @@
                 </fieldset>
 
                 <fieldset>
-                    <label for="senha" class="rotulo-campo">Confirmar Senha</label>
+                    <label for="csenha" class="rotulo-campo">Confirmar Senha</label>
                     <div class="campo-senha">
                         <input
                             type="password"
-                            id="senha"
+                            id="csenha"
                             name="csenha"
                             placeholder="Confirme sua senha"
                             value="<%= valores.csenha %>"
                             class="<%= cssErro.csenha %>"
                             aria-describedby="csenha-error"
                             required>
-                        <button type="button" class="btn-toggle-senha" aria-label="Mostrar senha" data-target="senha"></button>
+                        <button type="button" class="btn-toggle-senha" aria-label="Mostrar senha" data-target="csenha"></button>
                     </div>
                     <% if (msgErro.csenha) { %>
                         <output class="error-message" id="csenha-error" role="alert" aria-live="polite" style="display:block">
