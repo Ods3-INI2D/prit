@@ -1,14 +1,4 @@
 <nav class="nav-principal">
-    <button class="hamburger"
-            aria-controls="menuhamburger"
-            aria-expanded="false" 
-            aria-label="abrir menu hamburger">
-        <hr class="linha1">
-        <hr class="linha2">
-        <hr class="linha3">
-        <span class="rotulo-acao">Menu</span>
-    </button>
-
     <a href="/home"><img src="/imagens/logo-branco.svg" alt="logo" class="logo"></a>
 
     <section class="busca-container">
@@ -37,6 +27,19 @@
             </a>
         <% } %>
     </section>
+
+    <%# [ALTERADO] o botão do menu passou para o FIM do cabeçalho (lado direito no celular) e perdeu o texto "Menu".
+        Fica por último no HTML para a ordem de tabulação seguir a ordem visual. O nome acessível continua no aria-label
+        (os scripts home-idosos.js / acessibilidade-idosos.js o trocam para "Abrir menu" / "Fechar menu").
+        No desktop (≥ 1024 px) o botão continua oculto por menu.css. %>
+    <button class="hamburger"
+            aria-controls="menuhamburger"
+            aria-expanded="false"
+            aria-label="abrir menu hamburger">
+        <hr class="linha1">
+        <hr class="linha2">
+        <hr class="linha3">
+    </button>
 </nav>
 
 <nav class="desktop-navigation" aria-label="Navegação principal">
